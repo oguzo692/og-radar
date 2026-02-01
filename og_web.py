@@ -93,7 +93,7 @@ if check_password():
                 <h3 style='color: #ff4b4b;'>❌ W1 Kuponu - KAYBETTİ</h3>
                 <div class='match-row'><span>Karagümrük - GS</span> <span class='status-win'>GS W & +2 ✅</span></div>
                 <div class='match-row'><span>Bournemouth - Liv</span> <span class='status-win'>KG VAR ✅</span></div>
-                <div class='match-row'><span>Union Berlin - BVB</span> <span class='status-loss'>BVB İY 0.5 ÜST ❌</span></div>
+                <div class='match-row'><span>Union Berlin - BVB</span> <span class='status-win'>BVB İY 0.5 ÜST ✅</span></div>
                 <div class='match-row'><span>New - Aston Villa</span> <span class='status-loss'>NEW +2 ❌</span></div>
                 <div class='match-row'><span>FB - Göztepe</span> <span class='status-loss'>FB W ❌</span></div>
                 <br><p><b>Toplam Oran:</b> 7.09 | <b>Bütçe:</b> 100 USD | <b>Sonuç:</b> -100 USD</p>
