@@ -86,15 +86,14 @@ if check_password():
         st.divider()
 
         # SON 5 İŞLEM LİSTESİ (PRO TABLO)
-        st.subheader("📑 Son 5 Operasyonel İşlem")
+        st.subheader("📑 Son 3 İşlem")
         
         # Hayali veriler (Burayı istediğin zaman güncelleyebiliriz kanka)
         trades = [
             {"Coin": "BTC/USDT", "Tip": "🟢 Long", "Giriş": "$76,450", "K/Z": "+%2.4", "Durum": "Kapalı ✅"},
             {"Coin": "SOL/USDT", "Tip": "🔴 Short", "Giriş": "$102.1", "K/Z": "-%1.1", "Durum": "Kapalı ❌"},
             {"Coin": "ETH/USDT", "Tip": "🟢 Long", "Giriş": "$2,245", "K/Z": "+%0.8", "Durum": "Açık ⏳"},
-            {"Coin": "BTC/USDT", "Tip": "🟢 Long", "Giriş": "$75,900", "K/Z": "+%4.2", "Durum": "Kapalı ✅"},
-            {"Coin": "SOL/USDT", "Tip": "🟢 Long", "Giriş": "$98.5", "K/Z": "+%5.5", "Durum": "Kapalı ✅"},
+
         ]
         
         # Tabloyu cam kart içine gömme
