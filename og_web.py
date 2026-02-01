@@ -26,24 +26,23 @@ if check_password():
         .main { background-color: #0e1117; }
         div[data-testid="stMetricValue"] { font-size: 1.8rem !important; color: #00ff41 !important; }
         .member-card { background-color: #161b22; border-radius: 10px; padding: 15px; border: 1px solid #30363d; margin-bottom: 10px; }
-        .sidebar-btn { width: 100%; border-radius: 5px; background-color: #21262d; border: 1px solid #30363d; color: white; padding: 10px; margin-bottom: 5px; text-align: left; }
         </style>
         """, unsafe_allow_html=True)
 
-    # --- 3. SIDEBAR (COMMAND CENTER) ---
+    # --- 3. SIDEBAR (OG CORE SUITE) ---
     with st.sidebar:
-        st.title("🛡️ OG Core")
+        st.title("🛡️ OG Core Suite")
         
-        # PROJE SEKMELERİ (Yeni İstediğin Kısım)
-        st.subheader("🚀 Ekosistem")
-        st.button("📈 Trade Radar (Aktif)", use_container_width=True)
-        st.button("🤖 Crypto Tracker Bot", use_container_width=True) #
-        st.button("☕ Cold Brew Master", use_container_width=True) #
-        st.button("👕 Outfit Planner", use_container_width=True) #
+        # SADELEŞTİRİLMİŞ ÖZEL SEKMELER
+        st.subheader("🚀 Hizmetler")
+        st.button("📊 OG DashDash", use_container_width=True) # Yeni Sekme 1
+        st.button("📈 OG FormLine", use_container_width=True) # Yeni Sekme 2
+        st.button("🛡️ OG Trade Radar (Aktif)", use_container_width=True)
         
         st.divider()
         
         st.subheader("⚙️ Portföy Kontrol")
+        # Terminalindeki bakiyeyi buraya gir kanka
         kasa = st.number_input("Güncel Kasa (USD)", value=1200.0, step=0.1)
         st.info(f"🕒 Son Güncelleme: {datetime.now().strftime('%H:%M:%S')}")
         
@@ -70,12 +69,13 @@ if check_password():
     st.divider()
 
     # --- 5. EKİP KÂR ANALİZİ ---
-    st.subheader("👥 Ekip Kâr Analizi")
+    st.subheader("👥 Ekip Kâr Dağıtımı")
     kisi_basi_kar = net_kar / 3 if net_kar > 0 else 0.0
     toplam_alacak = 200 + kisi_basi_kar
     
     m1, m2, m3 = st.columns(3)
-    for col, name in zip([m1, m2, m3], ["oguzo", "ero7", "fybey"]): #
+    # Üyeler: oguzo, ero7, fybey
+    for col, name in zip([m1, m2, m3], ["oguzo", "ero7", "fybey"]):
         with col:
             st.markdown(f"""
             <div class="member-card">
