@@ -1,4 +1,4 @@
-import streamlit as st
+ximport streamlit as st
 import yfinance as yf
 from datetime import datetime
 import pandas as pd
@@ -28,11 +28,7 @@ if check_password():
     st.markdown("""
         <style>
         .main { background-color: #000000; }
-        
-        /* Silik Turuncu Konsepti */
         :root { --soft-orange: #cc7a00; }
-
-        /* Tüm Kartların Boyutunu Eşitleyen Yapı */
         .glass-card {
             background: rgba(255, 255, 255, 0.02);
             backdrop-filter: blur(15px);
@@ -41,32 +37,24 @@ if check_password():
             border: 1px solid var(--soft-orange);
             box-shadow: 0 4px 15px rgba(204, 122, 0, 0.1);
             margin-bottom: 20px;
-            height: 160px; /* Sabit Yükseklik */
+            height: 160px;
             display: flex;
             flex-direction: column;
             justify-content: center;
         }
-
-        /* Başlık Boyutlarını Eşitleme */
         h1, h2, h3 { 
             color: var(--soft-orange) !important; 
             font-size: 24px !important; 
             margin-bottom: 10px !important;
         }
-        
         div[data-testid="stMetricValue"] {
             color: var(--soft-orange) !important;
             font-size: 28px !important;
-            text-shadow: none !important;
         }
-
-        /* Sidebar Sınırı */
         section[data-testid="stSidebar"] {
             background-color: #050505;
             border-right: 1px solid var(--soft-orange);
         }
-
-        /* Tablo Konteynırı Genişlik Eşitleme */
         .table-container {
             border: 1px solid var(--soft-orange);
             border-radius: 10px;
@@ -76,27 +64,30 @@ if check_password():
         </style>
         """, unsafe_allow_html=True)
 
-    # --- 3. SIDEBAR ---
+    # --- 3. SIDEBAR (İSİMLERİ SABİTLEDİK) ---
     with st.sidebar:
         st.title("🛡️ OG Core")
+        # Menüdeki isimler ile aşağıdaki IF kontrolleri tam eşleşmeli
         page = st.radio("🚀 ürün", ["⚡ Ultra Atak Fon", "⚽️ FormLine", "📊 DashDash"])
         st.divider()
-        if page == "⚡ ultra atak fon":
+        
+        # Seçili sayfaya göre bakiye girişi göster
+        if page == "⚡ Ultra Atak Fon":
             kasa = st.number_input("fon bakiyesi (USD)", value=600.0, step=0.1)
+        
         st.info(f"🕒 {datetime.now().strftime('%H:%M:%S')}")
         if st.button("🔴 çıkış"):
             st.session_state["password_correct"] = False
             st.rerun()
 
     # --- 4. ULTRA ATAK FON ---
-    if page == "⚡ ultra atak fon":
+    if page == "⚡ Ultra Atak Fon":
         st.title("⚡ Ultra Atak Fon")
         
         try:
             data = yf.download(["BTC-USD", "ETH-USD", "SOL-USD"], period="1d", interval="1m", progress=False)['Close'].iloc[-1]
         except: data = {"BTC-USD": 0, "ETH-USD": 0, "SOL-USD": 0}
 
-        # Üst Metrikler (Hepsi Eşit Boyut)
         c1, c2, c3, c4 = st.columns(4)
         with c1: st.markdown(f"<div class='glass-card'>💰 FON TOPLAM<br><h2>${kasa:,.2f}</h2></div>", unsafe_allow_html=True)
         with c2: st.markdown(f"<div class='glass-card'>🟠 BTC/USDT<br><h2>${data['BTC-USD']:,.1f}</h2></div>", unsafe_allow_html=True)
@@ -104,19 +95,7 @@ if check_password():
         with c4: st.markdown(f"<div class='glass-card'>🟣 SOL/USDT<br><h2>${data['SOL-USD']:,.1f}</h2></div>", unsafe_allow_html=True)
 
         st.divider()
-        
-        # İŞLEM GEÇMİŞİ
         st.subheader("📑 işlem Geçmişi")
         trades = [
             {"Coin": "BTC/USDT", "Tip": "🟢 Long", "K/Z": "+%2.4", "Durum": "Kapalı ✅"},
-            {"Coin": "SOL/USDT", "Tip": "🔴 Short", "K/Z": "-%1.1", "Durum": "Kapalı ❌"},
-            {"Coin": "ETH/USDT", "Tip": "🟢 Long", "K/Z": "+%0.8", "Durum": "Açık ⏳"},
-        ]
-        st.markdown("<div class='table-container'>", unsafe_allow_html=True)
-        st.table(pd.DataFrame(trades))
-        st.markdown("</div>", unsafe_allow_html=True)
-
-    # --- 5. OG FORMLINE ---
-    elif page == "📈 OG FormLine":
-        st.title("📈 OG FormLine Analizi")
-        st.markdown("<div class='glass-card' style='height:auto;'>W2 - GS ✅ | Liv ✅ | BVB ✅ | FB ⏳</div>", unsafe_allow_html=True)
+            {"Coin": "SOL/USDT
