@@ -45,7 +45,7 @@ if check_password():
         st.divider()
         if page == "⚡ Ultra Atak Fon":
             st.subheader("⚙️ Fon Yönetimi")
-            kasa = st.number_input("Güncel Fon Bakiyesi (USD)", value=1200.0, step=0.1)
+            kasa = st.number_input("Güncel Fon Bakiyesi (USD)", value=600.0, step=0.1)
         st.info(f"🕒 Sistem Zamanı: {datetime.now().strftime('%H:%M:%S')}")
         if st.button("🔴 Güvenli Çıkış"):
             st.session_state["password_correct"] = False
