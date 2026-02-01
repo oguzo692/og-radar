@@ -31,7 +31,6 @@ if check_password():
         .main { background-color: #0d1117 !important; }
         :root { --soft-orange: #cc7a00; }
         
-        /* Glass Card Yapısı */
         .glass-card {
             background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(10px);
@@ -42,7 +41,6 @@ if check_password():
             height: auto !important;
         }
         
-        /* Kupon Kartı Tasarımı */
         .coupon-card {
             background: rgba(255, 255, 255, 0.02);
             border-radius: 12px;
@@ -66,13 +64,6 @@ if check_password():
         h1, h2, h3 { color: var(--soft-orange) !important; margin: 0 !important; font-size: 22px !important; }
         section[data-testid="stSidebar"] { background-color: #050505 !important; border-right: 1px solid var(--soft-orange); }
         .block-container { padding-top: 1.5rem !important; }
-        
-        /* Tabloyu terminal havasına sok */
-        .stTable {
-            background-color: transparent !important;
-            border: 1px solid rgba(204, 122, 0, 0.2);
-            border-radius: 8px;
-        }
         </style>
         """, unsafe_allow_html=True)
 
@@ -81,10 +72,7 @@ if check_password():
         st.title("🛡️ OG Core")
         page = st.radio("🚀 ürün", ["⚡ Ultra Atak Fon", "⚽️ FormLine", "📊 DashDash"])
         st.divider()
-        
-        # Bakiye Girişi (Sadece Fon sayfasında görünür veya her yerden yönetilebilir)
         kasa = st.number_input("fon bakiyesi (USD)", value=600.0, step=0.1)
-            
         st.info(f"🕒 {datetime.now().strftime('%H:%M:%S')}")
         if st.button("🔴 çıkış"):
             st.session_state["password_correct"] = False
@@ -92,26 +80,21 @@ if check_password():
 
     # --- 4. ULTRA ATAK FON ---
     if page == "⚡ Ultra Atak Fon":
-        # Verileri çek
         try:
-            data = yf.download(["BTC-USD", "ETH-USD", "SOL-USD"], period="1d", interval="1m", progress=False)['Close'].iloc[-1]
+            # Fiyatları çek
+            tickers = ["BTC-USD", "ETH-USD", "SOL-USD"]
+            df_prices = yf.download(tickers, period="1d", interval="1m", progress=False)
+            data = df_prices['Close'].iloc[-1]
         except: 
             data = {"BTC-USD": 0.0, "ETH-USD": 0.0, "SOL-USD": 0.0}
 
         # Başlık ve Fon Miktarı
         st.title("⚡ Ultra Atak Fon")
-        st.markdown(f"<h3 style='color: #888 !important; font-size: 18px !important; margin-top: -10px !important;'>Fon Bakiyesi: ${kasa:,.2f}</h3>", unsafe_allow_html=True)
+        st.markdown(f"<h3 style='color: #888 !important; font-size: 18px !important; margin-top: -10px !important; margin-bottom: 20px !important;'>Fon Bakiyesi: ${kasa:,.2f}</h3>", unsafe_allow_html=True)
         
         st.divider()
 
-        # Canlı Fiyatlar Başlığı
+        # Canlı Fiyatlar Bölümü
         st.subheader("🚀 Canlı Fiyatlar")
         c1, c2, c3 = st.columns(3)
-        with c1: st.markdown(f"<div class='glass-card'><small style='color:#888;'>BTC</small><h2>${data['BTC-USD']:,.1f}</h2></div>", unsafe_allow_html=True)
-        with c2: st.markdown(f"<div class='glass-card'><small style='color:#888;'>ETH</small><h2>${data['ETH-USD']:,.1f}</h2></div>", unsafe_allow_html=True)
-        with c3: st.markdown(f"<div class='glass-card'><small style='color:#888;'>SOL</small><h2>${data['SOL-USD']:,.1f}</h2></div>", unsafe_allow_html=True)
-
-        st.divider()
-        st.subheader("📑 İşlem Geçmişi")
-        
-        trades_df = pd.DataFrame(
+        with c1
