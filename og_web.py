@@ -4,10 +4,10 @@ from datetime import datetime
 import pandas as pd
 import numpy as np
 
-# --- SAYFA YAPILANDIRMASI ---
+# --- 1. SAYFA AYARLARI ---
 st.set_page_config(page_title="OG Core", page_icon="🛡️", layout="wide")
 
-# --- GÜVENLİK KONTROLÜ ---
+# --- 2. GÜVENLİK ---
 if "password_correct" not in st.session_state:
     st.session_state["password_correct"] = False
 
@@ -25,7 +25,7 @@ def check_password():
     return True
 
 if check_password():
-    # --- CSS TASARIM (HATASIZ) ---
+    # --- 3. CSS TASARIM (HATASIZ) ---
     st.markdown("""
         <style>
         .main { background-color: #0d1117 !important; }
@@ -60,28 +60,4 @@ if check_password():
         .status-loss { color: #ff4b4b; font-weight: bold; }
         .status-wait { color: #f1c40f; font-weight: bold; }
         
-        h1, h2, h3 { color: var(--soft-orange) !important; margin: 0 !important; }
-        section[data-testid="stSidebar"] { background-color: #050505 !important; border-right: 1px solid var(--soft-orange); }
-        .stTable { background-color: transparent !important; }
-        </style>
-        """, unsafe_allow_html=True)
-
-    # --- SIDEBAR ---
-    with st.sidebar:
-        st.title("🛡️ OG Core")
-        page = st.radio("🚀 MENÜ", ["⚡ Ultra Atak Fon", "⚽️ FormLine", "📊 DashDash"])
-        st.divider()
-        kasa = st.number_input("FON BAKİYESİ (USD)", value=600.0, step=10.0)
-        st.info(f"🕒 {datetime.now().strftime('%H:%M:%S')}")
-        if st.button("🔴 ÇIKIŞ"):
-            st.session_state["password_correct"] = False
-            st.rerun()
-
-    # --- SAYFA 1: ULTRA ATAK FON ---
-    if page == "⚡ Ultra Atak Fon":
-        
-        # 1. BÖLÜM: CANLI FİYATLAR (EN ÜSTTE)
-        st.subheader("🚀 Canlı Fiyatlar")
-        
-        try:
-            tickers =
+        h1, h2, h3 {
