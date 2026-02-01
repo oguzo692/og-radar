@@ -33,7 +33,7 @@ if check_password():
         /* Fiyat kutularını yazılara sıfırla */
         .glass-card {
             background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(15px);
             border-radius: 8px;
             padding: 8px 12px !important;
             border: 1px solid var(--soft-orange);
@@ -41,7 +41,7 @@ if check_password():
             height: auto !important;
         }
         
-        /* Kupon Kartı Tasarımı (Görseldeki gibi) */
+        /* Kupon Kartı Tasarımı */
         .coupon-card {
             background: rgba(255, 255, 255, 0.02);
             border-radius: 12px;
@@ -62,7 +62,7 @@ if check_password():
         .status-loss { color: #ff4b4b; font-weight: bold; }
         .status-wait { color: #f1c40f; font-weight: bold; }
         
-        h1, h2, h3 { color: var(--soft-orange) !important; margin: 0 !important; }
+        h1, h2, h3 { color: var(--soft-orange) !important; margin: 0 !important; font-size: 22px !important; }
         section[data-testid="stSidebar"] { background-color: #050505 !important; border-right: 1px solid var(--soft-orange); }
         .block-container { padding-top: 1.5rem !important; }
         </style>
@@ -71,55 +71,4 @@ if check_password():
     # --- 3. SIDEBAR ---
     with st.sidebar:
         st.title("🛡️ OG Core")
-        page = st.radio("🚀 ürün", ["⚡ Ultra Atak Fon", "⚽️ FormLine", "📊 DashDash"])
-        st.divider()
-        if page == "⚡ Ultra Atak Fon":
-            kasa = st.number_input("fon bakiyesi (USD)", value=600.0, step=0.1)
-        st.info(f"🕒 {datetime.now().strftime('%H:%M:%S')}")
-        if st.button("🔴 çıkış"):
-            st.session_state["password_correct"] = False
-            st.rerun()
-
-    # --- 4. ULTRA ATAK FON ---
-    if page == "⚡ Ultra Atak Fon":
-        st.title("⚡ Ultra Atak Fon")
-        try:
-            data = yf.download(["BTC-USD", "ETH-USD", "SOL-USD"], period="1d", interval="1m", progress=False)['Close'].iloc[-1]
-        except: data = {"BTC-USD": 0, "ETH-USD": 0, "SOL-USD": 0}
-
-        c1, c2, c3, c4 = st.columns(4)
-        with c1: st.markdown(f"<div class='glass-card'><small style='color:#888;'>TOPLAM</small><h2>${kasa:,.2f}</h2></div>", unsafe_allow_html=True)
-        with c2: st.markdown(f"<div class='glass-card'><small style='color:#888;'>BTC</small><h2>${data['BTC-USD']:,.1f}</h2></div>", unsafe_allow_html=True)
-        with c3: st.markdown(f"<div class='glass-card'><small style='color:#888;'>ETH</small><h2>${data['ETH-USD']:,.1f}</h2></div>", unsafe_allow_html=True)
-        with c4: st.markdown(f"<div class='glass-card'><small style='color:#888;'>SOL</small><h2>${data['SOL-USD']:,.1f}</h2></div>", unsafe_allow_html=True)
-
-        st.divider()
-        st.subheader("📑 İşlem Geçmişi")
-        # Boş kutu silindi, tablo doğrudan başlığın altında
-        trades_df = pd.DataFrame([
-            {"Coin": "BTC/USDT", "Tip": "🟢 Long", "K/Z": "+%2.4", "Durum": "Kapalı ✅"},
-            {"Coin": "SOL/USDT", "Tip": "🔴 Short", "K/Z": "-%1.1", "Durum": "Kapalı ❌"},
-            {"Coin": "ETH/USDT", "Tip": "🟢 Long", "K/Z": "+%0.8", "Durum": "Açık ⏳"}
-        ])
-        st.table(trades_df)
-
-    # --- 5. FORM LINE (ESKİ TASARIM GERİ GELDİ) ---
-    elif page == "⚽️ FormLine":
-        st.title("⚽️ FormLine Analizi")
-        
-        tab1, tab2 = st.tabs(["🔥 W2 Kuponu (1-2 Şubat)", "⏪ W1 Kuponu (24-25 Ocak)"])
-        
-        with tab1:
-            st.markdown("""<div class='coupon-card'>
-                <h2 style='color:#f1c40f;'>⏳ W2 - BEKLEMEDE</h2><br>
-                <div class='match-row'><span>GS - Kayserispor</span><span class='status-win'>GS W & +2 ✅</span></div>
-                <div class='match-row'><span>Liverpool - Newcastle</span><span class='status-win'>KG VAR ✅</span></div>
-                <div class='match-row'><span>BVB - Heidenheim</span><span class='status-win'>BVB İY 0.5 ÜST ✅</span></div>
-                <div class='match-row'><span>Kocaelispor - FB</span><span class='status-wait'>FB W & 2+ ⏳</span></div>
-                <hr style='border: 1px solid rgba(255,255,255,0.05);'>
-                <p><b>Toplam Oran: 5.40 | Bütçe: 100 USD | Sonuç: Beklemede</b></p>
-                </div>""", unsafe_allow_html=True)
-                
-        with tab2:
-            st.markdown("""<div class='coupon-card' style='border-color:#ff4b4b;'>
-                <h2 style='color:#ff
+        page = st.radio("🚀 ürün", ["
