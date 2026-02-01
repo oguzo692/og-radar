@@ -24,21 +24,21 @@ def check_password():
     return True
 
 if check_password():
-    # --- 2. INDUSTRIAL ORANGE CSS (SİLİK TURUNCU & EŞİT KUTULAR) ---
+    # --- 2. COMPACT INDUSTRIAL CSS ---
     st.markdown("""
         <style>
         .main { background-color: #000000 !important; }
         :root { --soft-orange: #cc7a00; }
         
+        /* Yazılara sıfır, sıkıştırılmış dikdörtgenler */
         .glass-card {
             background: rgba(255, 255, 255, 0.02);
             backdrop-filter: blur(15px);
-            border-radius: 10px;
-            padding: 20px;
+            border-radius: 8px;
+            padding: 10px 15px; /* Boşluklar azaltıldı */
             border: 1px solid var(--soft-orange);
-            box-shadow: 0 4px 15px rgba(204, 122, 0, 0.1);
-            margin-bottom: 20px;
-            height: 160px;
+            margin-bottom: 10px;
+            height: auto; /* Yazıya göre daralan yükseklik */
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -46,13 +46,14 @@ if check_password():
         
         h1, h2, h3 { 
             color: var(--soft-orange) !important; 
-            font-size: 24px !important; 
-            margin-bottom: 15px !important;
+            font-size: 22px !important; 
+            margin: 0 !important; /* Başlık boşlukları sıfırlandı */
         }
         
         div[data-testid="stMetricValue"] {
             color: var(--soft-orange) !important;
-            font-size: 28px !important;
+            font-size: 26px !important;
+            line-height: 1.2 !important;
         }
         
         section[data-testid="stSidebar"] {
@@ -60,12 +61,10 @@ if check_password():
             border-right: 1px solid var(--soft-orange);
         }
         
-        .table-container {
-            border: 1px solid var(--soft-orange);
-            border-radius: 10px;
-            padding: 15px;
+        /* Tablo görünümü iyileştirme */
+        .stTable {
             background: rgba(255, 255, 255, 0.01);
-            margin-bottom: 20px;
+            border-radius: 10px;
         }
         </style>
         """, unsafe_allow_html=True)
@@ -79,7 +78,7 @@ if check_password():
         if page == "⚡ Ultra Atak Fon":
             kasa = st.number_input("fon bakiyesi (USD)", value=600.0, step=0.1)
         else:
-            kasa = 600.0 # Hata almamak için varsayılan değer
+            kasa = 600.0
             
         st.info(f"🕒 {datetime.now().strftime('%H:%M:%S')}")
         if st.button("🔴 çıkış"):
@@ -95,13 +94,16 @@ if check_password():
         except:
             data = {"BTC-USD": 0, "ETH-USD": 0, "SOL-USD": 0}
 
+        # Üst Metrikler (Sıkıştırılmış)
         c1, c2, c3, c4 = st.columns(4)
-        with c1: st.markdown(f"<div class='glass-card'>💰 FON TOPLAM<br><h2>${kasa:,.2f}</h2></div>", unsafe_allow_html=True)
-        with c2: st.markdown(f"<div class='glass-card'>🟠 BTC/USDT<br><h2>${data['BTC-USD']:,.1f}</h2></div>", unsafe_allow_html=True)
-        with c3: st.markdown(f"<div class='glass-card'>🔵 ETH/USDT<br><h2>${data['ETH-USD']:,.1f}</h2></div>", unsafe_allow_html=True)
-        with c4: st.markdown(f"<div class='glass-card'>🟣 SOL/USDT<br><h2>${data['SOL-USD']:,.1f}</h2></div>", unsafe_allow_html=True)
+        with c1: st.markdown(f"<div class='glass-card'><small style='color:#888;'>FON TOPLAM</small><h2>${kasa:,.2f}</h2></div>", unsafe_allow_html=True)
+        with c2: st.markdown(f"<div class='glass-card'><small style='color:#888;'>BTC/USDT</small><h2>${data['BTC-USD']:,.1f}</h2></div>", unsafe_allow_html=True)
+        with c3: st.markdown(f"<div class='glass-card'><small style='color:#888;'>ETH/USDT</small><h2>${data['ETH-USD']:,.1f}</h2></div>", unsafe_allow_html=True)
+        with c4: st.markdown(f"<div class='glass-card'><small style='color:#888;'>SOL/USDT</small><h2>${data['SOL-USD']:,.1f}</h2></div>", unsafe_allow_html=True)
 
         st.divider()
+        
+        # İŞLEM GEÇMİŞİ (Boş turuncu kutu kaldırıldı)
         st.subheader("📑 İşlem Geçmişi")
         
         trades_df = pd.DataFrame([
@@ -110,9 +112,7 @@ if check_password():
             {"Coin": "ETH/USDT", "Tip": "🟢 Long", "K/Z": "+%0.8", "Durum": "Açık ⏳"}
         ])
         
-        st.markdown("<div class='table-container'>", unsafe_allow_html=True)
         st.table(trades_df)
-        st.markdown("</div>", unsafe_allow_html=True)
 
     # --- 5. FORM LINE ---
     elif page == "⚽️ FormLine":
