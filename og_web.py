@@ -14,7 +14,7 @@ def check_password():
         st.title("🔐 OG Core ")
         pwd = st.text_input("Şifre", type="password")
         if st.button("Giriş Yap"):
-            if pwd == "og2026":
+            if pwd == "1":
                 st.session_state["password_correct"] = True
                 st.rerun()
             else: st.error("❌ Götten sallama aq ya")
