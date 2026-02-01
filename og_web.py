@@ -3,7 +3,7 @@ import yfinance as yf
 from datetime import datetime
 
 # --- SAYFA YAPILANDIRMASI ---
-st.set_page_config(page_title="OG VIP Radar", page_icon="🛡️", layout="wide")
+st.set_page_config(page_title="OG - Core", page_icon="🛡️", layout="wide")
 
 # --- 1. GÜVENLİK ---
 if "password_correct" not in st.session_state:
@@ -11,10 +11,10 @@ if "password_correct" not in st.session_state:
 
 def check_password():
     if not st.session_state["password_correct"]:
-        st.title("🔐 OG VIP Erişim Paneli")
+        st.title("🔐 OG Core Paneli")
         pwd = st.text_input("Şifre", type="password")
         if st.button("Giriş Yap"):
-            if pwd == "og2026":
+            if pwd == "1234":
                 st.session_state["password_correct"] = True
                 st.rerun()
             else: st.error("❌ Hatalı Şifre!")
@@ -36,7 +36,7 @@ if check_password():
     # --- 3. SIDEBAR NAVIGATION ---
     with st.sidebar:
         st.title("🛡️ OG Core Suite")
-        page = st.radio("🚀 Hizmetler", ["🛡️ Trade Radar", "📈 OG FormLine", "📊 OG DashDash"])
+        page = st.radio("🚀 Hizmetler", ["🛡️ UltraAtak Fon ", "⚽️ OG FormLine", "📊 OG DashDash"])
         
         st.divider()
         if page == "🛡️ Trade Radar":
