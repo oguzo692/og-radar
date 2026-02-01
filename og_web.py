@@ -79,7 +79,7 @@ if check_password():
     # --- 3. SIDEBAR ---
     with st.sidebar:
         st.title("🛡️ OG Core")
-        page = st.radio("🚀 Strateji Yönetimi", ["⚡ Ultra Atak Fon", "📈 OG FormLine", "📊 OG DashDash"])
+        page = st.radio("🚀 Strateji Yönetimi", ["⚡ Ultra Atak Fon", "📈 FormLine", "📊 DashDash"])
         st.divider()
         if page == "⚡ Ultra Atak Fon":
             kasa = st.number_input("Güncel Fon Bakiyesi (USD)", value=600.0, step=0.1)
@@ -106,7 +106,7 @@ if check_password():
         st.divider()
         
         # İŞLEM GEÇMİŞİ
-        st.subheader("📑 İşlem Geçmişi")
+        st.subheader("📑 işlem Geçmişi")
         trades = [
             {"Coin": "BTC/USDT", "Tip": "🟢 Long", "K/Z": "+%2.4", "Durum": "Kapalı ✅"},
             {"Coin": "SOL/USDT", "Tip": "🔴 Short", "K/Z": "-%1.1", "Durum": "Kapalı ❌"},
