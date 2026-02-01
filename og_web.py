@@ -14,7 +14,7 @@ def check_password():
         else:
             st.session_state["password_correct"] = False
     if "password_correct" not in st.session_state:
-        st.title("🔐 OG VIP Erişim Paneli")
+        st.title("🔐 OG - Core Erişim Paneli")
         st.text_input("Şifre", type="password", on_change=password_entered, key="password")
         return False
     return True
@@ -78,7 +78,7 @@ if check_password():
 
     # --- 6. HEDEF ANALİZİ (YENİ TASARIM) ---
     st.subheader("🎯 Finansal Hedef Stratejisi")
-    hedef = 1500.0
+    hedef = 1200.0
     progress = min(max(kasa/hedef, 0.0), 1.0)
     
     h1, h2 = st.columns([2, 1])
