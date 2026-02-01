@@ -1,10 +1,11 @@
 import streamlit as st
 import yfinance as yf
+from datetime import datetime
 
 # --- SAYFA YAPILANDIRMASI ---
 st.set_page_config(page_title="OG VIP Radar", page_icon="🛡️", layout="wide")
 
-# --- 1. GÜVENLİK: ŞİFRE KORUMASI ---
+# --- 1. GÜVENLİK ---
 def check_password():
     def password_entered():
         if st.session_state["password"] == "og2026": 
@@ -12,79 +13,86 @@ def check_password():
             del st.session_state["password"]
         else:
             st.session_state["password_correct"] = False
-
     if "password_correct" not in st.session_state:
         st.title("🔐 OG VIP Erişim Paneli")
-        st.text_input("Lütfen Panel Şifresini Giriniz", type="password", on_change=password_entered, key="password")
-        st.warning("Bu panel sadece lisanslı kullanıcılar içindir.")
-        return False
-    elif not st.session_state["password_correct"]:
-        st.text_input("Lütfen Panel Şifresini Giriniz", type="password", on_change=password_entered, key="password")
-        st.error("❌ Hatalı Şifre!")
+        st.text_input("Şifre", type="password", on_change=password_entered, key="password")
         return False
     return True
 
 if check_password():
-    # --- 2. GÖRSEL TASARIM ---
+    # --- 2. GÖRSEL TASARIM (DARK PREMIUM) ---
     st.markdown("""
         <style>
         .main { background-color: #0e1117; }
         div[data-testid="stMetricValue"] { font-size: 1.8rem !important; color: #00ff41 !important; }
-        div[data-testid="stMetric"] { background-color: #161b22; border-radius: 12px; padding: 20px; border: 1px solid #30363d; }
+        .stProgress > div > div > div > div { background-color: #00ff41; }
+        .member-card { background-color: #161b22; border-radius: 10px; padding: 15px; border: 1px solid #30363d; margin-bottom: 10px; }
         </style>
         """, unsafe_allow_html=True)
 
-    # --- 3. YÖNETİCİ AYARLARI (SIDEBAR) ---
+    # --- 3. SIDEBAR & VERİ GİRİŞİ ---
     with st.sidebar:
-        st.header("⚙️ Portföy Yönetimi")
-        # Terminaldeki (TextEdit) güncel kasanı buraya yaz kanka
-        kasa = st.number_input("Güncel Kasa (USD)", value=600.0, step=0.1)
-        ana_para = 600.0
-        hedef = 1500.0
+        st.header("⚙️ Portföy Kontrol")
+        kasa = st.number_input("Güncel Kasa (USD)", value=1200.0, step=0.1) # Terminaldeki verini buraya yaz
         st.divider()
+        st.info(f"🕒 Son Güncelleme: {datetime.now().strftime('%H:%M:%S')}")
         if st.button("🔴 Güvenli Çıkış"):
             st.session_state["password_correct"] = False
             st.rerun()
 
-    # Canlı Piyasa Fiyatları (Bu API anahtarı istemez, hep çalışır)
-    def get_prices():
-        data = yf.download(["BTC-USD", "ETH-USD", "SOL-USD"], period="1d", interval="1m", progress=False)['Close']
-        return data.iloc[-1]
+    # Piyasa Verileri
+    data = yf.download(["BTC-USD", "ETH-USD", "SOL-USD"], period="1d", interval="1m", progress=False)['Close'].iloc[-1]
     
-    prices = get_prices()
-
-    # Hesaplamalar
-    net_kar = kasa - ana_para
-    kar_orani = (net_kar / ana_para) * 100 if ana_para != 0 else 0.0
-    kisi_basi_kar = net_kar / 3 if net_kar > 0 else 0.0
-
-    # --- 4. ANA EKRAN ---
+    # --- 4. DASHBOARD ÜST KISIM ---
     st.title("🛡️ OG Trade Discipline Radar")
-    st.caption("Veri Kaynağı: Manuel Giriş + Canlı Borsa ✅")
-
-    # Metrik Kartları
-    c1, c2, c3, c4 = st.columns(4)
-    c1.metric("💰 TOPLAM KASA", f"${kasa:,.2f}", f"%{kar_orani:+.1f}")
-    c2.metric("🟠 BTC/USDT", f"${prices['BTC-USD']:,.1f}")
-    c3.metric("🔵 ETH/USDT", f"${prices['ETH-USD']:,.1f}")
-    c4.metric("🟣 SOL/USDT", f"${prices['SOL-USD']:,.1f}")
+    
+    col1, col2, col3, col4 = st.columns(4)
+    ana_para = 600.0
+    net_kar = kasa - ana_para
+    kar_orani = (net_kar / ana_para) * 100
+    
+    col1.metric("💰 TOPLAM KASA", f"${kasa:,.2f}", f"%{kar_orani:+.1f}")
+    col2.metric("🟠 BTC/USDT", f"${data['BTC-USD']:,.1f}")
+    col3.metric("🔵 ETH/USDT", f"${data['ETH-USD']:,.1f}")
+    col4.metric("🟣 SOL/USDT", f"${data['SOL-USD']:,.1f}")
 
     st.divider()
 
-    # Kar Payları Bölümü
-    st.subheader("👥 Ekip Kâr Dağıtımı")
-    col_a, col_b = st.columns(2)
-    with col_a:
-        st.info(f"Kişi Başı Net Kâr: **${kisi_basi_kar:.2f}**")
-    with col_b:
-        st.success(f"Toplam Alacak (Ana+Kar): **${(200 + kisi_basi_kar):.2f}**")
-    st.caption("Üyeler: oguzo | ero7 | fybey")
+    # --- 5. EKİP KÂR DAĞITIMI (YENİ TASARIM) ---
+    st.subheader("👥 Ekip Kâr Analizi")
+    kisi_basi_kar = net_kar / 3 if net_kar > 0 else 0.0
+    toplam_alacak = 200 + kisi_basi_kar
+    
+    m1, m2, m3 = st.columns(3)
+    for col, name in zip([m1, m2, m3], ["oguzo", "ero7", "fybey"]):
+        with col:
+            st.markdown(f"""
+            <div class="member-card">
+                <h3 style='margin:0; color:#8b949e;'>{name.upper()}</h3>
+                <p style='margin:0; font-size:1.2rem; color:#00ff41;'>Alacak: ${toplam_alacak:,.2f}</p>
+                <p style='margin:0; font-size:0.8rem; color:#8b949e;'>Net Kar Payı: ${kisi_basi_kar:,.2f}</p>
+            </div>
+            """, unsafe_allow_html=True)
 
-    # Hedef Barı
     st.divider()
-    st.subheader("🎯 Finansal Hedef İlerlemesi")
+
+    # --- 6. HEDEF ANALİZİ (YENİ TASARIM) ---
+    st.subheader("🎯 Finansal Hedef Stratejisi")
+    hedef = 1500.0
     progress = min(max(kasa/hedef, 0.0), 1.0)
-    st.progress(progress)
-    st.write(f"Hedefe Kalan: **${max(hedef-kasa, 0):.1f}** | Başarı Oranı: **%{(kasa/hedef)*100:.1f}**")
+    
+    h1, h2 = st.columns([2, 1])
+    with h1:
+        st.progress(progress)
+        st.caption(f"Hedefe Gidiş: %{progress*100:.1f}")
+    with h2:
+        kalan = max(hedef - kasa, 0)
+        st.warning(f"Hedefe Kalan: **${kalan:,.1f}**")
+
+    # Alt Bilgi Kartları
+    c1, c2, c3 = st.columns(3)
+    c1.write(f"📈 **Büyüme Durumu:** {'🔥 Şahlanıyor' if kar_orani > 10 else '💎 Sabit'}")
+    c2.write(f"🚀 **1500$ Hedefi:** %{((kasa/1500)*100):.1f} Tamamlandı")
+    c3.write(f"🛡️ **Disiplin Puanı:** 10/10")
 
     st.caption("Powered by OG Core - 2026 Discipline is Profit.")
