@@ -139,6 +139,6 @@ if check_password():
     # --- 6. DASH DASH ---
     elif page == "📊 DashDash":
         st.title("📊 DashDash")
-        st.markdown("<div class='glass-card' style='height:auto;'>Sistem analitik verileri yükleniyor...</div>", unsafe_allow_html=True)
+        st.markdown("<div class='glass-card' style='height:auto;'>Soon...</div>", unsafe_allow_html=True)
 
     st.caption("Powered by OG Core - 2026 Discipline is Profit.")
