@@ -11,7 +11,7 @@ if "password_correct" not in st.session_state:
 
 def check_password():
     if not st.session_state["password_correct"]:
-        st.title("🔐 OG Core Erişim Paneli")
+        st.title("🔐 OG Core ")
         pwd = st.text_input("Şifre", type="password")
         if st.button("Giriş Yap"):
             if pwd == "og2026":
