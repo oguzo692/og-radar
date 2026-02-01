@@ -79,18 +79,18 @@ if check_password():
     # --- 3. SIDEBAR ---
     with st.sidebar:
         st.title("🛡️ OG Core")
-        page = st.radio("🚀 Strateji Yönetimi", ["⚡ Ultra Atak Fon", "📈 FormLine", "📊 DashDash"])
+        page = st.radio("🚀 ürün", ["⚡ Ultra Atak Fon", "⚽️ FormLine", "📊 DashDash"])
         st.divider()
-        if page == "⚡ Ultra Atak Fon":
-            kasa = st.number_input("Güncel Fon Bakiyesi (USD)", value=600.0, step=0.1)
+        if page == "⚡ ultra atak fon":
+            kasa = st.number_input("fon bakiyesi (USD)", value=600.0, step=0.1)
         st.info(f"🕒 {datetime.now().strftime('%H:%M:%S')}")
-        if st.button("🔴 Güvenli Çıkış"):
+        if st.button("🔴 çıkış"):
             st.session_state["password_correct"] = False
             st.rerun()
 
     # --- 4. ULTRA ATAK FON ---
-    if page == "⚡ Ultra Atak Fon":
-        st.title("⚡ Ultra Atak Fon Yönetimi")
+    if page == "⚡ ultra atak fon":
+        st.title("⚡ Ultra Atak Fon")
         
         try:
             data = yf.download(["BTC-USD", "ETH-USD", "SOL-USD"], period="1d", interval="1m", progress=False)['Close'].iloc[-1]
