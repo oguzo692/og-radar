@@ -1,6 +1,4 @@
 import streamlit as st
-import pandas as pd
-from pybit.unified_trading import HTTP
 import yfinance as yf
 
 # --- SAYFA YAPILANDIRMASI ---
@@ -36,49 +34,37 @@ if check_password():
         </style>
         """, unsafe_allow_html=True)
 
-    # --- 3. BYBIT VE PİYASA BAĞLANTISI ---
-    try:
-        # Secrets'tan anahtarları çekiyoruz
-        API_KEY = st.secrets["BYBIT_API_KEY"]
-        API_SECRET = st.secrets["BYBIT_API_SECRET"]
-        session = HTTP(testnet=False, api_key=API_KEY, api_secret=API_SECRET)
-        
-        # Canlı Bakiye Çekimi
-        wallet = session.get_wallet_balance(accountType="UNIFIED")
-        canli_kasa = float(wallet['result']['list'][0]['totalEquity'])
-    except Exception as e:
-        st.error(f"⚠️ API Bağlantı Hatası: {e}")
-        canli_kasa = 0.0
-
-    # Canlı Fiyatlar
-    def get_market_data():
-        data = yf.download(["BTC-USD", "ETH-USD", "SOL-USD"], period="1d", interval="1m", progress=False)['Close']
-        return data.iloc[-1]
-    
-    prices = get_market_data()
-
-    # --- 4. YÖNETİCİ AYARLARI ---
+    # --- 3. YÖNETİCİ AYARLARI (SIDEBAR) ---
     with st.sidebar:
         st.header("⚙️ Portföy Yönetimi")
-        st.write(f"📊 **Canlı Kasa:** ${canli_kasa:,.2f}")
+        # Terminaldeki (TextEdit) güncel kasanı buraya yaz kanka
+        kasa = st.number_input("Güncel Kasa (USD)", value=600.0, step=0.1)
         ana_para = 600.0
         hedef = 1500.0
+        st.divider()
         if st.button("🔴 Güvenli Çıkış"):
             st.session_state["password_correct"] = False
             st.rerun()
 
-    # Hesaplamalar
-    net_kar = canli_kasa - ana_para
-    kar_orani = (net_kar / ana_para) * 100 if ana_para != 0 else 0.0
-    kisi_basi = net_kar / 3 if net_kar > 0 else 0.0
+    # Canlı Piyasa Fiyatları (Bu API anahtarı istemez, hep çalışır)
+    def get_prices():
+        data = yf.download(["BTC-USD", "ETH-USD", "SOL-USD"], period="1d", interval="1m", progress=False)['Close']
+        return data.iloc[-1]
+    
+    prices = get_prices()
 
-    # --- 5. ANA EKRAN ---
+    # Hesaplamalar
+    net_kar = kasa - ana_para
+    kar_orani = (net_kar / ana_para) * 100 if ana_para != 0 else 0.0
+    kisi_basi_kar = net_kar / 3 if net_kar > 0 else 0.0
+
+    # --- 4. ANA EKRAN ---
     st.title("🛡️ OG Trade Discipline Radar")
-    st.caption(f"Sistem Durumu: **Canlı Veri Aktif ✅**")
+    st.caption("Veri Kaynağı: Manuel Giriş + Canlı Borsa ✅")
 
     # Metrik Kartları
     c1, c2, c3, c4 = st.columns(4)
-    c1.metric("💰 CANLI KASA", f"${canli_kasa:,.2f}", f"%{kar_orani:+.1f}")
+    c1.metric("💰 TOPLAM KASA", f"${kasa:,.2f}", f"%{kar_orani:+.1f}")
     c2.metric("🟠 BTC/USDT", f"${prices['BTC-USD']:,.1f}")
     c3.metric("🔵 ETH/USDT", f"${prices['ETH-USD']:,.1f}")
     c4.metric("🟣 SOL/USDT", f"${prices['SOL-USD']:,.1f}")
@@ -89,16 +75,16 @@ if check_password():
     st.subheader("👥 Ekip Kâr Dağıtımı")
     col_a, col_b = st.columns(2)
     with col_a:
-        st.info(f"Kişi Başı Net Kâr: **${kisi_basi:.2f}**")
+        st.info(f"Kişi Başı Net Kâr: **${kisi_basi_kar:.2f}**")
     with col_b:
-        st.success(f"Toplam Alacak (Ana+Kar): **${(200 + kisi_basi):.2f}**")
+        st.success(f"Toplam Alacak (Ana+Kar): **${(200 + kisi_basi_kar):.2f}**")
     st.caption("Üyeler: oguzo | ero7 | fybey")
 
     # Hedef Barı
     st.divider()
     st.subheader("🎯 Finansal Hedef İlerlemesi")
-    progress = min(max(canli_kasa/hedef, 0.0), 1.0)
+    progress = min(max(kasa/hedef, 0.0), 1.0)
     st.progress(progress)
-    st.write(f"Hedefe Kalan: **${max(hedef-canli_kasa, 0):.1f}** | Başarı Oranı: **%{(canli_kasa/hedef)*100:.1f}**")
+    st.write(f"Hedefe Kalan: **${max(hedef-kasa, 0):.1f}** | Başarı Oranı: **%{(kasa/hedef)*100:.1f}**")
 
     st.caption("Powered by OG Core - 2026 Discipline is Profit.")
