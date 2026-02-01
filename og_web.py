@@ -17,7 +17,7 @@ def check_password():
             if pwd == "og2026":
                 st.session_state["password_correct"] = True
                 st.rerun()
-            else: st.error("❌ Hatalı Şifre!")
+            else: st.error("❌ Götten sallama aq ya")
         return False
     return True
 
