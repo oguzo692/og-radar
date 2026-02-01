@@ -92,7 +92,7 @@ if check_password():
     # Alt Bilgi Kartları
     c1, c2, c3 = st.columns(3)
     c1.write(f"📈 **Büyüme Durumu:** {'🔥 Şahlanıyor' if kar_orani > 10 else '💎 Sabit'}")
-    c2.write(f"🚀 **1200$ Hedefi:** %{((kasa/1500)*100):.1f} Tamamlandı")
+    c2.write(f"🚀 **1200$ Hedefi:** %{((kasa/1200)*100):.1f} Tamamlandı")
     c3.write(f"🛡️ **Disiplin Puanı:** 10/10")
 
     st.caption("Powered by OG Core - 2026 Discipline is Profit.")
