@@ -22,7 +22,7 @@ def check_password():
         return False
     elif not st.session_state["password_correct"]:
         st.text_input("Lütfen Panel Şifresini Giriniz", type="password", on_change=password_entered, key="password")
-        st.error("❌ Hatalı Şifre! Lütfen OG ile iletişime geçin.")
+        st.error("❌ Hatalı Şifre!")
         return False
     return True
 
@@ -38,7 +38,7 @@ if check_password():
 
     # --- 3. BYBIT VE PİYASA BAĞLANTISI ---
     try:
-        # Streamlit Secrets'tan anahtarları çekiyoruz
+        # Secrets'tan anahtarları çekiyoruz
         API_KEY = st.secrets["BYBIT_API_KEY"]
         API_SECRET = st.secrets["BYBIT_API_SECRET"]
         session = HTTP(testnet=False, api_key=API_KEY, api_secret=API_SECRET)
@@ -46,8 +46,8 @@ if check_password():
         # Canlı Bakiye Çekimi
         wallet = session.get_wallet_balance(accountType="UNIFIED")
         canli_kasa = float(wallet['result']['list'][0]['totalEquity'])
-    except:
-        st.error("⚠️ API Bağlantısı Başarısız! Lütfen Streamlit Secrets ayarlarını kontrol et.")
+    except Exception as e:
+        st.error(f"⚠️ API Bağlantı Hatası: {e}")
         canli_kasa = 0.0
 
     # Canlı Fiyatlar
@@ -57,14 +57,12 @@ if check_password():
     
     prices = get_market_data()
 
-    # --- 4. YÖNETİCİ AYARLARI (SIDEBAR) ---
+    # --- 4. YÖNETİCİ AYARLARI ---
     with st.sidebar:
         st.header("⚙️ Portföy Yönetimi")
-        user = st.text_input("Aktif Kullanıcı", "ero7")
         st.write(f"📊 **Canlı Kasa:** ${canli_kasa:,.2f}")
         ana_para = 600.0
         hedef = 1500.0
-        st.divider()
         if st.button("🔴 Güvenli Çıkış"):
             st.session_state["password_correct"] = False
             st.rerun()
@@ -76,7 +74,7 @@ if check_password():
 
     # --- 5. ANA EKRAN ---
     st.title("🛡️ OG Trade Discipline Radar")
-    st.caption(f"Yatırımcı: **{user}** | Sistem Durumu: **Canlı Veri Aktif ✅**")
+    st.caption(f"Sistem Durumu: **Canlı Veri Aktif ✅**")
 
     # Metrik Kartları
     c1, c2, c3, c4 = st.columns(4)
@@ -103,6 +101,4 @@ if check_password():
     st.progress(progress)
     st.write(f"Hedefe Kalan: **${max(hedef-canli_kasa, 0):.1f}** | Başarı Oranı: **%{(canli_kasa/hedef)*100:.1f}**")
 
-    # --- 6. FOOTER ---
-    st.divider()
     st.caption("Powered by OG Core - 2026 Discipline is Profit.")
