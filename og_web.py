@@ -55,7 +55,7 @@ w2_coupon_html = """
     <div class='terminal-row'><span>BVB - Heidenheim</span><span class='win'>BVB İY 0.5 ÜST ✅</span></div>
     <div class='terminal-row'><span>Kocaelispor - FB</span><span class='win'>FB W & 1.5 ÜST ✅</span></div>
     <hr style='border: 1px solid #30363d; margin: 10px 0;'>
-    <div class='terminal-row'><span class='dim'>ORAN: 5.40</span><span class='dim'>BÜTÇE: 100 USD</span><span class='win'>DURUM: SONUÇLANDI</span></div>
+    <div class='terminal-row'><span class='dim'>ORAN: 5.40</span><span class='dim'>BÜTÇE: 100 USD</span><span class='win'>DURUM: SONUÇLANDI +540 USD</span></div>
 </div>
 """
 
