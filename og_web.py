@@ -119,11 +119,11 @@ if check_password():
         
         with t2:
             st.markdown("""<div class='coupon-card'>
-                <h2 style='color:#f1c40f;'>⏳ W2 - BEKLEMEDE</h2><br>
+                <h2 style='color:#f1c40f;'>✅ W2 - KAZANDI</h2><br>
                 <div class='match-row'><span>GS - Kayserispor</span><span class='status-win'>GS W & +2.5 ÜST ✅</span></div>
                 <div class='match-row'><span>Liverpool - Newcastle</span><span class='status-win'>KG VAR ✅</span></div>
                 <div class='match-row'><span>BVB - Heidenheim</span><span class='status-win'>BVB İY 0.5 ÜST ✅</span></div>
-                <div class='match-row'><span>Kocaelispor - FB</span><span class='status-wait'>FB W & 1.5 ÜST ⏳</span></div>
+                <div class='match-row'><span>Kocaelispor - FB</span><span class='status-wait'>FB W & 1.5 ÜST ✅</span></div>
                 <hr style='border: 1px solid rgba(255,255,255,0.05); margin: 20px 0;'>
                 <p><b>Toplam Oran: 5.40 | Bütçe: 100 USD | Durum: Beklemede</b></p>
                 </div>""", unsafe_allow_html=True)
