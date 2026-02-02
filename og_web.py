@@ -3,6 +3,7 @@ import yfinance as yf
 from datetime import datetime
 import pandas as pd
 import numpy as np
+import pytz
 
 # --- SAYFA YAPILANDIRMASI ---
 st.set_page_config(page_title="OG Core", page_icon="🛡️", layout="wide")
@@ -78,7 +79,8 @@ if check_password():
         else:
             kasa = 600.0
             
-        st.info(f"🕒 {datetime.now().strftime('%H:%M:%S')}")
+        tr_time = datetime.now(pytz.timezone('Europe/Istanbul')).strftime('%H:%M:%S')
+st.info(f"🕒 Sistem Zamanı: {tr_time}")
         if st.button("🔴 çıkış"):
             st.session_state["password_correct"] = False
             st.rerun()
