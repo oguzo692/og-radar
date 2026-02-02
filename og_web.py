@@ -20,12 +20,14 @@ def check_password():
             if pwd == "1":
                 st.session_state["password_correct"] = True
                 st.rerun()
-            else: st.error("❌ Yanlış şifre")
+            else:
+                st.error("❌ Yanlış şifre")
         return False
     return True
 
 if check_password():
-    # --- 2. PREMIUM CSS ---
+    # --- 2. PREMIUM CSS (INDUSTRIAL ORANGE) ---
+    # Tırnak hatalarını önlemek için bu bloğu çok dikkatli kapattım.
     st.markdown("""
         <style>
         .main { background-color: #0d1117 !important; }
@@ -67,11 +69,18 @@ if check_password():
         st.title("🛡️ OG Core")
         page = st.radio("🚀 ürün", ["⚡ Ultra Atak Fonu", "⚽️ FormLine", "📊 DashDash"])
         st.divider()
+        
         if page == "⚡ Ultra Atak Fonu":
             kasa = st.number_input("fon bakiyesi (USD)", value=600.0, step=0.1)
-        else: kasa = 600.0
-        tr_time = datetime.now(pytz.timezone('Europe/Istanbul')).strftime('%H:%M:%S')
-        st.info(f"🕒 Sistem Zamanı: {tr_time}")
+        else:
+            kasa = 600.0
+            
+        try:
+            tr_time = datetime.now(pytz.timezone('Europe/Istanbul')).strftime('%H:%M:%S')
+            st.info(f"🕒 Sistem Zamanı: {tr_time}")
+        except:
+            st.info(f"🕒 Zaman: {datetime.now().strftime('%H:%M:%S')}")
+
         if st.button("🔴 çıkış"):
             st.session_state["password_correct"] = False
             st.rerun()
@@ -81,7 +90,8 @@ if check_password():
         st.title("⚡ Ultra Atak Fon")
         try:
             data = yf.download(["BTC-USD", "ETH-USD", "SOL-USD"], period="1d", interval="1m", progress=False)['Close'].iloc[-1]
-        except: data = {"BTC-USD": 0, "ETH-USD": 0, "SOL-USD": 0}
+        except:
+            data = {"BTC-USD": 0, "ETH-USD": 0, "SOL-USD": 0}
 
         c1, c2, c3, c4 = st.columns(4)
         with c1: st.markdown(f"<div class='glass-card'><small style='color:#888;'>TOPLAM</small><h2>${kasa:,.2f}</h2></div>", unsafe_allow_html=True)
@@ -93,28 +103,4 @@ if check_password():
         st.subheader("📑 İşlem Geçmişi")
         df_trades = pd.DataFrame([
             {"Coin": "BTC/USDT", "Yön": "🟢 Long", "K/Z": "+%2.4", "Sonuç": "Kapalı ✅"},
-            {"Coin": "ETH/USDT", "Yön": "🟢 Long", "K/Z": "+%0.8", "Sonuç": "Açık ⏳"}
-        ])
-        st.table(df_trades)
-
-    # --- 5. FORM LINE (BAHİS DETAYLARI EKLENDİ) ---
-    elif page == "⚽️ FormLine":
-        st.title("⚽️ FormLine Analizi")
-        t1, t2, t3 = st.tabs(["🔥 W3 (8-9 Şub)", "🔥 W2 (1-2 Şub)", "⏪ W1 (Geçmiş)"])
-        
-        with t1:
-            st.markdown("<div class='glass-card'>W3 Maçları Henüz Girilmedi.</div>", unsafe_allow_html=True)
-        
-        with t2:
-            st.markdown("""<div class='coupon-card'>
-                <h2 style='color:#f1c40f;'>⏳ W2 - BEKLEMEDE</h2><br>
-                <div class='match-row'><span>GS - Kayserispor</span><span class='status-win'>GS W & +2.5 ÜST ✅</span></div>
-                <div class='match-row'><span>Liverpool - Newcastle</span><span class='status-win'>KG VAR ✅</span></div>
-                <div class='match-row'><span>BVB - Heidenheim</span><span class='status-win'>BVB İY 0.5 ÜST ✅</span></div>
-                <div class='match-row'><span>Kocaelispor - FB</span><span class='status-wait'>FB W & 1.5 ÜST ⏳</span></div>
-                <hr style='border: 1px solid rgba(255,255,255,0.05); margin: 20px 0;'>
-                <p><b>Toplam Oran: 5.40 | Bütçe: 100 USD | Durum: Beklemede</b></p>
-                </div>""", unsafe_allow_html=True)
-                
-        with t3:
-            st.markdown("""<div class='coupon
+            {"Coin": "ETH/USDT", "Yön": "🟢 Long", "K/Z":
