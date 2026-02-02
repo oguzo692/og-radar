@@ -30,7 +30,6 @@ if check_password():
         .main { background-color: #0d1117 !important; }
         :root { --soft-orange: #cc7a00; }
         
-        /* Fiyat kutularını yazılara sıfırla */
         .glass-card {
             background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(10px);
@@ -41,7 +40,6 @@ if check_password():
             height: auto !important;
         }
         
-        /* Kupon Kartı Tasarımı (Görseldeki gibi) */
         .coupon-card {
             background: rgba(255, 255, 255, 0.02);
             border-radius: 12px;
@@ -71,9 +69,11 @@ if check_password():
     # --- 3. SIDEBAR ---
     with st.sidebar:
         st.title("🛡️ OG Core")
+        # Harf uyumu için isimleri sabitledik
         page = st.radio("🚀 ürün", ["⚡ Ultra Atak Fonu", "⚽️ FormLine", "📊 DashDash"])
         st.divider()
-        if page == "⚡ Ultra Atak Fon":
+        
+        if page == "⚡ Ultra Atak Fonu":
             kasa = st.number_input("fon bakiyesi (USD)", value=600.0, step=0.1)
         else:
             kasa = 600.0
@@ -99,14 +99,13 @@ if check_password():
         st.divider()
         st.subheader("📑 İşlem Geçmişi")
         
-        # Boş kutuları sildik, tablo doğrudan burada
         trades_df = pd.DataFrame([
-            {"Coin": "X/USDT", "Yön": "🟢 Long", "K/Z": "+%2.4", "Sonuç": "Kapalı ✅"},
-            {"Coin": "X/USDT", "Yön": "🟢 Long", "K/Z": "+%0.8", "Sonuç": "Açık ⏳"}
+            {"Coin": "BTC/USDT", "Yön": "🟢 Long", "K/Z": "+%2.4", "Sonuç": "Kapalı ✅"},
+            {"Coin": "ETH/USDT", "Yön": "🟢 Long", "K/Z": "+%0.8", "Sonuç": "Açık ⏳"}
         ])
         st.table(trades_df)
 
-    # --- 5. FORM LINE (DETAYLI TASARIM GERİ GELDİ) ---
+    # --- 5. FORM LINE ---
     elif page == "⚽️ FormLine":
         st.title("⚽️ FormLine Analizi")
         
@@ -133,22 +132,11 @@ if check_password():
                 <div class='match-row'><span>FB - Göztepe</span><span class='status-loss'>FB W ❌</span></div>
                 <hr style='border: 1px solid rgba(255,255,255,0.05); margin: 20px 0;'>
                 <p><b>Toplam Oran: 7.09 | Bütçe: 100 USD | Sonuç: -100 USD</b></p>
-                </div>""", unsafe_allow_html=True)       
-
-         ^ with t3:
-            st.markdown("""<div class='coupon-card' style='border-color:#ff4b4b;'>
-                <h2 style='color:#ff4b4b;'>❌ W1 - KAYBETTİ</h2><br>
-                <div class='match-row'><span>Karagümrük - GS</span><span class='status-win'>GS W & +2 ✅</span></div>
-                <div class='match-row'><span>Bournemouth - Liv</span><span class='status-win'>KG VAR ✅</span></div>
-                <div class='match-row'><span>Union Berlin - BVB</span><span class='status-win'>BVB İY 0.5 ÜST ✅</span></div>
-                <div class='match-row'><span>New - Aston Villa</span><span class='status-loss'>NEW +2 ❌</span></div>
-                <div class='match-row'><span>FB - Göztepe</span><span class='status-loss'>FB W ❌</span></div>
-                <hr style='border: 1px solid rgba(255,255,255,0.05); margin: 20px 0;'>
-                <p><b>Toplam Oran: 7.09 | Bütçe: 100 USD | Sonuç: -100 USD</b></p>
                 </div>""", unsafe_allow_html=True)
+
     # --- 6. DASH DASH ---
     elif page == "📊 DashDash":
         st.title("📊 DashDash")
-        st.markdown("<div class='glass-card' style='height:auto;'>Soon...</div>", unsafe_allow_html=True)
+        st.markdown("<div class='glass-card' style='height:auto;'>Sistem analitik verileri yükleniyor...</div>", unsafe_allow_html=True)
 
     st.caption("Powered by OG Core - 2026 Discipline is Profit.")
