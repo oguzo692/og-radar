@@ -101,8 +101,8 @@ if check_password():
         
         # Boş kutuları sildik, tablo doğrudan burada
         trades_df = pd.DataFrame([
-            {"Coin": "X/USDT", "Tip": "🟢 Long", "K/Z": "+%2.4", "Sonuç": "Kapalı ✅"},
-            {"Coin": "X/USDT", "Tip": "🟢 Long", "K/Z": "+%0.8", "Sonuç": "Açık ⏳"}
+            {"Coin": "X/USDT", "Yön": "🟢 Long", "K/Z": "+%2.4", "Sonuç": "Kapalı ✅"},
+            {"Coin": "X/USDT", "Yön": "🟢 Long", "K/Z": "+%0.8", "Sonuç": "Açık ⏳"}
         ])
         st.table(trades_df)
 
@@ -134,7 +134,10 @@ if check_password():
                 <hr style='border: 1px solid rgba(255,255,255,0.05); margin: 20px 0;'>
                 <p><b>Toplam Oran: 7.09 | Bütçe: 100 USD | Sonuç: -100 USD</b></p>
                 </div>""", unsafe_allow_html=True)
-
+            
+         with t3:
+            st.markdown("""<div class='coupon-card' style='border-color:#ff4b4b;'>
+            
     # --- 6. DASH DASH ---
     elif page == "📊 DashDash":
         st.title("📊 DashDash")
