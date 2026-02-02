@@ -109,7 +109,7 @@ if check_password():
     elif page == "⚽️ FormLine":
         st.title("⚽️ FormLine Analizi")
         
-        t1, t2, t3 = st.tabs(["🔥 W3 Kuponu (7-8 Şubat)", "🔥 W2 Kuponu (1-2 Şubat)", "⏪ W1 Kuponu (24-25 Ocak)"])
+        t1, t2, t3 = st.tabs(["🔥 W3 Kuponu (7-8 Şubat)", "🔥 W2 Kuponu (1-2 Şubat)", "🔥 W1 Kuponu (24-25 Ocak)"])
         with t2:
             st.markdown("""<div class='coupon-card'>
                 <h2 style='color:#f1c40f;'>⏳ W2 - BEKLEMEDE</h2><br>
