@@ -3,7 +3,6 @@ import yfinance as yf
 from datetime import datetime, timedelta
 import pandas as pd
 import pytz
-import numpy as np
 
 # --- 1. AYARLAR ---
 st.set_page_config(page_title="OG Core v5.0", page_icon="🛡️", layout="wide")
@@ -88,12 +87,8 @@ if check_password():
         kar_oranı = (net_kar / ana_para) * 100 if ana_para > 0 else 0
         ilerleme = min(kasa / hedef_kasa, 1.0) if hedef_kasa > 0 else 0
         
-        # HTML Blokları (Hatasız)
-        progress_bar_html = f"""
-        <div style='background:#333; height:10px; width:100%; margin-top:5px;'>
-            <div style='background:#cc7a00; height:100%; width:{ilerleme*100}%;'></div>
-        </div>
-        """
+        # HTML Değişkenleri (Hata riskini sıfırlamak için)
+        progress_bar = f"<div style='background:#333; height:10px; width:100%; margin-top:5px;'><div style='background:#cc7a00; height:100%; width:{ilerleme*100}%;'></div></div>"
 
         # Ana Ekran
         st.markdown(f"""
@@ -101,11 +96,10 @@ if check_password():
             <div class='terminal-header'>💎 OG FundRoom — ULTRA ATAK KRİPTO FONU 2026</div>
             <h2 style='color:#fff !important;'>💰 TOPLAM KASA: {kasa:,.2f} USD (≈ {toplam_tl:,.0f} TL)</h2>
             <p class='terminal-text'>🎯 GÜNLÜK DURUM: <span class='highlight'>{net_kar:,.2f} USD (%{kar_oranı:.1f})</span></p>
-            
             <div style='margin-top:20px;'>
                 <p style='color:#fff;'>HEDEF FON MİKTARI: {hedef_kasa} USD</p>
                 <p style='color:#fff;'>İLERLEME: %{ilerleme*100:.1f}</p>
-                {progress_bar_html}
+                {progress_bar}
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -146,4 +140,58 @@ if check_password():
 
         # Ortaklık Dağılımı
         st.subheader("👥 KATILIM & KAR PAYLAŞIMI")
-        pay = kasa /
+        pay = kasa / 3
+        o1, o2, o3 = st.columns(3)
+        
+        # Kullanıcı Kartlarını Döngüyle Bas (Daha Temiz Kod)
+        users = ["OGUZO", "FYBEY", "ERO7"]
+        cols = [o1, o2, o3]
+        for col, user in zip(cols, users):
+            with col:
+                st.markdown(f"""
+                <div class='industrial-card'>
+                    <small style='color:#8b949e'>{user}</small>
+                    <h3>${pay:,.2f}</h3>
+                    <small class='highlight'>Pay: %33.3</small>
+                </div>
+                """, unsafe_allow_html=True)
+
+    # --- 6. FORM LINE ---
+    elif page == "⚽ FORMLINE":
+        st.title("⚽ FORMLINE ANALİZ")
+        t1, t2, t3 = st.tabs(["🔥 W3 (8-9 Şub)", "✅ W2 (1-2 Şub)", "⏪ W1 (Geçmiş)"])
+
+        with t1:
+            st.markdown("""
+            <div class='industrial-card'>
+                <h3>🔥 W3 KUPONU</h3>
+                <div class='match-row'><span>Analizler Bekleniyor...</span><span class='status-wait'>⏳</span></div>
+                <p style='color:#8b949e; margin-top:10px;'>Cuma günü güncellenecektir.</p>
+            </div>
+            """, unsafe_allow_html=True)
+
+        with t2:
+            # HTML'i değişkene atayarak hatayı önlüyoruz
+            w2_html = """
+            <div class='industrial-card' style='border-color: #00ff41;'>
+                <h3 style='color:#00ff41 !important;'>✅ W2 KUPONU - KAZANDI</h3>
+                <div class='match-row'><span>GS - Kayserispor</span><span class='status-win'>GS W & +2.5 ÜST ✅</span></div>
+                <div class='match-row'><span>Liverpool - Newcastle</span><span class='status-win'>KG VAR ✅</span></div>
+                <div class='match-row'><span>BVB - Heidenheim</span><span class='status-win'>BVB İY 0.5 ÜST ✅</span></div>
+                <div class='match-row'><span>Kocaelispor - FB</span><span class='status-win'>FB W & 1.5 ÜST ✅</span></div>
+                <hr style='border: 1px solid rgba(255,255,255,0.05); margin: 15px 0;'>
+                <p><b>Oran: 5.40 | Bütçe: 100 USD | Durum: Sonuçlandı</b></p>
+            </div>
+            """
+            st.markdown(w2_html, unsafe_allow_html=True)
+
+        with t3:
+            w1_html = """
+            <div class='industrial-card' style='border-color: #ff4b4b;'>
+                <h3 style='color:#ff4b4b !important;'>❌ W1 KUPONU - KAYBETTİ</h3>
+                <div class='match-row'><span>Karagümrük - GS</span><span class='status-win'>GS W & +1.5 ÜST ✅</span></div>
+                <div class='match-row'><span>Bournemouth - Liv</span><span class='status-win'>KG VAR ✅</span></div>
+                <div class='match-row'><span>New - Aston Villa</span><span class='status-loss'>MS 1 ❌</span></div>
+                <div class='match-row'><span>FB - Göztepe</span><span class='status-loss'>İY 0.5 ÜST ❌</span></div>
+                <hr style='border: 1px solid rgba(255,255,255,0.05); margin: 15px 0;'>
+                <p><b>Oran: 7.09 | Bütçe: 100 USD | Sonuç: -100 USD</b></p>
