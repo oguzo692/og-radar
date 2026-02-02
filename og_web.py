@@ -3,7 +3,7 @@ import yfinance as yf
 from datetime import datetime
 import pandas as pd
 import numpy as np
-import pytz
+import pytz # Türkiye saati için gerekli
 
 # --- SAYFA YAPILANDIRMASI ---
 st.set_page_config(page_title="OG Core", page_icon="🛡️", layout="wide")
@@ -70,7 +70,6 @@ if check_password():
     # --- 3. SIDEBAR ---
     with st.sidebar:
         st.title("🛡️ OG Core")
-        # Harf uyumu için isimleri sabitledik
         page = st.radio("🚀 ürün", ["⚡ Ultra Atak Fonu", "⚽️ FormLine", "📊 DashDash"])
         st.divider()
         
@@ -79,8 +78,13 @@ if check_password():
         else:
             kasa = 600.0
             
-        tr_time = datetime.now(pytz.timezone('Europe/Istanbul')).strftime('%H:%M:%S')
-st.info(f"🕒 Sistem Zamanı: {tr_time}")
+        # Saati Türkiye'ye sabitledik
+        try:
+            tr_tz = pytz.timezone('Europe/Istanbul')
+            tr_time = datetime.now(tr_tz).strftime('%H:%M:%S')
+            st.info(f"🕒 Sistem Zamanı: {tr_time}")
+        except:
+            st.info(f"🕒 Zaman: {datetime.now().strftime('%H:%M:%S')}")
 
         if st.button("🔴 çıkış"):
             st.session_state["password_correct"] = False
@@ -111,34 +115,7 @@ st.info(f"🕒 Sistem Zamanı: {tr_time}")
     # --- 5. FORM LINE ---
     elif page == "⚽️ FormLine":
         st.title("⚽️ FormLine Analizi")
-        
         t1, t2, t3 = st.tabs(["🔥 W3 Kuponu (7-8 Şubat)", "🔥 W2 Kuponu (1-2 Şubat)", "🔥 W1 Kuponu (24-25 Ocak)"])
-        with t2:
-            st.markdown("""<div class='coupon-card'>
-                <h2 style='color:#f1c40f;'>⏳ W2 - BEKLEMEDE</h2><br>
-                <div class='match-row'><span>GS - Kayserispor</span><span class='status-win'>GS W & +2 ✅</span></div>
-                <div class='match-row'><span>Liverpool - Newcastle</span><span class='status-win'>KG VAR ✅</span></div>
-                <div class='match-row'><span>BVB - Heidenheim</span><span class='status-win'>BVB İY 0.5 ÜST ✅</span></div>
-                <div class='match-row'><span>Kocaelispor - FB</span><span class='status-wait'>FB W & 2+ ⏳</span></div>
-                <hr style='border: 1px solid rgba(255,255,255,0.05); margin: 20px 0;'>
-                <p><b>Toplam Oran: 5.40 | Bütçe: 100 USD | Sonuç: Beklemede</b></p>
-                </div>""", unsafe_allow_html=True)
-                
-        with t3:
-            st.markdown("""<div class='coupon-card' style='border-color:#ff4b4b;'>
-                <h2 style='color:#ff4b4b;'>❌ W1 - KAYBETTİ</h2><br>
-                <div class='match-row'><span>Karagümrük - GS</span><span class='status-win'>GS W & +2 ✅</span></div>
-                <div class='match-row'><span>Bournemouth - Liv</span><span class='status-win'>KG VAR ✅</span></div>
-                <div class='match-row'><span>Union Berlin - BVB</span><span class='status-win'>BVB İY 0.5 ÜST ✅</span></div>
-                <div class='match-row'><span>New - Aston Villa</span><span class='status-loss'>NEW +2 ❌</span></div>
-                <div class='match-row'><span>FB - Göztepe</span><span class='status-loss'>FB W ❌</span></div>
-                <hr style='border: 1px solid rgba(255,255,255,0.05); margin: 20px 0;'>
-                <p><b>Toplam Oran: 7.09 | Bütçe: 100 USD | Sonuç: -100 USD</b></p>
-                </div>""", unsafe_allow_html=True)
-
-    # --- 6. DASH DASH ---
-    elif page == "📊 DashDash":
-        st.title("📊 DashDash")
-        st.markdown("<div class='glass-card' style='height:auto;'>Sistem analitik verileri yükleniyor...</div>", unsafe_allow_html=True)
-
-    st.caption("Powered by OG Core - 2026 Discipline is Profit.")
+        
+        with t1:
+            st.markdown("<div class='glass-card'
