@@ -81,6 +81,7 @@ if check_password():
             
         tr_time = datetime.now(pytz.timezone('Europe/Istanbul')).strftime('%H:%M:%S')
 st.info(f"🕒 Sistem Zamanı: {tr_time}")
+
         if st.button("🔴 çıkış"):
             st.session_state["password_correct"] = False
             st.rerun()
