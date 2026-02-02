@@ -13,99 +13,90 @@ if "password_correct" not in st.session_state:
 
 def check_password():
     if not st.session_state["password_correct"]:
-        st.markdown("<h1 style='text-align:center; color:#cc7a00; font-family:monospace;'>🔐 OG_CORE_v5.0</h1>", unsafe_allow_html=True)
-        pwd = st.text_input("ŞİFRE GİRİNİZ", type="password")
+        st.markdown("<h1 style='text-align:center; color:#cc7a00; font-family:sans-serif;'>🛡️ OG_CORE AUTH</h1>", unsafe_allow_html=True)
+        pwd = st.text_input("ŞİFRE", type="password")
         if st.button("SİSTEME GİR"):
             if pwd == "1":
                 st.session_state["password_correct"] = True
                 st.rerun()
             else:
-                st.error("❌ ERİŞİM ENGELLENDİ")
+                st.error("❌ ERİŞİM REDDEDİLDİ")
         return False
     return True
 
 if check_password():
-    # --- 2. OKUNAKLI INDUSTRIAL RETRO CSS ---
+    # --- 2. PREMIUM CYBER-INDUSTRIAL CSS ---
     st.markdown("""
         <style>
-        /* Okunaklı Mono Fontlar */
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+        /* Okunaklı Modern Sans-Serif Font */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
 
         .main { background-color: #0d1117 !important; }
         
-        /* Fontu jilet gibi yapıyoruz */
-        * { font-family: 'JetBrains Mono', monospace !important; }
+        * { font-family: 'Inter', sans-serif !important; }
 
         :root { 
-            --retro-orange: #cc7a00; 
-            --retro-green: #00ff41; 
-            --retro-red: #ff4b4b; 
-            --card-bg: rgba(255, 255, 255, 0.03);
+            --neon-orange: #ff9f1a; 
+            --deep-orange: #cc7a00;
+            --neon-green: #00ff41; 
+            --glass-bg: rgba(255, 255, 255, 0.05);
         }
 
-        /* Endüstriyel Kartlar */
-        .industrial-card {
-            background: var(--card-bg);
-            border: 1px solid var(--retro-orange);
-            border-left: 5px solid var(--retro-orange); /* Sol tarafı kalın şeritli */
-            padding: 15px;
-            margin-bottom: 15px;
-            color: #e6edf3;
+        /* Modern Glass Card */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 159, 26, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: 0.3s;
+        }
+        .glass-card:hover {
+            border-color: var(--neon-orange);
+            box-shadow: 0 0 15px rgba(255, 159, 26, 0.1);
         }
 
-        .card-label {
+        .label {
             color: #8b949e;
-            font-size: 12px !important;
+            font-size: 11px !important;
+            font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
+            margin-bottom: 8px;
         }
 
-        .card-value {
-            color: var(--retro-orange);
-            font-size: 24px !important;
-            font-weight: bold;
+        .value {
+            color: #ffffff;
+            font-size: 26px !important;
+            font-weight: 600;
         }
 
-        /* Kupon Satırları */
-        .match-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
+        .orange-text { color: var(--neon-orange) !important; }
 
-        .status-win { color: var(--retro-green) !important; font-weight: bold; }
-        
         /* Sidebar */
         section[data-testid="stSidebar"] { 
             background-color: #050505 !important; 
-            border-right: 1px solid var(--retro-orange); 
+            border-right: 1px solid rgba(255, 159, 26, 0.3); 
         }
 
-        /* Butonlar */
-        .stButton>button {
-            border-radius: 4px !important;
-            background-color: transparent !important;
-            border: 1px solid var(--retro-orange) !important;
-            color: var(--retro-orange) !important;
-            width: 100%;
-        }
-        .stButton>button:hover {
-            background-color: var(--retro-orange) !important;
-            color: #000 !important;
+        /* Custom Table */
+        .stTable { 
+            background: var(--glass-bg); 
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         </style>
         """, unsafe_allow_html=True)
 
     # --- 3. SIDEBAR ---
     with st.sidebar:
-        st.markdown("<h2 style='color:#cc7a00;'>🛡️ OG_CORE</h2>", unsafe_allow_html=True)
-        page = st.radio("MENÜ", ["⚡ ULTRA_FON", "⚽ FORM_LINE", "📊 DASH_DASH"])
+        st.markdown("<h2 style='color:#ff9f1a; font-weight:800;'>🛡️ OG CORE</h2>", unsafe_allow_html=True)
+        page = st.radio("MENÜ", ["⚡ ULTRA ATAK", "⚽ FORMLINE", "📊 DASHDASH"])
         st.divider()
         
-        if page == "⚡ ULTRA_FON":
-            # Fon bakiyesi oguzo, fybey ve ero7 arasında paylaştırılıyor
-            kasa = st.number_input("TOPLAM KASA (USD)", value=600.0, step=0.1)
+        if page == "⚡ ULTRA ATAK":
+            kasa = st.number_input("TOPLAM KASA", value=600.0, step=0.1)
         else:
             kasa = 600.0
             
@@ -117,8 +108,8 @@ if check_password():
             st.rerun()
 
     # --- 4. ULTRA ATAK FONU ---
-    if page == "⚡ ULTRA_FON":
-        st.markdown("<h2 style='color:#cc7a00;'>⚡ ULTRA_ATAK_FON</h2>", unsafe_allow_html=True)
+    if page == "⚡ ULTRA ATAK":
+        st.markdown("<h1 style='color:#ff9f1a; font-weight:800;'>⚡ ULTRA ATAK</h1>", unsafe_allow_html=True)
         
         try:
             tickers = ["BTC-USD", "ETH-USD", "SOL-USD"]
@@ -126,38 +117,34 @@ if check_password():
         except:
             prices = {"BTC-USD": 0, "ETH-USD": 0, "SOL-USD": 0}
 
-        # Üst Panel - 3 Kişilik Paylaşım (oguzo, fybey ve ero7)
+        # Üst Panel - Paylaşım (oguzo, fybey, ero7)
         pay = kasa / 3
         c1, c2, c3 = st.columns(3)
-        with c1: st.markdown(f"<div class='industrial-card'><div class='card-label'>oguzo</div><div class='card-value'>${pay:,.2f}</div></div>", unsafe_allow_html=True)
-        with c2: st.markdown(f"<div class='industrial-card'><div class='card-label'>fybey</div><div class='card-value'>${pay:,.2f}</div></div>", unsafe_allow_html=True)
-        with c3: st.markdown(f"<div class='industrial-card'><div class='card-label'>ero7</div><div class='card-value'>${pay:,.2f}</div></div>", unsafe_allow_html=True)
+        with c1: st.markdown(f"<div class='glass-card'><div class='label'>OGUZO</div><div class='value'>${pay:,.2f}</div></div>", unsafe_allow_html=True)
+        with c2: st.markdown(f"<div class='glass-card'><div class='label'>FYBEY</div><div class='value'>${pay:,.2f}</div></div>", unsafe_allow_html=True)
+        with c3: st.markdown(f"<div class='glass-card'><div class='label'>ERO7</div><div class='value'>${pay:,.2f}</div></div>", unsafe_allow_html=True)
 
         st.divider()
         
         # Canlı Fiyatlar
-        st.markdown("### >> CANLI_PİYASA_VERİSİ")
+        st.markdown("<h3 style='color:#8b949e; font-size:16px;'>>> PİYASA TAKİBİ</h3>", unsafe_allow_html=True)
         f1, f2, f3 = st.columns(3)
-        with f1: st.markdown(f"<div class='industrial-card'><div class='card-label'>BTC-USD</div><div class='card-value'>${prices.get('BTC-USD', 0):,.1f}</div></div>", unsafe_allow_html=True)
-        with f2: st.markdown(f"<div class='industrial-card'><div class='card-label'>ETH-USD</div><div class='card-value'>${prices.get('ETH-USD', 0):,.1f}</div></div>", unsafe_allow_html=True)
-        with f3: st.markdown(f"<div class='industrial-card'><div class='card-label'>SOL-USD</div><div class='card-value'>${prices.get('SOL-USD', 0):,.1f}</div></div>", unsafe_allow_html=True)
+        with f1: st.markdown(f"<div class='glass-card'><div class='label'>BTC-USD</div><div class='value orange-text'>${prices.get('BTC-USD', 0):,.1f}</div></div>", unsafe_allow_html=True)
+        with f2: st.markdown(f"<div class='glass-card'><div class='label'>ETH-USD</div><div class='value orange-text'>${prices.get('ETH-USD', 0):,.1f}</div></div>", unsafe_allow_html=True)
+        with f3: st.markdown(f"<div class='glass-card'><div class='label'>SOL-USD</div><div class='value orange-text'>${prices.get('SOL-USD', 0):,.1f}</div></div>", unsafe_allow_html=True)
 
     # --- 5. FORM LINE ---
-    elif page == "⚽ FORM_LINE":
-        st.markdown("<h2 style='color:#cc7a00;'>⚽ FORM_LINE_ANALİZ</h2>", unsafe_allow_html=True)
-        # W2 (1-2 Şubat) kuponu Kazandı olarak güncellendi
-        st.markdown("""<div class='industrial-card' style='border-left-color: #00ff41;'>
-            <div class='card-label'>W2_KUPON - DURUM: KAZANDI</div><br>
-            <div class='match-row'><span>GS - Kayseri</span><span class='status-win'>G_W & 2.5+ ✅</span></div>
-            <div class='match-row'><span>Liv - Newcastle</span><span class='status-win'>KG_VAR ✅</span></div>
-            <div class='match-row'><span>Kocaeli - FB</span><span class='status-win'>FB_W & 1.5+ ✅</span></div>
-            <hr style='border: 1px solid rgba(255,255,255,0.05);'>
-            <p>TOPLAM_ORAN: 5.40 | BÜTÇE: 100 USD</p>
+    elif page == "⚽ FORMLINE":
+        st.markdown("<h1 style='color:#ff9f1a; font-weight:800;'>⚽ FORMLINE</h1>", unsafe_allow_html=True)
+        st.markdown(f"""<div class='glass-card' style='border-left: 4px solid #00ff41;'>
+            <div class='label'>W2 KUPONU - KAZANDI</div>
+            <div style='display:flex; justify-content:space-between; margin:10px 0;'><span>GS - Kayseri</span><span style='color:#00ff41;'>✅</span></div>
+            <div style='display:flex; justify-content:space-between; margin:10px 0;'><span>Liv - Newcastle</span><span style='color:#00ff41;'>✅</span></div>
+            <div style='display:flex; justify-content:space-between; margin:10px 0;'><span>Kocaeli - FB</span><span style='color:#00ff41;'>✅</span></div>
+            <hr style='border-color:rgba(255,255,255,0.05)'>
+            <div class='label'>ORAN: 5.40 | BÜTÇE: 100 USD</div>
         </div>""", unsafe_allow_html=True)
 
     # --- 6. DASH DASH ---
-    elif page == "📊 DASH_DASH":
-        st.markdown("<h2 style='color:#cc7a00;'>📊 DASH_DASH</h2>", unsafe_allow_html=True)
-        st.markdown("<div class='industrial-card'>Analitik veri akışı beklemede...</div>", unsafe_allow_html=True)
-
-    st.caption("Powered by OG Core - 2026 Discipline is Profit.")
+    elif page == "📊 DASHDASH":
+        st.markdown("<h1 style='color:#ff9f1a; font-weight:800;'>📊 DASHDASH</h1>", unsafe_allow_html=True)
