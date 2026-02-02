@@ -125,7 +125,7 @@ if check_password():
                 <div class='match-row'><span>BVB - Heidenheim</span><span class='status-win'>BVB İY 0.5 ÜST ✅</span></div>
                 <div class='match-row'><span>Kocaelispor - FB</span><span class='status-wait'>FB W & 1.5 ÜST ✅</span></div>
                 <hr style='border: 1px solid rgba(255,255,255,0.05); margin: 20px 0;'>
-                <p><b>Toplam Oran: 5.40 | Bütçe: 100 USD | Durum: Beklemede</b></p>
+                <p><b>Toplam Oran: 5.40 | Bütçe: 100 USD | Durum: Sonuçlandı</b></p>
                 </div>""", unsafe_allow_html=True)
                 
         with t3:
