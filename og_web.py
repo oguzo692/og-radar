@@ -47,10 +47,17 @@ if check_password():
             font-size: 13px;
         }
         .status-win { color: var(--win-green); font-weight: bold; }
+        .status-loss { color: var(--loss-red); font-weight: bold; }
         .status-wait { color: #f1c40f; font-weight: bold; }
         
+        .terminal-header { 
+            border-bottom: 2px solid var(--soft-orange); 
+            padding-bottom: 5px; margin-bottom: 15px; 
+            color: var(--soft-orange); font-size: 18px; font-weight: bold;
+        }
         .terminal-text { color: var(--terminal-gray); font-size: 12px; }
         .highlight { color: var(--soft-orange); font-weight: bold; }
+        
         h1, h2, h3 { color: var(--soft-orange) !important; margin: 0 !important; }
         section[data-testid="stSidebar"] { background-color: #050505 !important; border-right: 1px solid var(--soft-orange); }
         </style>
@@ -63,7 +70,8 @@ if check_password():
         st.divider()
         kasa = st.number_input("TOPLAM KASA (USD)", value=600.0, step=1.0)
         ana_para = st.number_input("ANA SERMAYE (USD)", value=500.0)
-        gunluk_kayip = st.slider("ORT. GÜNLÜK KAYIP/GİDER (USD)", 1, 100, 20)
+        hedef_kasa = st.number_input("HEDEF KASA (USD)", value=1200.0)
+        gunluk_kayip = st.slider("GÜNLÜK ORT. HARCAMA (USD)", 0, 100, 20)
         
         tr_tz = pytz.timezone('Europe/Istanbul')
         st.info(f"🕒 {datetime.now(tr_tz).strftime('%H:%M:%S')}")
@@ -73,58 +81,69 @@ if check_password():
 
     # --- 5. ULTRA FON (PERFORMANS & SS VERİLERİ) ---
     if page == "⚡ ULTRA FON":
-        st.title("💎 OG TRADE RADAR - v7.1")
-        
-        # TL Karşılığı ve Fark Hesaplama
-        usd_try = 33.50 # Manuel veya API'den çekilebilir
+        # Hesaplamalar
+        usd_try = 33.50 
         toplam_tl = kasa * usd_try
         net_kar = kasa - ana_para
-        kar_oranı = (net_kar / ana_para) * 100
+        kar_oranı = (net_kar / ana_para) * 100 if ana_para > 0 else 0
+        ilerleme = min(kasa / hedef_kasa, 1.0) if hedef_kasa > 0 else 0
+        
+        # HTML Blokları (Hatasız)
+        progress_bar_html = f"""
+        <div style='background:#333; height:10px; width:100%; margin-top:5px;'>
+            <div style='background:#cc7a00; height:100%; width:{ilerleme*100}%;'></div>
+        </div>
+        """
 
-        # Üst Terminal Paneli
+        # Ana Ekran
+        st.markdown(f"""
+        <div class='industrial-card'>
+            <div class='terminal-header'>💎 OG FundRoom — ULTRA ATAK KRİPTO FONU 2026</div>
+            <h2 style='color:#fff !important;'>💰 TOPLAM KASA: {kasa:,.2f} USD (≈ {toplam_tl:,.0f} TL)</h2>
+            <p class='terminal-text'>🎯 GÜNLÜK DURUM: <span class='highlight'>{net_kar:,.2f} USD (%{kar_oranı:.1f})</span></p>
+            
+            <div style='margin-top:20px;'>
+                <p style='color:#fff;'>HEDEF FON MİKTARI: {hedef_kasa} USD</p>
+                <p style='color:#fff;'>İLERLEME: %{ilerleme*100:.1f}</p>
+                {progress_bar_html}
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # 2. Bölüm: Canlı Fiyatlar & Ömür Sayacı
         c1, c2 = st.columns([2, 1])
+        
         with c1:
+            try:
+                tickers = ["BTC-USD", "ETH-USD", "SOL-USD"]
+                prices = yf.download(tickers, period="1d", interval="1m", progress=False)['Close'].iloc[-1]
+                btc_p, eth_p, sol_p = prices['BTC-USD'], prices['ETH-USD'], prices['SOL-USD']
+            except:
+                btc_p, eth_p, sol_p = 0.0, 0.0, 0.0
+                
             st.markdown(f"""
             <div class='industrial-card'>
-                <p class='terminal-text'>💰 TOPLAM KASA: <span class='highlight'>${kasa:,.2f} (≈ {toplam_tl:,.0f} TL)</span></p>
-                <p class='terminal-text'>🎯 NET KAR/ZARAR: <span style='color:{"#00ff41" if net_kar >=0 else "#ff4b4b"}'>{net_kar:,.2f} USD (%{kar_oranı:.1f})</span></p>
-                <p class='terminal-text'>📅 SON GÜNCELLEME: {datetime.now(tr_tz).strftime('%H:%M:%S')}</p>
+                <div class='terminal-header'>📊 PERFORMANS GÖSTERGELERİ</div>
+                <div class='match-row'><span>BTC (Canlı)</span><span class='highlight'>${btc_p:,.1f}</span></div>
+                <div class='match-row'><span>ETH (Canlı)</span><span class='highlight'>${eth_p:,.1f}</span></div>
+                <div class='match-row'><span>SOL (Canlı)</span><span class='highlight'>${sol_p:,.1f}</span></div>
+                <hr style='border-color:#333;'>
+                <div class='match-row'><span>Piyasa Havası</span><span>Normal</span></div>
             </div>
             """, unsafe_allow_html=True)
-        
+            
         with c2:
-            # Ölüm Kalım Projeksiyonu (Runway)
+            # Survival Runway
             gun_sayisi = int(kasa / gunluk_kayip) if gunluk_kayip > 0 else 999
-            color = "#ff4b4b" if gun_sayisi < 10 else "#00ff41"
+            durum_renk = "#ff4b4b" if gun_sayisi < 14 else "#00ff41"
             st.markdown(f"""
-            <div class='industrial-card' style='border-color:{color}'>
-                <p class='terminal-text'>💀 ÖLÜM KALIM PROJEKSİYONU</p>
-                <h2 style='color:{color} !important;'>{gun_sayisi} GÜN</h2>
-                <small class='terminal-text'>Mevcut yakma hızına göre.</small>
+            <div class='industrial-card' style='border-color:{durum_renk}'>
+                <div class='terminal-header' style='color:{durum_renk}'>💀 FON ÖMRÜ</div>
+                <h1 style='font-size:40px !important; color:{durum_renk} !important;'>{gun_sayisi} GÜN</h1>
+                <small class='terminal-text'>Günlük {gunluk_kayip}$ yakma hızıyla.</small>
             </div>
             """, unsafe_allow_html=True)
 
-        # Ortaklık & Kâr Payları (SS'teki gibi)
-        st.subheader("👥 ÜYE KAR PAYLARI (oguzo | ero7 | fybey)")
-        pay = kasa / 3
-        kisi_basi_kar = net_kar / 3
-        o1, o2, o3 = st.columns(3)
-        for col, user in zip([o1, o2, o3], ["oguzo", "ero7", "fybey"]):
-            with col:
-                st.markdown(f"""
-                <div class='industrial-card'>
-                    <small class='terminal-text'>{user.upper()}</small>
-                    <h3>${pay:,.2f}</h3>
-                    <p style='font-size:12px; color:{"#00ff41" if kisi_basi_kar >=0 else "#ff4b4b"}'>
-                        Kâr: {kisi_basi_kar:+,.2f} USD
-                    </p>
-                </div>
-                """, unsafe_allow_html=True)
-
-    # --- 6. FORM LINE ---
-    elif page == "⚽ FORMLINE":
-        st.title("⚽ FORMLINE ANALİZ")
-        t1, t2, t3 = st.tabs(["🔥 W3 (8-9 Şub)", "✅ W2 (1-2 Şub)", "⏪ W1 (Geçmiş)"])
-        # (Önceki kupon kodları buraya gelecek - Alan tasarrufu için kısa kestim)
-        with t2:
-            st.markdown("<div class='industrial-card' style='border-color:#00ff41;'><h3>✅ W2 - KAZANDI</h3><div class='match-row'><span>Kocaelispor -
+        # Ortaklık Dağılımı
+        st.subheader("👥 KATILIM & KAR PAYLAŞIMI")
+        pay = kasa /
