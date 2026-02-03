@@ -1,230 +1,237 @@
 import streamlit as st
 import yfinance as yf
-from datetime import datetime
+from datetime import datetime, timedelta
 import pandas as pd
 import pytz
 
-# --- 1. AYARLAR (Geniş Ekran) ---
-st.set_page_config(page_title="OG Core v7.3", page_icon="🛡️", layout="wide")
+# --- 1. AYARLAR ---
+st.set_page_config(page_title="OG Core v7.1", page_icon="🛡️", layout="wide")
 
-# --- 2. CSS STİLLERİ (DAHA MODERN & MOBİL DOSTU) ---
+# --- 2. CSS STİLLERİ (GİZLİLİK MODU AKTİF) ---
 custom_css = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
 .main { background-color: #0d1117 !important; }
 * { font-family: 'JetBrains Mono', monospace !important; }
-
-/* Renk Paleti */
 :root { --soft-orange: #cc7a00; --win-green: #00ff41; --loss-red: #ff4b4b; --terminal-gray: #8b949e; }
 
-/* Gereksizleri Gizle */
-#MainMenu, header, footer, .stDeployButton {visibility: hidden !important;}
+/* --- GİZLİLİK MODU --- */
+#MainMenu {visibility: hidden;}
+header {visibility: hidden;}
+footer {visibility: hidden;}
+.stDeployButton {display:none;}
+[data-testid="stToolbar"] {visibility: hidden !important;}
+[data-testid="stDecoration"] {display:none;}
+[data-testid="stSidebarNav"] {border-right: 1px solid #30363d;}
+/* --------------------- */
 
-/* ÜST MENÜ STİLİ (MOBİL İÇİN KRİTİK) */
-div[data-testid="stRadio"] > div {
-    flex-direction: row; /* Yan yana diz */
-    justify-content: center;
-    background: #161b22;
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #30363d;
-}
-div[data-testid="stRadio"] label {
-    font-size: 14px !important;
-    background: transparent !important;
-    color: #e6edf3 !important;
-    padding: 5px 15px !important;
-    border: 1px solid transparent;
-}
-div[data-testid="stRadio"] label:hover {
-    color: var(--soft-orange) !important;
-    border-color: var(--soft-orange);
-}
-
-/* KART TASARIMI */
 .industrial-card {
-    background: #161b22;
-    border-left: 4px solid var(--soft-orange);
-    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.02);
+    border-left: 3px solid var(--soft-orange);
+    border-radius: 4px;
     padding: 15px;
-    margin-bottom: 15px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    margin-bottom: 20px;
 }
 .terminal-header { 
     color: var(--soft-orange); 
-    font-size: 13px; font-weight: bold; letter-spacing: 1px;
-    border-bottom: 1px solid #30363d; 
-    padding-bottom: 8px; margin-bottom: 12px;
+    font-size: 14px; 
+    font-weight: bold; 
+    border-bottom: 1px dashed #30363d; 
+    padding-bottom: 5px; 
+    margin-bottom: 10px;
+    text-transform: uppercase;
 }
-.row {
-    display: flex; justify-content: space-between; align-items: center;
-    font-size: 13px; color: #c9d1d9; margin-bottom: 8px;
-    border-bottom: 1px dashed #21262d; padding-bottom: 4px;
+.terminal-row {
+    display: flex; justify-content: space-between;
+    font-size: 13px; color: #e6edf3; margin-bottom: 6px;
 }
-.row:last-child { border-bottom: none; }
+.highlight { color: var(--soft-orange); }
+.win { color: var(--win-green); }
+.loss { color: var(--loss-red); }
+.dim { color: var(--terminal-gray); }
+.status-wait { color: #f1c40f; font-weight: bold; }
 
-/* RENKLER */
-.val-up { color: var(--win-green); font-weight: bold; }
-.val-down { color: var(--loss-red); font-weight: bold; }
-.val-neu { color: var(--soft-orange); font-weight: bold; }
-.dim { color: #8b949e; font-size: 11px; }
-
-/* MOBİL İÇİN FONT AYARI */
-@media only screen and (max-width: 600px) {
-    .row { font-size: 11px !important; }
-    h1 { font-size: 18px !important; }
-    .stMetric { font-size: 12px !important; }
-}
+h1, h2, h3 { color: #e6edf3 !important; }
+section[data-testid="stSidebar"] { background-color: #010409 !important; border-right: 1px solid #30363d; }
 </style>
 """
 
 # --- 3. HTML ŞABLONLARI ---
 
-def create_card(title, rows, color="#cc7a00"):
-    html = f"<div class='industrial-card' style='border-left-color: {color};'><div class='terminal-header' style='color:{color};'>{title}</div>"
-    for label, val, val_class in rows:
-        html += f"<div class='row'><span>{label}</span><span class='{val_class}'>{val}</span></div>"
-    html += "</div>"
-    return html
+w3_coupon_html = """
+<div class='industrial-card'>
+    <div class='terminal-header'>🔥 W3 KUPONU</div>
+    <div class='terminal-row'><span>Wolfsburg - Bvb</span><span class='highlight'>bvb x2 & 1.5 üst</span></div>
+    <div class='terminal-row'><span>Newcastle - Brentford</span><span class='highlight'>newcastle 1.5 üst</span></div>
+    <div class='terminal-row'><span>Rizespor - Gala</span><span class='highlight'>gala w & 1.5 üst</span></div>
+    <div class='terminal-row'><span>Lıve - Man City</span><span class='highlight'>lıve gol atar</span></div>
+    <div class='terminal-row'><span>Fenerbahçe - Gençlerbirliği</span><span class='highlight'>fenerbahçe w & 2.5 üst</span></div>
+    <hr style='border: 1px solid #30363d; margin: 10px 0;'>
+    <div class='terminal-row'><span class='dim'>oran: 8.79</span><span class='dim'>bet: 100 USD</span><span class='status-wait'>BEKLENİYOR ⏳</span></div>
+</div>
+"""
+
+w2_coupon_html = """
+<div class='industrial-card' style='border-left-color: #00ff41;'>
+    <div class='terminal-header' style='color:#00ff41;'>✅ W2 KUPONU - KAZANDI</div>
+    <div class='terminal-row'><span>Gala - Kayserispor</span><span class='win'>gala w & +2.5 üst ✅</span></div>
+    <div class='terminal-row'><span>Lıve - Newcastle</span><span class='win'>kg var ✅</span></div>
+    <div class='terminal-row'><span>Bvb - Heidenheim</span><span class='win'>bvb w & +1.5 üst ✅</span></div>
+    <div class='terminal-row'><span>Kocaelispor - Fenerbahçe</span><span class='win'>fenerbahçe w & 1.5 üst ✅</span></div>
+    <hr style='border: 1px solid #30363d; margin: 10px 0;'>
+    <div class='terminal-row'><span class='dim'>oran: 5.40</span><span class='dim'>bet: 100 USD</span><span class='win'>SONUÇLANDI +540 USD</span></div>
+</div>
+"""
+
+w1_coupon_html = """
+<div class='industrial-card' style='border-left-color: #ff4b4b;'>
+    <div class='terminal-header' style='color:#ff4b4b;'>❌ W1 KUPONU - KAYBETTİ</div>
+    <div class='terminal-row'><span>Karagümrük - Gala</span><span class='win'>gala w & 1.5 üst ✅</span></div>
+    <div class='terminal-row'><span>Bournemouth - Lıve</span><span class='win'>kg var ✅</span></div>
+    <div class='terminal-row'><span>Unıon Berlin - Bvb</span><span class='win'>bvb 0.5 üst ✅</span></div>
+    <div class='terminal-row'><span>Newcastle - Aston Villa</span><span class='loss'>newcastle 1.5 üst ❌</span></div>
+    <div class='terminal-row'><span>Fenerbahçe - Göztepe</span><span class='loss'>fenerbahçe w ❌</span></div>
+    <hr style='border: 1px solid #30363d; margin: 10px 0;'>
+    <div class='terminal-row'><span class='dim'>oran: 7.09</span><span class='dim'>bet: 100 USD</span><span class='loss'>SONUÇLANDI -100 USD</span></div>
+</div>
+"""
 
 # --- 4. GÜVENLİK ---
-if "password_correct" not in st.session_state: st.session_state["password_correct"] = False
+if "password_correct" not in st.session_state:
+    st.session_state["password_correct"] = False
 
 def check_password():
     if not st.session_state["password_correct"]:
-        st.markdown("<br><h2 style='text-align:center; color:#cc7a00;'>🛡️ OG CORE ACCESS</h2>", unsafe_allow_html=True)
-        pwd = st.text_input("PASSWORD", type="password", label_visibility="collapsed")
-        if st.button("LOGIN", use_container_width=True):
-            if pwd == "1": st.session_state["password_correct"] = True; st.rerun()
-            else: st.error("ACCESS DENIED")
+        st.markdown("<h1 style='text-align:center; color:#cc7a00; font-family:monospace;'>🛡️ OG_CORE AUTH</h1>", unsafe_allow_html=True)
+        pwd = st.text_input("ŞİFRE", type="password")
+        if st.button("SİSTEME GİR"):
+            if pwd == "1":
+                st.session_state["password_correct"] = True
+                st.rerun()
+            else:
+                st.error("❌ HATALI ŞİFRE")
         return False
     return True
 
 # --- 5. ANA UYGULAMA ---
 if check_password():
     st.markdown(custom_css, unsafe_allow_html=True)
-    
-    # --- ÜST MENÜ (SIDEBAR DEĞİL, ANA EKRAN) ---
-    st.markdown("<h3 style='text-align:center; color:#e6edf3;'>🛡️ OG CORE v7.3</h3>", unsafe_allow_html=True)
-    
-    # Menüyü yatay olarak en tepeye koyuyoruz
-    selected_page = st.radio("", ["⚡ DASHBOARD", "⚽ FORMLINE", "📈 SIMULATOR"], horizontal=True, label_visibility="collapsed")
-    st.markdown("---")
 
-    # --- AYARLAR PANELİ (EXPANDER İÇİNE GİZLENDİ - TEMİZ GÖRÜNÜM) ---
-    with st.expander("⚙️ AYARLAR & KASA YÖNETİMİ"):
-        kasa = st.number_input("Güncel Kasa ($)", value=600.0, step=10.0)
-        ana_para = st.number_input("Başlangıç ($)", value=500.0)
-        gunluk_yakim = st.number_input("Günlük Gider ($)", value=20)
-        if st.button("ÇIKIŞ YAP"): st.session_state["password_correct"] = False; st.rerun()
+    with st.sidebar:
+        st.markdown("<h2 style='color:#cc7a00;'>🛡️ OG CORE</h2>", unsafe_allow_html=True)
+        page = st.radio("SİSTEM MODÜLLERİ", ["⚡ ULTRA FON", "⚽ FORMLINE", "📊 DASHDASH"])
+        st.divider()
+        kasa = st.number_input("TOPLAM KASA (USD)", value=600.0, step=10.0)
+        ana_para = st.number_input("BAŞLANGIÇ SERMAYESİ", value=500.0)
+        gunluk_yakim = st.slider("GÜNLÜK ORT. HARCAMA ($)", 0, 100, 20)
+        
+        tr_tz = pytz.timezone('Europe/Istanbul')
+        st.info(f"🕒 {datetime.now(tr_tz).strftime('%H:%M:%S')}")
+        if st.button("ÇIKIŞ"):
+            st.session_state["password_correct"] = False
+            st.rerun()
 
-    # ZAMAN & HESAPLAMALAR
-    tr_tz = pytz.timezone('Europe/Istanbul')
-    net_kar = kasa - ana_para
-    tl_val = kasa * 33.50
+    # SAYFA 1: ULTRA FON
+    if page == "⚡ ULTRA FON":
+        net_kar = kasa - ana_para
+        kar_yuzdesi = (net_kar / ana_para) * 100 if ana_para > 0 else 0
+        tl_karsiligi = kasa * 33.50
+        
+        st.markdown(f"""
+        <div class='industrial-card'>
+            <div class='terminal-header'>💎 OG TRADE RADAR — v7.1</div>
+            <div class='terminal-row'><span>🕒 SON GÜNCELLEME</span><span>{datetime.now(tr_tz).strftime('%H:%M:%S')}</span></div>
+            <div class='terminal-row'><span>💰 TOPLAM KASA</span><span class='highlight'>${kasa:,.2f} (≈ {tl_karsiligi:,.0f} TL)</span></div>
+            <div class='terminal-row'><span>🚀 NET KAR/ZARAR</span><span style='color:{"#00ff41" if net_kar >=0 else "#ff4b4b"}'>{net_kar:,.2f} USD (%{kar_yuzdesi:.1f})</span></div>
+        </div>
+        """, unsafe_allow_html=True)
 
-    # ==========================
-    # SAYFA 1: DASHBOARD
-    # ==========================
-    if selected_page == "⚡ DASHBOARD":
-        # 1. Ana Durum Kartı
-        st.markdown(create_card("FİNANSAL DURUM", [
-            ("TOPLAM KASA", f"${kasa:,.2f}", "val-neu"),
-            ("TRY KARŞILIĞI", f"₺{tl_val:,.0f}", "dim"),
-            ("NET KAR/ZARAR", f"{net_kar:+.2f} USD", "val-up" if net_kar >=0 else "val-down")
-        ]), unsafe_allow_html=True)
-
-        # 2. Piyasa & Ömür (Yan Yana)
-        col1, col2 = st.columns(2)
-        with col1:
+        col_piyasa, col_omur = st.columns([2, 1])
+        with col_piyasa:
             try:
-                # Basit veri çekimi
-                btc = yf.Ticker("BTC-USD").history(period="1d")['Close'].iloc[-1]
-                eth = yf.Ticker("ETH-USD").history(period="1d")['Close'].iloc[-1]
-                sol = yf.Ticker("SOL-USD").history(period="1d")['Close'].iloc[-1]
-            except: btc, eth, sol = 0,0,0
+                btc_data = yf.Ticker("BTC-USD").history(period="1d")
+                eth_data = yf.Ticker("ETH-USD").history(period="1d")
+                sol_data = yf.Ticker("SOL-USD").history(period="1d")
+                btc = btc_data['Close'].iloc[-1] if not btc_data.empty else 0
+                eth = eth_data['Close'].iloc[-1] if not eth_data.empty else 0
+                sol = sol_data['Close'].iloc[-1] if not sol_data.empty else 0
+            except:
+                btc, eth, sol = 0, 0, 0
             
-            st.markdown(create_card("KRİPTO", [
-                ("BTC", f"${btc:,.0f}", "val-neu"),
-                ("ETH", f"${eth:,.0f}", "val-neu"),
-                ("SOL", f"${sol:,.1f}", "val-neu")
-            ]), unsafe_allow_html=True)
+            st.markdown(f"""
+            <div class='industrial-card'>
+                <div class='terminal-header'>📊 PİYASA</div>
+                <div class='terminal-row'><span>🟠 BTC</span><span>${btc:,.2f}</span></div>
+                <div class='terminal-row'><span>🔵 ETH</span><span>${eth:,.2f}</span></div>
+                <div class='terminal-row'><span>🟣 SOL</span><span>${sol:,.2f}</span></div>
+            </div>
+            """, unsafe_allow_html=True)
             
-        with col2:
-            gun_omru = int(kasa/gunluk_yakim) if gunluk_yakim>0 else 999
-            color_omur = "#00ff41" if gun_omru > 14 else "#ff4b4b"
-            st.markdown(create_card("RUNWAY", [
-                ("KALAN GÜN", f"{gun_omru}", "val-neu"),
-                ("DURUM", "KRİTİK" if gun_omru<14 else "İYİ", "val-down" if gun_omru<14 else "val-up"),
-                ("HARCAMA", f"-${gunluk_yakim}/gün", "dim")
-            ], color=color_omur), unsafe_allow_html=True)
+        with col_omur:
+            gun_omru = int(kasa / gunluk_yakim) if gunluk_yakim > 0 else 999
+            renk_durumu = "#ff4b4b" if gun_omru < 14 else "#00ff41"
+            st.markdown(f"""
+            <div class='industrial-card' style='border-left-color: {renk_durumu};'>
+                <div class='terminal-header' style='color:{renk_durumu};'>💀 FON ÖMRÜ</div>
+                <h2 style='text-align:center; color:{renk_durumu}; margin:10px 0;'>{gun_omru} GÜN</h2>
+                <div style='text-align:center; font-size:11px; color:#8b949e;'>Yakma hızı: ${gunluk_yakim}/gün</div>
+            </div>
+            """, unsafe_allow_html=True)
 
-        # 3. Paylar
+        st.subheader("🎯 Üye Payları")
         pay = kasa / 3
-        st.markdown(create_card("ORTAK PAYLARI", [
-            ("OGUZO", f"${pay:,.2f}", "val-neu"),
-            ("ERO7", f"${pay:,.2f}", "val-neu"),
-            ("FYBEY", f"${pay:,.2f}", "val-neu")
-        ]), unsafe_allow_html=True)
+        kisi_basi_kar = net_kar / 3
+        c1, c2, c3 = st.columns(3)
+        users = ["oguzo", "ero7", "fybey"]
+        for col, user in zip([c1, c2, c3], users):
+            with col:
+                st.markdown(f"""
+                <div class='industrial-card'>
+                    <div class='terminal-header'>{user.upper()}</div>
+                    <div class='terminal-row'><span>PAY</span><span class='highlight'>${pay:,.2f}</span></div>
+                    <div class='terminal-row'><span>KAR</span><span style='color:{"#00ff41" if kisi_basi_kar>=0 else "#ff4b4b"}'>{kisi_basi_kar:+.2f}</span></div>
+                </div>
+                """, unsafe_allow_html=True)
 
-    # ==========================
     # SAYFA 2: FORMLINE
-    # ==========================
-    elif selected_page == "⚽ FORMLINE":
-        # Sekmeler
-        tab1, tab2, tab3 = st.tabs(["🔥 W3 (AKTİF)", "✅ W2 (WIN)", "❌ W1 (LOSS)"])
-        
+    elif page == "⚽ FORMLINE":
+        st.title("⚽ FORMLINE")
+        tab1, tab2, tab3 = st.tabs(["⏳ W3", "✅ W2", "❌ W1"])
         with tab1:
-            st.markdown(create_card("🔥 W3 KUPONU", [
-                ("Wolfsburg - BVB", "BVB X2 & 1.5 ÜST", "val-neu"),
-                ("Newcastle - Brentford", "NEW 1.5 ÜST", "val-neu"),
-                ("Rizespor - GS", "GS W & 1.5 ÜST", "val-neu"),
-                ("LIV - Man City", "LIV GOL ATAR", "val-neu"),
-                ("FB - Gençlerbirliği", "FB W & 2.5 ÜST", "val-neu"),
-                ("ORAN / DURUM", "8.79 / BEKLİYOR", "dim")
-            ]), unsafe_allow_html=True)
-            
+            st.markdown(w3_coupon_html, unsafe_allow_html=True)
         with tab2:
-            st.markdown(create_card("✅ W2 KUPONU", [
-                ("GS - Kayseri", "WON", "val-up"),
-                ("LIV - New", "WON", "val-up"),
-                ("BVB - Heidenheim", "WON", "val-up"),
-                ("Kocaeli - FB", "WON", "val-up"),
-                ("KAZANÇ", "+$540", "val-up")
-            ], color="#00ff41"), unsafe_allow_html=True)
-            
+            st.markdown(w2_coupon_html, unsafe_allow_html=True)
         with tab3:
-            st.markdown(create_card("❌ W1 KUPONU", [
-                ("Karagümrük - GS", "WON", "val-up"),
-                ("New - Aston Villa", "LOST", "val-down"),
-                ("KAYIP", "-$100", "val-down")
-            ], color="#ff4b4b"), unsafe_allow_html=True)
+            st.markdown(w1_coupon_html, unsafe_allow_html=True)
 
-    # ==========================
-    # SAYFA 3: SIMULATOR
-    # ==========================
-    elif selected_page == "📈 SIMULATOR":
-        st.markdown(create_card("HEDEF AYARLARI", [
-            ("BAŞLANGIÇ", f"${kasa}", "val-neu"),
-            ("SİMÜLASYON", "30 Günlük", "dim")
-        ]), unsafe_allow_html=True)
+    # SAYFA 3: DASHDASH (HAFTALIK SİMÜLATÖR AYARLANDI)
+    elif page == "📊 DASHDASH":
+        st.title("📈 Performans Simülatörü")
+        col_inp1, col_inp2 = st.columns(2)
         
-        haftalik_hedef = st.slider("Haftalık Hedef Büyüme (%)", 1, 50, 5)
+        with col_inp1:
+            # BURASI ARTIK HAFTALIK HEDEF SORUYOR
+            haftalik_oran = st.slider("Haftalık Hedef Kar (%)", 1.0, 50.0, 5.0)
+        with col_inp2:
+            sure = st.slider("Simülasyon Süresi (Gün)", 7, 90, 30)
         
-        # Hesaplama
-        days = 30
-        data = [kasa * ((1 + haftalik_hedef/100)**(d/7)) for d in range(days)]
+        # Matematik: (1 + haftalik_oran/100) ^ (gun / 7)
+        # Yani her 7 günde bir o oranı koyuyor.
+        gelecek_degerler = [kasa * ((1 + haftalik_oran/100) ** (gun / 7)) for gun in range(sure)]
         
-        # Grafik
-        st.line_chart(data, height=200)
+        df_chart = pd.DataFrame({"Gün": range(sure), "Kasa Tahmini ($)": gelecek_degerler})
+        st.line_chart(df_chart.set_index("Gün"))
         
-        son_durum = data[-1]
-        st.success(f"30 Gün Sonra Tahmini: ${son_durum:,.2f}")
+        st.success(f"🚀 {sure} gün sonraki tahmini kasa: **${gelecek_degerler[-1]:,.2f}** (Haftalık %{haftalik_oran} büyüme ile)")
         
-        # Streak
-        st.markdown(create_card("PERFORMANS", [
-            ("SON 3 İŞLEM", "❌ ✅ ✅", "val-neu"),
-            ("MOMENTUM", "YÜKSEK 🔥", "val-up")
-        ]))
+        st.divider()
+        
+        st.markdown("""
+        <div class='industrial-card'>
+            <div class='terminal-header'>🏁 FORM VE SERİ (STREAK)</div>
+            <div class='terminal-row'><span>SON 5 İŞLEM</span><span>✅ ✅ ❌ ✅ ✅</span></div>
+            <div class='terminal-row'><span>MOMENTUM</span><span class='highlight'>+3 (GÜÇLÜ)</span></div>
+        </div>
+        """, unsafe_allow_html=True)
 
-    st.markdown("<div style='text-align:center; color:#30363d; font-size:10px; margin-top:20px;'>OG CORE v7.3 MOBILE ULTIMATE</div>", unsafe_allow_html=True)
+    st.caption("OG Core v7.1 | Discipline is Profit.")
