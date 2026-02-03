@@ -178,7 +178,7 @@ if check_password():
             </div>
             """, unsafe_allow_html=True)
 
-        st.subheader("🎯 HEDEF ANALİZİ & ÜYE PAYLARI")
+        st.subheader("🎯 ÜYE PAYLARI")
         pay = kasa / 3
         kisi_basi_kar = net_kar / 3
         c1, c2, c3 = st.columns(3)
