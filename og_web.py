@@ -158,7 +158,7 @@ if check_password():
         page = st.radio("SİSTEM MODÜLLERİ", ["⚡ ULTRA FON", "⚽ FORMLINE", "📊 DASHDASH"])
         st.divider()
         kasa = st.number_input("TOPLAM KASA (USD)", value=600.0, step=10.0)
-        ana_para = st.number_input("BAŞLANGIÇ SERMAYESİ", value=500.0)
+        ana_para = st.number_input("BAŞLANGIÇ SERMAYESİ", value=600.0)
         gunluk_yakim = st.slider("GÜNLÜK ORT. HARCAMA ($)", 0, 100, 20)
         
         tr_tz = pytz.timezone('Europe/Istanbul')
