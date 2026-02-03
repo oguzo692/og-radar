@@ -7,7 +7,6 @@ import json
 import os
 
 # --- 1. AYARLAR ---
-# initial_sidebar_state="expanded" ile sekmenin açık gelmesini garanti ediyoruz.
 st.set_page_config(
     page_title="OG Core v8.8", 
     page_icon="🛡️", 
@@ -23,22 +22,24 @@ custom_css = """
 * { font-family: 'JetBrains Mono', monospace !important; }
 :root { --soft-orange: #cc7a00; --win-green: #00ff41; --loss-red: #ff4b4b; --terminal-gray: #8b949e; }
 
-/* GİZLİLİK MODU - Sidebar Butonunu Engellemeyecek Şekilde Revize Edildi */
+/* GİZLİLİK MODU - GÜNCELLENDİ: Sidebar butonunu gizleyen 'header' kelimesi kaldırıldı */
 #MainMenu, footer, .stDeployButton {visibility: hidden !important;}
 [data-testid="stToolbar"] {visibility: hidden !important;}
 [data-testid="stDecoration"] {display:none;}
+[data-testid="stSidebarNav"] {border-right: 1px solid #30363d;}
 
-/* YAN SEKME BUTONU (SIDEBAR TOGGLE) GÖRÜNÜRLÜK FIX */
+/* YAN SEKME BUTONU (SIDEBAR TOGGLE) KURTARMA TASARIMI */
 [data-testid="stSidebarCollapsedControl"] {
     display: flex !important;
     visibility: visible !important;
     background-color: #cc7a00 !important;
     border-radius: 0 8px 8px 0 !important;
-    width: 45px !important;
-    height: 45px !important;
+    width: 50px !important;
+    height: 50px !important;
     left: 0 !important;
     top: 10px !important;
-    z-index: 999999 !important;
+    z-index: 9999999 !important;
+    box-shadow: 2px 2px 10px rgba(0,0,0,0.5) !important;
 }
 [data-testid="stSidebarCollapsedControl"] button {
     color: white !important;
