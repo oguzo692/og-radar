@@ -58,7 +58,7 @@ w3_coupon_html = """
     <div class='terminal-row'><span>Liverpool - Man City</span><span class='highlight'>LIVERPOOL GOL ATAR</span></div>
     <div class='terminal-row'><span>Fenerbahçe - Gençlerbirliği</span><span class='highlight'>MS 1</span></div>
     <hr style='border: 1px solid #30363d; margin: 10px 0;'>
-    <div class='terminal-row'><span class='dim'>ORAN: --</span><span class='dim'>BÜTÇE: 100 USD</span><span class='status-wait'>DURUM: OYNANIYOR ⏳</span></div>
+    <div class='terminal-row'><span class='dim'>ORAN: --</span><span class='dim'>BÜTÇE: 100 USD</span><span class='status-wait'>BEKLENİYOR ⏳</span></div>
 </div>
 """
 
@@ -70,7 +70,7 @@ w2_coupon_html = """
     <div class='terminal-row'><span>BVB - Heidenheim</span><span class='win'>BVB İY 0.5 ÜST ✅</span></div>
     <div class='terminal-row'><span>Kocaelispor - FB</span><span class='win'>FB W & 1.5 ÜST ✅</span></div>
     <hr style='border: 1px solid #30363d; margin: 10px 0;'>
-    <div class='terminal-row'><span class='dim'>ORAN: 5.40</span><span class='dim'>BÜTÇE: 100 USD</span><span class='win'>DURUM: SONUÇLANDI +540 USD</span></div>
+    <div class='terminal-row'><span class='dim'>ORAN: 5.40</span><span class='dim'>BÜTÇE: 100 USD</span><span class='win'>SONUÇLANDI +540 USD</span></div>
 </div>
 """
 
@@ -83,7 +83,7 @@ w1_coupon_html = """
     <div class='terminal-row'><span>New - Aston Villa</span><span class='loss'>MS 1 ❌</span></div>
     <div class='terminal-row'><span>FB - Göztepe</span><span class='loss'>İY 0.5 ÜST ❌</span></div>
     <hr style='border: 1px solid #30363d; margin: 10px 0;'>
-    <div class='terminal-row'><span class='dim'>ORAN: 7.09</span><span class='dim'>BÜTÇE: 100 USD</span><span class='loss'>SONUÇ: -100 USD</span></div>
+    <div class='terminal-row'><span class='dim'>ORAN: 7.09</span><span class='dim'>BÜTÇE: 100 USD</span><span class='loss'>SONUÇLANDI -100 USD</span></div>
 </div>
 """
 
