@@ -5,7 +5,7 @@ import pandas as pd
 import pytz
 
 # --- 1. AYARLAR ---
-st.set_page_config(page_title="OG Core v7.1", page_icon="🛡️", layout="wide")
+st.set_page_config(page_title="OG Core", page_icon="🛡️", layout="wide")
 
 # --- 2. CSS STİLLERİ (GİZLİLİK MODU - O YAZILARI SİLER) ---
 custom_css = """
@@ -221,7 +221,7 @@ if check_password():
         st.divider()
         st.markdown("""
         <div class='industrial-card'>
-            <div class='terminal-header'>🏁 FORM VE SERİ (STREAK)</div>
+            <div class='terminal-header'>🏁 Streak</div>
             <div class='terminal-row'><span>SON 5 İŞLEM</span><span>✅ ✅ ❌ ✅ ✅</span></div>
             <div class='terminal-row'><span>MOMENTUM</span><span class='highlight'>+3 (GÜÇLÜ)</span></div>
         </div>
