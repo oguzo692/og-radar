@@ -77,11 +77,11 @@ w2_coupon_html = """
 w1_coupon_html = """
 <div class='industrial-card' style='border-left-color: #ff4b4b;'>
     <div class='terminal-header' style='color:#ff4b4b;'>❌ W1 KUPONU - Kaybetti</div>
-    <div class='terminal-row'><span>Karagümrük - Gala</span><span class='win'>Gala w & 1.5 üst ✅</span></div>
+    <div class='terminal-row'><span>Karagümrük - Gala</span><span class='win'>gala w & 1.5 üst ✅</span></div>
     <div class='terminal-row'><span>Bournemouth - Lıve</span><span class='win'>kg var ✅</span></div>
-    <div class='terminal-row'><span>Unıon Berlin - Bvb</span><span class='win'>Bvb 0.5 üst ✅</span></div>
-    <div class='terminal-row'><span>Newcastle - Aston Villa</span><span class='loss'>Newcastle 1.5 üst ❌</span></div>
-    <div class='terminal-row'><span>Fenerbahçe - Göztepe</span><span class='loss'>Fnerbahçe w ❌</span></div>
+    <div class='terminal-row'><span>Unıon Berlin - Bvb</span><span class='win'>bvb 0.5 üst ✅</span></div>
+    <div class='terminal-row'><span>Newcastle - Aston Villa</span><span class='loss'>newcastle 1.5 üst ❌</span></div>
+    <div class='terminal-row'><span>Fenerbahçe - Göztepe</span><span class='loss'>fenerbahçe w ❌</span></div>
     <hr style='border: 1px solid #30363d; margin: 10px 0;'>
     <div class='terminal-row'><span class='dim'>ORAN: 7.09</span><span class='dim'>bet: 100 USD</span><span class='loss'>SONUÇLANDI -100 USD</span></div>
 </div>
