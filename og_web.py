@@ -237,9 +237,9 @@ if check_password():
         
         # --- 💎 LOOT BAR ---
         targets = [
-            {"val": 1000, "icon": "📱", "name": "TELEFON"},
-            {"val": 2500, "icon": "🏖️", "name": "TATİL"},
-            {"val": 5000, "icon": "🏎️", "name": "ARABA"},
+            {"val": 900, "icon": "📱", "name": "TELEFON"},
+            {"val": 1200, "icon": "🏖️", "name": "TATİL"},
+            {"val": 1800, "icon": "🏎️", "name": "ARABA"},
         ]
         max_target = targets[-1]["val"] * 1.2
         current_pct = min(100, (kasa / max_target) * 100)
