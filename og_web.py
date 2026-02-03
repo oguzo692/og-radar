@@ -253,7 +253,7 @@ if check_password():
         # CSS FIX: Başlıkta border-bottom: none komutu eklendi.
         loot_bar_html = f"""
 <div class='loot-wrapper'>
-<div class='terminal-header' style='margin-bottom:0px; border-bottom:none;'>💎 HEDEF YOLCULUĞU (LOOT TRACK)</div>
+<div class='terminal-header' style='margin-bottom:0px; border-bottom:none;'>💎 HEDEF YOLCULUĞU</div>
 <div class='loot-track'>
 <div class='loot-fill' style='width: {current_pct}%;'></div>
 {markers_html}
