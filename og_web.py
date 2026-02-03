@@ -54,7 +54,7 @@ w3_coupon_html = """
     <div class='terminal-header'>🔥 W3 KUPONU (8-9 ŞUBAT)</div>
     <div class='terminal-row'><span>Wolfsburg - Bvb</span><span class='highlight'>MS 2</span></div>
     <div class='terminal-row'><span>Newcastle - Brentford</span><span class='highlight'>NEWCASTLE 1.5 ÜST</span></div>
-    <div class='terminal-row'><span>Rizespor - Gala</span><span class='highlight'>MS 2 & 1.5 ÜST</span></div>
+    <div class='terminal-row'><span>Rizespor - Gala</span><span class='highlight'>Galam ms & 1.5 üst</span></div>
     <div class='terminal-row'><span>Liverpool - Man City</span><span class='highlight'>LIVERPOOL GOL ATAR</span></div>
     <div class='terminal-row'><span>Fenerbahçe - Gençlerbirliği</span><span class='highlight'>MS 1</span></div>
     <hr style='border: 1px solid #30363d; margin: 10px 0;'>
