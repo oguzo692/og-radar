@@ -37,7 +37,7 @@ div.stButton > button:hover { background-color: #ffffff !important; color: #0000
 .loot-container { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; margin-bottom: 25px; position: relative; height: 130px; }
 .progress-track { background: #21262d; height: 14px; border-radius: 7px; width: 100%; position: absolute; bottom: 35px; left: 0; margin: 0 20px; width: calc(100% - 40px); }
 .progress-fill { background: linear-gradient(90deg, #cc7a00, #ffae00); height: 100%; border-radius: 7px; box-shadow: 0 0 8px rgba(255, 174, 0, 0.4); transition: width 1s ease-in-out; }
-.milestone-item { position: absolute; top: -55px; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; width: 80px; }
+.milestone-item { position: absolute; top: -75px; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; width: 80px; }
 .m-icon { font-size: 24px; margin-bottom: 5px; filter: grayscale(1); opacity: 0.3; transition: 0.5s; }
 .m-label { font-size: 7px; font-weight: bold; color: #8b949e; white-space: nowrap; text-align: center; }
 .milestone-item.achieved .m-icon { filter: grayscale(0); opacity: 1; text-shadow: 0 0 15px #ffae00; transform: scale(1.1); }
