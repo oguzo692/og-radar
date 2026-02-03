@@ -7,7 +7,7 @@ import json
 import os
 
 # --- 1. AYARLAR ---
-st.set_page_config(page_title="OG Core v8.6", page_icon="🛡️", layout="wide")
+st.set_page_config(page_title="OG Core v8.7", page_icon="🛡️", layout="wide")
 
 # --- 2. CSS STİLLERİ ---
 custom_css = """
@@ -46,12 +46,13 @@ custom_css = """
 .dim { color: var(--terminal-gray); }
 .status-wait { color: #f1c40f; font-weight: bold; }
 
-/* --- 💎 LOOT BAR STİLİ (SANDVİÇ DÜZENİ) --- */
+/* --- 💎 LOOT BAR STİLİ (VISUAL FIXED) --- */
 .loot-wrapper {
     background: #161b22;
     border: 1px solid #30363d;
     border-radius: 8px;
-    padding: 50px 20px 50px 20px; 
+    /* İkon ve yazı taşmasın diye padding */
+    padding: 50px 25px 55px 25px; 
     margin-bottom: 25px;
     position: relative;
     box-shadow: 0 4px 12px rgba(0,0,0,0.3);
@@ -85,21 +86,31 @@ custom_css = """
 }
 .milestone-icon { 
     position: absolute;
-    bottom: 20px; 
+    bottom: 22px; /* Biraz daha yukarı aldık */
     font-size: 24px; 
-    transition: all 0.3s;
+    transition: all 0.3s ease;
 }
 .milestone-label { 
     position: absolute;
-    top: 20px; 
+    top: 22px; /* Biraz daha aşağı aldık */
     font-size: 11px; 
     font-weight: bold; 
     color: #8b949e; 
     text-align: center;
-    white-space: nowrap; 
+    white-space: nowrap;
+    transition: all 0.3s ease;
 }
-.milestone.active .milestone-label { color: #00ff41; text-shadow: 0 0 8px rgba(0, 255, 65, 0.3); }
-.milestone.active .milestone-icon { transform: scale(1.2); text-shadow: 0 0 15px rgba(255,255,255,0.6); }
+/* --- AKTİF HEDEF GÖRÜNÜMÜ (DÜZELTİLDİ) --- */
+.milestone.active .milestone-label { 
+    color: #00ff41; 
+    /* Daha keskin, daha az bulanık parlama */
+    text-shadow: 0 0 4px #00ff41; 
+}
+.milestone.active .milestone-icon { 
+    /* Çok büyümesin, hafifçe öne çıksın */
+    transform: scale(1.05); 
+    text-shadow: 0 0 10px rgba(255,255,255,0.5); 
+}
 
 h1, h2, h3 { color: #e6edf3 !important; }
 section[data-testid="stSidebar"] { background-color: #010409 !important; border-right: 1px solid #30363d; }
@@ -222,13 +233,15 @@ if check_password():
         kar_yuzdesi = (net_kar / ana_para) * 100 if ana_para > 0 else 0
         tl_karsiligi = kasa * 33.50
         
-        # --- 💎 LOOT BAR ---
+        # --- 💎 LOOT BAR (MATH & VISUAL FIX) ---
         targets = [
             {"val": 1000, "icon": "📱", "name": "TELEFON"},
             {"val": 2500, "icon": "🏖️", "name": "TATİL"},
             {"val": 5000, "icon": "🏎️", "name": "ARABA"},
         ]
-        max_target = targets[-1]["val"] * 1.2
+        # DÜZELTME 1: Barın sonunu daha ileri aldık (1.5 katı)
+        # Böylece küçük rakamlar (600$) barın başında daha az yer kaplayacak.
+        max_target = targets[-1]["val"] * 1.5 
         current_pct = min(100, (kasa / max_target) * 100)
         
         markers_html = ""
@@ -255,7 +268,7 @@ if check_password():
 
         st.markdown(f"""
 <div class='industrial-card'>
-<div class='terminal-header'>💎 OG TRADE RADAR — v8.6 (MINIMALIST)</div>
+<div class='terminal-header'>💎 OG TRADE RADAR — v8.7 (VISUAL FIX)</div>
 <div class='terminal-row'><span>🕒 SON GÜNCELLEME</span><span>{datetime.now(tr_tz).strftime('%H:%M:%S')}</span></div>
 <div class='terminal-row'><span>💰 TOPLAM KASA</span><span class='highlight'>${kasa:,.2f} (≈ {tl_karsiligi:,.0f} TL)</span></div>
 <div class='terminal-row'><span>🚀 NET KAR/ZARAR</span><span style='color:{"#00ff41" if net_kar >=0 else "#ff4b4b"}'>{net_kar:,.2f} USD (%{kar_yuzdesi:.1f})</span></div>
@@ -307,9 +320,6 @@ if check_password():
 <div class='terminal-row'><span>KAR</span><span style='color:{"#00ff41" if kisi_basi_kar>=0 else "#ff4b4b"}'>{kisi_basi_kar:+.2f}</span></div>
 </div>
 """, unsafe_allow_html=True)
-        
-        # --- 📜 LOOT HISTORY SİLİNDİ ---
-        # "Less is more."
 
     # SAYFA 2: FORMLINE
     elif page == "⚽ FORMLINE":
@@ -338,4 +348,4 @@ if check_password():
 </div>
 """, unsafe_allow_html=True)
 
-    st.caption("OG Core v8.6 | Fybey e aittir.")
+    st.caption("OG Core v8.7 | Fybey e aittir.")
