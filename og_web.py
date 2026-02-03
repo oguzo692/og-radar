@@ -4,10 +4,15 @@ from datetime import datetime, timedelta
 import pandas as pd
 import pytz
 
-# --- 1. AYARLAR ---
-st.set_page_config(page_title="OG Core v7.1", page_icon="🛡️", layout="wide")
+# --- 1. AYARLAR (MOBİL İÇİN SIDEBAR KAPALI BAŞLAR) ---
+st.set_page_config(
+    page_title="OG Core v7.1", 
+    page_icon="🛡️", 
+    layout="wide",
+    initial_sidebar_state="collapsed" # Telefonda menü kapalı başlar, ekranı kapatmaz
+)
 
-# --- 2. CSS STİLLERİ (GİZLİLİK MODU AKTİF) ---
+# --- 2. CSS STİLLERİ (GİZLİLİK MODU + MOBİL AYARLAR EKLENDİ) ---
 custom_css = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
@@ -44,15 +49,25 @@ footer {visibility: hidden;}
 .terminal-row {
     display: flex; justify-content: space-between;
     font-size: 13px; color: #e6edf3; margin-bottom: 6px;
+    flex-wrap: wrap; /* Mobilde uzun yazılar alt satıra geçsin, taşmasın */
 }
-.highlight { color: var(--soft-orange); }
-.win { color: var(--win-green); }
-.loss { color: var(--loss-red); }
+.highlight { color: var(--soft-orange); text-align: right; }
+.win { color: var(--win-green); text-align: right; }
+.loss { color: var(--loss-red); text-align: right; }
 .dim { color: var(--terminal-gray); }
 .status-wait { color: #f1c40f; font-weight: bold; }
 
 h1, h2, h3 { color: #e6edf3 !important; }
 section[data-testid="stSidebar"] { background-color: #010409 !important; border-right: 1px solid #30363d; }
+
+/* --- MOBİL İÇİN ÖZEL AYARLAR (EKRAN KÜÇÜLÜNCE DEVREYE GİRER) --- */
+@media only screen and (max-width: 600px) {
+    .terminal-row { font-size: 11px !important; } /* Telefonda yazılar bir tık küçülsün */
+    .terminal-header { font-size: 12px !important; }
+    .industrial-card { padding: 10px !important; margin-bottom: 15px !important; }
+    h1 { font-size: 20px !important; }
+    .stSlider label { font-size: 12px !important; }
+}
 </style>
 """
 
@@ -204,19 +219,16 @@ if check_password():
         with tab3:
             st.markdown(w1_coupon_html, unsafe_allow_html=True)
 
-    # SAYFA 3: DASHDASH (HAFTALIK SİMÜLATÖR AYARLANDI)
+    # SAYFA 3: DASHDASH
     elif page == "📊 DASHDASH":
         st.title("📈 Performans Simülatörü")
         col_inp1, col_inp2 = st.columns(2)
         
         with col_inp1:
-            # BURASI ARTIK HAFTALIK HEDEF SORUYOR
             haftalik_oran = st.slider("Haftalık Hedef Kar (%)", 1.0, 50.0, 5.0)
         with col_inp2:
             sure = st.slider("Simülasyon Süresi (Gün)", 7, 180, 30)
         
-        # Matematik: (1 + haftalik_oran/100) ^ (gun / 7)
-        # Yani her 7 günde bir o oranı koyuyor.
         gelecek_degerler = [kasa * ((1 + haftalik_oran/100) ** (gun / 7)) for gun in range(sure)]
         
         df_chart = pd.DataFrame({"Gün": range(sure), "Kasa Tahmini ($)": gelecek_degerler})
@@ -234,4 +246,4 @@ if check_password():
         </div>
         """, unsafe_allow_html=True)
 
-    st.caption("OG Core v7.1 | Discipline is Profit.")
+    st.caption("OG Core v7.2 Mobile | Discipline is Profit.")
