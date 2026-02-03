@@ -255,7 +255,7 @@ if check_password():
             
         loot_bar_html = f"""
 <div class='loot-wrapper'>
-<div class='terminal-header' style='margin-bottom:30px;'>💎 HEDEF YOLCULUĞU (LOOT TRACK)</div>
+<div class='terminal-header' style='margin-bottom:45px;'>💎 HEDEF YOLCULUĞU (LOOT TRACK)</div>
 <div class='loot-track'>
 <div class='loot-fill' style='width: {current_pct}%;'></div>
 {markers_html}
