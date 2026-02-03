@@ -14,7 +14,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- 2. CSS STİLLERİ (HATA DÜZELTİLDİ: custom_css) ---
+# --- 2. CSS STİLLERİ ---
 custom_css = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
@@ -34,7 +34,7 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 300px;
+    height: 250px;
     color: #ffffff;
     overflow: hidden;
     margin-top: 50px;
@@ -53,13 +53,13 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
 }
 
 .retro-title {
-    font-size: 40px;
+    font-size: 45px;
     font-weight: bold;
     letter-spacing: 15px;
-    text-shadow: 0 0 10px rgba(255,255,255,0.5);
+    text-shadow: 0 0 12px rgba(255,255,255,0.6);
     border-bottom: 2px solid #ffffff;
-    padding-bottom: 10px;
-    margin-bottom: 20px;
+    padding-bottom: 15px;
+    margin-bottom: 10px;
     z-index: 3;
 }
 
@@ -83,13 +83,25 @@ div.stButton > button {
     font-weight: bold !important;
     letter-spacing: 5px !important;
     transition: all 0.2s ease !important;
+    height: 45px !important;
+    margin-top: 10px !important;
 }
 div.stButton > button:hover {
     background-color: #ffffff !important;
     color: #000000 !important;
 }
 
-/* SİSTEMİN DİĞER TASARIMLARI (DOKUNULMADI) */
+/* ALT GİRİŞ YAZISI */
+.bottom-login-text {
+    text-align: center;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: #555;
+    margin-top: 20px;
+    text-transform: uppercase;
+}
+
+/* SİSTEMİN DİĞER TASARIMLARI */
 :root { --soft-orange: #cc7a00; --win-green: #00ff41; --loss-red: #ff4b4b; --terminal-gray: #8b949e; }
 #MainMenu, footer, .stDeployButton {visibility: hidden !important;}
 [data-testid="stToolbar"] {visibility: hidden !important;}
@@ -109,7 +121,7 @@ div.stButton > button:hover {
 .terminal-header { color: var(--soft-orange); font-size: 14px; font-weight: bold; border-bottom: 1px dashed #30363d; padding-bottom: 5px; margin-bottom: 10px; text-transform: uppercase; }
 .terminal-row { display: flex; justify-content: space-between; font-size: 13px; color: #e6edf3; margin-bottom: 6px; }
 
-/* LOOT BAR (KORUNDU) */
+/* LOOT BAR */
 .loot-wrapper { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px 25px 50px 25px; margin-bottom: 25px; position: relative; }
 .loot-track { background: #21262d; height: 14px; border-radius: 7px; width: 100%; position: relative; margin-top: 45px; }
 .loot-fill { background: linear-gradient(90deg, #cc7a00, #ffae00); height: 100%; border-radius: 7px; box-shadow: 0 0 15px rgba(204, 122, 0, 0.5); }
@@ -135,17 +147,23 @@ def check_password():
     if not st.session_state["password_correct"]:
         st.markdown(custom_css, unsafe_allow_html=True)
         
+        # ÜST BAŞLIK
         st.markdown('<div class="auth-wrapper"><div class="retro-title">OG_CORE</div></div>', unsafe_allow_html=True)
         
         col1, col2, col3 = st.columns([1,2,1])
         with col2:
-            pwd = st.text_input("AUTHORIZATION REQUIRED", type="password")
+            # AUTHORIZATION REQUIRED YAZISI KALDIRILDI (Label visibility collapsed)
+            pwd = st.text_input("ŞİFRE", type="password", label_visibility="collapsed")
             if st.button("EXECUTE LOGIN"):
                 if pwd == "1":
                     st.session_state["password_correct"] = True
                     st.rerun()
                 else:
                     st.error("ACCESS DENIED")
+            
+            # EN ALTTA KÜÇÜK GİRİŞ YAZISI
+            st.markdown('<div class="bottom-login-text">Giriş</div>', unsafe_allow_html=True)
+            
         return False
     return True
 
