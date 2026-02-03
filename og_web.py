@@ -14,8 +14,8 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- 2. CSS STİLLERİ ---
-ustom_css = """
+# --- 2. CSS STİLLERİ (HATA DÜZELTİLDİ: custom_css) ---
+custom_css = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
 
@@ -34,9 +34,10 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 70vh;
+    height: 300px;
     color: #ffffff;
     overflow: hidden;
+    margin-top: 50px;
 }
 
 /* SCANLINE (TARAMA ÇİZGİSİ) EFECT */
@@ -51,50 +52,25 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
     pointer-events: none;
 }
 
-.retro-logo-container {
-    text-align: center;
-    margin-bottom: 40px;
-    z-index: 3;
-}
-
-/* Opsiyonel Fotoğraf Alanı */
-.retro-image {
-    width: 150px;
-    filter: grayscale(100%) contrast(150%) brightness(80%);
-    border: 1px solid #333;
-    padding: 5px;
-    margin-bottom: 20px;
-}
-
 .retro-title {
-    font-size: 28px;
+    font-size: 40px;
     font-weight: bold;
-    letter-spacing: 8px;
+    letter-spacing: 15px;
     text-shadow: 0 0 10px rgba(255,255,255,0.5);
     border-bottom: 2px solid #ffffff;
     padding-bottom: 10px;
-    margin-bottom: 5px;
-}
-
-.retro-subtitle {
-    font-size: 12px;
-    color: #666;
-    letter-spacing: 2px;
+    margin-bottom: 20px;
+    z-index: 3;
 }
 
 /* GİRİŞ KUTUSU */
 .stTextInput > div > div > input {
     background-color: transparent !important;
-    border: 1px solid #444 !important;
+    border: 1px solid #ffffff !important;
     color: white !important;
     text-align: center;
     border-radius: 0px !important;
     font-size: 18px !important;
-    padding: 20px !important;
-}
-.stTextInput > div > div > input:focus {
-    border-color: #ffffff !important;
-    box-shadow: 0 0 15px rgba(255,255,255,0.2) !important;
 }
 
 /* EXECUTE BUTONU */
@@ -103,15 +79,14 @@ div.stButton > button {
     color: white !important;
     border: 1px solid #ffffff !important;
     border-radius: 0px !important;
-    padding: 15px 40px !important;
+    width: 100% !important;
     font-weight: bold !important;
-    letter-spacing: 3px !important;
+    letter-spacing: 5px !important;
     transition: all 0.2s ease !important;
 }
 div.stButton > button:hover {
     background-color: #ffffff !important;
     color: #000000 !important;
-    box-shadow: 0 0 20px rgba(255,255,255,0.4) !important;
 }
 
 /* SİSTEMİN DİĞER TASARIMLARI (DOKUNULMADI) */
@@ -128,9 +103,6 @@ div.stButton > button:hover {
     border-radius: 0 8px 8px 0 !important;
     width: 50px !important; height: 50px !important;
     left: 0 !important; top: 10px !important; z-index: 9999999 !important;
-}
-[data-testid="stSidebarCollapsedControl"] button, [data-testid="stSidebarCollapsedControl"] svg {
-    color: white !important; fill: white !important; 
 }
 
 .industrial-card { background: rgba(255, 255, 255, 0.02); border-left: 3px solid var(--soft-orange); border-radius: 4px; padding: 15px; margin-bottom: 20px; }
@@ -162,7 +134,8 @@ if "password_correct" not in st.session_state:
 def check_password():
     if not st.session_state["password_correct"]:
         st.markdown(custom_css, unsafe_allow_html=True)
-        st.markdown("<div class='auth-header'>OG_CORE</div>", unsafe_allow_html=True)
+        
+        st.markdown('<div class="auth-wrapper"><div class="retro-title">OG_CORE</div></div>', unsafe_allow_html=True)
         
         col1, col2, col3 = st.columns([1,2,1])
         with col2:
