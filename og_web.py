@@ -184,7 +184,7 @@ if check_password():
 
     elif page == "⚽ FORMLINE":
         st.title("⚽ FORMLINE ANALİZ")
-        tab1, tab2, tab3 = st.tabs(["🔥 W3 (8-9 Şub)", "✅ W2 (1-2 Şub)", "⏪ W1 (Geçmiş)"])
+        tab1, tab2, tab3 = st.tabs(["⏳ W3", "✅ W2", "❌ W1"])
         with tab1:
             st.markdown(w3_coupon_html, unsafe_allow_html=True)
         with tab2:
