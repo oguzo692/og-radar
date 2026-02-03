@@ -291,7 +291,7 @@ if check_password():
         with col_inp1:
             haftalik_oran = st.slider("Haftalık Hedef Kar (%)", 1.0, 50.0, 5.0)
         with col_inp2:
-            sure = st.slider("Simülasyon Süresi (Gün)", 7, 90, 30)
+            sure = st.slider("Simülasyon Süresi (Gün)", 7, 120, 30)
         
         gelecek_degerler = [kasa * ((1 + haftalik_oran/100) ** (gun / 7)) for gun in range(sure)]
         
