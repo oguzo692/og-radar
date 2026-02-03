@@ -1,6 +1,6 @@
 import streamlit as st
 import yfinance as yf
-from datetime import datetime, timedelta
+from datetime import datetime
 import pandas as pd
 import pytz
 import json
@@ -14,7 +14,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- 2. HTML ŞABLONLARI (Hata Vermemesi İçin En Üstte) ---
+# --- 2. HTML KUPON ŞABLONLARI (FORMLINE Hatasını Önler) ---
 w3_coupon_html = """
 <div class='industrial-card'>
     <div class='terminal-header'>🔥 W3 KUPONU</div>
@@ -24,96 +24,63 @@ w3_coupon_html = """
     <div class='terminal-row'><span>Lıve - Man City</span><span class='highlight'>lıve gol atar</span></div>
     <div class='terminal-row'><span>Fenerbahçe - Gençlerbirliği</span><span class='highlight'>fenerbahçe w & 2.5 üst</span></div>
     <hr style='border: 1px solid #30363d; margin: 10px 0;'>
-    <div class='terminal-row'><span class='dim'>oran: 8.79</span><span class='dim'>bet: 100 USD</span><span class='status-wait'>BEKLENİYOR ⏳</span></div>
+    <div class='terminal-row'><span class='dim'>oran: 8.79</span><span class='dim'>bet: 100 USD</span><span class='status-wait' style='color:#f1c40f;'>BEKLENİYOR ⏳</span></div>
 </div>
 """
 w2_coupon_html = """
 <div class='industrial-card' style='border-left-color: #00ff41;'>
     <div class='terminal-header' style='color:#00ff41;'>✅ W2 KUPONU - KAZANDI</div>
-    <div class='terminal-row'><span>Gala - Kayserispor</span><span class='win'>gala w & +2.5 üst ✅</span></div>
-    <div class='terminal-row'><span>Lıve - Newcastle</span><span class='win'>kg var ✅</span></div>
-    <div class='terminal-row'><span>Bvb - Heidenheim</span><span class='win'>bvb w & +1.5 üst ✅</span></div>
-    <div class='terminal-row'><span>Kocaelispor - Fenerbahçe</span><span class='win'>fenerbahçe w & 1.5 üst ✅</span></div>
+    <div class='terminal-row'><span>Gala - Kayserispor</span><span style='color:#00ff41;'>gala w & +2.5 üst ✅</span></div>
+    <div class='terminal-row'><span>Lıve - Newcastle</span><span style='color:#00ff41;'>kg var ✅</span></div>
+    <div class='terminal-row'><span>Bvb - Heidenheim</span><span style='color:#00ff41;'>bvb w & +1.5 üst ✅</span></div>
+    <div class='terminal-row'><span>Kocaelispor - Fenerbahçe</span><span style='color:#00ff41;'>fenerbahçe w & 1.5 üst ✅</span></div>
     <hr style='border: 1px solid #30363d; margin: 10px 0;'>
-    <div class='terminal-row'><span class='dim'>oran: 5.40</span><span class='dim'>bet: 100 USD</span><span class='win'>SONUÇLANDI +540 USD</span></div>
+    <div class='terminal-row'><span class='dim'>oran: 5.40</span><span class='dim'>bet: 100 USD</span><span style='color:#00ff41;'>SONUÇLANDI +540 USD</span></div>
 </div>
 """
 w1_coupon_html = """
 <div class='industrial-card' style='border-left-color: #ff4b4b;'>
     <div class='terminal-header' style='color:#ff4b4b;'>❌ W1 KUPONU - KAYBETTİ</div>
-    <div class='terminal-row'><span>Karagümrük - Gala</span><span class='win'>gala w & 1.5 üst ✅</span></div>
-    <div class='terminal-row'><span>Bournemouth - Lıve</span><span class='win'>kg var ✅</span></div>
-    <div class='terminal-row'><span>Unıon Berlin - Bvb</span><span class='win'>bvb 0.5 üst ✅</span></div>
-    <div class='terminal-row'><span>Newcastle - Aston Villa</span><span class='loss'>newcastle 1.5 üst ❌</span></div>
-    <div class='terminal-row'><span>Fenerbahçe - Göztepe</span><span class='loss'>fenerbahçe w ❌</span></div>
+    <div class='terminal-row'><span>Karagümrük - Gala</span><span style='color:#00ff41;'>gala w & 1.5 üst ✅</span></div>
+    <div class='terminal-row'><span>Bournemouth - Lıve</span><span style='color:#00ff41;'>kg var ✅</span></div>
+    <div class='terminal-row'><span>Unıon Berlin - Bvb</span><span style='color:#00ff41;'>bvb 0.5 üst ✅</span></div>
+    <div class='terminal-row'><span>Newcastle - Aston Villa</span><span style='color:#ff4b4b;'>newcastle 1.5 üst ❌</span></div>
+    <div class='terminal-row'><span>Fenerbahçe - Göztepe</span><span style='color:#ff4b4b;'>fenerbahçe w ❌</span></div>
     <hr style='border: 1px solid #30363d; margin: 10px 0;'>
-    <div class='terminal-row'><span class='dim'>oran: 7.09</span><span class='dim'>bet: 100 USD</span><span class='loss'>SONUÇLANDI -100 USD</span></div>
+    <div class='terminal-row'><span class='dim'>oran: 7.09</span><span class='dim'>bet: 100 USD</span><span style='color:#ff4b4b;'>SONUÇLANDI -100 USD</span></div>
 </div>
 """
 
-# --- 3. CSS STİLLERİ ---
+# --- 3. CSS (RETRO + PARLAK HEDEFLER) ---
 custom_css = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
-
 .main { background-color: #050505 !important; }
 body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, span, h1, h2, h3, button, input { 
     font-family: 'JetBrains Mono', monospace !important; 
 }
-
-/* --- 📺 RETRO AUTH EKRANI --- */
-.auth-wrapper {
-    position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center;
-    height: 250px; color: #ffffff; overflow: hidden; margin-top: 50px;
-}
-.auth-wrapper::before {
-    content: " "; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
-    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-    z-index: 2; background-size: 100% 4px, 3px 100%; pointer-events: none;
-}
-.retro-title {
-    font-size: 45px; font-weight: bold; letter-spacing: 15px; text-shadow: 0 0 12px rgba(255,255,255,0.6);
-    border-bottom: 2px solid #ffffff; padding-bottom: 15px; margin-bottom: 10px; z-index: 3;
-}
-.stTextInput > div > div > input { background-color: transparent !important; border: 1px solid #ffffff !important; color: white !important; text-align: center; border-radius: 0px !important; font-size: 18px !important; }
-div.stButton > button { background-color: transparent !important; color: white !important; border: 1px solid #ffffff !important; border-radius: 0px !important; width: 100% !important; font-weight: bold !important; letter-spacing: 5px !important; height: 45px !important; margin-top: 10px !important; }
+.auth-wrapper { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 250px; color: #ffffff; overflow: hidden; margin-top: 50px; }
+.auth-wrapper::before { content: " "; position: absolute; top: 0; left: 0; bottom: 0; right: 0; background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06)); z-index: 2; background-size: 100% 4px, 3px 100%; pointer-events: none; }
+.retro-title { font-size: 45px; font-weight: bold; letter-spacing: 15px; text-shadow: 0 0 12px rgba(255,255,255,0.6); border-bottom: 2px solid #ffffff; padding-bottom: 15px; margin-bottom: 10px; z-index: 3; }
+.stTextInput > div > div > input { background-color: transparent !important; border: 1px solid #ffffff !important; color: white !important; text-align: center; border-radius: 0px !important; }
+div.stButton > button { background-color: transparent !important; color: white !important; border: 1px solid #ffffff !important; border-radius: 0px !important; width: 100% !important; font-weight: bold !important; letter-spacing: 5px !important; height: 45px !important; }
 div.stButton > button:hover { background-color: #ffffff !important; color: #000000 !important; }
 
-/* --- 💎 LOOT BAR STİLİ (PARLAK SİMGELİ) --- */
-.loot-wrapper {
-    background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px 25px 50px 25px; margin-bottom: 25px; position: relative; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-}
-.loot-track {
-    background: #21262d; height: 14px; border-radius: 7px; width: 100%; position: relative; margin-top: 45px; 
-}
-.loot-fill {
-    background: linear-gradient(90deg, #cc7a00, #ffae00); height: 100%; border-radius: 7px; box-shadow: 0 0 15px rgba(204, 122, 0, 0.5);
-}
-.milestone {
-    position: absolute; top: 50%; transform: translate(-50%, -50%); width: 120px; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10; pointer-events: none;
-}
-.milestone-icon { position: absolute; bottom: 12px; font-size: 24px; transition: all 0.3s ease; text-shadow: 0 0 10px rgba(255,255,255,0.2); }
-.milestone.active .milestone-icon { text-shadow: 0 0 20px #ffae00, 0 0 30px #cc7a00; transform: scale(1.2); }
-.milestone-label { position: absolute; top: 15px; font-size: 11px; font-weight: bold; color: #8b949e; text-align: center; white-space: nowrap; }
+/* 💎 LOOT BAR & PARLAK HEDEFLER */
+.loot-wrapper { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px 25px 50px 25px; margin-bottom: 25px; position: relative; }
+.loot-track { background: #21262d; height: 14px; border-radius: 7px; width: 100%; position: relative; margin-top: 45px; }
+.loot-fill { background: linear-gradient(90deg, #cc7a00, #ffae00); height: 100%; border-radius: 7px; box-shadow: 0 0 15px rgba(204, 122, 0, 0.5); }
+.milestone { position: absolute; top: 50%; transform: translate(-50%, -50%); width: 120px; display: flex; flex-direction: column; align-items: center; z-index: 10; pointer-events: none; }
+.milestone-icon { font-size: 24px; transition: all 0.3s ease; }
+.milestone.active .milestone-icon { text-shadow: 0 0 15px #ffae00, 0 0 25px #cc7a00; transform: scale(1.2); }
+.milestone-label { font-size: 11px; font-weight: bold; color: #8b949e; text-align: center; margin-top: 30px; white-space: nowrap; }
 .milestone.active .milestone-label { color: #e6edf3; }
 
-/* DİĞER TASARIMLAR */
-:root { --soft-orange: #cc7a00; --win-green: #00ff41; --loss-red: #ff4b4b; --terminal-gray: #8b949e; }
-#MainMenu, footer, .stDeployButton {visibility: hidden !important;}
-[data-testid="stToolbar"] {visibility: hidden !important;}
-[data-testid="stDecoration"] {display:none;}
-[data-testid="stSidebarNav"] {border-right: 1px solid #30363d;}
-[data-testid="stSidebarCollapsedControl"] { display: flex !important; background-color: #cc7a00 !important; border-radius: 0 8px 8px 0 !important; width: 50px !important; height: 50px !important; left: 0 !important; top: 10px !important; z-index: 9999999 !important; }
-.industrial-card { background: rgba(255, 255, 255, 0.02); border-left: 3px solid var(--soft-orange); border-radius: 4px; padding: 15px; margin-bottom: 20px; }
-.terminal-header { color: var(--soft-orange); font-size: 14px; font-weight: bold; border-bottom: 1px dashed #30363d; padding-bottom: 5px; margin-bottom: 10px; text-transform: uppercase; }
+.industrial-card { background: rgba(255, 255, 255, 0.02); border-left: 3px solid #cc7a00; border-radius: 4px; padding: 15px; margin-bottom: 20px; }
+.terminal-header { color: #cc7a00; font-size: 14px; font-weight: bold; border-bottom: 1px dashed #30363d; padding-bottom: 5px; margin-bottom: 10px; text-transform: uppercase; }
 .terminal-row { display: flex; justify-content: space-between; font-size: 13px; color: #e6edf3; margin-bottom: 6px; }
-.highlight { color: var(--soft-orange); }
-.win { color: var(--win-green); }
-.loss { color: var(--loss-red); }
-.dim { color: var(--terminal-gray); }
-.status-wait { color: #f1c40f; font-weight: bold; }
-section[data-testid="stSidebar"] { background-color: #010409 !important; border-right: 1px solid #30363d; }
-.time-widget { display: block; width: 100%; padding: 0.3rem; font-size: 13px; font-weight: bold; color: #8b949e; text-align: center; background-color: #0d1117; border: 1px solid #30363d; border-radius: 0.25rem; margin-bottom: 8px; }
+.highlight { color: #cc7a00; }
+[data-testid="stSidebarCollapsedControl"] { display: flex !important; background-color: #cc7a00 !important; border-radius: 0 8px 8px 0 !important; }
 </style>
 """
 
@@ -132,8 +99,7 @@ def check_password():
                 if pwd == "1":
                     st.session_state["password_correct"] = True
                     st.rerun()
-                else:
-                    st.error("ACCESS DENIED")
+                else: st.error("ACCESS DENIED")
         return False
     return True
 
@@ -165,7 +131,7 @@ if check_password():
         gunluk_yakim = st.slider("HARCAMA ($/GÜN)", 0, 100, game_data["yakim"], key="yakim_input", on_change=save_game_data)
         st.divider()
         tr_tz = pytz.timezone('Europe/Istanbul')
-        st.markdown(f"<div class='time-widget'>🕒 {datetime.now(tr_tz).strftime('%H:%M:%S')}</div>", unsafe_allow_html=True)
+        st.markdown(f"<div style='text-align:center; font-size:13px; color:#8b949e; background:#0d1117; padding:5px; border:1px solid #30363d; border-radius:4px;'>🕒 {datetime.now(tr_tz).strftime('%H:%M:%S')}</div>", unsafe_allow_html=True)
         if st.button("🔴 ÇIKIŞ YAP", use_container_width=True): 
             st.session_state["password_correct"] = False
             st.rerun()
@@ -175,7 +141,7 @@ if check_password():
         kar_yuzdesi = (net_kar / ana_para) * 100 if ana_para > 0 else 0
         tl_karsiligi = kasa * 33.50
         
-        # --- 💎 LOOT BAR SİSTEMİ (RE-FIXED) ---
+        # --- 💎 LOOT BAR ---
         targets = [
             {"val": 1000, "icon": "📱", "name": "TELEFON"},
             {"val": 2500, "icon": "🏖️", "name": "TATİL"},
@@ -188,7 +154,7 @@ if check_password():
         for t in targets:
             pos = (t["val"] / max_target) * 100
             is_active = "active" if kasa >= t["val"] else ""
-            icon_display = t['icon'] if kasa >= t["val"] else "🔒"
+            icon_display = "✅" if kasa >= t["val"] else "🔒"
             markers_html += f"""
             <div class='milestone {is_active}' style='left: {pos}%;'>
                 <div class='milestone-icon'>{icon_display}</div>
@@ -221,14 +187,13 @@ if check_password():
             
         with col_omur:
             gun_omru = int(kasa / gunluk_yakim) if gunluk_yakim > 0 else 999
-            st.markdown(f"<div class='industrial-card'><div class='terminal-header'>💀 FON ÖMRÜ</div><h2 style='text-align:center;'>{gun_omru} GÜN</h2></div>", unsafe_allow_html=True)
+            st.markdown(f"<div class='industrial-card'><div class='terminal-header'>💀 FON ÖMRÜ</div><h2 style='text-align:center; color:#e6edf3;'>{gun_omru} GÜN</h2></div>", unsafe_allow_html=True)
 
         st.subheader("🎯 Üye Payları")
         pay = kasa / 3
         kisi_basi_kar = net_kar / 3
         c1, c2, c3 = st.columns(3)
-        users = ["oguzo", "ero7", "fybey"]
-        for col, user in zip([c1, c2, c3], users):
+        for col, user in zip([c1, c2, c3], ["oguzo", "ero7", "fybey"]):
             with col:
                 st.markdown(f"""<div class='industrial-card'><div class='terminal-header'>{user.upper()}</div><div class='terminal-row'><span>PAY</span><span class='highlight'>${pay:,.2f}</span></div><div class='terminal-row'><span>KAR</span><span style='color:{"#00ff41" if kisi_basi_kar>=0 else "#ff4b4b"}'>{kisi_basi_kar:+.2f}</span></div></div>""", unsafe_allow_html=True)
 
