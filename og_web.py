@@ -91,16 +91,6 @@ div.stButton > button:hover {
     color: #000000 !important;
 }
 
-/* ALT GİRİŞ YAZISI */
-.bottom-login-text {
-    text-align: center;
-    font-size: 11px;
-    letter-spacing: 3px;
-    color: #555;
-    margin-top: 20px;
-    text-transform: uppercase;
-}
-
 /* SİSTEMİN DİĞER TASARIMLARI */
 :root { --soft-orange: #cc7a00; --win-green: #00ff41; --loss-red: #ff4b4b; --terminal-gray: #8b949e; }
 #MainMenu, footer, .stDeployButton {visibility: hidden !important;}
@@ -152,7 +142,6 @@ def check_password():
         
         col1, col2, col3 = st.columns([1,2,1])
         with col2:
-            # AUTHORIZATION REQUIRED YAZISI KALDIRILDI (Label visibility collapsed)
             pwd = st.text_input("ŞİFRE", type="password", label_visibility="collapsed")
             if st.button("EXECUTE LOGIN"):
                 if pwd == "1":
@@ -160,9 +149,6 @@ def check_password():
                     st.rerun()
                 else:
                     st.error("ACCESS DENIED")
-            
-            # EN ALTTA KÜÇÜK GİRİŞ YAZISI
-            st.markdown('<div class="bottom-login-text">Giriş</div>', unsafe_allow_html=True)
             
         return False
     return True
