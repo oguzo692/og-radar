@@ -7,7 +7,7 @@ import json
 import os
 
 # --- 1. AYARLAR ---
-st.set_page_config(page_title="OG Core v8.7", page_icon="🛡️", layout="wide")
+st.set_page_config(page_title="OG Core v8.8", page_icon="🛡️", layout="wide")
 
 # --- 2. CSS STİLLERİ ---
 custom_css = """
@@ -46,13 +46,13 @@ custom_css = """
 .dim { color: var(--terminal-gray); }
 .status-wait { color: #f1c40f; font-weight: bold; }
 
-/* --- 💎 LOOT BAR STİLİ (VISUAL FIXED) --- */
+/* --- 💎 LOOT BAR STİLİ (FIXED & SPACED) --- */
 .loot-wrapper {
     background: #161b22;
     border: 1px solid #30363d;
     border-radius: 8px;
-    /* İkon ve yazı taşmasın diye padding */
-    padding: 50px 25px 55px 25px; 
+    /* İkonlar ve yazılar için üstten/alttan geniş padding */
+    padding: 20px 25px 50px 25px; 
     margin-bottom: 25px;
     position: relative;
     box-shadow: 0 4px 12px rgba(0,0,0,0.3);
@@ -63,6 +63,8 @@ custom_css = """
     border-radius: 7px;
     width: 100%;
     position: relative;
+    /* Başlık ile bar arasına mesafe koyuyoruz ki ikonlar sıkışmasın */
+    margin-top: 45px; 
 }
 @keyframes fillAnimation { from { width: 0%; } }
 .loot-fill {
@@ -86,13 +88,13 @@ custom_css = """
 }
 .milestone-icon { 
     position: absolute;
-    bottom: 7px; /* Biraz daha yukarı aldık */
-    font-size: 20px; 
+    bottom: 25px; /* Barın üstüne */
+    font-size: 24px; 
     transition: all 0.3s ease;
 }
 .milestone-label { 
     position: absolute;
-    top: 15px; /* Biraz daha aşağı aldık */
+    top: 25px; /* Barın altına */
     font-size: 11px; 
     font-weight: bold; 
     color: #8b949e; 
@@ -100,22 +102,20 @@ custom_css = """
     white-space: nowrap;
     transition: all 0.3s ease;
 }
-/* --- AKTİF HEDEF GÖRÜNÜMÜ (DÜZELTİLDİ) --- */
+/* Aktif Hedef Efekti (Daha Sade Neon) */
 .milestone.active .milestone-label { 
     color: #00ff41; 
-    /* Daha keskin, daha az bulanık parlama */
-    text-shadow: 0 0 4px #00ff41; 
+    text-shadow: 0 0 5px rgba(0, 255, 65, 0.6); 
 }
 .milestone.active .milestone-icon { 
-    /* Çok büyümesin, hafifçe öne çıksın */
-    transform: scale(1.05); 
-    text-shadow: 0 0 10px rgba(255,255,255,0.5); 
+    transform: scale(1.1); /* Hafif büyüme */
+    text-shadow: 0 0 10px rgba(255,255,255,0.4); 
 }
 
 h1, h2, h3 { color: #e6edf3 !important; }
 section[data-testid="stSidebar"] { background-color: #010409 !important; border-right: 1px solid #30363d; }
 
-/* --- 🔥 COMPACT SIDEBAR --- */
+/* --- COMPACT SIDEBAR --- */
 section[data-testid="stSidebar"] div.stButton > button {
     padding-top: 0.3rem;
     padding-bottom: 0.3rem;
@@ -233,29 +233,28 @@ if check_password():
         kar_yuzdesi = (net_kar / ana_para) * 100 if ana_para > 0 else 0
         tl_karsiligi = kasa * 33.50
         
-        # --- 💎 LOOT BAR (MATH & VISUAL FIX) ---
+        # --- 💎 LOOT BAR FIX ---
         targets = [
             {"val": 1000, "icon": "📱", "name": "TELEFON"},
             {"val": 2500, "icon": "🏖️", "name": "TATİL"},
             {"val": 5000, "icon": "🏎️", "name": "ARABA"},
         ]
-        # DÜZELTME 1: Barın sonunu daha ileri aldık (1.5 katı)
-        # Böylece küçük rakamlar (600$) barın başında daha az yer kaplayacak.
-        max_target = targets[-1]["val"] * 1.5 
+        # MATEMATİK FIX: Barın sonu, son hedefin 1.3 katı olsun (Ne çok boş ne çok dolu)
+        max_target = targets[-1]["val"] * 1.3 
         current_pct = min(100, (kasa / max_target) * 100)
         
         markers_html = ""
-        acquired_milestones = []
         for t in targets:
             pos = (t["val"] / max_target) * 100
             is_active = "active" if kasa >= t["val"] else ""
             icon_display = t['icon'] if kasa >= t["val"] else "🔒"
-            if kasa >= t["val"]: acquired_milestones.append(t)
             markers_html += f"<div class='milestone {is_active}' style='left: {pos}%;'><div class='milestone-icon'>{icon_display}</div><div class='milestone-label'>{t['name']} (${t['val']})</div></div>"
             
+        # CSS FIX: Başlıkta border-bottom: none komutu eklendi.
         loot_bar_html = f"""
 <div class='loot-wrapper'>
-<div class='terminal-header' style='margin-bottom:20px;'>💎 HEDEF YOLCULUĞU (LOOT TRACK)</div>
+<div class='terminal-header' style='margin-bottom:0px; border-bottom:none;'>💎 HEDEF YOLCULUĞU (LOOT TRACK)</div>
+<div class='loot-track'>
 <div class='loot-fill' style='width: {current_pct}%;'></div>
 {markers_html}
 </div>
@@ -267,7 +266,7 @@ if check_password():
 
         st.markdown(f"""
 <div class='industrial-card'>
-<div class='terminal-header'>💎 OG TRADE RADAR — v8.7 (VISUAL FIX)</div>
+<div class='terminal-header'>💎 OG TRADE RADAR — v8.8 (FIXED)</div>
 <div class='terminal-row'><span>🕒 SON GÜNCELLEME</span><span>{datetime.now(tr_tz).strftime('%H:%M:%S')}</span></div>
 <div class='terminal-row'><span>💰 TOPLAM KASA</span><span class='highlight'>${kasa:,.2f} (≈ {tl_karsiligi:,.0f} TL)</span></div>
 <div class='terminal-row'><span>🚀 NET KAR/ZARAR</span><span style='color:{"#00ff41" if net_kar >=0 else "#ff4b4b"}'>{net_kar:,.2f} USD (%{kar_yuzdesi:.1f})</span></div>
@@ -347,4 +346,4 @@ if check_password():
 </div>
 """, unsafe_allow_html=True)
 
-    st.caption("OG Core v8.7 | Fybey e aittir.")
+    st.caption("OG Core v8.8 | Fybey e aittir.")
