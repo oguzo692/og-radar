@@ -69,7 +69,7 @@ def load_game_data():
         try:
             with open(SAVE_FILE, "r") as f: return json.load(f)
         except: pass
-    return {"kasa": 600.0, "ana_para": 500.0, "yakim": 20}
+    return {"kasa": 600.0, "ana_para": 600.0, "yakim": 20}
 
 def save_game_data():
     data = {"kasa": st.session_state.kasa_input, "ana_para": st.session_state.ana_input, "yakim": st.session_state.yakim_input}
@@ -83,6 +83,7 @@ if check_password():
 
     with st.sidebar:
         st.markdown("<h2 style='color:#cc7a00;'>🛡️ OG CORE</h2>", unsafe_allow_html=True)
+        # --- BURASI SENİN GİDEN SEKMELERİN ---
         page = st.radio("SİSTEM MODÜLLERİ", ["⚡ ULTRA FON", "⚽ FORMLINE", "📊 DASHDASH"])
         st.divider()
         kasa = st.number_input("TOPLAM KASA (USD)", value=game_data["kasa"], step=10.0, key="kasa_input")
@@ -122,6 +123,13 @@ if check_password():
         with col2:
             omur = int(kasa / gunluk_yakim) if gunluk_yakim > 0 else 999
             st.markdown(f"<div class='industrial-card'><div class='terminal-header'>💀 FON ÖMRÜ</div><h2 style='text-align:center;'>{omur} GÜN</h2></div>", unsafe_allow_html=True)
+
+        pay, kisi_kar = kasa/3, net_kar/3
+        st.subheader("🎯 Üye Payları")
+        c1, c2, c3 = st.columns(3)
+        for c, u in zip([c1, c2, c3], ["OGUZO", "ERO7", "FYBEY"]):
+            with c:
+                st.markdown(f"<div class='industrial-card'><div class='terminal-header'>{u}</div><div class='terminal-row'><span>PAY</span><span class='highlight'>${pay:,.2f}</span></div><div class='terminal-row'><span>KAR</span><span style='color:{"#00ff41" if kisi_kar>=0 else "#ff4b4b"}'>{kisi_kar:+.2f}</span></div></div>", unsafe_allow_html=True)
 
     elif page == "⚽ FORMLINE":
         st.title("⚽ FORMLINE")
