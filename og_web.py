@@ -5,7 +5,7 @@ import pandas as pd
 import pytz
 
 # --- 1. AYARLAR ---
-st.set_page_config(page_title="OG Core v7.9", page_icon="🛡️", layout="wide")
+st.set_page_config(page_title="OG Core v8.0", page_icon="🛡️", layout="wide")
 
 # --- 2. CSS STİLLERİ ---
 custom_css = """
@@ -49,8 +49,8 @@ custom_css = """
     background: #161b22;
     border: 1px solid #30363d;
     border-radius: 8px;
-    padding: 20px 20px 40px 20px; /* Alt boşluğu artırdım ikonlar için */
-    margin-bottom: 20px;
+    padding: 20px 20px 45px 20px; /* Alt boşluk artırıldı */
+    margin-bottom: 25px;
     position: relative;
     box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
@@ -60,7 +60,7 @@ custom_css = """
     border-radius: 7px;
     width: 100%;
     position: relative;
-    margin-top: 10px;
+    margin-top: 15px;
 }
 @keyframes fillAnimation { from { width: 0%; } }
 .loot-fill {
@@ -72,14 +72,15 @@ custom_css = """
 }
 .milestone {
     position: absolute;
-    top: -30px; /* Barın üstüne */
+    top: -35px;
     transform: translateX(-50%);
     text-align: center;
-    width: 80px; /* Genişlik verdim kaymasın */
+    width: 100px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    z-index: 10;
 }
 .milestone-icon { font-size: 20px; margin-bottom: 2px; }
 .milestone-label { font-size: 10px; font-weight: bold; color: #8b949e; line-height: 1.1; }
@@ -172,7 +173,7 @@ if check_password():
         kar_yuzdesi = (net_kar / ana_para) * 100 if ana_para > 0 else 0
         tl_karsiligi = kasa * 33.50
         
-        # --- 💎 LOOT BAR (DÜZELTİLDİ: Tek Satır HTML) ---
+        # --- 💎 LOOT BAR FIX (SOLA YAPIŞIK YAZILDI) ---
         targets = [
             {"val": 1000, "icon": "📱", "name": "TELEFON"},
             {"val": 2500, "icon": "🏖️", "name": "TATİL"},
@@ -188,32 +189,32 @@ if check_password():
             pos = (t["val"] / max_target) * 100
             is_active = "active" if kasa >= t["val"] else ""
             icon_display = t['icon'] if kasa >= t["val"] else "🔒"
+            if kasa >= t["val"]: acquired_milestones.append(t)
             
-            if kasa >= t["val"]:
-                acquired_milestones.append(t)
-            
-            # HTML'i tek satırda birleştiriyoruz ki Markdown bozulmasın
+            # TEK SATIR HALİNDE BİRLEŞTİRME
             markers_html += f"<div class='milestone {is_active}' style='left: {pos}%;'><div class='milestone-icon'>{icon_display}</div><div class='milestone-label'>{t['name']} (${t['val']})</div></div>"
             
-        st.markdown(f"""
-        <div class='loot-wrapper'>
-            <div class='terminal-header' style='margin-bottom:30px;'>💎 HEDEF YOLCULUĞU (LOOT TRACK)</div>
-            <div class='loot-track'>
-                <div class='loot-fill' style='width: {current_pct}%;'></div>
-                {markers_html}
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+        # HTML STRINGI SOLA DAYALI OLUŞTURULUYOR
+        loot_bar_html = f"""
+<div class='loot-wrapper'>
+<div class='terminal-header' style='margin-bottom:30px;'>💎 HEDEF YOLCULUĞU (LOOT TRACK)</div>
+<div class='loot-track'>
+<div class='loot-fill' style='width: {current_pct}%;'></div>
+{markers_html}
+</div>
+</div>
+"""
+        st.markdown(loot_bar_html, unsafe_allow_html=True)
         # -----------------------------------------------
 
         st.markdown(f"""
-        <div class='industrial-card'>
-            <div class='terminal-header'>💎 OG TRADE RADAR — v7.9</div>
-            <div class='terminal-row'><span>🕒 SON GÜNCELLEME</span><span>{datetime.now(tr_tz).strftime('%H:%M:%S')}</span></div>
-            <div class='terminal-row'><span>💰 TOPLAM KASA</span><span class='highlight'>${kasa:,.2f} (≈ {tl_karsiligi:,.0f} TL)</span></div>
-            <div class='terminal-row'><span>🚀 NET KAR/ZARAR</span><span style='color:{"#00ff41" if net_kar >=0 else "#ff4b4b"}'>{net_kar:,.2f} USD (%{kar_yuzdesi:.1f})</span></div>
-        </div>
-        """, unsafe_allow_html=True)
+<div class='industrial-card'>
+<div class='terminal-header'>💎 OG TRADE RADAR — v8.0</div>
+<div class='terminal-row'><span>🕒 SON GÜNCELLEME</span><span>{datetime.now(tr_tz).strftime('%H:%M:%S')}</span></div>
+<div class='terminal-row'><span>💰 TOPLAM KASA</span><span class='highlight'>${kasa:,.2f} (≈ {tl_karsiligi:,.0f} TL)</span></div>
+<div class='terminal-row'><span>🚀 NET KAR/ZARAR</span><span style='color:{"#00ff41" if net_kar >=0 else "#ff4b4b"}'>{net_kar:,.2f} USD (%{kar_yuzdesi:.1f})</span></div>
+</div>
+""", unsafe_allow_html=True)
 
         col_piyasa, col_omur = st.columns([2, 1])
         with col_piyasa:
@@ -228,24 +229,24 @@ if check_password():
                 btc, eth, sol = 0, 0, 0
             
             st.markdown(f"""
-            <div class='industrial-card'>
-                <div class='terminal-header'>📊 PİYASA</div>
-                <div class='terminal-row'><span>🟠 BTC</span><span>${btc:,.2f}</span></div>
-                <div class='terminal-row'><span>🔵 ETH</span><span>${eth:,.2f}</span></div>
-                <div class='terminal-row'><span>🟣 SOL</span><span>${sol:,.2f}</span></div>
-            </div>
-            """, unsafe_allow_html=True)
+<div class='industrial-card'>
+<div class='terminal-header'>📊 PİYASA</div>
+<div class='terminal-row'><span>🟠 BTC</span><span>${btc:,.2f}</span></div>
+<div class='terminal-row'><span>🔵 ETH</span><span>${eth:,.2f}</span></div>
+<div class='terminal-row'><span>🟣 SOL</span><span>${sol:,.2f}</span></div>
+</div>
+""", unsafe_allow_html=True)
             
         with col_omur:
             gun_omru = int(kasa / gunluk_yakim) if gunluk_yakim > 0 else 999
             renk_durumu = "#ff4b4b" if gun_omru < 14 else "#00ff41"
             st.markdown(f"""
-            <div class='industrial-card' style='border-left-color: {renk_durumu};'>
-                <div class='terminal-header' style='color:{renk_durumu};'>💀 FON ÖMRÜ</div>
-                <h2 style='text-align:center; color:{renk_durumu}; margin:10px 0;'>{gun_omru} GÜN</h2>
-                <div style='text-align:center; font-size:11px; color:#8b949e;'>Yakma hızı: ${gunluk_yakim}/gün</div>
-            </div>
-            """, unsafe_allow_html=True)
+<div class='industrial-card' style='border-left-color: {renk_durumu};'>
+<div class='terminal-header' style='color:{renk_durumu};'>💀 FON ÖMRÜ</div>
+<h2 style='text-align:center; color:{renk_durumu}; margin:10px 0;'>{gun_omru} GÜN</h2>
+<div style='text-align:center; font-size:11px; color:#8b949e;'>Yakma hızı: ${gunluk_yakim}/gün</div>
+</div>
+""", unsafe_allow_html=True)
 
         st.subheader("🎯 Üye Payları")
         pay = kasa / 3
@@ -255,12 +256,12 @@ if check_password():
         for col, user in zip([c1, c2, c3], users):
             with col:
                 st.markdown(f"""
-                <div class='industrial-card'>
-                    <div class='terminal-header'>{user.upper()}</div>
-                    <div class='terminal-row'><span>PAY</span><span class='highlight'>${pay:,.2f}</span></div>
-                    <div class='terminal-row'><span>KAR</span><span style='color:{"#00ff41" if kisi_basi_kar>=0 else "#ff4b4b"}'>{kisi_basi_kar:+.2f}</span></div>
-                </div>
-                """, unsafe_allow_html=True)
+<div class='industrial-card'>
+<div class='terminal-header'>{user.upper()}</div>
+<div class='terminal-row'><span>PAY</span><span class='highlight'>${pay:,.2f}</span></div>
+<div class='terminal-row'><span>KAR</span><span style='color:{"#00ff41" if kisi_basi_kar>=0 else "#ff4b4b"}'>{kisi_basi_kar:+.2f}</span></div>
+</div>
+""", unsafe_allow_html=True)
         
         # --- 📜 LOOT HISTORY (GANİMET GÜNLÜĞÜ) ---
         if acquired_milestones:
@@ -302,11 +303,11 @@ if check_password():
         st.divider()
         
         st.markdown("""
-        <div class='industrial-card'>
-            <div class='terminal-header'>🏁 FORM VE SERİ (STREAK)</div>
-            <div class='terminal-row'><span>SON 5 İŞLEM</span><span>✅ ✅ ❌ ✅ ✅</span></div>
-            <div class='terminal-row'><span>MOMENTUM</span><span class='highlight'>+3 (GÜÇLÜ)</span></div>
-        </div>
-        """, unsafe_allow_html=True)
+<div class='industrial-card'>
+<div class='terminal-header'>🏁 FORM VE SERİ (STREAK)</div>
+<div class='terminal-row'><span>SON 5 İŞLEM</span><span>✅ ✅ ❌ ✅ ✅</span></div>
+<div class='terminal-row'><span>MOMENTUM</span><span class='highlight'>+3 (GÜÇLÜ)</span></div>
+</div>
+""", unsafe_allow_html=True)
 
-    st.caption("OG Core v7.9 | Discipline is Profit.")
+    st.caption("OG Core v8.0 | Discipline is Profit.")
