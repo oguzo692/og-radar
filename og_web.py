@@ -7,7 +7,7 @@ import json
 import os
 
 # --- 1. AYARLAR ---
-st.set_page_config(page_title="OG Core v8.4", page_icon="🛡️", layout="wide")
+st.set_page_config(page_title="OG Core v8.6", page_icon="🛡️", layout="wide")
 
 # --- 2. CSS STİLLERİ ---
 custom_css = """
@@ -46,12 +46,12 @@ custom_css = """
 .dim { color: var(--terminal-gray); }
 .status-wait { color: #f1c40f; font-weight: bold; }
 
-/* --- 💎 LOOT BAR STİLİ --- */
+/* --- 💎 LOOT BAR STİLİ (SANDVİÇ DÜZENİ) --- */
 .loot-wrapper {
     background: #161b22;
     border: 1px solid #30363d;
     border-radius: 8px;
-    padding: 20px 20px 45px 20px; 
+    padding: 50px 20px 50px 20px; 
     margin-bottom: 25px;
     position: relative;
     box-shadow: 0 4px 12px rgba(0,0,0,0.3);
@@ -62,7 +62,6 @@ custom_css = """
     border-radius: 7px;
     width: 100%;
     position: relative;
-    margin-top: 15px;
 }
 @keyframes fillAnimation { from { width: 0%; } }
 .loot-fill {
@@ -74,39 +73,49 @@ custom_css = """
 }
 .milestone {
     position: absolute;
-    top: -35px;
-    transform: translateX(-50%);
-    text-align: center;
-    width: 100px;
+    top: 50%; 
+    transform: translate(-50%, -50%);
+    width: 120px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     z-index: 10;
+    pointer-events: none;
 }
-.milestone-icon { font-size: 20px; margin-bottom: 2px; }
-.milestone-label { font-size: 10px; font-weight: bold; color: #8b949e; line-height: 1.1; }
-.milestone.active .milestone-label { color: #00ff41; text-shadow: 0 0 5px #00ff41; }
-.milestone.active .milestone-icon { text-shadow: 0 0 10px rgba(255,255,255,0.5); }
+.milestone-icon { 
+    position: absolute;
+    bottom: 20px; 
+    font-size: 24px; 
+    transition: all 0.3s;
+}
+.milestone-label { 
+    position: absolute;
+    top: 20px; 
+    font-size: 11px; 
+    font-weight: bold; 
+    color: #8b949e; 
+    text-align: center;
+    white-space: nowrap; 
+}
+.milestone.active .milestone-label { color: #00ff41; text-shadow: 0 0 8px rgba(0, 255, 65, 0.3); }
+.milestone.active .milestone-icon { transform: scale(1.2); text-shadow: 0 0 15px rgba(255,255,255,0.6); }
 
 h1, h2, h3 { color: #e6edf3 !important; }
 section[data-testid="stSidebar"] { background-color: #010409 !important; border-right: 1px solid #30363d; }
 
-/* --- 🔥 BUTON VE SAAT KÜÇÜLTME (COMPACT MOD) --- */
-/* Sidebar butonlarını daha ince yap */
+/* --- 🔥 COMPACT SIDEBAR --- */
 section[data-testid="stSidebar"] div.stButton > button {
     padding-top: 0.3rem;
     padding-bottom: 0.3rem;
     font-size: 13px;
     border: 1px solid #30363d;
 }
-/* Özel Buton Renkleri */
 button[kind="primary"] {
     background-color: #cc7a00 !important;
     color: white !important;
     border: none !important;
 }
-/* Saat Widget Stili */
 .time-widget {
     display: block;
     width: 100%;
@@ -118,7 +127,7 @@ button[kind="primary"] {
     background-color: #0d1117;
     border: 1px solid #30363d;
     border-radius: 0.25rem;
-    margin-bottom: 8px; /* Butonlar arası boşluk */
+    margin-bottom: 8px;
     font-family: 'JetBrains Mono', monospace;
 }
 </style>
@@ -173,26 +182,18 @@ def check_password():
         return False
     return True
 
-# --- 5. SAVE GAME SİSTEMİ (VERİTABANI) ---
+# --- 5. SAVE GAME SİSTEMİ ---
 SAVE_FILE = "og_save_data.json"
-
 def load_game_data():
     if os.path.exists(SAVE_FILE):
         try:
-            with open(SAVE_FILE, "r") as f:
-                return json.load(f)
-        except:
-            pass
+            with open(SAVE_FILE, "r") as f: return json.load(f)
+        except: pass
     return {"kasa": 600.0, "ana_para": 500.0, "yakim": 20}
 
 def save_game_data():
-    data = {
-        "kasa": st.session_state.kasa_input,
-        "ana_para": st.session_state.ana_input,
-        "yakim": st.session_state.yakim_input
-    }
-    with open(SAVE_FILE, "w") as f:
-        json.dump(data, f)
+    data = {"kasa": st.session_state.kasa_input, "ana_para": st.session_state.ana_input, "yakim": st.session_state.yakim_input}
+    with open(SAVE_FILE, "w") as f: json.dump(data, f)
     st.toast("💾 OYUN KAYDEDİLDİ", icon="✅")
 
 # --- 6. ANA UYGULAMA ---
@@ -204,30 +205,16 @@ if check_password():
         st.markdown("<h2 style='color:#cc7a00;'>🛡️ OG CORE</h2>", unsafe_allow_html=True)
         page = st.radio("SİSTEM MODÜLLERİ", ["⚡ ULTRA FON", "⚽ FORMLINE", "📊 DASHDASH"])
         st.divider()
-        
-        # INPUTLAR
         kasa = st.number_input("TOPLAM KASA (USD)", value=game_data["kasa"], step=10.0, key="kasa_input", on_change=save_game_data)
         ana_para = st.number_input("BAŞLANGIÇ SERMAYESİ", value=game_data["ana_para"], key="ana_input", on_change=save_game_data)
         gunluk_yakim = st.slider("GÜNLÜK ORT. HARCAMA ($)", 0, 100, game_data["yakim"], key="yakim_input", on_change=save_game_data)
+        st.write("") 
         
-        st.write("") # Boşluk
-        
-        # --- KÜÇÜLTÜLMÜŞ KONTROL PANELİ ---
         st.markdown("---")
-        
-        # 1. KAYDET BUTONU
-        if st.button("💾 AYARLARI KAYDET", type="primary", use_container_width=True, key="save_sidebar"):
-            save_game_data()
-
-        # 2. SAAT BARI (Buton gibi görünen HTML)
+        if st.button("💾 AYARLARI KAYDET", type="primary", use_container_width=True, key="save_sidebar"): save_game_data()
         tr_tz = pytz.timezone('Europe/Istanbul')
-        time_str = datetime.now(tr_tz).strftime('%H:%M:%S')
-        st.markdown(f"<div class='time-widget'>🕒 {time_str}</div>", unsafe_allow_html=True)
-        
-        # 3. ÇIKIŞ BUTONU
-        if st.button("🔴 ÇIKIŞ", use_container_width=True, key="exit_sidebar"):
-            st.session_state["password_correct"] = False
-            st.rerun()
+        st.markdown(f"<div class='time-widget'>🕒 {datetime.now(tr_tz).strftime('%H:%M:%S')}</div>", unsafe_allow_html=True)
+        if st.button("🔴 ÇIKIŞ", use_container_width=True, key="exit_sidebar"): st.session_state["password_correct"] = False; st.rerun()
 
     # SAYFA 1: ULTRA FON
     if page == "⚡ ULTRA FON":
@@ -237,9 +224,9 @@ if check_password():
         
         # --- 💎 LOOT BAR ---
         targets = [
-            {"val": 900, "icon": "📱", "name": "TELEFON"},
-            {"val": 1200, "icon": "🏖️", "name": "TATİL"},
-            {"val": 1800, "icon": "🏎️", "name": "ARABA"},
+            {"val": 1000, "icon": "📱", "name": "TELEFON"},
+            {"val": 2500, "icon": "🏖️", "name": "TATİL"},
+            {"val": 5000, "icon": "🏎️", "name": "ARABA"},
         ]
         max_target = targets[-1]["val"] * 1.2
         current_pct = min(100, (kasa / max_target) * 100)
@@ -255,7 +242,7 @@ if check_password():
             
         loot_bar_html = f"""
 <div class='loot-wrapper'>
-<div class='terminal-header' style='margin-bottom:30px;'>💎 HEDEF YOLCULUĞU (LOOT TRACK)</div>
+<div class='terminal-header' style='margin-bottom:20px;'>💎 HEDEF YOLCULUĞU (LOOT TRACK)</div>
 <div class='loot-track'>
 <div class='loot-fill' style='width: {current_pct}%;'></div>
 {markers_html}
@@ -264,15 +251,11 @@ if check_password():
 """
         st.markdown(loot_bar_html, unsafe_allow_html=True)
         
-        # YEDEK KAYDET BUTONU
-        if st.button("💾 HIZLI KAYDET", key="save_main"):
-            save_game_data()
-
-        # -----------------------------------------------
+        if st.button("💾 HIZLI KAYDET", key="save_main"): save_game_data()
 
         st.markdown(f"""
 <div class='industrial-card'>
-<div class='terminal-header'>💎 OG TRADE RADAR — v8.4 (COMPACT)</div>
+<div class='terminal-header'>💎 OG TRADE RADAR — v8.6 (MINIMALIST)</div>
 <div class='terminal-row'><span>🕒 SON GÜNCELLEME</span><span>{datetime.now(tr_tz).strftime('%H:%M:%S')}</span></div>
 <div class='terminal-row'><span>💰 TOPLAM KASA</span><span class='highlight'>${kasa:,.2f} (≈ {tl_karsiligi:,.0f} TL)</span></div>
 <div class='terminal-row'><span>🚀 NET KAR/ZARAR</span><span style='color:{"#00ff41" if net_kar >=0 else "#ff4b4b"}'>{net_kar:,.2f} USD (%{kar_yuzdesi:.1f})</span></div>
@@ -325,14 +308,8 @@ if check_password():
 </div>
 """, unsafe_allow_html=True)
         
-        # --- 📜 LOOT HISTORY ---
-        if acquired_milestones:
-            st.markdown("---")
-            history_html = "<div class='industrial-card'><div class='terminal-header'>📜 LOOT HISTORY (KİLİDİ AÇILANLAR)</div>"
-            for m in reversed(acquired_milestones):
-                history_html += f"<div class='terminal-row'><span style='color:#00ff41;'>[UNLOCKED] {m['name']}</span><span>${m['val']} ✅</span></div>"
-            history_html += "</div>"
-            st.markdown(history_html, unsafe_allow_html=True)
+        # --- 📜 LOOT HISTORY SİLİNDİ ---
+        # "Less is more."
 
     # SAYFA 2: FORMLINE
     elif page == "⚽ FORMLINE":
@@ -355,10 +332,10 @@ if check_password():
         st.divider()
         st.markdown("""
 <div class='industrial-card'>
-<div class='terminal-header'>🏁 STREAK</div>
-<div class='terminal-row'><span>SON 3 İŞLEM</span><span>❌ ✅ ✅</span></div>
+<div class='terminal-header'>🏁 FORM VE SERİ (STREAK)</div>
+<div class='terminal-row'><span>SON 5 İŞLEM</span><span>✅ ✅ ❌ ✅ ✅</span></div>
 <div class='terminal-row'><span>MOMENTUM</span><span class='highlight'>+3 (GÜÇLÜ)</span></div>
 </div>
 """, unsafe_allow_html=True)
 
-    st.caption("OG Core v8.4 | Fybey e aittir.")
+    st.caption("OG Core v8.6 | Fybey e aittir.")
