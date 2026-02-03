@@ -5,9 +5,9 @@ import pandas as pd
 import pytz
 
 # --- 1. AYARLAR ---
-st.set_page_config(page_title="OG Core", page_icon="🛡️", layout="wide")
+st.set_page_config(page_title="OG Core v7.1", page_icon="🛡️", layout="wide")
 
-# --- 2. CSS STİLLERİ (GİZLİLİK MODU - O YAZILARI SİLER) ---
+# --- 2. CSS STİLLERİ (GİZLİLİK MODU AKTİF) ---
 custom_css = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
@@ -15,7 +15,7 @@ custom_css = """
 * { font-family: 'JetBrains Mono', monospace !important; }
 :root { --soft-orange: #cc7a00; --win-green: #00ff41; --loss-red: #ff4b4b; --terminal-gray: #8b949e; }
 
-/* --- GİZLİLİK MODU: O YAZIYI VE BUTONLARI YOK EDEN KISIM --- */
+/* --- GİZLİLİK MODU: OK İŞARETİ VE BUTONLARI YOK EDEN KISIM --- */
 #MainMenu {visibility: hidden;}
 header {visibility: hidden;}
 footer {visibility: hidden;}
@@ -58,7 +58,7 @@ section[data-testid="stSidebar"] { background-color: #010409 !important; border-
 
 # --- 3. HTML ŞABLONLARI ---
 
-# W3 Kuponu
+# W3 Kuponu (Senin girdiğin güncel maçlar)
 w3_coupon_html = """
 <div class='industrial-card'>
     <div class='terminal-header'>🔥 W3 KUPONU</div>
@@ -68,32 +68,32 @@ w3_coupon_html = """
     <div class='terminal-row'><span>Lıve - Man City</span><span class='highlight'>lıve gol atar</span></div>
     <div class='terminal-row'><span>Fenerbahçe - Gençlerbirliği</span><span class='highlight'>fenerbahçe w & 2.5 üst</span></div>
     <hr style='border: 1px solid #30363d; margin: 10px 0;'>
-    <div class='terminal-row'><span class='dim'>oran:8.79</span><span class='dim'>bet: 100 USD</span><span class='status-wait'>bekliyor ⏳</span></div>
+    <div class='terminal-row'><span class='dim'>oran: 8.79</span><span class='dim'>bet: 100 USD</span><span class='status-wait'>BEKLENİYOR ⏳</span></div>
 </div>
 """
 
 w2_coupon_html = """
 <div class='industrial-card' style='border-left-color: #00ff41;'>
-    <div class='terminal-header' style='color:#00ff41;'>✅ W2 KUPONU - kazandı</div>
+    <div class='terminal-header' style='color:#00ff41;'>✅ W2 KUPONU - KAZANDI</div>
     <div class='terminal-row'><span>Gala - Kayserispor</span><span class='win'>gala w & +2.5 üst ✅</span></div>
     <div class='terminal-row'><span>Lıve - Newcastle</span><span class='win'>kg var ✅</span></div>
     <div class='terminal-row'><span>Bvb - Heidenheim</span><span class='win'>bvb w & +1.5 üst ✅</span></div>
     <div class='terminal-row'><span>Kocaelispor - Fenerbahçe</span><span class='win'>fenerbahçe w & 1.5 üst ✅</span></div>
     <hr style='border: 1px solid #30363d; margin: 10px 0;'>
-    <div class='terminal-row'><span class='dim'>oran:5.40</span><span class='dim'>bet: 100 USD</span><span class='win'>sonuçlandı +540 USD</span></div>
+    <div class='terminal-row'><span class='dim'>oran: 5.40</span><span class='dim'>bet: 100 USD</span><span class='win'>SONUÇLANDI +540 USD</span></div>
 </div>
 """
 
 w1_coupon_html = """
 <div class='industrial-card' style='border-left-color: #ff4b4b;'>
-    <div class='terminal-header' style='color:#ff4b4b;'>❌ W1 KUPONU - Kaybetti</div>
+    <div class='terminal-header' style='color:#ff4b4b;'>❌ W1 KUPONU - KAYBETTİ</div>
     <div class='terminal-row'><span>Karagümrük - Gala</span><span class='win'>gala w & 1.5 üst ✅</span></div>
     <div class='terminal-row'><span>Bournemouth - Lıve</span><span class='win'>kg var ✅</span></div>
     <div class='terminal-row'><span>Unıon Berlin - Bvb</span><span class='win'>bvb 0.5 üst ✅</span></div>
     <div class='terminal-row'><span>Newcastle - Aston Villa</span><span class='loss'>newcastle 1.5 üst ❌</span></div>
     <div class='terminal-row'><span>Fenerbahçe - Göztepe</span><span class='loss'>fenerbahçe w ❌</span></div>
     <hr style='border: 1px solid #30363d; margin: 10px 0;'>
-    <div class='terminal-row'><span class='dim'>oran:7.09</span><span class='dim'>bet: 100 USD</span><span class='loss'>sonuçlandı -100 USD</span></div>
+    <div class='terminal-row'><span class='dim'>oran: 7.09</span><span class='dim'>bet: 100 USD</span><span class='loss'>SONUÇLANDI -100 USD</span></div>
 </div>
 """
 
@@ -105,12 +105,12 @@ def check_password():
     if not st.session_state["password_correct"]:
         st.markdown("<h1 style='text-align:center; color:#cc7a00; font-family:monospace;'>🛡️ OG_CORE AUTH</h1>", unsafe_allow_html=True)
         pwd = st.text_input("ŞİFRE", type="password")
-        if st.button("go"):
+        if st.button("SİSTEME GİR"):
             if pwd == "1":
                 st.session_state["password_correct"] = True
                 st.rerun()
             else:
-                st.error("aynen kral")
+                st.error("❌ HATALI ŞİFRE")
         return False
     return True
 
@@ -120,20 +120,20 @@ if check_password():
 
     with st.sidebar:
         st.markdown("<h2 style='color:#cc7a00;'>🛡️ OG CORE</h2>", unsafe_allow_html=True)
-        # BURADAKİ İSİMLER, AŞAĞIDAKİ IF/ELIF İLE AYNI OLMALI
+        # BURADAKİ İSİMLERLE AŞAĞIDAKİLER ARTIK EŞLEŞİYOR
         page = st.radio("SİSTEM MODÜLLERİ", ["⚡ ULTRA FON", "⚽ FORMLINE", "📊 DASHDASH"])
         st.divider()
-        kasa = st.number_input("Toplam Varlık (USD)", value=600.0, step=10.0)
-        ana_para = st.number_input("Başlangıç Sermayesi", value=600.0)
-        gunluk_yakim = st.slider("Ortalama Kayıp ($)", 0, 200, 20)
+        kasa = st.number_input("TOPLAM KASA (USD)", value=600.0, step=10.0)
+        ana_para = st.number_input("BAŞLANGIÇ SERMAYESİ", value=500.0)
+        gunluk_yakim = st.slider("GÜNLÜK ORT. HARCAMA ($)", 0, 100, 20)
         
         tr_tz = pytz.timezone('Europe/Istanbul')
         st.info(f"🕒 {datetime.now(tr_tz).strftime('%H:%M:%S')}")
-        if st.button("çıkış"):
+        if st.button("ÇIKIŞ"):
             st.session_state["password_correct"] = False
             st.rerun()
 
-    # SAYFA 1
+    # SAYFA 1: ULTRA FON
     if page == "⚡ ULTRA FON":
         net_kar = kasa - ana_para
         kar_yuzdesi = (net_kar / ana_para) * 100 if ana_para > 0 else 0
@@ -195,7 +195,7 @@ if check_password():
                 </div>
                 """, unsafe_allow_html=True)
 
-    # SAYFA 2 (BURAYI DÜZELTTİM - BÜYÜK HARF UYUMU)
+    # SAYFA 2: FORMLINE (DÜZELTİLDİ: HEPSİ BÜYÜK HARF)
     elif page == "⚽ FORMLINE":
         st.title("⚽ FORMLINE")
         tab1, tab2, tab3 = st.tabs(["⏳ W3", "✅ W2", "❌ W1"])
@@ -206,7 +206,7 @@ if check_password():
         with tab3:
             st.markdown(w1_coupon_html, unsafe_allow_html=True)
 
-    # SAYFA 3 (BURAYI DA DÜZELTTİM - BÜYÜK HARF UYUMU)
+    # SAYFA 3: DASHDASH (DÜZELTİLDİ: HEPSİ BÜYÜK HARF)
     elif page == "📊 DASHDASH":
         st.title("📈 Performans Simülatörü")
         col_inp1, col_inp2 = st.columns(2)
@@ -217,11 +217,15 @@ if check_password():
         gelecek_degerler = [kasa * ((1 + hedef_oran/100) ** gun) for gun in range(sure)]
         df_chart = pd.DataFrame({"Gün": range(sure), "Kasa Tahmini ($)": gelecek_degerler})
         st.line_chart(df_chart.set_index("Gün"))
+        
         st.success(f"🚀 {sure} gün sonraki tahmini kasa: **${gelecek_degerler[-1]:,.2f}**")
+        
         st.divider()
+        
+        # STREAK KISMI ARTIK GÖRÜNECEK
         st.markdown("""
         <div class='industrial-card'>
-            <div class='terminal-header'>🏁 Streak</div>
+            <div class='terminal-header'>🏁 FORM VE SERİ (STREAK)</div>
             <div class='terminal-row'><span>SON 5 İŞLEM</span><span>✅ ✅ ❌ ✅ ✅</span></div>
             <div class='terminal-row'><span>MOMENTUM</span><span class='highlight'>+3 (GÜÇLÜ)</span></div>
         </div>
