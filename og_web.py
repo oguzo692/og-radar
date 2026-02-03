@@ -15,47 +15,103 @@ st.set_page_config(
 )
 
 # --- 2. CSS STİLLERİ ---
-custom_css = """
+ustom_css = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
 
-.main { background-color: #0d1117 !important; }
+/* ANA ARKA PLAN */
+.main { background-color: #050505 !important; }
+
+/* GENEL FONT */
 body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, span, h1, h2, h3, button, input { 
     font-family: 'JetBrains Mono', monospace !important; 
 }
 
-/* SADE SİYAH-BEYAZ GİRİŞ EKRANI */
-.auth-header {
-    text-align: center;
-    color: white;
-    letter-spacing: 15px;
-    font-size: clamp(30px, 5vw, 50px);
-    border-bottom: 2px solid white;
-    padding-bottom: 10px;
-    margin-bottom: 50px;
-    margin-top: 50px;
+/* --- 📺 RETRO AUTH EKRANI TASARIMI --- */
+.auth-wrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 70vh;
+    color: #ffffff;
+    overflow: hidden;
 }
+
+/* SCANLINE (TARAMA ÇİZGİSİ) EFECT */
+.auth-wrapper::before {
+    content: " ";
+    position: absolute;
+    top: 0; left: 0; bottom: 0; right: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    z-index: 2;
+    background-size: 100% 4px, 3px 100%;
+    pointer-events: none;
+}
+
+.retro-logo-container {
+    text-align: center;
+    margin-bottom: 40px;
+    z-index: 3;
+}
+
+/* Opsiyonel Fotoğraf Alanı */
+.retro-image {
+    width: 150px;
+    filter: grayscale(100%) contrast(150%) brightness(80%);
+    border: 1px solid #333;
+    padding: 5px;
+    margin-bottom: 20px;
+}
+
+.retro-title {
+    font-size: 28px;
+    font-weight: bold;
+    letter-spacing: 8px;
+    text-shadow: 0 0 10px rgba(255,255,255,0.5);
+    border-bottom: 2px solid #ffffff;
+    padding-bottom: 10px;
+    margin-bottom: 5px;
+}
+
+.retro-subtitle {
+    font-size: 12px;
+    color: #666;
+    letter-spacing: 2px;
+}
+
+/* GİRİŞ KUTUSU */
 .stTextInput > div > div > input {
     background-color: transparent !important;
-    border: 1px solid white !important;
-    border-radius: 0px !important;
+    border: 1px solid #444 !important;
     color: white !important;
     text-align: center;
-    font-size: 20px !important;
-}
-div.stButton > button {
     border-radius: 0px !important;
+    font-size: 18px !important;
+    padding: 20px !important;
+}
+.stTextInput > div > div > input:focus {
+    border-color: #ffffff !important;
+    box-shadow: 0 0 15px rgba(255,255,255,0.2) !important;
+}
+
+/* EXECUTE BUTONU */
+div.stButton > button {
     background-color: transparent !important;
     color: white !important;
-    border: 1px solid white !important;
-    width: 100%;
-    height: 50px;
-    letter-spacing: 5px;
-    font-weight: bold;
+    border: 1px solid #ffffff !important;
+    border-radius: 0px !important;
+    padding: 15px 40px !important;
+    font-weight: bold !important;
+    letter-spacing: 3px !important;
+    transition: all 0.2s ease !important;
 }
 div.stButton > button:hover {
-    background-color: white !important;
-    color: black !important;
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    box-shadow: 0 0 20px rgba(255,255,255,0.4) !important;
 }
 
 /* SİSTEMİN DİĞER TASARIMLARI (DOKUNULMADI) */
