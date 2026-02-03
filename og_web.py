@@ -7,13 +7,23 @@ import pytz
 # --- 1. AYARLAR ---
 st.set_page_config(page_title="OG Core v7.1", page_icon="🛡️", layout="wide")
 
-# --- 2. CSS STİLLERİ ---
+# --- 2. CSS STİLLERİ (GİZLİLİK MODU EKLENDİ - O HATAYI SİLER) ---
 custom_css = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
 .main { background-color: #0d1117 !important; }
 * { font-family: 'JetBrains Mono', monospace !important; }
 :root { --soft-orange: #cc7a00; --win-green: #00ff41; --loss-red: #ff4b4b; --terminal-gray: #8b949e; }
+
+/* --- GİZLİLİK MODU: O YAZIYI VE BUTONLARI YOK EDEN KISIM --- */
+#MainMenu {visibility: hidden;}
+header {visibility: hidden;}
+footer {visibility: hidden;}
+.stDeployButton {display:none;}
+[data-testid="stToolbar"] {visibility: hidden !important;}
+[data-testid="stDecoration"] {display:none;}
+[data-testid="stSidebarNav"] {border-right: 1px solid #30363d;}
+/* ----------------------------------------------------------- */
 
 .industrial-card {
     background: rgba(255, 255, 255, 0.02);
