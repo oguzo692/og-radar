@@ -15,7 +15,7 @@ custom_css = """
 * { font-family: 'JetBrains Mono', monospace !important; }
 :root { --soft-orange: #cc7a00; --win-green: #00ff41; --loss-red: #ff4b4b; --terminal-gray: #8b949e; }
 
-/* --- GİZLİLİK MODU: OK İŞARETİ VE BUTONLARI YOK EDEN KISIM --- */
+/* --- GİZLİLİK MODU --- */
 #MainMenu {visibility: hidden;}
 header {visibility: hidden;}
 footer {visibility: hidden;}
@@ -23,7 +23,7 @@ footer {visibility: hidden;}
 [data-testid="stToolbar"] {visibility: hidden !important;}
 [data-testid="stDecoration"] {display:none;}
 [data-testid="stSidebarNav"] {border-right: 1px solid #30363d;}
-/* ----------------------------------------------------------- */
+/* --------------------- */
 
 .industrial-card {
     background: rgba(255, 255, 255, 0.02);
@@ -58,7 +58,6 @@ section[data-testid="stSidebar"] { background-color: #010409 !important; border-
 
 # --- 3. HTML ŞABLONLARI ---
 
-# W3 Kuponu (Senin girdiğin güncel maçlar)
 w3_coupon_html = """
 <div class='industrial-card'>
     <div class='terminal-header'>🔥 W3 KUPONU</div>
@@ -120,7 +119,6 @@ if check_password():
 
     with st.sidebar:
         st.markdown("<h2 style='color:#cc7a00;'>🛡️ OG CORE</h2>", unsafe_allow_html=True)
-        # BURADAKİ İSİMLERLE AŞAĞIDAKİLER ARTIK EŞLEŞİYOR
         page = st.radio("SİSTEM MODÜLLERİ", ["⚡ ULTRA FON", "⚽ FORMLINE", "📊 DASHDASH"])
         st.divider()
         kasa = st.number_input("TOPLAM KASA (USD)", value=600.0, step=10.0)
@@ -195,7 +193,7 @@ if check_password():
                 </div>
                 """, unsafe_allow_html=True)
 
-    # SAYFA 2: FORMLINE (DÜZELTİLDİ: HEPSİ BÜYÜK HARF)
+    # SAYFA 2: FORMLINE
     elif page == "⚽ FORMLINE":
         st.title("⚽ FORMLINE")
         tab1, tab2, tab3 = st.tabs(["⏳ W3", "✅ W2", "❌ W1"])
@@ -206,23 +204,28 @@ if check_password():
         with tab3:
             st.markdown(w1_coupon_html, unsafe_allow_html=True)
 
-    # SAYFA 3: DASHDASH (DÜZELTİLDİ: HEPSİ BÜYÜK HARF)
+    # SAYFA 3: DASHDASH (HAFTALIK SİMÜLATÖR AYARLANDI)
     elif page == "📊 DASHDASH":
         st.title("📈 Performans Simülatörü")
         col_inp1, col_inp2 = st.columns(2)
+        
         with col_inp1:
-            hedef_oran = st.slider("Günlük Hedef Kar (%)", 0.1, 5.0, 1.0)
+            # BURASI ARTIK HAFTALIK HEDEF SORUYOR
+            haftalik_oran = st.slider("Haftalık Hedef Kar (%)", 1.0, 50.0, 5.0)
         with col_inp2:
-            sure = st.slider("Simülasyon Süresi (Gün)", 7, 90, 30, 180)
-        gelecek_degerler = [kasa * ((1 + hedef_oran/100) ** gun) for gun in range(sure)]
+            sure = st.slider("Simülasyon Süresi (Gün)", 7, 90, 30)
+        
+        # Matematik: (1 + haftalik_oran/100) ^ (gun / 7)
+        # Yani her 7 günde bir o oranı koyuyor.
+        gelecek_degerler = [kasa * ((1 + haftalik_oran/100) ** (gun / 7)) for gun in range(sure)]
+        
         df_chart = pd.DataFrame({"Gün": range(sure), "Kasa Tahmini ($)": gelecek_degerler})
         st.line_chart(df_chart.set_index("Gün"))
         
-        st.success(f"🚀 {sure} gün sonraki tahmini kasa: **${gelecek_degerler[-1]:,.2f}**")
+        st.success(f"🚀 {sure} gün sonraki tahmini kasa: **${gelecek_degerler[-1]:,.2f}** (Haftalık %{haftalik_oran} büyüme ile)")
         
         st.divider()
         
-        # STREAK KISMI ARTIK GÖRÜNECEK
         st.markdown("""
         <div class='industrial-card'>
             <div class='terminal-header'>🏁 FORM VE SERİ (STREAK)</div>
