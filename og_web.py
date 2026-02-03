@@ -5,9 +5,9 @@ import pandas as pd
 import pytz
 
 # --- 1. AYARLAR ---
-st.set_page_config(page_title="OG Core v7.1", page_icon="🛡️", layout="wide")
+st.set_page_config(page_title="OG Core v7.8", page_icon="🛡️", layout="wide")
 
-# --- 2. CSS STİLLERİ (GİZLİLİK MODU AKTİF) ---
+# --- 2. CSS STİLLERİ (YENİ LOOT BAR & ANİMASYON EKLENDİ) ---
 custom_css = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
@@ -15,16 +15,13 @@ custom_css = """
 * { font-family: 'JetBrains Mono', monospace !important; }
 :root { --soft-orange: #cc7a00; --win-green: #00ff41; --loss-red: #ff4b4b; --terminal-gray: #8b949e; }
 
-/* --- GİZLİLİK MODU --- */
-#MainMenu {visibility: hidden;}
-header {visibility: hidden;}
-footer {visibility: hidden;}
-.stDeployButton {display:none;}
+/* GİZLİLİK MODU */
+#MainMenu, header, footer, .stDeployButton {visibility: hidden !important;}
 [data-testid="stToolbar"] {visibility: hidden !important;}
 [data-testid="stDecoration"] {display:none;}
 [data-testid="stSidebarNav"] {border-right: 1px solid #30363d;}
-/* --------------------- */
 
+/* KART TASARIMI */
 .industrial-card {
     background: rgba(255, 255, 255, 0.02);
     border-left: 3px solid var(--soft-orange);
@@ -34,12 +31,8 @@ footer {visibility: hidden;}
 }
 .terminal-header { 
     color: var(--soft-orange); 
-    font-size: 14px; 
-    font-weight: bold; 
-    border-bottom: 1px dashed #30363d; 
-    padding-bottom: 5px; 
-    margin-bottom: 10px;
-    text-transform: uppercase;
+    font-size: 14px; font-weight: bold; border-bottom: 1px dashed #30363d; 
+    padding-bottom: 5px; margin-bottom: 10px; text-transform: uppercase;
 }
 .terminal-row {
     display: flex; justify-content: space-between;
@@ -50,6 +43,51 @@ footer {visibility: hidden;}
 .loss { color: var(--loss-red); }
 .dim { color: var(--terminal-gray); }
 .status-wait { color: #f1c40f; font-weight: bold; }
+
+/* --- 💎 LOOT BAR STİLİ (ANİMASYONLU) --- */
+.loot-wrapper {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    position: relative;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+.loot-track {
+    background: #21262d;
+    height: 14px;
+    border-radius: 7px;
+    width: 100%;
+    position: relative;
+    margin-top: 25px; /* İkonlar için yer */
+}
+/* Animasyon Keyframe */
+@keyframes fillAnimation {
+    from { width: 0%; }
+}
+.loot-fill {
+    background: linear-gradient(90deg, #cc7a00, #ffae00);
+    height: 100%;
+    border-radius: 7px;
+    box-shadow: 0 0 15px rgba(204, 122, 0, 0.5);
+    animation: fillAnimation 1.5s ease-out forwards; /* 1.5 saniyelik açılış efekti */
+}
+.milestone {
+    position: absolute;
+    top: -35px;
+    transform: translateX(-50%);
+    text-align: center;
+    transition: all 0.3s ease;
+    opacity: 0.6;
+}
+.milestone.active {
+    opacity: 1;
+    transform: translateX(-50%) scale(1.1);
+}
+.milestone-icon { font-size: 20px; }
+.milestone-label { font-size: 10px; font-weight: bold; margin-top: 2px; color: #8b949e; }
+.milestone.active .milestone-label { color: #00ff41; text-shadow: 0 0 5px #00ff41; }
 
 h1, h2, h3 { color: #e6edf3 !important; }
 section[data-testid="stSidebar"] { background-color: #010409 !important; border-right: 1px solid #30363d; }
@@ -137,9 +175,47 @@ if check_password():
         kar_yuzdesi = (net_kar / ana_para) * 100 if ana_para > 0 else 0
         tl_karsiligi = kasa * 33.50
         
+        # --- 💎 LOOT BAR SİSTEMİ (OTOMATİK) ---
+        targets = [
+            {"val": 1000, "icon": "📱", "name": "TELEFON"},
+            {"val": 2500, "icon": "🏖️", "name": "TATİL"},
+            {"val": 5000, "icon": "🏎️", "name": "ARABA"},
+        ]
+        max_target = targets[-1]["val"] * 1.2 # Barın sonu son hedeften biraz ilerde olsun
+        current_pct = min(100, (kasa / max_target) * 100)
+        
+        markers_html = ""
+        acquired_milestones = [] # History için liste
+        
+        for t in targets:
+            pos = (t["val"] / max_target) * 100
+            is_active = "active" if kasa >= t["val"] else ""
+            icon_display = t['icon'] if kasa >= t["val"] else "🔒" # Kilitli/Açık ikon
+            
+            if kasa >= t["val"]:
+                acquired_milestones.append(t)
+                
+            markers_html += f"""
+            <div class='milestone {is_active}' style='left: {pos}%;'>
+                <div class='milestone-icon'>{icon_display}</div>
+                <div class='milestone-label'>{t['name']} (${t['val']})</div>
+            </div>
+            """
+            
+        st.markdown(f"""
+        <div class='loot-wrapper'>
+            <div class='terminal-header' style='margin-bottom:20px;'>💎 HEDEF YOLCULUĞU (LOOT TRACK)</div>
+            <div class='loot-track'>
+                <div class='loot-fill' style='width: {current_pct}%;'></div>
+                {markers_html}
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+        # ----------------------------------------
+
         st.markdown(f"""
         <div class='industrial-card'>
-            <div class='terminal-header'>💎 OG TRADE RADAR — v7.1</div>
+            <div class='terminal-header'>💎 OG TRADE RADAR — v7.8</div>
             <div class='terminal-row'><span>🕒 SON GÜNCELLEME</span><span>{datetime.now(tr_tz).strftime('%H:%M:%S')}</span></div>
             <div class='terminal-row'><span>💰 TOPLAM KASA</span><span class='highlight'>${kasa:,.2f} (≈ {tl_karsiligi:,.0f} TL)</span></div>
             <div class='terminal-row'><span>🚀 NET KAR/ZARAR</span><span style='color:{"#00ff41" if net_kar >=0 else "#ff4b4b"}'>{net_kar:,.2f} USD (%{kar_yuzdesi:.1f})</span></div>
@@ -193,6 +269,15 @@ if check_password():
                 </div>
                 """, unsafe_allow_html=True)
 
+        # --- 📜 LOOT HISTORY (GANİMET GÜNLÜĞÜ) ---
+        if acquired_milestones:
+            st.markdown("---")
+            history_html = "<div class='industrial-card'><div class='terminal-header'>📜 LOOT HISTORY (KİLİDİ AÇILANLAR)</div>"
+            for m in reversed(acquired_milestones):
+                history_html += f"<div class='terminal-row'><span style='color:#00ff41;'>[UNLOCKED] {m['name']}</span><span>${m['val']} ✅</span></div>"
+            history_html += "</div>"
+            st.markdown(history_html, unsafe_allow_html=True)
+
     # SAYFA 2: FORMLINE
     elif page == "⚽ FORMLINE":
         st.title("⚽ FORMLINE")
@@ -204,19 +289,16 @@ if check_password():
         with tab3:
             st.markdown(w1_coupon_html, unsafe_allow_html=True)
 
-    # SAYFA 3: DASHDASH (HAFTALIK SİMÜLATÖR AYARLANDI)
+    # SAYFA 3: DASHDASH
     elif page == "📊 DASHDASH":
         st.title("📈 Performans Simülatörü")
         col_inp1, col_inp2 = st.columns(2)
         
         with col_inp1:
-            # BURASI ARTIK HAFTALIK HEDEF SORUYOR
             haftalik_oran = st.slider("Haftalık Hedef Kar (%)", 1.0, 50.0, 5.0)
         with col_inp2:
             sure = st.slider("Simülasyon Süresi (Gün)", 7, 90, 30)
         
-        # Matematik: (1 + haftalik_oran/100) ^ (gun / 7)
-        # Yani her 7 günde bir o oranı koyuyor.
         gelecek_degerler = [kasa * ((1 + haftalik_oran/100) ** (gun / 7)) for gun in range(sure)]
         
         df_chart = pd.DataFrame({"Gün": range(sure), "Kasa Tahmini ($)": gelecek_degerler})
@@ -234,4 +316,4 @@ if check_password():
         </div>
         """, unsafe_allow_html=True)
 
-    st.caption("OG Core v7.1 | Discipline is Profit.")
+    st.caption("OG Core v7.8 | Discipline is Profit.")
