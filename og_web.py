@@ -105,7 +105,7 @@ def check_password():
     if not st.session_state["password_correct"]:
         st.markdown("<h1 style='text-align:center; color:#cc7a00; font-family:monospace;'>🛡️ OG_CORE AUTH</h1>", unsafe_allow_html=True)
         pwd = st.text_input("ŞİFRE", type="password")
-        if st.button("SİSTEME GİR"):
+        if st.button("go"):
             if pwd == "1":
                 st.session_state["password_correct"] = True
                 st.rerun()
@@ -123,9 +123,9 @@ if check_password():
         # BURADAKİ İSİMLER, AŞAĞIDAKİ IF/ELIF İLE AYNI OLMALI
         page = st.radio("SİSTEM MODÜLLERİ", ["⚡ ULTRA FON", "⚽ FORMLINE", "📊 DASHDASH"])
         st.divider()
-        kasa = st.number_input("TOPLAM KASA (USD)", value=600.0, step=10.0)
-        ana_para = st.number_input("BAŞLANGIÇ SERMAYESİ", value=500.0)
-        gunluk_yakim = st.slider("GÜNLÜK ORT. HARCAMA ($)", 0, 100, 20)
+        kasa = st.number_input("Toplam Varlık (USD)", value=600.0, step=10.0)
+        ana_para = st.number_input("Başlangıç Sermayesi", value=600.0)
+        gunluk_yakim = st.slider("Ortalama Kayıp ($)", 0, 200, 20)
         
         tr_tz = pytz.timezone('Europe/Istanbul')
         st.info(f"🕒 {datetime.now(tr_tz).strftime('%H:%M:%S')}")
