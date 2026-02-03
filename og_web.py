@@ -3,9 +3,11 @@ import yfinance as yf
 from datetime import datetime, timedelta
 import pandas as pd
 import pytz
+import json
+import os
 
 # --- 1. AYARLAR ---
-st.set_page_config(page_title="OG Core v8.0", page_icon="🛡️", layout="wide")
+st.set_page_config(page_title="OG Core v8.1", page_icon="🛡️", layout="wide")
 
 # --- 2. CSS STİLLERİ ---
 custom_css = """
@@ -49,7 +51,7 @@ custom_css = """
     background: #161b22;
     border: 1px solid #30363d;
     border-radius: 8px;
-    padding: 20px 20px 45px 20px; /* Alt boşluk artırıldı */
+    padding: 20px 20px 45px 20px; 
     margin-bottom: 25px;
     position: relative;
     box-shadow: 0 4px 12px rgba(0,0,0,0.3);
@@ -93,7 +95,6 @@ section[data-testid="stSidebar"] { background-color: #010409 !important; border-
 """
 
 # --- 3. HTML ŞABLONLARI ---
-
 w3_coupon_html = """
 <div class='industrial-card'>
     <div class='terminal-header'>🔥 W3 KUPONU</div>
@@ -106,7 +107,6 @@ w3_coupon_html = """
     <div class='terminal-row'><span class='dim'>oran: 8.79</span><span class='dim'>bet: 100 USD</span><span class='status-wait'>BEKLENİYOR ⏳</span></div>
 </div>
 """
-
 w2_coupon_html = """
 <div class='industrial-card' style='border-left-color: #00ff41;'>
     <div class='terminal-header' style='color:#00ff41;'>✅ W2 KUPONU - KAZANDI</div>
@@ -118,7 +118,6 @@ w2_coupon_html = """
     <div class='terminal-row'><span class='dim'>oran: 5.40</span><span class='dim'>bet: 100 USD</span><span class='win'>SONUÇLANDI +540 USD</span></div>
 </div>
 """
-
 w1_coupon_html = """
 <div class='industrial-card' style='border-left-color: #ff4b4b;'>
     <div class='terminal-header' style='color:#ff4b4b;'>❌ W1 KUPONU - KAYBETTİ</div>
@@ -133,33 +132,57 @@ w1_coupon_html = """
 """
 
 # --- 4. GÜVENLİK ---
-if "password_correct" not in st.session_state:
-    st.session_state["password_correct"] = False
-
+if "password_correct" not in st.session_state: st.session_state["password_correct"] = False
 def check_password():
     if not st.session_state["password_correct"]:
         st.markdown("<h1 style='text-align:center; color:#cc7a00; font-family:monospace;'>🛡️ OG_CORE AUTH</h1>", unsafe_allow_html=True)
         pwd = st.text_input("ŞİFRE", type="password")
         if st.button("SİSTEME GİR"):
-            if pwd == "1":
-                st.session_state["password_correct"] = True
-                st.rerun()
-            else:
-                st.error("❌ HATALI ŞİFRE")
+            if pwd == "1": st.session_state["password_correct"] = True; st.rerun()
+            else: st.error("❌ HATALI ŞİFRE")
         return False
     return True
 
-# --- 5. ANA UYGULAMA ---
+# --- 5. SAVE GAME SİSTEMİ (VERİTABANI) ---
+SAVE_FILE = "og_save_data.json"
+
+def load_game_data():
+    """Varsa kayıtlı veriyi çeker, yoksa varsayılanı döner"""
+    if os.path.exists(SAVE_FILE):
+        try:
+            with open(SAVE_FILE, "r") as f:
+                return json.load(f)
+        except:
+            pass
+    return {"kasa": 600.0, "ana_para": 500.0, "yakim": 20}
+
+def save_game_data():
+    """Mevcut inputları dosyaya yazar"""
+    data = {
+        "kasa": st.session_state.kasa_input,
+        "ana_para": st.session_state.ana_input,
+        "yakim": st.session_state.yakim_input
+    }
+    with open(SAVE_FILE, "w") as f:
+        json.dump(data, f)
+    st.toast("💾 OYUN KAYDEDİLDİ", icon="✅")
+
+# --- 6. ANA UYGULAMA ---
 if check_password():
     st.markdown(custom_css, unsafe_allow_html=True)
+
+    # Veriyi Yükle
+    game_data = load_game_data()
 
     with st.sidebar:
         st.markdown("<h2 style='color:#cc7a00;'>🛡️ OG CORE</h2>", unsafe_allow_html=True)
         page = st.radio("SİSTEM MODÜLLERİ", ["⚡ ULTRA FON", "⚽ FORMLINE", "📊 DASHDASH"])
         st.divider()
-        kasa = st.number_input("TOPLAM KASA (USD)", value=600.0, step=10.0)
-        ana_para = st.number_input("BAŞLANGIÇ SERMAYESİ", value=600.0)
-        gunluk_yakim = st.slider("GÜNLÜK ORT. HARCAMA ($)", 0, 100, 20)
+        
+        # INPUTLARI BINDING ETTİK (Her değişiklikte save_game_data çalışır)
+        kasa = st.number_input("TOPLAM KASA (USD)", value=game_data["kasa"], step=10.0, key="kasa_input", on_change=save_game_data)
+        ana_para = st.number_input("BAŞLANGIÇ SERMAYESİ", value=game_data["ana_para"], key="ana_input", on_change=save_game_data)
+        gunluk_yakim = st.slider("GÜNLÜK ORT. HARCAMA ($)", 0, 100, game_data["yakim"], key="yakim_input", on_change=save_game_data)
         
         tr_tz = pytz.timezone('Europe/Istanbul')
         st.info(f"🕒 {datetime.now(tr_tz).strftime('%H:%M:%S')}")
@@ -173,7 +196,7 @@ if check_password():
         kar_yuzdesi = (net_kar / ana_para) * 100 if ana_para > 0 else 0
         tl_karsiligi = kasa * 33.50
         
-        # --- 💎 LOOT BAR FIX (SOLA YAPIŞIK YAZILDI) ---
+        # --- 💎 LOOT BAR (SOLA YAPIŞIK) ---
         targets = [
             {"val": 1000, "icon": "📱", "name": "TELEFON"},
             {"val": 2500, "icon": "🏖️", "name": "TATİL"},
@@ -184,17 +207,13 @@ if check_password():
         
         markers_html = ""
         acquired_milestones = []
-        
         for t in targets:
             pos = (t["val"] / max_target) * 100
             is_active = "active" if kasa >= t["val"] else ""
             icon_display = t['icon'] if kasa >= t["val"] else "🔒"
             if kasa >= t["val"]: acquired_milestones.append(t)
-            
-            # TEK SATIR HALİNDE BİRLEŞTİRME
             markers_html += f"<div class='milestone {is_active}' style='left: {pos}%;'><div class='milestone-icon'>{icon_display}</div><div class='milestone-label'>{t['name']} (${t['val']})</div></div>"
             
-        # HTML STRINGI SOLA DAYALI OLUŞTURULUYOR
         loot_bar_html = f"""
 <div class='loot-wrapper'>
 <div class='terminal-header' style='margin-bottom:30px;'>💎 HEDEF YOLCULUĞU (LOOT TRACK)</div>
@@ -209,7 +228,7 @@ if check_password():
 
         st.markdown(f"""
 <div class='industrial-card'>
-<div class='terminal-header'>💎 OG TRADE RADAR — v8.0</div>
+<div class='terminal-header'>💎 OG TRADE RADAR — v8.1 (MEMORY ON)</div>
 <div class='terminal-row'><span>🕒 SON GÜNCELLEME</span><span>{datetime.now(tr_tz).strftime('%H:%M:%S')}</span></div>
 <div class='terminal-row'><span>💰 TOPLAM KASA</span><span class='highlight'>${kasa:,.2f} (≈ {tl_karsiligi:,.0f} TL)</span></div>
 <div class='terminal-row'><span>🚀 NET KAR/ZARAR</span><span style='color:{"#00ff41" if net_kar >=0 else "#ff4b4b"}'>{net_kar:,.2f} USD (%{kar_yuzdesi:.1f})</span></div>
@@ -225,8 +244,7 @@ if check_password():
                 btc = btc_data['Close'].iloc[-1] if not btc_data.empty else 0
                 eth = eth_data['Close'].iloc[-1] if not eth_data.empty else 0
                 sol = sol_data['Close'].iloc[-1] if not sol_data.empty else 0
-            except:
-                btc, eth, sol = 0, 0, 0
+            except: btc, eth, sol = 0, 0, 0
             
             st.markdown(f"""
 <div class='industrial-card'>
@@ -263,7 +281,7 @@ if check_password():
 </div>
 """, unsafe_allow_html=True)
         
-        # --- 📜 LOOT HISTORY (GANİMET GÜNLÜĞÜ) ---
+        # --- 📜 LOOT HISTORY ---
         if acquired_milestones:
             st.markdown("---")
             history_html = "<div class='industrial-card'><div class='terminal-header'>📜 LOOT HISTORY (KİLİDİ AÇILANLAR)</div>"
@@ -276,32 +294,21 @@ if check_password():
     elif page == "⚽ FORMLINE":
         st.title("⚽ FORMLINE")
         tab1, tab2, tab3 = st.tabs(["⏳ W3", "✅ W2", "❌ W1"])
-        with tab1:
-            st.markdown(w3_coupon_html, unsafe_allow_html=True)
-        with tab2:
-            st.markdown(w2_coupon_html, unsafe_allow_html=True)
-        with tab3:
-            st.markdown(w1_coupon_html, unsafe_allow_html=True)
+        with tab1: st.markdown(w3_coupon_html, unsafe_allow_html=True)
+        with tab2: st.markdown(w2_coupon_html, unsafe_allow_html=True)
+        with tab3: st.markdown(w1_coupon_html, unsafe_allow_html=True)
 
     # SAYFA 3: DASHDASH
     elif page == "📊 DASHDASH":
         st.title("📈 Performans Simülatörü")
         col_inp1, col_inp2 = st.columns(2)
-        
-        with col_inp1:
-            haftalik_oran = st.slider("Haftalık Hedef Kar (%)", 1.0, 50.0, 5.0)
-        with col_inp2:
-            sure = st.slider("Simülasyon Süresi (Gün)", 7, 120, 30)
-        
+        with col_inp1: haftalik_oran = st.slider("Haftalık Hedef Kar (%)", 1.0, 50.0, 5.0)
+        with col_inp2: sure = st.slider("Simülasyon Süresi (Gün)", 7, 120, 30)
         gelecek_degerler = [kasa * ((1 + haftalik_oran/100) ** (gun / 7)) for gun in range(sure)]
-        
         df_chart = pd.DataFrame({"Gün": range(sure), "Kasa Tahmini ($)": gelecek_degerler})
         st.line_chart(df_chart.set_index("Gün"))
-        
         st.success(f"🚀 {sure} gün sonraki tahmini kasa: **${gelecek_degerler[-1]:,.2f}** (Haftalık %{haftalik_oran} büyüme ile)")
-        
         st.divider()
-        
         st.markdown("""
 <div class='industrial-card'>
 <div class='terminal-header'>🏁 FORM VE SERİ (STREAK)</div>
@@ -310,4 +317,4 @@ if check_password():
 </div>
 """, unsafe_allow_html=True)
 
-    st.caption("OG Core v8.0 | Fybey e aittir.")
+    st.caption("OG Core v8.1 | Fybey e aittir.")
