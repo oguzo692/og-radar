@@ -48,47 +48,20 @@ section[data-testid="stSidebar"] { background-color: #010409 !important; border-
 
 # --- 3. HTML ŞABLONLARI ---
 
-# W3 Kuponu (YENİ EKLENEN)
+# W3 Kuponu (Düzenlenmiş ve Hatasız)
 w3_coupon_html = """
 <div class='industrial-card'>
     <div class='terminal-header'>🔥 W3 KUPONU (8-9 ŞUBAT)</div>
-    
-    <div class='terminal-row'>
-        <span>Wolfsburg - BVB</span>
-        <span class='highlight'>MS 2</span>
-    </div>
-
-    <div class='terminal-row'>
-        <span>Newcastle - Brentford</span>
-        <span class='highlight'>NEWCASTLE 1.5 ÜST</span>
-    </div>
-
-    <div class='terminal-row'>
-        <span>Rizespor - GS</span>
-        <span class='highlight'>MS 2 & 1.5 ÜST</span>
-    </div>
-
-    <div class='terminal-row'>
-        <span>Liverpool - Man City</span>
-        <span class='highlight'>LIVERPOOL GOL ATAR</span>
-    </div>
-    
-    <div class='terminal-row'>
-        <span>Fenerbahçe - Gençlerbirliği</span>
-        <span class='highlight'>MS 1</span>
-    </div>
-
+    <div class='terminal-row'><span>Wolfsburg - BVB</span><span class='highlight'>MS 2</span></div>
+    <div class='terminal-row'><span>Newcastle - Brentford</span><span class='highlight'>NEWCASTLE 1.5 ÜST</span></div>
+    <div class='terminal-row'><span>Rizespor - GS</span><span class='highlight'>MS 2 & 1.5 ÜST</span></div>
+    <div class='terminal-row'><span>Liverpool - Man City</span><span class='highlight'>LIVERPOOL GOL ATAR</span></div>
+    <div class='terminal-row'><span>Fenerbahçe - Gençlerbirliği</span><span class='highlight'>MS 1</span></div>
     <hr style='border: 1px solid #30363d; margin: 10px 0;'>
-    
-    <div class='terminal-row'>
-        <span class='dim'>ORAN: --</span>
-        <span class='dim'>BÜTÇE: 100 USD</span>
-        <span class='status-wait'>DURUM: OYNANIYOR ⏳</span>
-    </div>
+    <div class='terminal-row'><span class='dim'>ORAN: --</span><span class='dim'>BÜTÇE: 100 USD</span><span class='status-wait'>DURUM: OYNANIYOR ⏳</span></div>
 </div>
 """
 
-# W2 Kuponu (Kazanan)
 w2_coupon_html = """
 <div class='industrial-card' style='border-left-color: #00ff41;'>
     <div class='terminal-header' style='color:#00ff41;'>✅ W2 KUPONU - KAZANDI</div>
@@ -101,7 +74,6 @@ w2_coupon_html = """
 </div>
 """
 
-# W1 Kuponu (Kaybeden)
 w1_coupon_html = """
 <div class='industrial-card' style='border-left-color: #ff4b4b;'>
     <div class='terminal-header' style='color:#ff4b4b;'>❌ W1 KUPONU - KAYBETTİ</div>
@@ -133,10 +105,8 @@ def check_password():
 
 # --- 5. ANA UYGULAMA ---
 if check_password():
-    # CSS'i yükle
     st.markdown(custom_css, unsafe_allow_html=True)
 
-    # SIDEBAR
     with st.sidebar:
         st.markdown("<h2 style='color:#cc7a00;'>🛡️ OG CORE v7.1</h2>", unsafe_allow_html=True)
         page = st.radio("SİSTEM MODÜLLERİ", ["⚡ ULTRA FON", "⚽ FORMLINE", "📊 DASHDASH"])
@@ -151,14 +121,11 @@ if check_password():
             st.session_state["password_correct"] = False
             st.rerun()
 
-    # SAYFA 1: ULTRA FON (v7.1 Dashboard)
     if page == "⚡ ULTRA FON":
-        # Hesaplamalar
         net_kar = kasa - ana_para
         kar_yuzdesi = (net_kar / ana_para) * 100 if ana_para > 0 else 0
         tl_karsiligi = kasa * 33.50
         
-        # 1. BÖLÜM: ÜST BİLGİ PANELİ
         st.markdown(f"""
         <div class='industrial-card'>
             <div class='terminal-header'>💎 OG TRADE RADAR — v7.1</div>
@@ -168,16 +135,12 @@ if check_password():
         </div>
         """, unsafe_allow_html=True)
 
-        # 2. BÖLÜM: PİYASA VE ÖLÜM KALIM
         col_piyasa, col_omur = st.columns([2, 1])
-        
         with col_piyasa:
-            # Fiyatları çekme (Hata korumalı)
             try:
                 btc_data = yf.Ticker("BTC-USD").history(period="1d")
                 eth_data = yf.Ticker("ETH-USD").history(period="1d")
                 sol_data = yf.Ticker("SOL-USD").history(period="1d")
-                
                 btc = btc_data['Close'].iloc[-1] if not btc_data.empty else 0
                 eth = eth_data['Close'].iloc[-1] if not eth_data.empty else 0
                 sol = sol_data['Close'].iloc[-1] if not sol_data.empty else 0
@@ -194,10 +157,8 @@ if check_password():
             """, unsafe_allow_html=True)
             
         with col_omur:
-            # Survival Runway Hesaplama
             gun_omru = int(kasa / gunluk_yakim) if gunluk_yakim > 0 else 999
             renk_durumu = "#ff4b4b" if gun_omru < 14 else "#00ff41"
-            
             st.markdown(f"""
             <div class='industrial-card' style='border-left-color: {renk_durumu};'>
                 <div class='terminal-header' style='color:{renk_durumu};'>💀 FON ÖMRÜ</div>
@@ -206,16 +167,12 @@ if check_password():
             </div>
             """, unsafe_allow_html=True)
 
-        # 3. BÖLÜM: HEDEF ANALİZİ & PAYLAŞIM
         st.subheader("🎯 HEDEF ANALİZİ & ÜYE PAYLARI")
         pay = kasa / 3
         kisi_basi_kar = net_kar / 3
-        
         c1, c2, c3 = st.columns(3)
         users = ["oguzo", "ero7", "fybey"]
-        cols = [c1, c2, c3]
-        
-        for col, user in zip(cols, users):
+        for col, user in zip([c1, c2, c3], users):
             with col:
                 st.markdown(f"""
                 <div class='industrial-card'>
@@ -225,41 +182,28 @@ if check_password():
                 </div>
                 """, unsafe_allow_html=True)
 
-    # SAYFA 2: FORM LINE
     elif page == "⚽ FORMLINE":
         st.title("⚽ FORMLINE ANALİZ")
         tab1, tab2, tab3 = st.tabs(["🔥 W3 (8-9 Şub)", "✅ W2 (1-2 Şub)", "⏪ W1 (Geçmiş)"])
-        
         with tab1:
             st.markdown(w3_coupon_html, unsafe_allow_html=True)
-            
         with tab2:
             st.markdown(w2_coupon_html, unsafe_allow_html=True)
-            
         with tab3:
             st.markdown(w1_coupon_html, unsafe_allow_html=True)
 
-    # SAYFA 3: DASHDASH (BİLEŞİK GETİRİ)
     elif page == "📊 DASHDASH":
         st.title("📈 PERFORMANS SİMÜLATÖRÜ")
-        
         col_inp1, col_inp2 = st.columns(2)
         with col_inp1:
             hedef_oran = st.slider("Günlük Hedef Kar (%)", 0.1, 5.0, 1.0)
         with col_inp2:
             sure = st.slider("Simülasyon Süresi (Gün)", 7, 90, 30)
-            
-        # Bileşik Faiz Hesabı
         gelecek_degerler = [kasa * ((1 + hedef_oran/100) ** gun) for gun in range(sure)]
         df_chart = pd.DataFrame({"Gün": range(sure), "Kasa Tahmini ($)": gelecek_degerler})
-        
         st.line_chart(df_chart.set_index("Gün"))
-        
-        son_deger = gelecek_degerler[-1]
-        st.success(f"🚀 {sure} gün sonraki tahmini kasa: **${son_deger:,.2f}**")
-        
+        st.success(f"🚀 {sure} gün sonraki tahmini kasa: **${gelecek_degerler[-1]:,.2f}**")
         st.divider()
-        
         st.markdown("""
         <div class='industrial-card'>
             <div class='terminal-header'>🏁 FORM VE SERİ (STREAK)</div>
