@@ -7,7 +7,7 @@ import json
 import os
 
 # --- 1. AYARLAR ---
-st.set_page_config(page_title="OG Core v8.2", page_icon="🛡️", layout="wide")
+st.set_page_config(page_title="OG Core v8.3", page_icon="🛡️", layout="wide")
 
 # --- 2. CSS STİLLERİ ---
 custom_css = """
@@ -91,6 +91,13 @@ custom_css = """
 
 h1, h2, h3 { color: #e6edf3 !important; }
 section[data-testid="stSidebar"] { background-color: #010409 !important; border-right: 1px solid #30363d; }
+/* Buton Stili */
+button[kind="primary"] {
+    background-color: #cc7a00 !important;
+    border: none !important;
+    color: white !important;
+    font-weight: bold !important;
+}
 </style>
 """
 
@@ -177,14 +184,15 @@ if check_password():
         page = st.radio("SİSTEM MODÜLLERİ", ["⚡ ULTRA FON", "⚽ FORMLINE", "📊 DASHDASH"])
         st.divider()
         
-        # INPUTLARI BINDING ETTİK (Her değişiklikte save_game_data çalışır - AutoSave)
+        # INPUTLARI BINDING ETTİK
         kasa = st.number_input("TOPLAM KASA (USD)", value=game_data["kasa"], step=10.0, key="kasa_input", on_change=save_game_data)
         ana_para = st.number_input("BAŞLANGIÇ SERMAYESİ", value=game_data["ana_para"], key="ana_input", on_change=save_game_data)
         gunluk_yakim = st.slider("GÜNLÜK ORT. HARCAMA ($)", 0, 100, game_data["yakim"], key="yakim_input", on_change=save_game_data)
         
-        st.markdown("---")
-        # 🟢 MANUEL KAYDET BUTONU EKLENDİ
-        if st.button("💾 AYARLARI KAYDET", use_container_width=True):
+        st.write("") # Boşluk
+        
+        # 🟢 BUTON 1: SIDEBAR (PRIMARY RENKTE)
+        if st.button("💾 AYARLARI KAYDET", type="primary", use_container_width=True, key="save_sidebar"):
             save_game_data()
 
         tr_tz = pytz.timezone('Europe/Istanbul')
@@ -227,11 +235,17 @@ if check_password():
 </div>
 """
         st.markdown(loot_bar_html, unsafe_allow_html=True)
+        
+        # 🟢 BUTON 2: ANA EKRAN (YEDEK BUTON)
+        # Eğer yandakini görmezsen buna bas kral
+        if st.button("💾 VERİLERİ KAYDET (SAVE)", key="save_main"):
+            save_game_data()
+
         # -----------------------------------------------
 
         st.markdown(f"""
 <div class='industrial-card'>
-<div class='terminal-header'>💎 OG TRADE RADAR — v8.2 (MANUAL SAVE)</div>
+<div class='terminal-header'>💎 OG TRADE RADAR — v8.3 (DOUBLE BUTTON)</div>
 <div class='terminal-row'><span>🕒 SON GÜNCELLEME</span><span>{datetime.now(tr_tz).strftime('%H:%M:%S')}</span></div>
 <div class='terminal-row'><span>💰 TOPLAM KASA</span><span class='highlight'>${kasa:,.2f} (≈ {tl_karsiligi:,.0f} TL)</span></div>
 <div class='terminal-row'><span>🚀 NET KAR/ZARAR</span><span style='color:{"#00ff41" if net_kar >=0 else "#ff4b4b"}'>{net_kar:,.2f} USD (%{kar_yuzdesi:.1f})</span></div>
@@ -320,4 +334,4 @@ if check_password():
 </div>
 """, unsafe_allow_html=True)
 
-    st.caption("OG Core v8.2 | Fybey e aittir.")
+    st.caption("OG Core v8.3 | Fybey e aittir.")
