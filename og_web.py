@@ -94,7 +94,7 @@ custom_css = """
 }
 .milestone-label { 
     position: absolute;
-    top: 40px; /* Barın altına */
+    top: 15px; /* Barın altına */
     font-size: 11px; 
     font-weight: bold; 
     color: #8b949e; 
