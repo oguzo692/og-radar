@@ -128,7 +128,7 @@ if check_password():
         
         tr_tz = pytz.timezone('Europe/Istanbul')
         st.info(f"🕒 {datetime.now(tr_tz).strftime('%H:%M:%S')}")
-        if st.button("🔴 ÇIKIŞ"):
+        if st.button("çıkış"):
             st.session_state["password_correct"] = False
             st.rerun()
 
@@ -178,7 +178,7 @@ if check_password():
             </div>
             """, unsafe_allow_html=True)
 
-        st.subheader("🎯 ÜYE PAYLARI")
+        st.subheader("🎯 Üye Payları")
         pay = kasa / 3
         kisi_basi_kar = net_kar / 3
         c1, c2, c3 = st.columns(3)
@@ -193,8 +193,8 @@ if check_password():
                 </div>
                 """, unsafe_allow_html=True)
 
-    elif page == "⚽ FORMLINE":
-        st.title("⚽ FORMLINE")
+    elif page == "⚽ Formlıne":
+        st.title("⚽ Formlıne")
         tab1, tab2, tab3 = st.tabs(["⏳ W3", "✅ W2", "❌ W1"])
         with tab1:
             st.markdown(w3_coupon_html, unsafe_allow_html=True)
@@ -203,8 +203,8 @@ if check_password():
         with tab3:
             st.markdown(w1_coupon_html, unsafe_allow_html=True)
 
-    elif page == "📊 DASHDASH":
-        st.title("📈 PERFORMANS SİMÜLATÖRÜ")
+    elif page == "📊 Dashdash":
+        st.title("📈 Performans Similatörü")
         col_inp1, col_inp2 = st.columns(2)
         with col_inp1:
             hedef_oran = st.slider("Günlük Hedef Kar (%)", 0.1, 5.0, 1.0)
