@@ -22,7 +22,7 @@ custom_css = """
 * { font-family: 'JetBrains Mono', monospace !important; }
 :root { --soft-orange: #cc7a00; --win-green: #00ff41; --loss-red: #ff4b4b; --terminal-gray: #8b949e; }
 
-/* GİZLİLİK MODU - GÜNCELLENDİ: Sidebar butonunu gizleyen 'header' kelimesi kaldırıldı */
+/* GİZLİLİK MODU */
 #MainMenu, footer, .stDeployButton {visibility: hidden !important;}
 [data-testid="stToolbar"] {visibility: hidden !important;}
 [data-testid="stDecoration"] {display:none;}
@@ -39,7 +39,6 @@ custom_css = """
     left: 0 !important;
     top: 10px !important;
     z-index: 9999999 !important;
-    box-shadow: 2px 2px 10px rgba(0,0,0,0.5) !important;
 }
 [data-testid="stSidebarCollapsedControl"] button {
     color: white !important;
@@ -237,7 +236,6 @@ if check_password():
         kasa = st.number_input("TOPLAM KASA (USD)", value=game_data["kasa"], step=10.0, key="kasa_input", on_change=save_game_data)
         ana_para = st.number_input("BAŞLANGIÇ SERMAYESİ", value=game_data["ana_para"], key="ana_input", on_change=save_game_data)
         gunluk_yakim = st.slider("GÜNLÜK ORT. HARCAMA ($)", 0, 100, game_data["yakim"], key="yakim_input", on_change=save_game_data)
-        st.write("") 
         
         st.markdown("---")
         if st.button("💾 AYARLARI KAYDET", type="primary", use_container_width=True, key="save_sidebar"): save_game_data()
@@ -253,7 +251,6 @@ if check_password():
         kar_yuzdesi = (net_kar / ana_para) * 100 if ana_para > 0 else 0
         tl_karsiligi = kasa * 33.50
         
-        # --- 💎 LOOT BAR FIX ---
         targets = [
             {"val": 1000, "icon": "📱", "name": "TELEFON"},
             {"val": 2500, "icon": "🏖️", "name": "TATİL"},
