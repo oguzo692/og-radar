@@ -18,6 +18,8 @@ custom_css = """
 :root { --soft-orange: #cc7a00; --win-green: #00ff41; --loss-red: #ff4b4b; --terminal-gray: #8b949e; }
 #MainMenu, header, footer, .stDeployButton {visibility: hidden !important;}
 [data-testid="stToolbar"] {visibility: hidden !important;}
+[data-testid="stDecoration"] {display:none;}
+[data-testid="stSidebarNav"] {border-right: 1px solid #30363d;}
 .industrial-card {
     background: rgba(255, 255, 255, 0.02);
     border-left: 3px solid var(--soft-orange);
@@ -40,7 +42,6 @@ custom_css = """
 .milestone { position: absolute; top: 50%; transform: translate(-50%, -50%); width: 120px; display: flex; flex-direction: column; align-items: center; z-index: 10; }
 .milestone-icon { position: absolute; bottom: 12px; font-size: 24px; }
 .milestone-label { position: absolute; top: 15px; font-size: 11px; font-weight: bold; color: #8b949e; white-space: nowrap; }
-.milestone.active .milestone-label { color: #00ff41; }
 .time-widget { display: block; width: 100%; padding: 0.3rem; font-size: 13px; font-weight: bold; color: #8b949e; text-align: center; background-color: #0d1117; border: 1px solid #30363d; border-radius: 0.25rem; }
 </style>
 """
@@ -83,16 +84,12 @@ if check_password():
 
     with st.sidebar:
         st.markdown("<h2 style='color:#cc7a00;'>🛡️ OG CORE</h2>", unsafe_allow_html=True)
-        # --- BURASI SENİN GİDEN SEKMELERİN ---
         page = st.radio("SİSTEM MODÜLLERİ", ["⚡ ULTRA FON", "⚽ FORMLINE", "📊 DASHDASH"])
         st.divider()
         kasa = st.number_input("TOPLAM KASA (USD)", value=game_data["kasa"], step=10.0, key="kasa_input")
         ana_para = st.number_input("BAŞLANGIÇ SERMAYESİ", value=game_data["ana_para"], key="ana_input")
         gunluk_yakim = st.slider("GÜNLÜK ORT. HARCAMA ($)", 0, 100, game_data["yakim"], key="yakim_input")
         if st.button("💾 AYARLARI KAYDET", type="primary", use_container_width=True): save_game_data()
-        tr_tz = pytz.timezone('Europe/Istanbul')
-        st.markdown(f"<div class='time-widget'>🕒 {datetime.now(tr_tz).strftime('%H:%M:%S')}</div>", unsafe_allow_html=True)
-        if st.button("🔴 ÇIKIŞ", use_container_width=True): st.session_state["password_correct"] = False; st.rerun()
 
     if page == "⚡ ULTRA FON":
         net_kar = kasa - ana_para
@@ -124,13 +121,6 @@ if check_password():
             omur = int(kasa / gunluk_yakim) if gunluk_yakim > 0 else 999
             st.markdown(f"<div class='industrial-card'><div class='terminal-header'>💀 FON ÖMRÜ</div><h2 style='text-align:center;'>{omur} GÜN</h2></div>", unsafe_allow_html=True)
 
-        pay, kisi_kar = kasa/3, net_kar/3
-        st.subheader("🎯 Üye Payları")
-        c1, c2, c3 = st.columns(3)
-        for c, u in zip([c1, c2, c3], ["OGUZO", "ERO7", "FYBEY"]):
-            with c:
-                st.markdown(f"<div class='industrial-card'><div class='terminal-header'>{u}</div><div class='terminal-row'><span>PAY</span><span class='highlight'>${pay:,.2f}</span></div><div class='terminal-row'><span>KAR</span><span style='color:{"#00ff41" if kisi_kar>=0 else "#ff4b4b"}'>{kisi_kar:+.2f}</span></div></div>", unsafe_allow_html=True)
-
     elif page == "⚽ FORMLINE":
         st.title("⚽ FORMLINE")
         t1, t2, t3 = st.tabs(["⏳ W3", "✅ W2", "❌ W1"])
@@ -145,6 +135,3 @@ if check_password():
         vals = [kasa * ((1 + h_oran/100) ** (g / 7)) for g in range(sure)]
         st.line_chart(pd.DataFrame({"Gün": range(sure), "Kasa Tahmini ($)": vals}).set_index("Gün"))
         st.success(f"🚀 {sure} gün sonra tahmin: **${vals[-1]:,.2f}**")
-        st.markdown("<div class='industrial-card'><div class='terminal-header'>🏁 FORM VE SERİ</div><div class='terminal-row'><span>SON 5</span><span>✅ ✅ ❌ ✅ ✅</span></div><div class='terminal-row'><span>MOMENTUM</span><span class='highlight'>+3 (GÜÇLÜ)</span></div></div>", unsafe_allow_html=True)
-
-    st.caption("OG Core v8.8 | Fybey e aittir.")
