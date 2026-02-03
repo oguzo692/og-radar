@@ -7,7 +7,8 @@ import json
 import os
 
 # --- 1. AYARLAR ---
-st.set_page_config(page_title="OG Core v8.8", page_icon="🛡️", layout="wide")
+# initial_sidebar_state="expanded" ekledim ki sekme otomatik açılsın.
+st.set_page_config(page_title="OG Core v8.8", page_icon="🛡️", layout="wide", initial_sidebar_state="expanded")
 
 # --- 2. CSS STİLLERİ ---
 custom_css = """
@@ -22,6 +23,14 @@ custom_css = """
 [data-testid="stToolbar"] {visibility: hidden !important;}
 [data-testid="stDecoration"] {display:none;}
 [data-testid="stSidebarNav"] {border-right: 1px solid #30363d;}
+
+/* YAN SEKME BUTONU GÖRÜNÜRLÜK FIX */
+[data-testid="stSidebarCollapsedControl"] {
+    display: flex !important;
+    background-color: #cc7a00 !important;
+    border-radius: 0 5px 5px 0 !important;
+    color: white !important;
+}
 
 /* KART TASARIMI */
 .industrial-card {
@@ -46,7 +55,7 @@ custom_css = """
 .dim { color: var(--terminal-gray); }
 .status-wait { color: #f1c40f; font-weight: bold; }
 
-/* --- 💎 LOOT BAR STİLİ (FIXED & SPACED) --- */
+/* --- 💎 LOOT BAR STİLİ --- */
 .loot-wrapper {
     background: #161b22;
     border: 1px solid #30363d;
@@ -99,14 +108,6 @@ custom_css = """
     text-align: center;
     white-space: nowrap;
     transition: all 0.3s ease;
-}
-.milestone.active .milestone-label { 
-    color: #00ff41; 
-    text-shadow: 0 0 5px rgba(0, 255, 65, 0.6); 
-}
-.milestone.active .milestone-icon { 
-    transform: scale(1.1);
-    text-shadow: 0 0 10px rgba(255,255,255,0.4); 
 }
 
 h1, h2, h3 { color: #e6edf3 !important; }
