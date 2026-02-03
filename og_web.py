@@ -68,7 +68,7 @@ w3_coupon_html = """
     <div class='terminal-row'><span>Lıve - Man City</span><span class='highlight'>lıve gol atar</span></div>
     <div class='terminal-row'><span>Fenerbahçe - Gençlerbirliği</span><span class='highlight'>fenerbahçe w & 2.5 üst</span></div>
     <hr style='border: 1px solid #30363d; margin: 10px 0;'>
-    <div class='terminal-row'><span class='dim'>oran:8.79 --</span><span class='dim'>bet: 100 USD</span><span class='status-wait'>bekliyor ⏳</span></div>
+    <div class='terminal-row'><span class='dim'>oran:8.79</span><span class='dim'>bet: 100 USD</span><span class='status-wait'>bekliyor ⏳</span></div>
 </div>
 """
 
