@@ -7,7 +7,7 @@ import pytz
 # --- 1. AYARLAR ---
 st.set_page_config(page_title="OG Core v7.1", page_icon="🛡️", layout="wide")
 
-# --- 2. CSS STİLLERİ (Değişken olarak tanımlandı - HATA RİSKİ SIFIR) ---
+# --- 2. CSS STİLLERİ ---
 custom_css = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
@@ -39,14 +39,16 @@ custom_css = """
 .win { color: var(--win-green); }
 .loss { color: var(--loss-red); }
 .dim { color: var(--terminal-gray); }
+.status-wait { color: #f1c40f; font-weight: bold; }
 
 h1, h2, h3 { color: #e6edf3 !important; }
 section[data-testid="stSidebar"] { background-color: #010409 !important; border-right: 1px solid #30363d; }
 </style>
 """
 
-# --- 3. HTML ŞABLONLARI (Kuponlar vb.) ---
-# W2 Kuponu HTML'i
+# --- 3. HTML ŞABLONLARI ---
+
+# W2 Kuponu (Kazanan)
 w2_coupon_html = """
 <div class='industrial-card' style='border-left-color: #00ff41;'>
     <div class='terminal-header' style='color:#00ff41;'>✅ W2 KUPONU - KAZANDI</div>
@@ -59,7 +61,7 @@ w2_coupon_html = """
 </div>
 """
 
-# W1 Kuponu HTML'i
+# W1 Kuponu (Kaybeden)
 w1_coupon_html = """
 <div class='industrial-card' style='border-left-color: #ff4b4b;'>
     <div class='terminal-header' style='color:#ff4b4b;'>❌ W1 KUPONU - KAYBETTİ</div>
@@ -130,13 +132,16 @@ if check_password():
         col_piyasa, col_omur = st.columns([2, 1])
         
         with col_piyasa:
-            # Fiyatları çekmeye çalış, hata verirse 0 bas
+            # Fiyatları çekme (Hata korumalı)
             try:
-                tickers = ["BTC-USD", "ETH-USD", "SOL-USD"]
-                prices = yf.download(tickers, period="1d", interval="1m", progress=False)['Close'].iloc[-1]
-                btc = prices['BTC-USD']
-                eth = prices['ETH-USD']
-                sol = prices['SOL-USD']
+                # Anlık veri çekemezse son kapanışı alır
+                btc_data = yf.Ticker("BTC-USD").history(period="1d")
+                eth_data = yf.Ticker("ETH-USD").history(period="1d")
+                sol_data = yf.Ticker("SOL-USD").history(period="1d")
+                
+                btc = btc_data['Close'].iloc[-1] if not btc_data.empty else 0
+                eth = eth_data['Close'].iloc[-1] if not eth_data.empty else 0
+                sol = sol_data['Close'].iloc[-1] if not sol_data.empty else 0
             except:
                 btc, eth, sol = 0, 0, 0
             
@@ -187,7 +192,6 @@ if check_password():
         tab1, tab2, tab3 = st.tabs(["🔥 W3 (8-9 Şub)", "✅ W2 (1-2 Şub)", "⏪ W1 (Geçmiş)"])
         
         with tab1:
-            with tab1:
             # --- W3 KUPON GİRİŞİ BAŞLANGIÇ ---
             w3_html = """
             <div class='industrial-card'>
@@ -217,7 +221,6 @@ if check_password():
                 </div>
             </div>
             """
-            
             st.markdown(w3_html, unsafe_allow_html=True)
             # --- W3 KUPON GİRİŞİ BİTİŞ ---
             
@@ -227,4 +230,33 @@ if check_password():
         with tab3:
             st.markdown(w1_coupon_html, unsafe_allow_html=True)
 
-    # SAY
+    # SAYFA 3: DASHDASH (BİLEŞİK GETİRİ)
+    elif page == "📊 DASHDASH":
+        st.title("📈 PERFORMANS SİMÜLATÖRÜ")
+        
+        col_inp1, col_inp2 = st.columns(2)
+        with col_inp1:
+            hedef_oran = st.slider("Günlük Hedef Kar (%)", 0.1, 5.0, 1.0)
+        with col_inp2:
+            sure = st.slider("Simülasyon Süresi (Gün)", 7, 90, 30)
+            
+        # Bileşik Faiz Hesabı
+        gelecek_degerler = [kasa * ((1 + hedef_oran/100) ** gun) for gun in range(sure)]
+        df_chart = pd.DataFrame({"Gün": range(sure), "Kasa Tahmini ($)": gelecek_degerler})
+        
+        st.line_chart(df_chart.set_index("Gün"))
+        
+        son_deger = gelecek_degerler[-1]
+        st.success(f"🚀 {sure} gün sonraki tahmini kasa: **${son_deger:,.2f}**")
+        
+        st.divider()
+        
+        st.markdown("""
+        <div class='industrial-card'>
+            <div class='terminal-header'>🏁 FORM VE SERİ (STREAK)</div>
+            <div class='terminal-row'><span>SON 5 İŞLEM</span><span>✅ ✅ ❌ ✅ ✅</span></div>
+            <div class='terminal-row'><span>MOMENTUM</span><span class='highlight'>+3 (GÜÇLÜ)</span></div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    st.caption("OG Core v7.1 | Discipline is Profit.")
