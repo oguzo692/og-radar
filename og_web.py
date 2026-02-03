@@ -7,7 +7,7 @@ import json
 import os
 
 # --- 1. AYARLAR ---
-st.set_page_config(page_title="OG Core v8.3", page_icon="🛡️", layout="wide")
+st.set_page_config(page_title="OG Core v8.4", page_icon="🛡️", layout="wide")
 
 # --- 2. CSS STİLLERİ ---
 custom_css = """
@@ -91,12 +91,35 @@ custom_css = """
 
 h1, h2, h3 { color: #e6edf3 !important; }
 section[data-testid="stSidebar"] { background-color: #010409 !important; border-right: 1px solid #30363d; }
-/* Buton Stili */
+
+/* --- 🔥 BUTON VE SAAT KÜÇÜLTME (COMPACT MOD) --- */
+/* Sidebar butonlarını daha ince yap */
+section[data-testid="stSidebar"] div.stButton > button {
+    padding-top: 0.3rem;
+    padding-bottom: 0.3rem;
+    font-size: 13px;
+    border: 1px solid #30363d;
+}
+/* Özel Buton Renkleri */
 button[kind="primary"] {
     background-color: #cc7a00 !important;
-    border: none !important;
     color: white !important;
-    font-weight: bold !important;
+    border: none !important;
+}
+/* Saat Widget Stili */
+.time-widget {
+    display: block;
+    width: 100%;
+    padding: 0.3rem;
+    font-size: 13px;
+    font-weight: bold;
+    color: #8b949e;
+    text-align: center;
+    background-color: #0d1117;
+    border: 1px solid #30363d;
+    border-radius: 0.25rem;
+    margin-bottom: 8px; /* Butonlar arası boşluk */
+    font-family: 'JetBrains Mono', monospace;
 }
 </style>
 """
@@ -175,8 +198,6 @@ def save_game_data():
 # --- 6. ANA UYGULAMA ---
 if check_password():
     st.markdown(custom_css, unsafe_allow_html=True)
-
-    # Veriyi Yükle
     game_data = load_game_data()
 
     with st.sidebar:
@@ -184,20 +205,27 @@ if check_password():
         page = st.radio("SİSTEM MODÜLLERİ", ["⚡ ULTRA FON", "⚽ FORMLINE", "📊 DASHDASH"])
         st.divider()
         
-        # INPUTLARI BINDING ETTİK
+        # INPUTLAR
         kasa = st.number_input("TOPLAM KASA (USD)", value=game_data["kasa"], step=10.0, key="kasa_input", on_change=save_game_data)
         ana_para = st.number_input("BAŞLANGIÇ SERMAYESİ", value=game_data["ana_para"], key="ana_input", on_change=save_game_data)
         gunluk_yakim = st.slider("GÜNLÜK ORT. HARCAMA ($)", 0, 100, game_data["yakim"], key="yakim_input", on_change=save_game_data)
         
         st.write("") # Boşluk
         
-        # 🟢 BUTON 1: SIDEBAR (PRIMARY RENKTE)
+        # --- KÜÇÜLTÜLMÜŞ KONTROL PANELİ ---
+        st.markdown("---")
+        
+        # 1. KAYDET BUTONU
         if st.button("💾 AYARLARI KAYDET", type="primary", use_container_width=True, key="save_sidebar"):
             save_game_data()
 
+        # 2. SAAT BARI (Buton gibi görünen HTML)
         tr_tz = pytz.timezone('Europe/Istanbul')
-        st.info(f"🕒 {datetime.now(tr_tz).strftime('%H:%M:%S')}")
-        if st.button("🔴 ÇIKIŞ"):
+        time_str = datetime.now(tr_tz).strftime('%H:%M:%S')
+        st.markdown(f"<div class='time-widget'>🕒 {time_str}</div>", unsafe_allow_html=True)
+        
+        # 3. ÇIKIŞ BUTONU
+        if st.button("🔴 ÇIKIŞ", use_container_width=True, key="exit_sidebar"):
             st.session_state["password_correct"] = False
             st.rerun()
 
@@ -236,16 +264,15 @@ if check_password():
 """
         st.markdown(loot_bar_html, unsafe_allow_html=True)
         
-        # 🟢 BUTON 2: ANA EKRAN (YEDEK BUTON)
-        # Eğer yandakini görmezsen buna bas kral
-        if st.button("💾 VERİLERİ KAYDET (SAVE)", key="save_main"):
+        # YEDEK KAYDET BUTONU
+        if st.button("💾 HIZLI KAYDET", key="save_main"):
             save_game_data()
 
         # -----------------------------------------------
 
         st.markdown(f"""
 <div class='industrial-card'>
-<div class='terminal-header'>💎 OG TRADE RADAR — v8.3 (DOUBLE BUTTON)</div>
+<div class='terminal-header'>💎 OG TRADE RADAR — v8.4 (COMPACT)</div>
 <div class='terminal-row'><span>🕒 SON GÜNCELLEME</span><span>{datetime.now(tr_tz).strftime('%H:%M:%S')}</span></div>
 <div class='terminal-row'><span>💰 TOPLAM KASA</span><span class='highlight'>${kasa:,.2f} (≈ {tl_karsiligi:,.0f} TL)</span></div>
 <div class='terminal-row'><span>🚀 NET KAR/ZARAR</span><span style='color:{"#00ff41" if net_kar >=0 else "#ff4b4b"}'>{net_kar:,.2f} USD (%{kar_yuzdesi:.1f})</span></div>
@@ -334,4 +361,4 @@ if check_password():
 </div>
 """, unsafe_allow_html=True)
 
-    st.caption("OG Core v8.3 | Fybey e aittir.")
+    st.caption("OG Core v8.4 | Fybey e aittir.")
