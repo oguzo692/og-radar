@@ -14,117 +14,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- 2. CSS STİLLERİ ---
-custom_css = """
-<style>
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
-
-/* ANA ARKA PLAN */
-.main { background-color: #050505 !important; }
-
-/* GENEL FONT */
-body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, span, h1, h2, h3, button, input { 
-    font-family: 'JetBrains Mono', monospace !important; 
-}
-
-/* --- 📺 RETRO AUTH EKRANI TASARIMI --- */
-.auth-wrapper {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 250px;
-    color: #ffffff;
-    overflow: hidden;
-    margin-top: 50px;
-}
-
-/* SCANLINE (TARAMA ÇİZGİSİ) EFECT */
-.auth-wrapper::before {
-    content: " ";
-    position: absolute;
-    top: 0; left: 0; bottom: 0; right: 0;
-    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
-                linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-    z-index: 2;
-    background-size: 100% 4px, 3px 100%;
-    pointer-events: none;
-}
-
-.retro-title {
-    font-size: 45px;
-    font-weight: bold;
-    letter-spacing: 15px;
-    text-shadow: 0 0 12px rgba(255,255,255,0.6);
-    border-bottom: 2px solid #ffffff;
-    padding-bottom: 15px;
-    margin-bottom: 10px;
-    z-index: 3;
-}
-
-/* GİRİŞ KUTUSU */
-.stTextInput > div > div > input {
-    background-color: transparent !important;
-    border: 1px solid #ffffff !important;
-    color: white !important;
-    text-align: center;
-    border-radius: 0px !important;
-    font-size: 18px !important;
-}
-
-/* GİRİŞ BUTONU */
-div.stButton > button {
-    background-color: transparent !important;
-    color: white !important;
-    border: 1px solid #ffffff !important;
-    border-radius: 0px !important;
-    width: 100% !important;
-    font-weight: bold !important;
-    letter-spacing: 5px !important;
-    transition: all 0.2s ease !important;
-    height: 45px !important;
-    margin-top: 10px !important;
-}
-div.stButton > button:hover {
-    background-color: #ffffff !important;
-    color: #000000 !important;
-}
-
-/* SİSTEMİN DİĞER TASARIMLARI */
-:root { --soft-orange: #cc7a00; --win-green: #00ff41; --loss-red: #ff4b4b; --terminal-gray: #8b949e; }
-#MainMenu, footer, .stDeployButton {visibility: hidden !important;}
-[data-testid="stToolbar"] {visibility: hidden !important;}
-[data-testid="stDecoration"] {display:none;}
-[data-testid="stSidebarNav"] {border-right: 1px solid #30363d;}
-
-/* SIDEBAR TOGGLE KURTARICI */
-[data-testid="stSidebarCollapsedControl"] {
-    display: flex !important;
-    background-color: #cc7a00 !important;
-    border-radius: 0 8px 8px 0 !important;
-    width: 50px !important; height: 50px !important;
-    left: 0 !important; top: 10px !important; z-index: 9999999 !important;
-}
-
-.industrial-card { background: rgba(255, 255, 255, 0.02); border-left: 3px solid var(--soft-orange); border-radius: 4px; padding: 15px; margin-bottom: 20px; }
-.terminal-header { color: var(--soft-orange); font-size: 14px; font-weight: bold; border-bottom: 1px dashed #30363d; padding-bottom: 5px; margin-bottom: 10px; text-transform: uppercase; }
-.terminal-row { display: flex; justify-content: space-between; font-size: 13px; color: #e6edf3; margin-bottom: 6px; }
-
-/* LOOT BAR */
-.loot-wrapper { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px 25px 50px 25px; margin-bottom: 25px; position: relative; }
-.loot-track { background: #21262d; height: 14px; border-radius: 7px; width: 100%; position: relative; margin-top: 45px; }
-.loot-fill { background: linear-gradient(90deg, #cc7a00, #ffae00); height: 100%; border-radius: 7px; box-shadow: 0 0 15px rgba(204, 122, 0, 0.5); }
-.milestone { position: absolute; top: 50%; transform: translate(-50%, -50%); width: 120px; display: flex; flex-direction: column; align-items: center; z-index: 10; pointer-events: none; }
-.milestone-icon { position: absolute; bottom: 12px; font-size: 24px; }
-.milestone-label { position: absolute; top: 15px; font-size: 11px; font-weight: bold; color: #8b949e; text-align: center; white-space: nowrap; }
-
-section[data-testid="stSidebar"] { background-color: #010409 !important; border-right: 1px solid #30363d; }
-.time-widget { display: block; width: 100%; padding: 0.3rem; font-size: 13px; font-weight: bold; color: #8b949e; text-align: center; background-color: #0d1117; border: 1px solid #30363d; border-radius: 0.25rem; margin-bottom: 8px; }
-</style>
-"""
-
-# --- 3. HTML ŞABLONLARI ---
+# --- 2. HTML ŞABLONLARI (Hata Vermemesi İçin En Üstte) ---
 w3_coupon_html = """
 <div class='industrial-card'>
     <div class='terminal-header'>🔥 W3 KUPONU</div>
@@ -137,7 +27,6 @@ w3_coupon_html = """
     <div class='terminal-row'><span class='dim'>oran: 8.79</span><span class='dim'>bet: 100 USD</span><span class='status-wait'>BEKLENİYOR ⏳</span></div>
 </div>
 """
-
 w2_coupon_html = """
 <div class='industrial-card' style='border-left-color: #00ff41;'>
     <div class='terminal-header' style='color:#00ff41;'>✅ W2 KUPONU - KAZANDI</div>
@@ -149,7 +38,6 @@ w2_coupon_html = """
     <div class='terminal-row'><span class='dim'>oran: 5.40</span><span class='dim'>bet: 100 USD</span><span class='win'>SONUÇLANDI +540 USD</span></div>
 </div>
 """
-
 w1_coupon_html = """
 <div class='industrial-card' style='border-left-color: #ff4b4b;'>
     <div class='terminal-header' style='color:#ff4b4b;'>❌ W1 KUPONU - KAYBETTİ</div>
@@ -163,6 +51,72 @@ w1_coupon_html = """
 </div>
 """
 
+# --- 3. CSS STİLLERİ ---
+custom_css = """
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+
+.main { background-color: #050505 !important; }
+body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, span, h1, h2, h3, button, input { 
+    font-family: 'JetBrains Mono', monospace !important; 
+}
+
+/* --- 📺 RETRO AUTH EKRANI --- */
+.auth-wrapper {
+    position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    height: 250px; color: #ffffff; overflow: hidden; margin-top: 50px;
+}
+.auth-wrapper::before {
+    content: " "; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    z-index: 2; background-size: 100% 4px, 3px 100%; pointer-events: none;
+}
+.retro-title {
+    font-size: 45px; font-weight: bold; letter-spacing: 15px; text-shadow: 0 0 12px rgba(255,255,255,0.6);
+    border-bottom: 2px solid #ffffff; padding-bottom: 15px; margin-bottom: 10px; z-index: 3;
+}
+.stTextInput > div > div > input { background-color: transparent !important; border: 1px solid #ffffff !important; color: white !important; text-align: center; border-radius: 0px !important; font-size: 18px !important; }
+div.stButton > button { background-color: transparent !important; color: white !important; border: 1px solid #ffffff !important; border-radius: 0px !important; width: 100% !important; font-weight: bold !important; letter-spacing: 5px !important; height: 45px !important; margin-top: 10px !important; }
+div.stButton > button:hover { background-color: #ffffff !important; color: #000000 !important; }
+
+/* --- 💎 LOOT BAR STİLİ (PARLAK SİMGELİ) --- */
+.loot-wrapper {
+    background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px 25px 50px 25px; margin-bottom: 25px; position: relative; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+.loot-track {
+    background: #21262d; height: 14px; border-radius: 7px; width: 100%; position: relative; margin-top: 45px; 
+}
+.loot-fill {
+    background: linear-gradient(90deg, #cc7a00, #ffae00); height: 100%; border-radius: 7px; box-shadow: 0 0 15px rgba(204, 122, 0, 0.5);
+}
+.milestone {
+    position: absolute; top: 50%; transform: translate(-50%, -50%); width: 120px; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10; pointer-events: none;
+}
+.milestone-icon { position: absolute; bottom: 12px; font-size: 24px; transition: all 0.3s ease; text-shadow: 0 0 10px rgba(255,255,255,0.2); }
+.milestone.active .milestone-icon { text-shadow: 0 0 20px #ffae00, 0 0 30px #cc7a00; transform: scale(1.2); }
+.milestone-label { position: absolute; top: 15px; font-size: 11px; font-weight: bold; color: #8b949e; text-align: center; white-space: nowrap; }
+.milestone.active .milestone-label { color: #e6edf3; }
+
+/* DİĞER TASARIMLAR */
+:root { --soft-orange: #cc7a00; --win-green: #00ff41; --loss-red: #ff4b4b; --terminal-gray: #8b949e; }
+#MainMenu, footer, .stDeployButton {visibility: hidden !important;}
+[data-testid="stToolbar"] {visibility: hidden !important;}
+[data-testid="stDecoration"] {display:none;}
+[data-testid="stSidebarNav"] {border-right: 1px solid #30363d;}
+[data-testid="stSidebarCollapsedControl"] { display: flex !important; background-color: #cc7a00 !important; border-radius: 0 8px 8px 0 !important; width: 50px !important; height: 50px !important; left: 0 !important; top: 10px !important; z-index: 9999999 !important; }
+.industrial-card { background: rgba(255, 255, 255, 0.02); border-left: 3px solid var(--soft-orange); border-radius: 4px; padding: 15px; margin-bottom: 20px; }
+.terminal-header { color: var(--soft-orange); font-size: 14px; font-weight: bold; border-bottom: 1px dashed #30363d; padding-bottom: 5px; margin-bottom: 10px; text-transform: uppercase; }
+.terminal-row { display: flex; justify-content: space-between; font-size: 13px; color: #e6edf3; margin-bottom: 6px; }
+.highlight { color: var(--soft-orange); }
+.win { color: var(--win-green); }
+.loss { color: var(--loss-red); }
+.dim { color: var(--terminal-gray); }
+.status-wait { color: #f1c40f; font-weight: bold; }
+section[data-testid="stSidebar"] { background-color: #010409 !important; border-right: 1px solid #30363d; }
+.time-widget { display: block; width: 100%; padding: 0.3rem; font-size: 13px; font-weight: bold; color: #8b949e; text-align: center; background-color: #0d1117; border: 1px solid #30363d; border-radius: 0.25rem; margin-bottom: 8px; }
+</style>
+"""
+
 # --- 4. GÜVENLİK ---
 if "password_correct" not in st.session_state:
     st.session_state["password_correct"] = False
@@ -171,7 +125,6 @@ def check_password():
     if not st.session_state["password_correct"]:
         st.markdown(custom_css, unsafe_allow_html=True)
         st.markdown('<div class="auth-wrapper"><div class="retro-title">OG_CORE</div></div>', unsafe_allow_html=True)
-        
         col1, col2, col3 = st.columns([1,2,1])
         with col2:
             pwd = st.text_input("ŞİFRE", type="password", label_visibility="collapsed")
@@ -210,7 +163,6 @@ if check_password():
         kasa = st.number_input("KASA (USD)", value=game_data["kasa"], step=10.0, key="kasa_input", on_change=save_game_data)
         ana_para = st.number_input("SERMAYE", value=game_data["ana_para"], key="ana_input", on_change=save_game_data)
         gunluk_yakim = st.slider("HARCAMA ($/GÜN)", 0, 100, game_data["yakim"], key="yakim_input", on_change=save_game_data)
-        
         st.divider()
         tr_tz = pytz.timezone('Europe/Istanbul')
         st.markdown(f"<div class='time-widget'>🕒 {datetime.now(tr_tz).strftime('%H:%M:%S')}</div>", unsafe_allow_html=True)
@@ -223,24 +175,41 @@ if check_password():
         kar_yuzdesi = (net_kar / ana_para) * 100 if ana_para > 0 else 0
         tl_karsiligi = kasa * 33.50
         
-        targets = [{"val": 1000, "icon": "📱", "name": "TELEFON"}, {"val": 2500, "icon": "🏖️", "name": "TATİL"}, {"val": 5000, "icon": "🏎️", "name": "ARABA"}]
+        # --- 💎 LOOT BAR SİSTEMİ (RE-FIXED) ---
+        targets = [
+            {"val": 1000, "icon": "📱", "name": "TELEFON"},
+            {"val": 2500, "icon": "🏖️", "name": "TATİL"},
+            {"val": 5000, "icon": "🏎️", "name": "ARABA"},
+        ]
         max_target = 6500
         current_pct = min(100, (kasa / max_target) * 100)
         
         markers_html = ""
         for t in targets:
             pos = (t["val"] / max_target) * 100
-            markers_html += f"<div class='milestone' style='left: {pos}%;'><div class='milestone-icon'>{'✅' if kasa >= t['val'] else '🔒'}</div><div class='milestone-label'>{t['name']} (${t['val']})</div></div>"
+            is_active = "active" if kasa >= t["val"] else ""
+            icon_display = t['icon'] if kasa >= t["val"] else "🔒"
+            markers_html += f"""
+            <div class='milestone {is_active}' style='left: {pos}%;'>
+                <div class='milestone-icon'>{icon_display}</div>
+                <div class='milestone-label'>{t['name']} (${t['val']})</div>
+            </div>"""
             
-        st.markdown(f"<div class='loot-wrapper'><div class='terminal-header'>💎 HEDEF YOLCULUĞU</div><div class='loot-track'><div class='loot-fill' style='width: {current_pct}%;'></div>{markers_html}</div></div>", unsafe_allow_html=True)
+        st.markdown(f"""
+        <div class='loot-wrapper'>
+            <div class='terminal-header' style='margin-bottom:0px; border-bottom:none;'>💎 HEDEF YOLCULUĞU</div>
+            <div class='loot-track'>
+                <div class='loot-fill' style='width: {current_pct}%;'></div>
+                {markers_html}
+            </div>
+        </div>""", unsafe_allow_html=True)
         
         st.markdown(f"""
         <div class='industrial-card'>
             <div class='terminal-header'>💎 OG TRADE RADAR — v8.8</div>
             <div class='terminal-row'><span>💰 TOPLAM KASA</span><span class='highlight'>${kasa:,.2f} (≈ {tl_karsiligi:,.0f} TL)</span></div>
             <div class='terminal-row'><span>🚀 NET KAR/ZARAR</span><span style='color:{"#00ff41" if net_kar >=0 else "#ff4b4b"}'>{net_kar:,.2f} USD (%{kar_yuzdesi:.1f})</span></div>
-        </div>
-        """, unsafe_allow_html=True)
+        </div>""", unsafe_allow_html=True)
 
         col_piyasa, col_omur = st.columns([2, 1])
         with col_piyasa:
