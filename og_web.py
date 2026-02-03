@@ -109,7 +109,7 @@ if check_password():
     st.markdown(custom_css, unsafe_allow_html=True)
 
     with st.sidebar:
-        st.markdown("<h2 style='color:#cc7a00;'>🛡️ OG CORE v7.1</h2>", unsafe_allow_html=True)
+        st.markdown("<h2 style='color:#cc7a00;'>🛡️ OG CORE</h2>", unsafe_allow_html=True)
         page = st.radio("SİSTEM MODÜLLERİ", ["⚡ ULTRA FON", "⚽ FORMLINE", "📊 DASHDASH"])
         st.divider()
         kasa = st.number_input("TOPLAM KASA (USD)", value=600.0, step=10.0)
@@ -150,7 +150,7 @@ if check_password():
             
             st.markdown(f"""
             <div class='industrial-card'>
-                <div class='terminal-header'>📊 PİYASA NABZI</div>
+                <div class='terminal-header'>📊 PİYASA</div>
                 <div class='terminal-row'><span>🟠 BTC</span><span>${btc:,.2f}</span></div>
                 <div class='terminal-row'><span>🔵 ETH</span><span>${eth:,.2f}</span></div>
                 <div class='terminal-row'><span>🟣 SOL</span><span>${sol:,.2f}</span></div>
@@ -184,7 +184,7 @@ if check_password():
                 """, unsafe_allow_html=True)
 
     elif page == "⚽ FORMLINE":
-        st.title("⚽ FORMLINE ANALİZ")
+        st.title("⚽ FORMLINE")
         tab1, tab2, tab3 = st.tabs(["⏳ W3", "✅ W2", "❌ W1"])
         with tab1:
             st.markdown(w3_coupon_html, unsafe_allow_html=True)
