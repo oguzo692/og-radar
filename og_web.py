@@ -310,4 +310,4 @@ if check_password():
 </div>
 """, unsafe_allow_html=True)
 
-    st.caption("OG Core v8.0 | Discipline is Profit.")
+    st.caption("OG Core v8.0 | Fybey e aittir.")
