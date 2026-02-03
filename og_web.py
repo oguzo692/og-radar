@@ -355,8 +355,8 @@ if check_password():
         st.divider()
         st.markdown("""
 <div class='industrial-card'>
-<div class='terminal-header'>🏁 FORM VE SERİ (STREAK)</div>
-<div class='terminal-row'><span>SON 5 İŞLEM</span><span>✅ ✅ ❌ ✅ ✅</span></div>
+<div class='terminal-header'>🏁 STREAK</div>
+<div class='terminal-row'><span>SON 3 İŞLEM</span><span>❌ ✅ ✅</span></div>
 <div class='terminal-row'><span>MOMENTUM</span><span class='highlight'>+3 (GÜÇLÜ)</span></div>
 </div>
 """, unsafe_allow_html=True)
