@@ -14,12 +14,12 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- 2. KUPON ŞABLONLARI (HATA ALMAMAK İÇİN EN ÜSTTE) ---
+# --- 2. KUPON ŞABLONLARI ---
 w3_coupon_html = """<div class='industrial-card'><div class='terminal-header'>🔥 W3 KUPONU</div><div class='terminal-row'><span>Wolfsburg - Bvb</span><span class='highlight'>bvb x2 & 1.5 üst</span></div><div class='terminal-row'><span>Newcastle - Brentford</span><span class='highlight'>newcastle 1.5 üst</span></div><div class='terminal-row'><span>Rizespor - Gala</span><span class='highlight'>gala w & 1.5 üst</span></div><div class='terminal-row'><span>Lıve - Man City</span><span class='highlight'>lıve gol atar</span></div><div class='terminal-row'><span>Fenerbahçe - Gençlerbirliği</span><span class='highlight'>fenerbahçe w & 2.5 üst</span></div><hr style='border: 1px solid #30363d; margin: 10px 0;'><div class='terminal-row'><span class='dim'>oran: 8.79</span><span class='dim'>bet: 100 USD</span><span style='color:#f1c40f;'>BEKLENİYOR ⏳</span></div></div>"""
 w2_coupon_html = """<div class='industrial-card' style='border-left-color: #00ff41;'><div class='terminal-header' style='color:#00ff41;'>✅ W2 KUPONU - KAZANDI</div><div class='terminal-row'><span>Gala - Kayserispor</span><span style='color:#00ff41;'>gala w & +2.5 üst ✅</span></div><div class='terminal-row'><span>Lıve - Newcastle</span><span style='color:#00ff41;'>kg var ✅</span></div><div class='terminal-row'><span>Bvb - Heidenheim</span><span style='color:#00ff41;'>bvb w & +1.5 üst ✅</span></div><div class='terminal-row'><span>Kocaelispor - Fenerbahçe</span><span style='color:#00ff41;'>fenerbahçe w & 1.5 üst ✅</span></div><hr style='border: 1px solid #30363d; margin: 10px 0;'><div class='terminal-row'><span class='dim'>oran: 5.40</span><span class='dim'>bet: 100 USD</span><span style='color:#00ff41;'>SONUÇLANDI +540 USD</span></div></div>"""
 w1_coupon_html = """<div class='industrial-card' style='border-left-color: #ff4b4b;'><div class='terminal-header' style='color:#ff4b4b;'>❌ W1 KUPONU - KAYBETTİ</div><div class='terminal-row'><span>Karagümrük - Gala</span><span style='color:#00ff41;'>gala w & 1.5 üst ✅</span></div><div class='terminal-row'><span>Bournemouth - Lıve</span><span style='color:#00ff41;'>kg var ✅</span></div><div class='terminal-row'><span>Unıon Berlin - Bvb</span><span style='color:#00ff41;'>bvb 0.5 üst ✅</span></div><div class='terminal-row'><span>Newcastle - Aston Villa</span><span style='color:#ff4b4b;'>newcastle 1.5 üst ❌</span></div><div class='terminal-row'><span>Fenerbahçe - Göztepe</span><span style='color:#ff4b4b;'>fenerbahçe w ❌</span></div><hr style='border: 1px solid #30363d; margin: 10px 0;'><div class='terminal-row'><span class='dim'>oran: 7.09</span><span class='dim'>bet: 100 USD</span><span style='color:#ff4b4b;'>SONUÇLANDI -100 USD</span></div></div>"""
 
-# --- 3. CSS (SADE RETRO + ATOMİK HEDEFLER) ---
+# --- 3. CSS (HİZALAMA DÜZELTİLDİ) ---
 custom_css = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
@@ -33,14 +33,14 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
 div.stButton > button { background-color: transparent !important; color: white !important; border: 1px solid #ffffff !important; border-radius: 0px !important; width: 100% !important; font-weight: bold !important; letter-spacing: 5px !important; height: 45px !important; }
 div.stButton > button:hover { background-color: #ffffff !important; color: #000000 !important; }
 
-/* 💎 HEDEF YOLCULUĞU CSS */
-.loot-container { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 25px; margin-bottom: 25px; position: relative; }
-.progress-track { background: #21262d; height: 12px; border-radius: 6px; width: 100%; position: relative; margin-top: 5px; margin-bottom: 20px; }
-.progress-fill { background: linear-gradient(90deg, #cc7a00, #ffae00); height: 100%; border-radius: 6px; box-shadow: 0 0 5px rgba(255, 174, 0, 0.4); transition: width 1s ease-in-out; }
-.milestone-item { position: absolute; top: -45px; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; }
-.m-icon { font-size: 22px; margin-bottom: 5px; filter: grayscale(1); opacity: 0.3; transition: 0.5s; }
-.m-label { font-size: 5px; font-weight: bold; color: #8b949e; white-space: nowrap; }
-.milestone-item.achieved .m-icon { filter: grayscale(0); opacity: 1; text-shadow: 0 0 15px #ffae00; transform: scale(1.2); }
+/* 💎 HEDEF YOLCULUĞU CSS - HİZALAMA FIX */
+.loot-container { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; margin-bottom: 25px; position: relative; height: 130px; }
+.progress-track { background: #21262d; height: 14px; border-radius: 7px; width: 100%; position: absolute; bottom: 35px; left: 0; margin: 0 20px; width: calc(100% - 40px); }
+.progress-fill { background: linear-gradient(90deg, #cc7a00, #ffae00); height: 100%; border-radius: 7px; box-shadow: 0 0 8px rgba(255, 174, 0, 0.4); transition: width 1s ease-in-out; }
+.milestone-item { position: absolute; top: -55px; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; width: 80px; }
+.m-icon { font-size: 24px; margin-bottom: 5px; filter: grayscale(1); opacity: 0.3; transition: 0.5s; }
+.m-label { font-size: 10px; font-weight: bold; color: #8b949e; white-space: nowrap; text-align: center; }
+.milestone-item.achieved .m-icon { filter: grayscale(0); opacity: 1; text-shadow: 0 0 15px #ffae00; transform: scale(1.1); }
 .milestone-item.achieved .m-label { color: #ffffff; }
 
 .industrial-card { background: rgba(255, 255, 255, 0.02); border-left: 3px solid #cc7a00; border-radius: 4px; padding: 15px; margin-bottom: 20px; }
@@ -104,7 +104,6 @@ if check_password():
             st.rerun()
 
     if page == "⚡ ULTRA FON":
-        # HEDEF HESAPLAMA
         targets = [
             {"val": 1000, "icon": "📱", "name": "TELEFON"},
             {"val": 2500, "icon": "🏖️", "name": "TATİL"},
@@ -113,7 +112,6 @@ if check_password():
         max_t = 6500
         pct = min(100, (kasa / max_t) * 100)
         
-        # HEDEF HTML OLUŞTURMA (TEK BLOK)
         target_html = f"<div class='loot-container'><div class='terminal-header' style='border:none;margin:0;'>💎 HEDEF YOLCULUĞU</div><div class='progress-track'>"
         target_html += f"<div class='progress-fill' style='width:{pct}%'></div>"
         for t in targets:
@@ -123,9 +121,8 @@ if check_password():
             target_html += f"<div class='milestone-item {cls}' style='left:{pos}%'><div class='m-icon'>{icon}</div><div class='m-label'>{t['name']} (${t['val']})</div></div>"
         target_html += "</div></div>"
         
-        st.markdown(target_html, unsafe_allow_html=True) #
+        st.markdown(target_html, unsafe_allow_html=True)
 
-        # KASA ÖZET
         net_kar = kasa - ana_para
         st.markdown(f"""
         <div class='industrial-card'>
@@ -154,7 +151,7 @@ if check_password():
     elif page == "⚽ FORMLINE":
         st.title("⚽ FORMLINE")
         t1, t2, t3 = st.tabs(["⏳ W3", "✅ W2", "❌ W1"])
-        with t1: st.markdown(w3_coupon_html, unsafe_allow_html=True) #
+        with t1: st.markdown(w3_coupon_html, unsafe_allow_html=True)
         with t2: st.markdown(w2_coupon_html, unsafe_allow_html=True)
         with t3: st.markdown(w1_coupon_html, unsafe_allow_html=True)
 
