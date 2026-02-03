@@ -52,13 +52,13 @@ section[data-testid="stSidebar"] { background-color: #010409 !important; border-
 w3_coupon_html = """
 <div class='industrial-card'>
     <div class='terminal-header'>🔥 W3 KUPONU</div>
-    <div class='terminal-row'><span>Wolfsburg - Bvb</span><span class='highlight'>bvb x2</span></div>
+    <div class='terminal-row'><span>Wolfsburg - Bvb</span><span class='highlight'>bvb x2 & 1.5 üst</span></div>
     <div class='terminal-row'><span>Newcastle - Brentford</span><span class='highlight'>newcastle 1.5 üst</span></div>
     <div class='terminal-row'><span>Rizespor - Gala</span><span class='highlight'>gala w & 1.5 üst</span></div>
     <div class='terminal-row'><span>Lıve - Man City</span><span class='highlight'>lıve gol atar</span></div>
     <div class='terminal-row'><span>Fenerbahçe - Gençlerbirliği</span><span class='highlight'>fenerbahçe w & 2.5 üst</span></div>
     <hr style='border: 1px solid #30363d; margin: 10px 0;'>
-    <div class='terminal-row'><span class='dim'>ORAN: --</span><span class='dim'>bet: 100 USD</span><span class='status-wait'>BEKLENİYOR ⏳</span></div>
+    <div class='terminal-row'><span class='dim'>oran:8.79 --</span><span class='dim'>bet: 100 USD</span><span class='status-wait'>BEKLENİYOR ⏳</span></div>
 </div>
 """
 
@@ -70,7 +70,7 @@ w2_coupon_html = """
     <div class='terminal-row'><span>Bvb - Heidenheim</span><span class='win'>bvb w & +1.5 üst ✅</span></div>
     <div class='terminal-row'><span>Kocaelispor - Fenerbahçe</span><span class='win'>fenerbahçe w & 1.5 üst ✅</span></div>
     <hr style='border: 1px solid #30363d; margin: 10px 0;'>
-    <div class='terminal-row'><span class='dim'>ORAN: 5.40</span><span class='dim'>bet: 100 USD</span><span class='win'>SONUÇLANDI +540 USD</span></div>
+    <div class='terminal-row'><span class='dim'>oran:5.40</span><span class='dim'>bet: 100 USD</span><span class='win'>SONUÇLANDI +540 USD</span></div>
 </div>
 """
 
@@ -83,7 +83,7 @@ w1_coupon_html = """
     <div class='terminal-row'><span>Newcastle - Aston Villa</span><span class='loss'>newcastle 1.5 üst ❌</span></div>
     <div class='terminal-row'><span>Fenerbahçe - Göztepe</span><span class='loss'>fenerbahçe w ❌</span></div>
     <hr style='border: 1px solid #30363d; margin: 10px 0;'>
-    <div class='terminal-row'><span class='dim'>ORAN: 7.09</span><span class='dim'>bet: 100 USD</span><span class='loss'>SONUÇLANDI -100 USD</span></div>
+    <div class='terminal-row'><span class='dim'>oran:7.09</span><span class='dim'>bet: 100 USD</span><span class='loss'>SONUÇLANDI -100 USD</span></div>
 </div>
 """
 
