@@ -73,7 +73,7 @@ w1_coupon_html = """
 """
 
 # W3 Kuponu HTML'i
-w1_coupon_html = """
+w3_coupon_html = """
 <div class='industrial-card' style='border-left-color: #ff4b4b;'>
     <div class='terminal-header' style='color:#ff4b4b;'>❌ W1 KUPONU - KAYBETTİ</div>
     <div class='terminal-row'><span>Karagümrük - GS</span><span class='win'>GS W & +1.5 ÜST ✅</span></div>
