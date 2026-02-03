@@ -51,7 +51,7 @@ section[data-testid="stSidebar"] { background-color: #010409 !important; border-
 # W3 Kuponu (Düzenlenmiş ve Hatasız)
 w3_coupon_html = """
 <div class='industrial-card'>
-    <div class='terminal-header'>🔥 W3 KUPONU (8-9 ŞUBAT)</div>
+    <div class='terminal-header'>🔥 W3 KUPONU</div>
     <div class='terminal-row'><span>Wolfsburg - Bvb</span><span class='highlight'>bvb w</span></div>
     <div class='terminal-row'><span>Newcastle - Brentford</span><span class='highlight'>newcastle 1.5 üst</span></div>
     <div class='terminal-row'><span>Rizespor - Gala</span><span class='highlight'>gala w & 1.5 üst</span></div>
