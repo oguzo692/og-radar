@@ -86,7 +86,7 @@ custom_css = """
 }
 .milestone-icon { 
     position: absolute;
-    bottom: 22px; /* Biraz daha yukarı aldık */
+    bottom: 30px; /* Biraz daha yukarı aldık */
     font-size: 24px; 
     transition: all 0.3s ease;
 }
