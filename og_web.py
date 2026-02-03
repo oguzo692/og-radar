@@ -187,12 +187,38 @@ if check_password():
         tab1, tab2, tab3 = st.tabs(["🔥 W3 (8-9 Şub)", "✅ W2 (1-2 Şub)", "⏪ W1 (Geçmiş)"])
         
         with tab1:
-            st.markdown("""
+            with tab1:
+            # --- W3 KUPON GİRİŞİ BAŞLANGIÇ ---
+            w3_html = """
             <div class='industrial-card'>
-                <div class='terminal-header'>🔥 W3 ANALİZLERİ</div>
-                <div class='terminal-row'><span class='dim'>Veri bekleniyor...</span><span class='highlight'>⏳</span></div>
+                <div class='terminal-header'>🔥 W3 KUPONU (8-9 ŞUBAT)</div>
+                
+                <div class='terminal-row'>
+                    <span>Takım A - Takım B</span>
+                    <span class='highlight'>MAÇ SONUCU 1</span>
+                </div>
+
+                <div class='terminal-row'>
+                    <span>Takım C - Takım D</span>
+                    <span class='highlight'>2.5 ÜST</span>
+                </div>
+
+                <div class='terminal-row'>
+                    <span>Takım E - Takım F</span>
+                    <span class='highlight'>KG VAR</span>
+                </div>
+
+                <hr style='border: 1px solid #30363d; margin: 10px 0;'>
+                
+                <div class='terminal-row'>
+                    <span class='dim'>ORAN: 4.50</span>
+                    <span class='dim'>BÜTÇE: 100$</span>
+                    <span class='status-wait'>DURUM: OYNANIYOR ⏳</span>
+                </div>
             </div>
-            """, unsafe_allow_html=True)
+            """
+            st.markdown(w3_html, unsafe_allow_html=True)
+            # --- W3 KUPON GİRİŞİ BİTİŞ ---
             
         with tab2:
             st.markdown(w2_coupon_html, unsafe_allow_html=True)
