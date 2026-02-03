@@ -72,6 +72,19 @@ w1_coupon_html = """
 </div>
 """
 
+# W1 Kuponu HTML'i
+w1_coupon_html = """
+<div class='industrial-card' style='border-left-color: #ff4b4b;'>
+    <div class='terminal-header' style='color:#ff4b4b;'>❌ W1 KUPONU - KAYBETTİ</div>
+    <div class='terminal-row'><span>Karagümrük - GS</span><span class='win'>GS W & +1.5 ÜST ✅</span></div>
+    <div class='terminal-row'><span>Bournemouth - Liv</span><span class='win'>KG VAR ✅</span></div>
+    <div class='terminal-row'><span>New - Aston Villa</span><span class='loss'>MS 1 ❌</span></div>
+    <div class='terminal-row'><span>FB - Göztepe</span><span class='loss'>İY 0.5 ÜST ❌</span></div>
+    <hr style='border: 1px solid #30363d; margin: 10px 0;'>
+    <div class='terminal-row'><span class='dim'>ORAN: 7.09</span><span class='dim'>BÜTÇE: 100 USD</span><span class='loss'>SONUÇ: -100 USD</span></div>
+</div>
+"""
+
 # --- 4. GÜVENLİK ---
 if "password_correct" not in st.session_state:
     st.session_state["password_correct"] = False
