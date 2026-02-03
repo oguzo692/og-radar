@@ -198,7 +198,7 @@ if check_password():
                 <div class='terminal-header'>🔥 W3 KUPONU (8-9 ŞUBAT)</div>
                 
                 <div class='terminal-row'>
-                    <span>Takım A - Takım B</span>
+                    <span>Wolfsburg - BVB</span>
                     <span class='highlight'>MAÇ SONUCU 1</span>
                 </div>
 
