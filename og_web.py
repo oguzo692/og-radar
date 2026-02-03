@@ -7,7 +7,7 @@ import json
 import os
 
 # --- 1. AYARLAR ---
-st.set_page_config(page_title="OG Core v8.1", page_icon="🛡️", layout="wide")
+st.set_page_config(page_title="OG Core v8.2", page_icon="🛡️", layout="wide")
 
 # --- 2. CSS STİLLERİ ---
 custom_css = """
@@ -147,7 +147,6 @@ def check_password():
 SAVE_FILE = "og_save_data.json"
 
 def load_game_data():
-    """Varsa kayıtlı veriyi çeker, yoksa varsayılanı döner"""
     if os.path.exists(SAVE_FILE):
         try:
             with open(SAVE_FILE, "r") as f:
@@ -157,7 +156,6 @@ def load_game_data():
     return {"kasa": 600.0, "ana_para": 500.0, "yakim": 20}
 
 def save_game_data():
-    """Mevcut inputları dosyaya yazar"""
     data = {
         "kasa": st.session_state.kasa_input,
         "ana_para": st.session_state.ana_input,
@@ -179,14 +177,19 @@ if check_password():
         page = st.radio("SİSTEM MODÜLLERİ", ["⚡ ULTRA FON", "⚽ FORMLINE", "📊 DASHDASH"])
         st.divider()
         
-        # INPUTLARI BINDING ETTİK (Her değişiklikte save_game_data çalışır)
+        # INPUTLARI BINDING ETTİK (Her değişiklikte save_game_data çalışır - AutoSave)
         kasa = st.number_input("TOPLAM KASA (USD)", value=game_data["kasa"], step=10.0, key="kasa_input", on_change=save_game_data)
         ana_para = st.number_input("BAŞLANGIÇ SERMAYESİ", value=game_data["ana_para"], key="ana_input", on_change=save_game_data)
         gunluk_yakim = st.slider("GÜNLÜK ORT. HARCAMA ($)", 0, 100, game_data["yakim"], key="yakim_input", on_change=save_game_data)
         
+        st.markdown("---")
+        # 🟢 MANUEL KAYDET BUTONU EKLENDİ
+        if st.button("💾 AYARLARI KAYDET", use_container_width=True):
+            save_game_data()
+
         tr_tz = pytz.timezone('Europe/Istanbul')
         st.info(f"🕒 {datetime.now(tr_tz).strftime('%H:%M:%S')}")
-        if st.button("ÇIKIŞ"):
+        if st.button("🔴 ÇIKIŞ"):
             st.session_state["password_correct"] = False
             st.rerun()
 
@@ -196,7 +199,7 @@ if check_password():
         kar_yuzdesi = (net_kar / ana_para) * 100 if ana_para > 0 else 0
         tl_karsiligi = kasa * 33.50
         
-        # --- 💎 LOOT BAR (SOLA YAPIŞIK) ---
+        # --- 💎 LOOT BAR ---
         targets = [
             {"val": 1000, "icon": "📱", "name": "TELEFON"},
             {"val": 2500, "icon": "🏖️", "name": "TATİL"},
@@ -228,7 +231,7 @@ if check_password():
 
         st.markdown(f"""
 <div class='industrial-card'>
-<div class='terminal-header'>💎 OG TRADE RADAR — v8.1 (MEMORY ON)</div>
+<div class='terminal-header'>💎 OG TRADE RADAR — v8.2 (MANUAL SAVE)</div>
 <div class='terminal-row'><span>🕒 SON GÜNCELLEME</span><span>{datetime.now(tr_tz).strftime('%H:%M:%S')}</span></div>
 <div class='terminal-row'><span>💰 TOPLAM KASA</span><span class='highlight'>${kasa:,.2f} (≈ {tl_karsiligi:,.0f} TL)</span></div>
 <div class='terminal-row'><span>🚀 NET KAR/ZARAR</span><span style='color:{"#00ff41" if net_kar >=0 else "#ff4b4b"}'>{net_kar:,.2f} USD (%{kar_yuzdesi:.1f})</span></div>
@@ -317,4 +320,4 @@ if check_password():
 </div>
 """, unsafe_allow_html=True)
 
-    st.caption("OG Core v8.1 | Fybey e aittir.")
+    st.caption("OG Core v8.2 | Fybey e aittir.")
