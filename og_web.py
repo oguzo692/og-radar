@@ -14,12 +14,24 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- 2. CSS STİLLERİ ---
+# --- 2. CSS STİLLERİ (DÜZELTİLDİ) ---
 custom_css = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+
 .main { background-color: #0d1117 !important; }
-* { font-family: 'JetBrains Mono', monospace !important; }
+
+/* DÜZELTME BURADA: Yıldız (*) yerine genel kapsayıcıları hedefliyoruz */
+body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, span, h1, h2, h3, button, input { 
+    font-family: 'JetBrains Mono', monospace !important; 
+}
+
+/* İkonların bozulmaması için özel koruma */
+.material-symbols-rounded { 
+    font-family: 'Material Symbols Rounded' !important; 
+    font-weight: normal !important;
+}
+
 :root { --soft-orange: #cc7a00; --win-green: #00ff41; --loss-red: #ff4b4b; --terminal-gray: #8b949e; }
 
 /* GİZLİLİK MODU */
@@ -40,10 +52,13 @@ custom_css = """
     top: 10px !important;
     z-index: 9999999 !important;
 }
-[data-testid="stSidebarCollapsedControl"] button {
+
+/* İkonun rengini beyaz yap ama fontunu bozma */
+[data-testid="stSidebarCollapsedControl"] button, 
+[data-testid="stSidebarCollapsedControl"] img, 
+[data-testid="stSidebarCollapsedControl"] svg {
     color: white !important;
-    width: 100% !important;
-    height: 100% !important;
+    fill: white !important; 
 }
 
 /* KART TASARIMI */
