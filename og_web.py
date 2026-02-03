@@ -213,7 +213,7 @@ if check_password():
         with col_inp1:
             hedef_oran = st.slider("Günlük Hedef Kar (%)", 0.1, 5.0, 1.0)
         with col_inp2:
-            sure = st.slider("Simülasyon Süresi (Gün)", 7, 90, 30)
+            sure = st.slider("Simülasyon Süresi (Gün)", 7, 90, 30, 180)
         gelecek_degerler = [kasa * ((1 + hedef_oran/100) ** gun) for gun in range(sure)]
         df_chart = pd.DataFrame({"Gün": range(sure), "Kasa Tahmini ($)": gelecek_degerler})
         st.line_chart(df_chart.set_index("Gün"))
