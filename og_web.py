@@ -58,7 +58,7 @@ w3_coupon_html = """
     <div class='terminal-row'><span>Lıve - Man City</span><span class='highlight'>Lıve gol atar</span></div>
     <div class='terminal-row'><span>Fenerbahçe - Gençlerbirliği</span><span class='highlight'>MS 1</span></div>
     <hr style='border: 1px solid #30363d; margin: 10px 0;'>
-    <div class='terminal-row'><span class='dim'>ORAN: --</span><span class='dim'>BÜTÇE: 100 USD</span><span class='status-wait'>BEKLENİYOR ⏳</span></div>
+    <div class='terminal-row'><span class='dim'>ORAN: --</span><span class='dim'>bet: 100 USD</span><span class='status-wait'>BEKLENİYOR ⏳</span></div>
 </div>
 """
 
@@ -70,7 +70,7 @@ w2_coupon_html = """
     <div class='terminal-row'><span>Bvb - Heidenheim</span><span class='win'>bvb w & +1.5 üst ✅</span></div>
     <div class='terminal-row'><span>Kocaelispor - Fenerbahçe</span><span class='win'>fenerbahçe w & 1.5 üst ✅</span></div>
     <hr style='border: 1px solid #30363d; margin: 10px 0;'>
-    <div class='terminal-row'><span class='dim'>ORAN: 5.40</span><span class='dim'>BÜTÇE: 100 USD</span><span class='win'>SONUÇLANDI +540 USD</span></div>
+    <div class='terminal-row'><span class='dim'>ORAN: 5.40</span><span class='dim'>bet: 100 USD</span><span class='win'>SONUÇLANDI +540 USD</span></div>
 </div>
 """
 
@@ -83,7 +83,7 @@ w1_coupon_html = """
     <div class='terminal-row'><span>Newcastle - Aston Villa</span><span class='loss'>Newcastle 1.5 üst ❌</span></div>
     <div class='terminal-row'><span>Fenerbahçe - Göztepe</span><span class='loss'>Fnerbahçe w ❌</span></div>
     <hr style='border: 1px solid #30363d; margin: 10px 0;'>
-    <div class='terminal-row'><span class='dim'>ORAN: 7.09</span><span class='dim'>BÜTÇE: 100 USD</span><span class='loss'>SONUÇLANDI -100 USD</span></div>
+    <div class='terminal-row'><span class='dim'>ORAN: 7.09</span><span class='dim'>bet: 100 USD</span><span class='loss'>SONUÇLANDI -100 USD</span></div>
 </div>
 """
 
