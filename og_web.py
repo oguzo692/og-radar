@@ -52,9 +52,9 @@ section[data-testid="stSidebar"] { background-color: #010409 !important; border-
 w3_coupon_html = """
 <div class='industrial-card'>
     <div class='terminal-header'>🔥 W3 KUPONU (8-9 ŞUBAT)</div>
-    <div class='terminal-row'><span>Wolfsburg - BVB</span><span class='highlight'>MS 2</span></div>
+    <div class='terminal-row'><span>Wolfsburg - Bvb</span><span class='highlight'>MS 2</span></div>
     <div class='terminal-row'><span>Newcastle - Brentford</span><span class='highlight'>NEWCASTLE 1.5 ÜST</span></div>
-    <div class='terminal-row'><span>Rizespor - GS</span><span class='highlight'>MS 2 & 1.5 ÜST</span></div>
+    <div class='terminal-row'><span>Rizespor - Gala</span><span class='highlight'>MS 2 & 1.5 ÜST</span></div>
     <div class='terminal-row'><span>Liverpool - Man City</span><span class='highlight'>LIVERPOOL GOL ATAR</span></div>
     <div class='terminal-row'><span>Fenerbahçe - Gençlerbirliği</span><span class='highlight'>MS 1</span></div>
     <hr style='border: 1px solid #30363d; margin: 10px 0;'>
@@ -65,9 +65,9 @@ w3_coupon_html = """
 w2_coupon_html = """
 <div class='industrial-card' style='border-left-color: #00ff41;'>
     <div class='terminal-header' style='color:#00ff41;'>✅ W2 KUPONU - KAZANDI</div>
-    <div class='terminal-row'><span>GS - Kayserispor</span><span class='win'>GS W & +2.5 ÜST ✅</span></div>
+    <div class='terminal-row'><span>Gala - Kayserispor</span><span class='win'>GS W & +2.5 ÜST ✅</span></div>
     <div class='terminal-row'><span>Liverpool - Newcastle</span><span class='win'>KG VAR ✅</span></div>
-    <div class='terminal-row'><span>BVB - Heidenheim</span><span class='win'>BVB İY 0.5 ÜST ✅</span></div>
+    <div class='terminal-row'><span>Bvb - Heidenheim</span><span class='win'>BVB İY 0.5 ÜST ✅</span></div>
     <div class='terminal-row'><span>Kocaelispor - FB</span><span class='win'>FB W & 1.5 ÜST ✅</span></div>
     <hr style='border: 1px solid #30363d; margin: 10px 0;'>
     <div class='terminal-row'><span class='dim'>ORAN: 5.40</span><span class='dim'>BÜTÇE: 100 USD</span><span class='win'>SONUÇLANDI +540 USD</span></div>
@@ -77,10 +77,10 @@ w2_coupon_html = """
 w1_coupon_html = """
 <div class='industrial-card' style='border-left-color: #ff4b4b;'>
     <div class='terminal-header' style='color:#ff4b4b;'>❌ W1 KUPONU - KAYBETTİ</div>
-    <div class='terminal-row'><span>Karagümrük - GS</span><span class='win'>GS W & +1.5 ÜST ✅</span></div>
+    <div class='terminal-row'><span>Karagümrük - Gala</span><span class='win'>GS W & +1.5 ÜST ✅</span></div>
     <div class='terminal-row'><span>Bournemouth - Liv</span><span class='win'>KG VAR ✅</span></div>
-    <div class='terminal-row'><span>Unıon Berlin - BVB</span><span class='win'>BVB 0.5 ÜST ✅</span></div>
-    <div class='terminal-row'><span>New - Aston Villa</span><span class='loss'>MS 1 ❌</span></div>
+    <div class='terminal-row'><span>Unıon Berlin - Bvb</span><span class='win'>BVB 0.5 ÜST ✅</span></div>
+    <div class='terminal-row'><span>Newcastle - Aston Villa</span><span class='loss'>MS 1 ❌</span></div>
     <div class='terminal-row'><span>FB - Göztepe</span><span class='loss'>İY 0.5 ÜST ❌</span></div>
     <hr style='border: 1px solid #30363d; margin: 10px 0;'>
     <div class='terminal-row'><span class='dim'>ORAN: 7.09</span><span class='dim'>BÜTÇE: 100 USD</span><span class='loss'>SONUÇLANDI -100 USD</span></div>
