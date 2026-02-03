@@ -36,7 +36,7 @@ div.stButton > button:hover { background-color: #ffffff !important; color: #0000
 /* 💎 HEDEF YOLCULUĞU CSS */
 .loot-container { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 25px; margin-bottom: 25px; position: relative; }
 .progress-track { background: #21262d; height: 12px; border-radius: 6px; width: 100%; position: relative; margin-top: 50px; margin-bottom: 20px; }
-.progress-fill { background: linear-gradient(90deg, #cc7a00, #ffae00); height: 100%; border-radius: 6px; box-shadow: 0 0 15px rgba(255, 174, 0, 0.4); transition: width 1s ease-in-out; }
+.progress-fill { background: linear-gradient(90deg, #cc7a00, #ffae00); height: 100%; border-radius: 6px; box-shadow: 0 0 5px rgba(255, 174, 0, 0.4); transition: width 1s ease-in-out; }
 .milestone-item { position: absolute; top: -45px; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; }
 .m-icon { font-size: 22px; margin-bottom: 5px; filter: grayscale(1); opacity: 0.3; transition: 0.5s; }
 .m-label { font-size: 10px; font-weight: bold; color: #8b949e; white-space: nowrap; }
