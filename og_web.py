@@ -19,7 +19,7 @@ w3_coupon_html = """<div class='industrial-card'><div class='terminal-header'>�
 w2_coupon_html = """<div class='industrial-card' style='border-left-color: #00ff41;'><div class='terminal-header' style='color:#00ff41;'>✅ W2 KUPONU - KAZANDI</div><div class='terminal-row'><span>Gala - Kayserispor</span><span style='color:#00ff41;'>gala w & +2.5 üst ✅</span></div><div class='terminal-row'><span>Lıve - Newcastle</span><span style='color:#00ff41;'>kg var ✅</span></div><div class='terminal-row'><span>Bvb - Heidenheim</span><span style='color:#00ff41;'>bvb w & +1.5 üst ✅</span></div><div class='terminal-row'><span>Kocaelispor - Fenerbahçe</span><span style='color:#00ff41;'>fenerbahçe w & 1.5 üst ✅</span></div><hr style='border: 1px solid #30363d; margin: 10px 0;'><div class='terminal-row'><span class='dim'>oran: 5.40</span><span class='dim'>bet: 100 USD</span><span style='color:#00ff41;'>SONUÇLANDI +540 USD</span></div></div>"""
 w1_coupon_html = """<div class='industrial-card' style='border-left-color: #ff4b4b;'><div class='terminal-header' style='color:#ff4b4b;'>❌ W1 KUPONU - KAYBETTİ</div><div class='terminal-row'><span>Karagümrük - Gala</span><span style='color:#00ff41;'>gala w & 1.5 üst ✅</span></div><div class='terminal-row'><span>Bournemouth - Lıve</span><span style='color:#00ff41;'>kg var ✅</span></div><div class='terminal-row'><span>Unıon Berlin - Bvb</span><span style='color:#00ff41;'>bvb 0.5 üst ✅</span></div><div class='terminal-row'><span>Newcastle - Aston Villa</span><span style='color:#ff4b4b;'>newcastle 1.5 üst ❌</span></div><div class='terminal-row'><span>Fenerbahçe - Göztepe</span><span style='color:#ff4b4b;'>fenerbahçe w ❌</span></div><hr style='border: 1px solid #30363d; margin: 10px 0;'><div class='terminal-row'><span class='dim'>oran: 7.09</span><span class='dim'>bet: 100 USD</span><span style='color:#ff4b4b;'>SONUÇLANDI -100 USD</span></div></div>"""
 
-# --- 3. CSS ---
+# --- 3. CSS (FİYAT ETİKETLERİ EKLENDİ) ---
 custom_css = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
@@ -33,14 +33,16 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
 div.stButton > button { background-color: transparent !important; color: white !important; border: 1px solid #ffffff !important; border-radius: 0px !important; width: 100% !important; font-weight: bold !important; letter-spacing: 5px !important; height: 45px !important; }
 div.stButton > button:hover { background-color: #ffffff !important; color: #000000 !important; }
 
-/* 💎 HEDEF YOLCULUĞU - CETVEL SİSTEMİ */
-.loot-container { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; margin-bottom: 25px; position: relative; height: 160px; }
-.progress-track { background: #21262d; height: 16px; border-radius: 8px; width: calc(100% - 40px); position: absolute; bottom: 45px; left: 20px; box-shadow: inset 0 0 5px #000; }
+/* 💎 HEDEF YOLCULUĞU - GELİŞMİŞ CETVEL */
+.loot-container { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; margin-bottom: 25px; position: relative; height: 180px; }
+.progress-track { background: #21262d; height: 16px; border-radius: 8px; width: calc(100% - 60px); position: absolute; bottom: 55px; left: 30px; box-shadow: inset 0 0 5px #000; }
 .progress-fill { background: linear-gradient(90deg, #cc7a00, #ffae00); height: 100%; border-radius: 8px; box-shadow: 0 0 10px rgba(255, 174, 0, 0.4); transition: width 1s ease-in-out; }
 
-/* CETVEL ÇİZGİLERİ (TICKS) */
-.tick { position: absolute; bottom: 0; width: 2px; height: 6px; background: rgba(255,255,255,0.2); z-index: 2; }
-.tick-long { height: 10px; background: rgba(255,255,255,0.4); }
+/* CETVEL ÇİZGİLERİ VE RAKAMLAR */
+.tick { position: absolute; bottom: -8px; width: 1px; height: 8px; background: rgba(255,255,255,0.15); }
+.tick-long { height: 12px; background: rgba(255,255,255,0.4); width: 2px; }
+.tick-label { position: absolute; bottom: -25px; transform: translateX(-50%); font-size: 8px; color: #444; font-weight: bold; }
+.tick-long + .tick-label { color: #8b949e; font-size: 9px; }
 
 .milestone-item { position: absolute; top: -65px; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; width: 100px; z-index: 5; }
 .m-icon { font-size: 26px; margin-bottom: 2px; filter: grayscale(1); opacity: 0.3; transition: 0.5s; }
@@ -49,10 +51,9 @@ div.stButton > button:hover { background-color: #ffffff !important; color: #0000
 .milestone-item.achieved .m-label { color: #ffffff; }
 
 .industrial-card { background: rgba(255, 255, 255, 0.02); border-left: 3px solid #cc7a00; border-radius: 4px; padding: 15px; margin-bottom: 20px; }
-.terminal-header { color: #cc7a00; font-size: 14px; font-weight: bold; border-bottom: 1px dashed #30363d; padding-bottom: 5px; margin-bottom: 10px; text-transform: uppercase; }
+.terminal-header { color: #cc7a00; font-size: 13px; font-weight: bold; border-bottom: 1px dashed #30363d; padding-bottom: 5px; margin-bottom: 10px; text-transform: uppercase; }
 .terminal-row { display: flex; justify-content: space-between; font-size: 13px; color: #e6edf3; margin-bottom: 6px; }
 .highlight { color: #cc7a00; }
-[data-testid="stSidebar"] { background-color: #010409 !important; border-right: 1px solid #30363d; }
 </style>
 """
 
@@ -109,6 +110,7 @@ if check_password():
             st.rerun()
 
     if page == "⚡ ULTRA FON":
+        # HEDEFLER
         targets = [
             {"val": 1000, "icon": "📱", "name": "TELEFON"},
             {"val": 2500, "icon": "🏖️", "name": "TATİL"},
@@ -117,12 +119,15 @@ if check_password():
         max_t = 6500
         pct = min(100, (kasa / max_t) * 100)
         
+        # HEDEF BAR OLUŞTURMA
         target_html = f"<div class='loot-container'><div class='terminal-header' style='border:none;margin:0;'>💎 HEDEF YOLCULUĞU</div><div class='progress-track'>"
         
-        # CETVEL ÇİZGİLERİ
-        for i in range(0, 101, 5):
-            tick_class = "tick-long" if i % 25 == 0 else ""
+        # FİYAT ÇİZGİLERİ VE DOLAR KARŞILIKLARI (CETVEL)
+        for i in range(0, 101, 10): # Her %10'da bir
+            tick_val = int((i / 100) * max_t)
+            tick_class = "tick-long" if i % 20 == 0 else ""
             target_html += f"<div class='tick {tick_class}' style='left:{i}%'></div>"
+            target_html += f"<div class='tick-label' style='left:{i}%'>${tick_val}</div>"
             
         target_html += f"<div class='progress-fill' style='width:{pct}%'></div>"
         
@@ -130,7 +135,7 @@ if check_password():
             pos = (t['val'] / max_t) * 100
             cls = "achieved" if kasa >= t['val'] else ""
             icon = t['icon'] if kasa >= t['val'] else "🔒"
-            target_html += f"<div class='milestone-item {cls}' style='left:{pos}%'><div class='m-icon'>{icon}</div><div class='m-label'>{t['name']} (${t['val']})</div></div>"
+            target_html += f"<div class='milestone-item {cls}' style='left:{pos}%'><div class='m-icon'>{icon}</div><div class='m-label'>{t['name']}</div></div>"
         target_html += "</div></div>"
         
         st.markdown(target_html, unsafe_allow_html=True)
