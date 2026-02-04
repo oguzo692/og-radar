@@ -236,7 +236,7 @@ if check_password():
                 sol = yf.Ticker("SOL-USD").history(period="1d")['Close'].iloc[-1]
                 st.markdown(f"""
                 <div class='industrial-card'>
-                    <div class='terminal-header'>LIVE MARKET DATA</div>
+                    <div class='terminal-header'>Güncel Fiyatlar</div>
                     <div class='terminal-row'><span>BITCOIN</span><span class='highlight'>${btc:,.2f}</span></div>
                     <div class='terminal-row'><span>ETHEREUM</span><span>${eth:,.2f}</span></div>
                     <div class='terminal-row'><span>SOLANA</span><span>${sol:,.2f}</span></div>
