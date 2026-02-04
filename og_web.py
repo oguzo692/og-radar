@@ -14,66 +14,73 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- 2. CSS STİLLERİ (HATA DÜZELTİLDİ: custom_css) ---
+# --- 2. KUPON ŞABLONLARI (HATA ALMAMAK İÇİN EN ÜSTTE) ---
+w3_coupon_html = """<div class='industrial-card'><div class='terminal-header'>🔥 W3 KUPONU</div><div class='terminal-row'><span>Wolfsburg - Bvb</span><span class='highlight'>bvb x2 & 1.5 üst</span></div><div class='terminal-row'><span>Newcastle - Brentford</span><span class='highlight'>newcastle 1.5 üst</span></div><div class='terminal-row'><span>Rizespor - Gala</span><span class='highlight'>gala w & 1.5 üst</span></div><div class='terminal-row'><span>Lıve - Man City</span><span class='highlight'>lıve gol atar</span></div><div class='terminal-row'><span>Fenerbahçe - Gençlerbirliği</span><span class='highlight'>fenerbahçe w & 2.5 üst</span></div><hr style='border: 1px solid #30363d; margin: 10px 0;'><div class='terminal-row'><span class='dim'>oran: 8.79</span><span class='dim'>bet: 100 USD</span><span style='color:#f1c40f;'>BEKLENİYOR ⏳</span></div></div>"""
+w2_coupon_html = """<div class='industrial-card' style='border-left-color: #00ff41;'><div class='terminal-header' style='color:#00ff41;'>✅ W2 KUPONU - KAZANDI</div><div class='terminal-row'><span>Gala - Kayserispor</span><span class='win'>gala w & +2.5 üst ✅</span></div><div class='terminal-row'><span>Lıve - Newcastle</span><span class='win'>kg var ✅</span></div><div class='terminal-row'><span>Bvb - Heidenheim</span><span class='win'>bvb w & +1.5 üst ✅</span></div><div class='terminal-row'><span>Kocaelispor - Fenerbahçe</span><span class='win'>fenerbahçe w & 1.5 üst ✅</span></div><hr style='border: 1px solid #30363d; margin: 10px 0;'><div class='terminal-row'><span class='dim'>oran: 5.40</span><span class='dim'>bet: 100 USD</span><span class='win'>SONUÇLANDI +540 USD</span></div></div>"""
+w1_coupon_html = """<div class='industrial-card' style='border-left-color: #ff4b4b;'><div class='terminal-header' style='color:#ff4b4b;'>❌ W1 KUPONU - KAYBETTİ</div><div class='terminal-row'><span>Karagümrük - Gala</span><span class='win'>gala w & 1.5 üst ✅</span></div><div class='terminal-row'><span>Bournemouth - Lıve</span><span class='win'>kg var ✅</span></div><div class='terminal-row'><span>Unıon Berlin - Bvb</span><span class='win'>bvb 0.5 üst ✅</span></div><div class='terminal-row'><span>Newcastle - Aston Villa</span><span class='loss'>newcastle 1.5 üst ❌</span></div><div class='terminal-row'><span>Fenerbahçe - Göztepe</span><span class='loss'>fenerbahçe w ❌</span></div><hr style='border: 1px solid #30363d; margin: 10px 0;'><div class='terminal-row'><span class='dim'>oran: 7.09</span><span class='dim'>bet: 100 USD</span><span class='loss'>SONUÇLANDI -100 USD</span></div></div>"""
+
+# --- 3. CSS STİLLERİ ---
 custom_css = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
 
-/* ANA ARKA PLAN */
 .main { background-color: #050505 !important; }
-
-/* GENEL FONT */
 body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, span, h1, h2, h3, button, input { 
     font-family: 'JetBrains Mono', monospace !important; 
 }
 
-/* --- 📺 RETRO AUTH EKRANI TASARIMI --- */
+/* --- 📺 GELİŞMİŞ RETRO ARKA PLAN VE AUTH --- */
 .auth-wrapper {
     position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 300px;
+    height: 350px;
     color: #ffffff;
     overflow: hidden;
     margin-top: 50px;
+    border: 1px solid rgba(255,255,255,0.05);
+    background: radial-gradient(circle, rgba(20,20,20,1) 0%, rgba(5,5,5,1) 100%);
 }
 
-/* SCANLINE (TARAMA ÇİZGİSİ) EFECT */
 .auth-wrapper::before {
     content: " ";
     position: absolute;
     top: 0; left: 0; bottom: 0; right: 0;
-    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
-                linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%), 
+                linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
     z-index: 2;
-    background-size: 100% 4px, 3px 100%;
+    background-size: 100% 3px, 3px 100%;
     pointer-events: none;
 }
 
 .retro-title {
-    font-size: 40px;
+    font-size: 50px;
     font-weight: bold;
     letter-spacing: 15px;
-    text-shadow: 0 0 10px rgba(255,255,255,0.5);
+    text-shadow: 0 0 15px rgba(255,255,255,0.5);
     border-bottom: 2px solid #ffffff;
     padding-bottom: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 40px;
     z-index: 3;
 }
 
 /* GİRİŞ KUTUSU */
 .stTextInput > div > div > input {
-    background-color: transparent !important;
-    border: 1px solid #ffffff !important;
+    background-color: rgba(255,255,255,0.02) !important;
+    border: 1px solid #333 !important;
     color: white !important;
     text-align: center;
     border-radius: 0px !important;
-    font-size: 18px !important;
+    font-size: 20px !important;
+}
+.stTextInput > div > div > input:focus {
+    border-color: #ffffff !important;
+    box-shadow: 0 0 10px rgba(255,255,255,0.1) !important;
 }
 
-/* EXECUTE BUTONU */
+/* GİRİŞ BUTONU */
 div.stButton > button {
     background-color: transparent !important;
     color: white !important;
@@ -82,21 +89,22 @@ div.stButton > button {
     width: 100% !important;
     font-weight: bold !important;
     letter-spacing: 5px !important;
-    transition: all 0.2s ease !important;
+    height: 50px !important;
+    transition: all 0.3s ease !important;
 }
 div.stButton > button:hover {
     background-color: #ffffff !important;
     color: #000000 !important;
+    box-shadow: 0 0 20px rgba(255,255,255,0.3) !important;
 }
 
-/* SİSTEMİN DİĞER TASARIMLARI (DOKUNULMADI) */
+/* SİSTEMİN DİĞER TASARIMLARI */
 :root { --soft-orange: #cc7a00; --win-green: #00ff41; --loss-red: #ff4b4b; --terminal-gray: #8b949e; }
 #MainMenu, footer, .stDeployButton {visibility: hidden !important;}
 [data-testid="stToolbar"] {visibility: hidden !important;}
 [data-testid="stDecoration"] {display:none;}
 [data-testid="stSidebarNav"] {border-right: 1px solid #30363d;}
 
-/* SIDEBAR TOGGLE KURTARICI */
 [data-testid="stSidebarCollapsedControl"] {
     display: flex !important;
     background-color: #cc7a00 !important;
@@ -109,7 +117,7 @@ div.stButton > button:hover {
 .terminal-header { color: var(--soft-orange); font-size: 14px; font-weight: bold; border-bottom: 1px dashed #30363d; padding-bottom: 5px; margin-bottom: 10px; text-transform: uppercase; }
 .terminal-row { display: flex; justify-content: space-between; font-size: 13px; color: #e6edf3; margin-bottom: 6px; }
 
-/* LOOT BAR (KORUNDU) */
+/* LOOT BAR */
 .loot-wrapper { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px 25px 50px 25px; margin-bottom: 25px; position: relative; }
 .loot-track { background: #21262d; height: 14px; border-radius: 7px; width: 100%; position: relative; margin-top: 45px; }
 .loot-fill { background: linear-gradient(90deg, #cc7a00, #ffae00); height: 100%; border-radius: 7px; box-shadow: 0 0 15px rgba(204, 122, 0, 0.5); }
@@ -122,11 +130,6 @@ section[data-testid="stSidebar"] { background-color: #010409 !important; border-
 </style>
 """
 
-# --- 3. HTML ŞABLONLARI ---
-w3_coupon_html = """<div class='industrial-card'><div class='terminal-header'>🔥 W3 KUPONU</div><div class='terminal-row'><span>Wolfsburg - Bvb</span><span class='highlight'>bvb x2 & 1.5 üst</span></div><div class='terminal-row'><span>Newcastle - Brentford</span><span class='highlight'>newcastle 1.5 üst</span></div><div class='terminal-row'><span>Rizespor - Gala</span><span class='highlight'>gala w & 1.5 üst</span></div><div class='terminal-row'><span>Lıve - Man City</span><span class='highlight'>lıve gol atar</span></div><div class='terminal-row'><span>Fenerbahçe - Gençlerbirliği</span><span class='highlight'>fenerbahçe w & 2.5 üst</span></div><hr style='border: 1px solid #30363d; margin: 10px 0;'><div class='terminal-row'><span class='dim'>oran: 8.79</span><span class='dim'>bet: 100 USD</span><span class='status-wait'>BEKLENİYOR ⏳</span></div></div>"""
-w2_coupon_html = """<div class='industrial-card' style='border-left-color: #00ff41;'><div class='terminal-header' style='color:#00ff41;'>✅ W2 KUPONU - KAZANDI</div><div class='terminal-row'><span>Gala - Kayserispor</span><span class='win'>gala w & +2.5 üst ✅</span></div><div class='terminal-row'><span>Lıve - Newcastle</span><span class='win'>kg var ✅</span></div><div class='terminal-row'><span>Bvb - Heidenheim</span><span class='win'>bvb w & +1.5 üst ✅</span></div><div class='terminal-row'><span>Kocaelispor - Fenerbahçe</span><span class='win'>fenerbahçe w & 1.5 üst ✅</span></div><hr style='border: 1px solid #30363d; margin: 10px 0;'><div class='terminal-row'><span class='dim'>oran: 5.40</span><span class='dim'>bet: 100 USD</span><span class='win'>SONUÇLANDI +540 USD</span></div></div>"""
-w1_coupon_html = """<div class='industrial-card' style='border-left-color: #ff4b4b;'><div class='terminal-header' style='color:#ff4b4b;'>❌ W1 KUPONU - KAYBETTİ</div><div class='terminal-row'><span>Karagümrük - Gala</span><span class='win'>gala w & 1.5 üst ✅</span></div><div class='terminal-row'><span>Bournemouth - Lıve</span><span class='win'>kg var ✅</span></div><div class='terminal-row'><span>Unıon Berlin - Bvb</span><span class='win'>bvb 0.5 üst ✅</span></div><div class='terminal-row'><span>Newcastle - Aston Villa</span><span class='loss'>newcastle 1.5 üst ❌</span></div><div class='terminal-row'><span>Fenerbahçe - Göztepe</span><span class='loss'>fenerbahçe w ❌</span></div><hr style='border: 1px solid #30363d; margin: 10px 0;'><div class='terminal-row'><span class='dim'>oran: 7.09</span><span class='dim'>bet: 100 USD</span><span class='loss'>SONUÇLANDI -100 USD</span></div></div>"""
-
 # --- 4. GÜVENLİK ---
 if "password_correct" not in st.session_state:
     st.session_state["password_correct"] = False
@@ -134,13 +137,14 @@ if "password_correct" not in st.session_state:
 def check_password():
     if not st.session_state["password_correct"]:
         st.markdown(custom_css, unsafe_allow_html=True)
-        
+        # ARKA PLAN VE BAŞLIK
         st.markdown('<div class="auth-wrapper"><div class="retro-title">OG_CORE</div></div>', unsafe_allow_html=True)
         
         col1, col2, col3 = st.columns([1,2,1])
         with col2:
-            pwd = st.text_input("AUTHORIZATION REQUIRED", type="password")
-            if st.button("EXECUTE LOGIN"):
+            # AUTHORIZATION REQUIRED YAZISI KALDIRILDI
+            pwd = st.text_input("ŞİFRE", type="password", label_visibility="collapsed")
+            if st.button("Giriş"): # BUTON YAZISI DEĞİŞTİ
                 if pwd == "1":
                     st.session_state["password_correct"] = True
                     st.rerun()
@@ -213,7 +217,7 @@ if check_password():
                 btc = yf.Ticker("BTC-USD").history(period="1d")['Close'].iloc[-1]
                 eth = yf.Ticker("ETH-USD").history(period="1d")['Close'].iloc[-1]
                 st.markdown(f"<div class='industrial-card'><div class='terminal-header'>📊 PİYASA</div><div class='terminal-row'><span>🟠 BTC</span><span>${btc:,.2f}</span></div><div class='terminal-row'><span>🔵 ETH</span><span>${eth:,.2f}</span></div></div>", unsafe_allow_html=True)
-            except: st.error("Veri çekilemedi.")
+            except: st.error("Veri hatası")
             
         with col_omur:
             gun_omru = int(kasa / gunluk_yakim) if gunluk_yakim > 0 else 999
