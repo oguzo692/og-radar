@@ -14,140 +14,125 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- 2. CSS STİLLERİ (ANİMASYONLU SİBER TASARIM) ---
+# --- 2. CSS STİLLERİ (GELİŞTİRİLMİŞ TEKNOLOJİK TASARIM) ---
 custom_css = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@400;700&display=swap');
 
 /* ANA ARKA PLAN */
-.main { background-color: #050505 !important; }
+.main { background-color: #0a0a0a !important; background-image: radial-gradient(circle, #1a1a1a 1px, transparent 1px); background-size: 30px 30px; }
 
 /* GENEL FONT */
 body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, span, h1, h2, h3, button, input { 
     font-family: 'JetBrains Mono', monospace !important; 
 }
 
-/* --- 📺 ANİMASYONLU AUTH EKRANI --- */
+/* --- 📺 WOW DEDİRTEN AUTH EKRANI --- */
 .auth-container {
-    padding: 3rem;
-    background: rgba(15, 15, 15, 0.95);
-    border: 1px solid #cc7a00;
-    border-radius: 4px;
-    box-shadow: 0 0 30px rgba(204, 122, 0, 0.1);
+    padding: 4rem;
+    background: linear-gradient(145deg, #0f0f0f, #151515);
+    border: 2px solid #ffffff;
+    border-radius: 0px;
+    box-shadow: 10px 10px 0px #cc7a00;
     text-align: center;
-    margin-top: 50px;
+    margin-top: 40px;
     position: relative;
     overflow: hidden;
 }
 
-/* SCANLINE ANİMASYONU */
+/* YENİ SCANLINE VE PARLAMA */
 .auth-container::before {
     content: " ";
     position: absolute;
-    top: 0; left: 0; width: 100%; height: 2px;
-    background: rgba(204, 122, 0, 0.2);
-    box-shadow: 0 0 10px #cc7a00;
-    animation: scanline 4s linear infinite;
-    z-index: 5;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: repeating-linear-gradient(0deg, rgba(255,255,255, 0.03) 0px, rgba(255,255,255, 0.03) 1px, transparent 1px, transparent 2px);
+    pointer-events: none;
 }
 
-@keyframes scanline {
-    0% { top: 0%; }
-    100% { top: 100%; }
-}
-
-/* BAŞLIK TİTREME (FLICKER) */
+/* TURUNCU & BEYAZ GLITCH BAŞLIK */
 .auth-header {
     font-family: 'Orbitron', sans-serif !important;
-    font-size: 50px;
-    font-weight: bold;
-    color: #cc7a00;
-    letter-spacing: 12px;
-    margin-bottom: 10px;
-    text-shadow: 0 0 15px rgba(204, 122, 0, 0.6);
-    animation: flicker 2s infinite;
+    font-size: 65px;
+    font-weight: 900;
+    color: #ffffff;
+    letter-spacing: 15px;
+    margin-bottom: 5px;
+    text-shadow: 4px 4px 0px #cc7a00;
+    position: relative;
 }
 
-@keyframes flicker {
-    0% { opacity: 0.9; }
-    5% { opacity: 0.8; }
-    10% { opacity: 1; }
-    15% { opacity: 0.9; }
-    25% { opacity: 1; }
-    100% { opacity: 1; }
+.auth-header::after {
+    content: "OG_CORE";
+    position: absolute;
+    left: 2px; text-shadow: -1px 0 #cc7a00;
+    top: 0; color: #fff; background: #0f0f0f;
+    overflow: hidden; clip: rect(0,900px,0,0); 
+    animation: noise-anim 2s infinite linear alternate-reverse;
+}
+
+@keyframes noise-anim {
+  0% { clip: rect(10px, 9999px, 50px, 0); }
+  20% { clip: rect(80px, 9999px, 90px, 0); }
+  100% { clip: rect(20px, 9999px, 60px, 0); }
 }
 
 .auth-status {
-    font-size: 11px;
-    color: #8b949e;
-    letter-spacing: 4px;
-    margin-bottom: 30px;
-    text-transform: uppercase;
+    font-size: 12px;
+    color: #cc7a00;
+    font-weight: bold;
+    letter-spacing: 6px;
+    margin-bottom: 40px;
+    border-top: 1px solid #333;
+    padding-top: 10px;
 }
 
-/* INPUT VE BUTONLAR */
+/* INPUT VE BUTONLARIN YENİ HALİ */
 .stTextInput > div > div > input {
-    background-color: rgba(0,0,0,0.5) !important;
-    border: 1px solid #30363d !important;
-    color: #00ff41 !important; /* Matrix Yeşili Yazı */
+    background-color: #ffffff !important;
+    border: none !important;
+    color: #000000 !important;
     text-align: center;
-    font-size: 20px !important;
-    transition: all 0.3s;
-}
-
-.stTextInput > div > div > input:focus {
-    border-color: #cc7a00 !important;
-    box-shadow: 0 0 10px rgba(204, 122, 0, 0.3) !important;
+    font-size: 24px !important;
+    font-weight: bold !important;
+    border-radius: 0px !important;
 }
 
 div.stButton > button {
-    background-color: transparent !important;
-    color: white !important;
-    border: 1px solid #cc7a00 !important;
+    background-color: #cc7a00 !important;
+    color: #ffffff !important;
+    border: none !important;
     border-radius: 0px !important;
     width: 100% !important;
-    font-weight: bold !important;
-    letter-spacing: 5px !important;
-    height: 50px;
-    transition: 0.4s;
+    font-weight: 900 !important;
+    font-size: 18px !important;
+    letter-spacing: 8px !important;
+    height: 60px;
+    box-shadow: 6px 6px 0px #ffffff;
+    transition: 0.2s;
 }
 
 div.stButton > button:hover {
-    background-color: #cc7a00 !important;
+    transform: translate(-2px, -2px);
+    box-shadow: 10px 10px 0px #ffffff;
     color: #000 !important;
-    box-shadow: 0 0 20px #cc7a00;
 }
 
 /* SIDEBAR & CARDS */
 .industrial-card { 
-    background: rgba(255, 255, 255, 0.02); 
-    border-left: 3px solid #cc7a00; 
-    padding: 15px; 
+    background: rgba(255, 255, 255, 0.03); 
+    border: 1px solid #333;
+    border-left: 5px solid #cc7a00; 
+    padding: 20px; 
     margin-bottom: 20px;
-    transition: transform 0.2s;
 }
-.industrial-card:hover { transform: scale(1.01); }
-
-.terminal-header { color: #cc7a00; font-size: 14px; font-weight: bold; border-bottom: 1px dashed #30363d; padding-bottom: 5px; margin-bottom: 10px; text-transform: uppercase; }
-.terminal-row { display: flex; justify-content: space-between; font-size: 13px; color: #e6edf3; margin-bottom: 6px; }
+.terminal-header { color: #ffffff; font-size: 16px; font-weight: bold; border-bottom: 2px solid #cc7a00; padding-bottom: 5px; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 2px;}
+.terminal-row { display: flex; justify-content: space-between; font-size: 14px; color: #e6edf3; margin-bottom: 8px; }
 .highlight { color: #cc7a00; font-weight: bold; }
-.win { color: #00ff41; font-weight: bold; }
-.loss { color: #ff4b4b; font-weight: bold; }
 
-/* LOOT BAR */
-.loot-wrapper { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px 25px 50px 25px; margin-bottom: 25px; position: relative; }
-.loot-track { background: #21262d; height: 14px; border-radius: 7px; width: 100%; position: relative; margin-top: 45px; }
-.loot-fill { 
-    background: linear-gradient(90deg, #cc7a00, #ffae00); 
-    height: 100%; border-radius: 7px; 
-    box-shadow: 0 0 15px rgba(204, 122, 0, 0.5);
-    transition: width 1s ease-in-out; 
-}
-.milestone { position: absolute; top: 50%; transform: translate(-50%, -50%); width: 120px; display: flex; flex-direction: column; align-items: center; z-index: 10; }
-.milestone-label { position: absolute; top: 18px; font-size: 11px; font-weight: bold; color: #8b949e; text-align: center; }
-
-section[data-testid="stSidebar"] { background-color: #010409 !important; border-right: 1px solid #30363d; }
-.time-widget { display: block; width: 100%; padding: 0.5rem; font-size: 14px; font-weight: bold; color: #cc7a00; text-align: center; background-color: #0d1117; border: 1px solid #333; border-radius: 4px; }
+/* DİĞER STİLLER AYNI KALDI */
+.loot-wrapper { background: #000; border: 2px solid #cc7a00; padding: 25px; margin-bottom: 25px; }
+.loot-fill { background: #ffffff; box-shadow: 0 0 15px #cc7a00; }
+.time-widget { color: #ffffff; border: 1px solid #cc7a00; background: #000; }
 </style>
 """
 
@@ -163,22 +148,22 @@ if "password_correct" not in st.session_state:
 def check_password():
     if not st.session_state["password_correct"]:
         st.markdown(custom_css, unsafe_allow_html=True)
-        _, col_mid, _ = st.columns([1, 2, 1])
+        _, col_mid, _ = st.columns([1, 3, 1])
         with col_mid:
             st.markdown("""
                 <div class="auth-container">
                     <div class="auth-header">OG_CORE</div>
-                    <div class="auth-status">SYSTEM STATUS: ENCRYPTED // SECURITY: ALPHA-V8</div>
+                    <div class="auth-status">AUTHORIZED PERSONNEL ONLY // SYSTEM_BOOT_V8.8</div>
                 </div>
             """, unsafe_allow_html=True)
             
-            pwd = st.text_input("ACCESS KEY", type="password", placeholder="PASSWORD")
-            if st.button("INITIALIZE SYSTEM"):
+            pwd = st.text_input("INPUT ACCESS KEY", type="password", placeholder="········")
+            if st.button("EXECUTE"):
                 if pwd == "1":
                     st.session_state["password_correct"] = True
                     st.rerun()
                 else:
-                    st.error("ACCESS DENIED")
+                    st.error("INTEGRITY BREACH: WRONG KEY")
         return False
     return True
 
