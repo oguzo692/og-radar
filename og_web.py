@@ -89,7 +89,7 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
 .stTextInput > div > div > input {
     background-color: rgba(0,0,0,0.5) !important;
     border: 1px solid #30363d !important;
-    color: #00ff41 !important; /* Matrix Yeşili Yazı */
+    color: #cc7a00 !important; /* Matrix Yeşili yerine turuncu uyumu */
     text-align: center;
     font-size: 20px !important;
     transition: all 0.3s;
@@ -110,6 +110,7 @@ div.stButton > button {
     letter-spacing: 5px !important;
     height: 50px;
     transition: 0.4s;
+    margin-top: 10px;
 }
 
 div.stButton > button:hover {
@@ -168,17 +169,17 @@ def check_password():
             st.markdown("""
                 <div class="auth-container">
                     <div class="auth-header">OG_CORE</div>
-                    <div class="auth-status">SYSTEM STATUS: ENCRYPTED // SECURITY: ALPHA-V8</div>
+                    <div class="auth-status">SİSTEM DURUMU: ŞİFRELENDİ // GÜVENLİK: ALPHA-V8</div>
                 </div>
             """, unsafe_allow_html=True)
             
-            pwd = st.text_input("ACCESS KEY", type="password", placeholder="PASSWORD")
-            if st.button("INITIALIZE SYSTEM"):
+            pwd = st.text_input("GİRİŞ ANAHTARI", type="password", placeholder="ŞİFRE")
+            if st.button("SİSTEMİ BAŞLAT"):
                 if pwd == "1":
                     st.session_state["password_correct"] = True
                     st.rerun()
                 else:
-                    st.error("ACCESS DENIED")
+                    st.error("ERİŞİM REDDEDİLDİ")
         return False
     return True
 
@@ -212,7 +213,7 @@ if check_password():
         st.divider()
         tr_tz = pytz.timezone('Europe/Istanbul')
         st.markdown(f"<div class='time-widget'>{datetime.now(tr_tz).strftime('%H:%M:%S')}</div>", unsafe_allow_html=True)
-        if st.button("🔴 TERMINATE SESSION", use_container_width=True): 
+        if st.button("🔴 OTURUMU KAPAT", use_container_width=True): 
             st.session_state["password_correct"] = False
             st.rerun()
 
@@ -226,7 +227,7 @@ if check_password():
         current_pct = min(100, (kasa / max_target) * 100)
         
         m_html = "".join([f"<div class='milestone' style='left:{(t['val']/max_target)*100}%'><div style='font-size:20px;'>{'✅' if kasa>=t['val'] else '🔒'}</div><div class='milestone-label'>{t['name']}</div></div>" for t in targets])
-        st.markdown(f"<div class='loot-wrapper'><div class='terminal-header'>TARGET PROGRESSION</div><div class='loot-track'><div class='loot-fill' style='width:{current_pct}%'></div>{m_html}</div></div>", unsafe_allow_html=True)
+        st.markdown(f"<div class='loot-wrapper'><div class='terminal-header'>HEDEF İLERLEMESİ</div><div class='loot-track'><div class='loot-fill' style='width:{current_pct}%'></div>{m_html}</div></div>", unsafe_allow_html=True)
         
         st.markdown(f"""
         <div class='industrial-card'>
@@ -240,12 +241,12 @@ if check_password():
         with c_market:
             try:
                 btc = yf.Ticker("BTC-USD").history(period="1d")['Close'].iloc[-1]
-                st.markdown(f"<div class='industrial-card'><div class='terminal-header'>MARKET DATA</div><div class='terminal-row'><span>BITCOIN</span><span>${btc:,.2f}</span></div></div>", unsafe_allow_html=True)
+                st.markdown(f"<div class='industrial-card'><div class='terminal-header'>PİYASA VERİSİ</div><div class='terminal-row'><span>BITCOIN</span><span>${btc:,.2f}</span></div></div>", unsafe_allow_html=True)
             except: st.error("Market data link lost.")
             
         with c_life:
             omur = int(kasa / yakim) if yakim > 0 else 999
-            st.markdown(f"<div class='industrial-card'><div class='terminal-header'>FUND LIFESPAN</div><h2 style='text-align:center;'>{omur} GÜN</h2></div>", unsafe_allow_html=True)
+            st.markdown(f"<div class='industrial-card'><div class='terminal-header'>KASA ÖMRÜ</div><h2 style='text-align:center;'>{omur} GÜN</h2></div>", unsafe_allow_html=True)
 
         st.subheader("🎯 Pay Dağılımı")
         cols = st.columns(3)
@@ -266,4 +267,4 @@ if check_password():
         df = pd.DataFrame({"Gün": range(sure), "Tahmin ($)": [kasa * ((1 + h_oran/100) ** (d / 7)) for d in range(sure)]})
         st.line_chart(df.set_index("Gün"))
 
-    st.caption("OG Core v8.8 | Fybey e aittir.")
+    st.caption("OG Core v8.8 | Fybey'e aittir.")
