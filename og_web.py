@@ -14,12 +14,11 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- 2. CSS STİLLERİ (HIGH-END SİBER TERMİNAL) ---
+# --- 2. CSS STİLLERİ ---
 custom_css = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&family=Orbitron:wght@400;900&display=swap');
 
-/* --- ANA EKRAN VE DERİNLİK --- */
 .stApp { 
     background-color: #030303 !important;
     background-image: 
@@ -29,13 +28,11 @@ custom_css = """
     background-size: 100% 100%, 30px 30px, 30px 30px;
 }
 
-/* GENEL FONT DÜZENLEME */
 body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, span, h1, h2, h3, button, input { 
     font-family: 'JetBrains Mono', monospace !important; 
     color: #e0e0e0 !important;
 }
 
-/* --- 📺 GİRİŞ EKRANI (TAM MERKEZ VE GÖRÜNÜR) --- */
 .auth-container {
     padding: 4rem;
     background: linear-gradient(145deg, rgba(15,15,15,0.95) 0%, rgba(5,5,5,1) 100%);
@@ -66,7 +63,6 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
     opacity: 0.8;
 }
 
-/* --- 💎 PREMIUM KART TASARIMI --- */
 .industrial-card { 
     background: rgba(18, 18, 18, 0.7) !important;
     backdrop-filter: blur(12px);
@@ -104,7 +100,6 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
 
 .highlight { color: #cc7a00 !important; font-weight: 700; font-size: 18px; }
 
-/* --- 🔘 SİBER BUTON VE INPUT --- */
 .stTextInput > div > div > input {
     background-color: rgba(0,0,0,0.5) !important;
     border: 1px solid rgba(255,255,255,0.1) !important;
@@ -125,15 +120,23 @@ div.stButton > button:hover {
     color: #000 !important;
 }
 
-/* SIDEBAR RE-STYLING */
 section[data-testid="stSidebar"] { 
     background-color: #050505 !important; 
     border-right: 1px solid rgba(204, 122, 0, 0.2); 
 }
+
+.time-widget { 
+    padding: 15px; 
+    font-size: 20px; 
+    color: #cc7a00; 
+    text-align: center; 
+    background: rgba(204, 122, 0, 0.03); 
+    border: 1px solid rgba(204, 122, 0, 0.1); 
+}
 </style>
 """
 
-# --- 3. HTML ŞABLONLARI (HEPSİ AYNI İÇERİK OLACAK ŞEKİLDE GÜNCELLENDİ) ---
+# --- 3. HTML ŞABLONLARI ---
 common_matches = """
 <div class='terminal-row'><span>Wolfsburg - Bvb</span><span class='highlight'>bvb x2 & 1.5 üst</span></div>
 <div class='terminal-row'><span>Newcastle - Brentford</span><span class='highlight'>newcastle 1.5 üst</span></div>
@@ -155,22 +158,21 @@ if "password_correct" not in st.session_state:
 def check_password():
     if not st.session_state["password_correct"]:
         st.markdown(custom_css, unsafe_allow_html=True)
-        _, col_mid, _ = st.columns([0.5, 2, 0.5])
-        with col_mid:
-            st.markdown("""
-                <div class="auth-container">
-                    <div class="auth-header">OG_CORE</div>
-                    <div class="auth-motto">ARCHITECTING THE FUTURE OF WEALTH</div>
-                </div>
-            """, unsafe_allow_html=True)
-            
-            pwd = st.text_input("ERİŞİM ANAHTARI", type="password", placeholder="System key required...")
-            if st.button("TERMİNALİ INITIALIZE ET", use_container_width=True):
-                if pwd == "1":
-                    st.session_state["password_correct"] = True
-                    st.rerun()
-                else:
-                    st.error("ACCESS DENIED")
+        # Sütun hatası düzeltildi, doğrudan kapsayıcı eklendi
+        st.markdown(f"""
+            <div class="auth-container">
+                <div class="auth-header">OG_CORE</div>
+                <div class="auth-motto">ARCHITECTING THE FUTURE OF WEALTH</div>
+            </div>
+        """, unsafe_allow_html=True)
+        
+        pwd = st.text_input("ERİŞİM ANAHTARI", type="password", placeholder="System key required...", label_visibility="collapsed")
+        if st.button("TERMİNALİ INITIALIZE ET", use_container_width=True):
+            if pwd == "1":
+                st.session_state["password_correct"] = True
+                st.rerun()
+            else:
+                st.error("ACCESS DENIED")
         return False
     return True
 
@@ -195,6 +197,7 @@ if check_password():
 
     with st.sidebar:
         st.markdown("<h2 style='color:#cc7a00; font-family:Orbitron; letter-spacing:4px; text-align:center;'>🛡️ OG CORE</h2>", unsafe_allow_html=True)
+        # İSİMLER DÜZELTİLDİ
         page = st.radio("SİSTEM MODÜLLERİ", ["⚡ Ulrta Atak Fon", "⚽ Formlıne", "📊 Similasyon"])
         st.divider()
         kasa = st.number_input("KASA (USD)", value=game_data["kasa"], step=10.0, key="kasa_input", on_change=save_game_data)
@@ -208,11 +211,11 @@ if check_password():
             st.session_state["password_correct"] = False
             st.rerun()
 
-    if page == "⚡ ULTRA FON":
+    # KOŞULLAR RADYO BUTONLARIYLA EŞİTLENDİ
+    if page == "⚡ Ulrta Atak Fon":
         net_kar = kasa - ana_para
         kar_yuzdesi = (net_kar / ana_para) * 100 if ana_para > 0 else 0
         
-        # HEDEF YOLCULUĞU
         targets = [{"val": 1000, "name": "TELEFON"}, {"val": 2500, "name": "TATİL"}, {"val": 5000, "name": "ARABA"}]
         max_target = 6500
         current_pct = min(100, (kasa / max_target) * 100)
@@ -252,14 +255,14 @@ if check_password():
         for col, user in zip(cols, ["oguzo", "ero7", "fybey"]):
             col.markdown(f"""<div class='industrial-card'><div class='terminal-header'>{user.upper()}</div><div class='terminal-row'><span>SHARE</span><span class='highlight'>${kasa/3:,.2f}</span></div><div class='terminal-row'><span>PROFIT</span><span>${(net_kar/3):,.2f}</span></div></div>""", unsafe_allow_html=True)
 
-    elif page == "⚽ FORMLINE":
+    elif page == "⚽ Formlıne":
         st.title("⚽ FORMLINE")
         t1, t2, t3 = st.tabs(["⏳ AKTİF (W3)", "✅ KAZANAN (W2)", "❌ KAYBEDEN (W1)"])
         with t1: st.markdown(w3_coupon_html, unsafe_allow_html=True)
         with t2: st.markdown(w2_coupon_html, unsafe_allow_html=True)
         with t3: st.markdown(w1_coupon_html, unsafe_allow_html=True)
 
-    elif page == "📊 DASHDASH":
+    elif page == "📊 Similasyon":
         st.title("📈 Projeksiyon")
         h_oran = st.slider("Haftalık Hedef (%)", 1, 50, 5)
         sure = st.slider("Simülasyon (Gün)", 7, 120, 30)
