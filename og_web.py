@@ -27,13 +27,14 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
     font-family: 'JetBrains Mono', monospace !important; 
 }
 
-/* --- 📺 WOW DEDİRTEN GİRİŞ EKRANI (TURUNCU & BEYAZ) --- */
+/* --- 📺 WOW DEDİRTEN GİRİŞ EKRANI (DENGELENMİŞ TURUNCU & BEYAZ) --- */
 .auth-container {
     padding: 3.5rem;
     background: linear-gradient(135deg, rgba(20,20,20,0.95) 0%, rgba(5,5,5,1) 100%);
     border: 2px solid #ffffff;
-    border-right: 8px solid #cc7a00;
-    border-bottom: 8px solid #cc7a00;
+    /* Çizgiler beyazla aynı kalınlığa (2px) çekildi */
+    border-right: 2px solid #cc7a00;
+    border-bottom: 2px solid #cc7a00;
     box-shadow: 0 0 50px rgba(204, 122, 0, 0.15);
     text-align: center;
     margin-top: 50px;
@@ -79,16 +80,23 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
     display: inline-block;
 }
 
-/* INPUT VE BUTONLAR */
+/* --- 🔑 REVİZE EDİLEN ŞİFRE ALANI --- */
 .stTextInput > div > div > input {
-    background-color: #ffffff !important;
-    border: none !important;
-    color: #000000 !important;
+    background-color: rgba(255, 255, 255, 0.05) !important; /* Çiğ beyazlık gitti, şeffaf siyahımsı oldu */
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    color: #ffffff !important; /* Yazı artık beyaz */
     text-align: center;
     font-size: 22px !important;
     font-weight: bold !important;
-    letter-spacing: 5px;
+    letter-spacing: 10px;
     border-radius: 0px !important;
+    transition: all 0.3s;
+}
+
+.stTextInput > div > div > input:focus {
+    background-color: rgba(204, 122, 0, 0.1) !important;
+    border-color: #cc7a00 !important;
+    box-shadow: 0 0 15px rgba(204, 122, 0, 0.3) !important;
 }
 
 div.stButton > button {
@@ -112,7 +120,7 @@ div.stButton > button:hover {
     transform: translateY(-2px);
 }
 
-/* DİĞER SİSTEM BİLEŞENLERİ (DOKUNULMADI) */
+/* DİĞER SİSTEM BİLEŞENLERİ */
 .industrial-card { 
     background: rgba(255, 255, 255, 0.02); 
     border-left: 3px solid #cc7a00; 
