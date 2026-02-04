@@ -34,7 +34,7 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
 .auth-container {
     padding: 5rem 2rem;
     background: rgba(5, 5, 5, 0.8);
-    border: 1px solid rgba(204, 122, 0, 0.3);
+    border: 100px solid rgba(204, 122, 0, 0.3);
     border-radius: 8px;
     box-shadow: 0 0 60px rgba(0, 0, 0, 1), inset 0 0 30px rgba(204, 122, 0, 0.02);
     text-align: center;
