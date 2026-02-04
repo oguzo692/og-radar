@@ -198,7 +198,7 @@ if check_password():
     with st.sidebar:
         st.markdown("<h2 style='color:#cc7a00; font-family:Orbitron; letter-spacing:4px; text-align:center;'>🛡️ OG CORE</h2>", unsafe_allow_html=True)
         # İSİMLER DÜZELTİLDİ
-        page = st.radio("SİSTEM MODÜLLERİ", ["⚡ Ulrta Atak Fon", "⚽ Formlıne", "📊 Similasyon"])
+        page = st.radio("Modüller", ["⚡ Ultra Atak Fon", "⚽ Formlıne", "📊 Similasyon"])
         st.divider()
         kasa = st.number_input("KASA (USD)", value=game_data["kasa"], step=10.0, key="kasa_input", on_change=save_game_data)
         ana_para = st.number_input("ANA PARA", value=game_data["ana_para"], key="ana_input", on_change=save_game_data)
