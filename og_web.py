@@ -14,113 +14,119 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- 2. CSS STİLLERİ (ANİMASYONLU SİBER TASARIM) ---
+# --- 2. CSS STİLLERİ (YENİLENMİŞ SİBER TERMİNAL TASARIMI) ---
 custom_css = """
 <style>
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@400;900&display=swap');
 
 /* ANA ARKA PLAN */
-.main { background-color: #050505 !important; }
+.main { background-color: #030303 !important; }
 
 /* GENEL FONT */
 body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, span, h1, h2, h3, button, input { 
     font-family: 'JetBrains Mono', monospace !important; 
 }
 
-/* --- 📺 WOW DEDİRTEN GİRİŞ EKRANI (DENGELENMİŞ TURUNCU & BEYAZ) --- */
-.auth-container {
-    padding: 3.5rem;
-    background: linear-gradient(135deg, rgba(20,20,20,0.95) 0%, rgba(5,5,5,1) 100%);
-    border: 2px solid #ffffff;
-    /* Çizgiler beyazla aynı kalınlığa (2px) çekildi */
-    border-right: 2px solid #cc7a00;
-    border-bottom: 2px solid #cc7a00;
-    box-shadow: 0 0 50px rgba(204, 122, 0, 0.15);
-    text-align: center;
-    margin-top: 50px;
-    position: relative;
-    overflow: hidden;
+/* --- 🛡️ HIGH-END AUTHENTICATION SCREEN --- */
+.auth-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 80vh;
 }
 
-/* TEKNOLOJİK PARLAMA EFEKTİ */
-.auth-container::after {
-    content: "";
+.auth-container {
+    padding: 4rem;
+    background: rgba(10, 10, 10, 0.95);
+    border: 1px solid rgba(204, 122, 0, 0.3);
+    border-top: 4px solid #cc7a00;
+    box-shadow: 0 20px 70px rgba(0,0,0,0.8), 0 0 20px rgba(204, 122, 0, 0.1);
+    text-align: center;
+    position: relative;
+    max-width: 600px;
+    width: 100%;
+}
+
+/* SCANLINE EFEKTİ */
+.auth-container::before {
+    content: " ";
     position: absolute;
-    top: -50%; left: -50%; width: 200%; height: 200%;
-    background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 70%);
+    top: 0; left: 0; bottom: 0; right: 0;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
+                linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
+    background-size: 100% 4px, 3px 100%;
+    z-index: 2;
     pointer-events: none;
 }
 
 .auth-header {
     font-family: 'Orbitron', sans-serif !important;
-    font-size: 55px;
+    font-size: 68px;
     font-weight: 900;
     color: #ffffff;
-    letter-spacing: 14px;
-    margin-bottom: 5px;
-    text-shadow: 3px 3px #cc7a00;
-    animation: tech-pulse 3s infinite;
+    letter-spacing: 18px;
+    margin-bottom: 0px;
+    text-shadow: 0 0 15px rgba(255,255,255,0.3), 3px 3px 0px #cc7a00;
 }
 
-@keyframes tech-pulse {
-    0% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.02); opacity: 0.9; }
-    100% { transform: scale(1); opacity: 1; }
-}
-
-.auth-status {
-    font-size: 10px;
-    color: #cc7a00;
-    letter-spacing: 6px;
-    margin-bottom: 40px;
-    text-transform: uppercase;
-    font-weight: bold;
-    border-top: 1px solid rgba(255,255,255,0.1);
-    padding-top: 10px;
+.glitch-text {
+    position: relative;
     display: inline-block;
 }
 
-/* --- 🔑 REVİZE EDİLEN ŞİFRE ALANI --- */
+.auth-subtitle {
+    font-size: 11px;
+    color: #cc7a00;
+    letter-spacing: 8px;
+    margin-bottom: 50px;
+    text-transform: uppercase;
+    font-weight: bold;
+    opacity: 0.8;
+}
+
+/* INPUT TASARIMI */
 .stTextInput > div > div > input {
-    background-color: rgba(255, 255, 255, 0.05) !important; /* Çiğ beyazlık gitti, şeffaf siyahımsı oldu */
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;
-    color: #ffffff !important; /* Yazı artık beyaz */
+    background-color: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid #333 !important;
+    border-bottom: 2px solid #cc7a00 !important;
+    color: #ffffff !important;
     text-align: center;
-    font-size: 22px !important;
+    font-size: 24px !important;
     font-weight: bold !important;
-    letter-spacing: 10px;
-    border-radius: 0px !important;
-    transition: all 0.3s;
+    padding: 20px !important;
+    border-radius: 4px !important;
+    transition: all 0.4s;
 }
 
 .stTextInput > div > div > input:focus {
-    background-color: rgba(204, 122, 0, 0.1) !important;
-    border-color: #cc7a00 !important;
-    box-shadow: 0 0 15px rgba(204, 122, 0, 0.3) !important;
+    background-color: rgba(204, 122, 0, 0.05) !important;
+    border-bottom: 2px solid #ffffff !important;
+    box-shadow: 0 5px 15px rgba(204, 122, 0, 0.2) !important;
 }
 
+/* BUTON TASARIMI */
 div.stButton > button {
-    background-color: transparent !important;
-    color: #ffffff !important;
-    border: 2px solid #ffffff !important;
-    border-radius: 0px !important;
+    background: #cc7a00 !important;
+    color: #000000 !important;
+    border: none !important;
+    border-radius: 4px !important;
     width: 100% !important;
-    font-weight: bold !important;
-    letter-spacing: 10px !important;
-    height: 55px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
+    font-weight: 900 !important;
+    letter-spacing: 5px !important;
+    height: 60px;
+    margin-top: 20px;
+    text-transform: uppercase;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 div.stButton > button:hover {
-    background-color: #cc7a00 !important;
-    border-color: #cc7a00 !important;
-    color: #000000 !important;
-    box-shadow: 0 0 25px #cc7a00;
-    transform: translateY(-2px);
+    background-color: #ffffff !important;
+    box-shadow: 0 0 30px rgba(204, 122, 0, 0.4);
+    transform: scale(1.02);
 }
 
-/* DİĞER SİSTEM BİLEŞENLERİ */
+/* DİĞER SİSTEM BİLEŞENLERİ (KORUNDU) */
 .industrial-card { 
     background: rgba(255, 255, 255, 0.02); 
     border-left: 3px solid #cc7a00; 
@@ -164,22 +170,25 @@ if "password_correct" not in st.session_state:
 def check_password():
     if not st.session_state["password_correct"]:
         st.markdown(custom_css, unsafe_allow_html=True)
+        # Ekranı ortalamak için wrapper
+        st.markdown('<div class="auth-wrapper">', unsafe_allow_html=True)
         _, col_mid, _ = st.columns([1, 2, 1])
         with col_mid:
             st.markdown("""
                 <div class="auth-container">
-                    <div class="auth-header">OG_CORE</div>
-                    <div class="auth-status">ESTABLISHING SECURE CONNECTION...</div>
+                    <div class="auth-header"><span class="glitch-text">OG_CORE</span></div>
+                    <div class="auth-subtitle">CENTRAL INTELLIGENCE ACCESS PORTAL</div>
                 </div>
             """, unsafe_allow_html=True)
             
-            pwd = st.text_input("ENTER ACCESS KEY", type="password", placeholder="••••••••")
-            if st.button("INITIALIZE"):
+            pwd = st.text_input("VERIFY IDENTITY", type="password", placeholder="ENTER KEYCODE")
+            if st.button("EXECUTE AUTHENTICATION"):
                 if pwd == "1":
                     st.session_state["password_correct"] = True
                     st.rerun()
                 else:
-                    st.error("ACCESS DENIED: INVALID KEY")
+                    st.error("CORE_ERROR: ACCESS VIOLATION DETECTED")
+        st.markdown('</div>', unsafe_allow_html=True)
         return False
     return True
 
