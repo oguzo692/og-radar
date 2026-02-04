@@ -212,7 +212,7 @@ if check_password():
             st.rerun()
 
     # KOŞULLAR RADYO BUTONLARIYLA EŞİTLENDİ
-    if page == "⚡ Ulrta Atak Fon":
+    if page == "⚡ Ultra Atak Fon":
         net_kar = kasa - ana_para
         kar_yuzdesi = (net_kar / ana_para) * 100 if ana_para > 0 else 0
         
