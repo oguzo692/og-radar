@@ -33,7 +33,6 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
     color: #e0e0e0 !important;
 }
 
-/* --- 🔑 HEDEF İLERLEME BARI (MODERNİZE EDİLDİ) --- */
 .loot-wrapper {
     background: rgba(18, 18, 18, 0.8);
     border: 1px solid rgba(255, 255, 255, 0.05);
@@ -41,7 +40,6 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
     padding: 30px 25px 60px 25px;
     margin-bottom: 30px;
     position: relative;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 
 .loot-track {
@@ -59,7 +57,6 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
     height: 100%;
     border-radius: 6px; 
     box-shadow: 0 0 15px rgba(204, 122, 0, 0.5);
-    transition: width 1s ease-in-out; 
 }
 
 .milestone {
@@ -80,14 +77,12 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
     color: #888;
     text-align: center;
     white-space: nowrap;
-    letter-spacing: 1px;
 }
 
 .auth-container {
     padding: 4rem;
     background: linear-gradient(145deg, rgba(15,15,15,0.95) 0%, rgba(5,5,5,1) 100%);
     border: 1px solid rgba(204, 122, 0, 0.3);
-    box-shadow: 0 0 60px rgba(0,0,0,1), inset 0 0 20px rgba(204, 122, 0, 0.05);
     text-align: center;
     max-width: 650px;
     margin: 10vh auto;
@@ -100,8 +95,6 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
     font-weight: 900;
     color: #ffffff;
     letter-spacing: 12px;
-    margin-bottom: 5px;
-    text-shadow: 0 0 30px rgba(204, 122, 0, 0.2);
 }
 
 .industrial-card { 
@@ -111,8 +104,6 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
     border-top: 2px solid rgba(204, 122, 0, 0.4) !important;
     padding: 25px; 
     margin-bottom: 25px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    transition: all 0.4s ease;
 }
 
 .terminal-header { 
@@ -159,12 +150,12 @@ common_matches = """
 <div class='terminal-row'><span>Lıve - Man City</span><span class='highlight'>lıve gol atar</span></div>
 <div class='terminal-row'><span>Fenerbahçe - Gençlerbirliği</span><span class='highlight'>fenerbahçe w & 2.5 üst</span></div>
 <hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'>
-<div class='terminal-row'><span>oran: 8.79</span><span>bet: 100 USD</span>
+<div class='terminal-row'><span>oran: 8.79</span><span>bet: 100 USD</span></div>
 """
 
-w3_coupon_html = f"<div class='industrial-card'><div class='terminal-header'>🔥 W3 KUPONU</div>{common_matches}<span style='color:#cc7a00'>BEKLENİYOR ⏳</span></div></div>"
-w2_coupon_html = f"<div class='industrial-card' style='border-top-color: #00ff41 !important;'><div class='terminal-header' style='color:#00ff41;'>✅ W2 KUPONU - KAZANDI</div>{common_matches}<span style='color:#00ff41'>SONUÇLANDI +879 USD ✅</span></div></div>"
-w1_coupon_html = f"<div class='industrial-card' style='border-top-color: #ff4b4b !important;'><div class='terminal-header' style='color:#ff4b4b;'>❌ W1 KUPONU - KAYBETTİ</div>{common_matches}<span style='color:#ff4b4b'>SONUÇLANDI -100 USD ❌</span></div></div>"
+w3_coupon_html = f"<div class='industrial-card'><div class='terminal-header'>🔥 W3 KUPONU</div>{common_matches}<span style='color:#cc7a00'>BEKLENİYOR ⏳</span></div>"
+w2_coupon_html = f"<div class='industrial-card' style='border-top-color: #00ff41 !important;'><div class='terminal-header' style='color:#00ff41;'>✅ W2 KUPONU - KAZANDI</div>{common_matches}<span style='color:#00ff41'>SONUÇLANDI +879 USD ✅</span></div>"
+w1_coupon_html = f"<div class='industrial-card' style='border-top-color: #ff4b4b !important;'><div class='terminal-header' style='color:#ff4b4b;'>❌ W1 KUPONU - KAYBETTİ</div>{common_matches}<span style='color:#ff4b4b'>SONUÇLANDI -100 USD ❌</span></div>"
 
 # --- 4. GÜVENLİK ---
 if "password_correct" not in st.session_state:
@@ -173,10 +164,10 @@ if "password_correct" not in st.session_state:
 def check_password():
     if not st.session_state["password_correct"]:
         st.markdown(custom_css, unsafe_allow_html=True)
-        st.markdown(f"""
+        st.markdown("""
             <div class="auth-container">
                 <div class="auth-header">OG_CORE</div>
-                <div class="auth-motto">ARCHITECTING THE FUTURE OF WEALTH</div>
+                <div style="font-size: 10px; color: #cc7a00; letter-spacing: 5px; text-transform: uppercase; margin-bottom: 40px; opacity: 0.8;">ARCHITECTING THE FUTURE OF WEALTH</div>
             </div>
         """, unsafe_allow_html=True)
         
@@ -228,7 +219,7 @@ if check_password():
         net_kar = kasa - ana_para
         kar_yuzdesi = (net_kar / ana_para) * 100 if ana_para > 0 else 0
         
-        # --- 📈 HEDEF İLERLEME SİSTEMİ ---
+        # --- HEDEF İLERLEME SİSTEMİ ---
         targets = [
             {"val": 1000, "name": "TELEFON", "icon": "📱"}, 
             {"val": 2500, "name": "TATİL", "icon": "✈️"}, 
@@ -242,12 +233,7 @@ if check_password():
             is_unlocked = kasa >= t['val']
             icon = t['icon'] if is_unlocked else "🔒"
             pos = (t['val'] / max_target) * 100
-            m_html += f"""
-            <div class='milestone' style='left:{pos}%'>
-                <div style='font-size:22px;'>{icon}</div>
-                <div class='milestone-label'>{t['name']}<br>${t['val']}</div>
-            </div>
-            """
+            m_html += f"<div class='milestone' style='left:{pos}%'><div style='font-size:22px;'>{icon}</div><div class='milestone-label'>{t['name']}<br>${t['val']}</div></div>"
             
         st.markdown(f"""
         <div class='loot-wrapper'>
@@ -261,7 +247,7 @@ if check_password():
         
         st.markdown(f"""
         <div class='industrial-card'>
-            <div class='terminal-header'>💎 OG TRADE RADAR — v8.8</div>
+            <div class='terminal-header'>💎 OG TRADE RADAR — V8.8</div>
             <div class='terminal-row'><span style='color:#888;'>NET KAR/ZARAR</span><span style='color:{"#00ff41" if net_kar >=0 else "#ff4b4b"}; font-size:22px; font-weight:900;'>${net_kar:,.2f} (%{kar_yuzdesi:.1f})</span></div>
             <div class='terminal-row' style='font-size:18px;'><span style='color:#888;'>TOPLAM KASA</span><span class='highlight'>${kasa:,.2f}</span></div>
         </div>
@@ -275,7 +261,7 @@ if check_password():
                 sol = yf.Ticker("SOL-USD").history(period="1d")['Close'].iloc[-1]
                 st.markdown(f"""
                 <div class='industrial-card'>
-                    <div class='terminal-header'>Güncel Fiyatlar</div>
+                    <div class='terminal-header'>GÜNCEL FİYATLAR</div>
                     <div class='terminal-row'><span>BITCOIN</span><span class='highlight'>${btc:,.2f}</span></div>
                     <div class='terminal-row'><span>ETHEREUM</span><span>${eth:,.2f}</span></div>
                     <div class='terminal-row'><span>SOLANA</span><span>${sol:,.2f}</span></div>
