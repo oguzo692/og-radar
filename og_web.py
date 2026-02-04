@@ -14,15 +14,15 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- 2. CSS STİLLERİ (YÜKSEK İŞÇİLİKLİ SİBER TASARIM) ---
+# --- 2. CSS STİLLERİ (PURE BLACK & SİBER TASARIM) ---
 custom_css = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@400;900&display=swap');
 
-/* ANA ARKA PLAN */
+/* TAM SİYAH ARKA PLAN */
 .main { 
-    background-color: #020202 !important;
-    background-image: radial-gradient(circle at center, #0a0a0a 0%, #020202 100%) !important;
+    background-color: #000000 !important;
+    background-image: none !important;
 }
 
 /* GENEL FONT */
@@ -33,28 +33,28 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
 /* --- 📺 GELİŞMİŞ SİBER AUTH EKRANI --- */
 .auth-container {
     padding: 5rem 2rem;
-    background: rgba(5, 5, 5, 0.8);
-    border: 1px solid rgba(204, 122, 0, 0.3);
-    border-radius: 8px;
-    box-shadow: 0 0 60px rgba(0, 0, 0, 1), inset 0 0 30px rgba(204, 122, 0, 0.02);
+    background: #000000; /* Tam Siyah */
+    border: 1px solid rgba(204, 122, 0, 0.4);
+    border-radius: 4px;
+    box-shadow: 0 0 80px rgba(0, 0, 0, 1), inset 0 0 40px rgba(204, 122, 0, 0.03);
     text-align: center;
     margin-top: 30px;
     position: relative;
     overflow: hidden;
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(5px);
 }
 
-/* ARKA PLAN HAREKETLİ IZGARA (GRID) */
+/* ARKA PLAN HAREKETLİ IZGARA (GRID) - DAHA KOYU */
 .auth-container::before {
     content: "";
     position: absolute;
     top: 0; left: 0; width: 200%; height: 200%;
-    background-image: linear-gradient(rgba(204, 122, 0, 0.05) 1px, transparent 1px), 
-                      linear-gradient(90deg, rgba(204, 122, 0, 0.05) 1px, transparent 1px);
+    background-image: linear-gradient(rgba(204, 122, 0, 0.03) 1px, transparent 1px), 
+                      linear-gradient(90deg, rgba(204, 122, 0, 0.03) 1px, transparent 1px);
     background-size: 40px 40px;
     animation: grid-move 20s linear infinite;
     z-index: -1;
-    opacity: 0.5;
+    opacity: 0.4;
 }
 
 @keyframes grid-move {
@@ -66,8 +66,8 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
 .scanline {
     position: absolute;
     width: 100%; height: 4px;
-    background: rgba(204, 122, 0, 0.1);
-    box-shadow: 0 0 20px #cc7a00;
+    background: rgba(204, 122, 0, 0.15);
+    box-shadow: 0 0 25px #cc7a00;
     animation: scanline-move 4s linear infinite;
     z-index: 10;
     pointer-events: none;
@@ -88,35 +88,34 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
     margin-bottom: 5px;
     position: relative;
     display: inline-block;
-    /* Parlama kısılıp detay artırıldı */
     text-shadow: 
-        2px 2px 0px #663300,
-        0 0 10px rgba(255, 140, 0, 0.4);
-    animation: float 3s ease-in-out infinite;
+        3px 3px 0px #331a00,
+        0 0 15px rgba(255, 140, 0, 0.4);
+    animation: float 3.5s ease-in-out infinite;
 }
 
-/* GLITCH EFEKTİ (HAFİF TİTREŞİM) */
+/* GLITCH EFEKTİ */
 .auth-header::after {
     content: "OG_CORE";
     position: absolute;
     top: 0; left: 0; width: 100%; height: 100%;
     color: #ff8c00;
-    opacity: 0.3;
-    animation: glitch 5s infinite;
+    opacity: 0.2;
+    animation: glitch 6s infinite;
     z-index: -1;
 }
 
 @keyframes glitch {
     0% { transform: translate(0); }
-    2% { transform: translate(-5px, 2px); color: #00ff41; }
-    4% { transform: translate(5px, -2px); color: #ff0000; }
+    2% { transform: translate(-4px, 1px); color: #00ff41; }
+    4% { transform: translate(4px, -1px); color: #ff0000; }
     6% { transform: translate(0); }
     100% { transform: translate(0); }
 }
 
 @keyframes float {
     0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
+    50% { transform: translateY(-8px); }
 }
 
 .auth-status {
@@ -132,8 +131,8 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
 
 /* INPUT VE BUTONLAR */
 .stTextInput > div > div > input {
-    background-color: rgba(0,0,0,0.7) !important;
-    border: 1px solid #333 !important;
+    background-color: #000000 !important;
+    border: 1px solid #222 !important;
     border-left: 5px solid #cc7a00 !important;
     color: #ff8c00 !important;
     text-align: center;
@@ -144,7 +143,7 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
 
 .stTextInput > div > div > input:focus {
     border-color: #ff8c00 !important;
-    box-shadow: 0 0 20px rgba(255, 140, 0, 0.1) !important;
+    box-shadow: 0 0 25px rgba(255, 140, 0, 0.15) !important;
 }
 
 div.stButton > button {
@@ -164,18 +163,24 @@ div.stButton > button {
 
 div.stButton > button:hover {
     background-color: #ff8c00 !important;
-    color: #000 !important;
-    box-shadow: 0 0 40px rgba(255, 140, 0, 0.6) !important;
+    color: #000000 !important;
+    box-shadow: 0 0 50px rgba(255, 140, 0, 0.7) !important;
     border: 1px solid #ff8c00 !important;
 }
 
 /* SIDEBAR & CARDS */
+section[data-testid="stSidebar"] { 
+    background-color: #000000 !important; 
+    border-right: 1px solid #222; 
+}
 .industrial-card { 
-    background: rgba(255, 255, 255, 0.02); 
+    background: rgba(0, 0, 0, 0.5); 
     border-left: 4px solid #cc7a00; 
     padding: 15px; 
     margin-bottom: 20px;
-    transition: transform 0.2s;
+    border-right: 1px solid #222;
+    border-top: 1px solid #222;
+    border-bottom: 1px solid #222;
 }
 </style>
 """
