@@ -14,62 +14,115 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- 2. CSS STİLLERİ (PURE BLACK & OKUNAKLI SİBER TASARIM) ---
+# --- 2. CSS STİLLERİ (YÜKSEK İŞÇİLİKLİ SİBER TASARIM) ---
 custom_css = """
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@400;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@400;900&display=swap');
 
-/* TAM SİYAH ARKA PLAN */
+/* ANA ARKA PLAN */
 .main { 
-    background-color: #000000 !important;
+    background-color: #020202 !important;
+    background-image: radial-gradient(circle at center, #0a0a0a 0%, #020202 100%) !important;
 }
 
-/* GENEL FONT DÜZENLEME (Okunabilirlik artırıldı) */
-body, [data-testid="stAppViewContainer"], p, div, span, input { 
-    font-family: 'Inter', sans-serif !important; 
-    font-size: 15px !important;
+/* GENEL FONT */
+body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, span, h1, h2, h3, button, input { 
+    font-family: 'JetBrains Mono', monospace !important; 
 }
 
-/* SİDEBAR YAZI TİPLERİ VE BOYUTLARI */
-[data-testid="stSidebar"] * {
-    font-family: 'Inter', sans-serif !important;
-}
-
-[data-testid="stSidebar"] .stRadio div[role="radiogroup"] label {
-    font-size: 14px !important;
-    font-weight: 600 !important;
-    letter-spacing: 0.5px;
-    color: #e6edf3 !important;
-}
-
-/* GİRİŞ EKRANI ÖZEL FONTU */
-.auth-header {
-    font-family: 'Orbitron', sans-serif !important;
-    font-size: 75px !important;
-    font-weight: 900;
-    color: #ff8c00;
-    letter-spacing: 22px;
-    text-shadow: 3px 3px 0px #331a00, 0 0 15px rgba(255, 140, 0, 0.4);
-    animation: float 3.5s ease-in-out infinite;
-}
-
+/* --- 📺 GELİŞMİŞ SİBER AUTH EKRANI --- */
 .auth-container {
     padding: 5rem 2rem;
-    background: #000000;
-    border: 1px solid rgba(204, 122, 0, 0.4);
-    border-radius: 4px;
-    box-shadow: 0 0 80px rgba(0, 0, 0, 1), inset 0 0 40px rgba(204, 122, 0, 0.03);
+    background: rgba(5, 5, 5, 0.8);
+    border: 1px solid rgba(204, 122, 0, 0.3);
+    border-radius: 8px;
+    box-shadow: 0 0 60px rgba(0, 0, 0, 1), inset 0 0 30px rgba(204, 122, 0, 0.02);
     text-align: center;
     margin-top: 30px;
     position: relative;
     overflow: hidden;
+    backdrop-filter: blur(10px);
+}
+
+/* ARKA PLAN HAREKETLİ IZGARA (GRID) */
+.auth-container::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; width: 200%; height: 200%;
+    background-image: linear-gradient(rgba(204, 122, 0, 0.05) 1px, transparent 1px), 
+                      linear-gradient(90deg, rgba(204, 122, 0, 0.05) 1px, transparent 1px);
+    background-size: 40px 40px;
+    animation: grid-move 20s linear infinite;
+    z-index: -1;
+    opacity: 0.5;
+}
+
+@keyframes grid-move {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(-40px, -40px); }
+}
+
+/* SCANLINE (TARAMA ÇİZGİSİ) */
+.scanline {
+    position: absolute;
+    width: 100%; height: 4px;
+    background: rgba(204, 122, 0, 0.1);
+    box-shadow: 0 0 20px #cc7a00;
+    animation: scanline-move 4s linear infinite;
+    z-index: 10;
+    pointer-events: none;
+}
+
+@keyframes scanline-move {
+    0% { top: -10%; }
+    100% { top: 110%; }
+}
+
+/* OG_CORE BAŞLIK (TOK VE DERİN PARLAMA) */
+.auth-header {
+    font-family: 'Orbitron', sans-serif !important;
+    font-size: 70px;
+    font-weight: 900;
+    color: #ff8c00;
+    letter-spacing: 20px;
+    margin-bottom: 5px;
+    position: relative;
+    display: inline-block;
+    /* Parlama kısılıp detay artırıldı */
+    text-shadow: 
+        2px 2px 0px #663300,
+        0 0 10px rgba(255, 140, 0, 0.4);
+    animation: float 3s ease-in-out infinite;
+}
+
+/* GLITCH EFEKTİ (HAFİF TİTREŞİM) */
+.auth-header::after {
+    content: "OG_CORE";
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    color: #ff8c00;
+    opacity: 0.3;
+    animation: glitch 5s infinite;
+    z-index: -1;
+}
+
+@keyframes glitch {
+    0% { transform: translate(0); }
+    2% { transform: translate(-5px, 2px); color: #00ff41; }
+    4% { transform: translate(5px, -2px); color: #ff0000; }
+    6% { transform: translate(0); }
+    100% { transform: translate(0); }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
 }
 
 .auth-status {
-    font-family: 'JetBrains Mono', monospace !important;
-    font-size: 12px !important;
+    font-size: 10px;
     color: #8b949e;
-    letter-spacing: 6px !important;
+    letter-spacing: 8px;
     margin-bottom: 50px;
     text-transform: uppercase;
     border-top: 1px solid rgba(204, 122, 0, 0.2);
@@ -77,87 +130,52 @@ body, [data-testid="stAppViewContainer"], p, div, span, input {
     padding-top: 10px;
 }
 
-/* INPUT VE BUTONLARIN OKUNAKLILIĞI */
+/* INPUT VE BUTONLAR */
 .stTextInput > div > div > input {
-    background-color: #000000 !important;
-    border: 1px solid #222 !important;
+    background-color: rgba(0,0,0,0.7) !important;
+    border: 1px solid #333 !important;
     border-left: 5px solid #cc7a00 !important;
     color: #ff8c00 !important;
     text-align: center;
-    font-size: 18px !important;
-    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 20px !important;
     border-radius: 0px !important;
+    transition: 0.4s all;
+}
+
+.stTextInput > div > div > input:focus {
+    border-color: #ff8c00 !important;
+    box-shadow: 0 0 20px rgba(255, 140, 0, 0.1) !important;
 }
 
 div.stButton > button {
     background-color: transparent !important;
     color: #ff8c00 !important;
     border: 1px solid rgba(255, 140, 0, 0.5) !important;
-    border-radius: 4px !important;
+    border-radius: 0px !important;
     width: 100% !important;
-    font-weight: 800 !important;
-    font-family: 'Orbitron', sans-serif !important;
-    font-size: 16px !important;
-    letter-spacing: 4px !important;
+    font-weight: bold !important;
+    letter-spacing: 10px !important;
     height: 60px;
     transition: 0.4s;
     margin-top: 20px;
+    overflow: hidden;
+    position: relative;
 }
 
 div.stButton > button:hover {
     background-color: #ff8c00 !important;
-    color: #000000 !important;
-    box-shadow: 0 0 50px rgba(255, 140, 0, 0.7) !important;
+    color: #000 !important;
+    box-shadow: 0 0 40px rgba(255, 140, 0, 0.6) !important;
+    border: 1px solid #ff8c00 !important;
 }
 
 /* SIDEBAR & CARDS */
-section[data-testid="stSidebar"] { background-color: #000000 !important; border-right: 1px solid #222; }
-
 .industrial-card { 
     background: rgba(255, 255, 255, 0.02); 
-    border-left: 3px solid #cc7a00; 
-    padding: 18px; 
+    border-left: 4px solid #cc7a00; 
+    padding: 15px; 
     margin-bottom: 20px;
-}
-
-.terminal-header { 
-    font-family: 'Orbitron', sans-serif !important;
-    color: #cc7a00; 
-    font-size: 13px !important; 
-    font-weight: 800; 
-    border-bottom: 1px dashed #30363d; 
-    padding-bottom: 8px; 
-    margin-bottom: 12px; 
-    text-transform: uppercase; 
-}
-
-.terminal-row { font-size: 14px !important; line-height: 1.6; }
-
-/* SCANLINE VE ANIMASYONLAR */
-.scanline {
-    position: absolute;
-    width: 100%; height: 4px;
-    background: rgba(204, 122, 0, 0.15);
-    box-shadow: 0 0 25px #cc7a00;
-    animation: scanline-move 4s linear infinite;
-    z-index: 10;
-    pointer-events: none;
-}
-@keyframes scanline-move { 0% { top: -10%; } 100% { top: 110%; } }
-@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
-
-/* LOOT BAR */
-.loot-wrapper { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 25px; margin-bottom: 25px; }
-.loot-fill { box-shadow: 0 0 20px rgba(204, 122, 0, 0.6); }
-
-.time-widget { 
-    font-family: 'JetBrains Mono', monospace !important;
-    font-size: 18px !important; 
-    color: #cc7a00; 
-    background-color: #0d1117; 
-    border: 1px solid #333; 
-    border-radius: 8px;
-    padding: 10px;
+    transition: transform 0.2s;
 }
 </style>
 """
@@ -183,6 +201,7 @@ def check_password():
                     <div class="auth-status">SİSTEM DURUMU: ŞİFRELENDİ // GÜVENLİK: ALPHA-V8</div>
                 </div>
             """, unsafe_allow_html=True)
+            
             pwd = st.text_input("GİRİŞ ANAHTARI", type="password", placeholder="ŞİFREYİ GİRİNİZ")
             if st.button("SİSTEMİ BAŞLAT"):
                 if pwd == "1":
@@ -213,7 +232,7 @@ if check_password():
     game_data = load_game_data()
 
     with st.sidebar:
-        st.markdown("<h2 style='color:#cc7a00; font-family:Orbitron; letter-spacing:2px;'>🛡️ OG CORE</h2>", unsafe_allow_html=True)
+        st.markdown("<h2 style='color:#cc7a00; font-family:Orbitron;'>🛡️ OG CORE</h2>", unsafe_allow_html=True)
         page = st.radio("SİSTEM MODÜLLERİ", ["⚡ ULTRA FON", "⚽ FORMLINE", "📊 DASHDASH"])
         st.divider()
         kasa = st.number_input("KASA (USD)", value=game_data["kasa"], step=10.0, key="kasa_input", on_change=save_game_data)
@@ -255,7 +274,7 @@ if check_password():
             
         with c_life:
             omur = int(kasa / yakim) if yakim > 0 else 999
-            st.markdown(f"<div class='industrial-card'><div class='terminal-header'>KASA ÖMRÜ</div><h2 style='text-align:center; font-family:Orbitron;'>{omur} GÜN</h2></div>", unsafe_allow_html=True)
+            st.markdown(f"<div class='industrial-card'><div class='terminal-header'>KASA ÖMRÜ</div><h2 style='text-align:center;'>{omur} GÜN</h2></div>", unsafe_allow_html=True)
 
         st.subheader("🎯 Pay Dağılımı")
         cols = st.columns(3)
