@@ -14,147 +14,151 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- 2. CSS STİLLERİ (YENİLENMİŞ SİBER TERMİNAL TASARIMI) ---
+# --- 2. CSS STİLLERİ (PURE BLACK & OKUNAKLI SİBER TASARIM) ---
 custom_css = """
 <style>
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@400;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@400;900&display=swap');
 
-/* ANA ARKA PLAN */
-.main { background-color: #030303 !important; }
-
-/* GENEL FONT */
-body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, span, h1, h2, h3, button, input { 
-    font-family: 'JetBrains Mono', monospace !important; 
+/* TAM SİYAH ARKA PLAN */
+.main { 
+    background-color: #000000 !important;
 }
 
-/* --- 🛡️ HIGH-END AUTHENTICATION SCREEN --- */
-.auth-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 80vh;
+/* GENEL FONT DÜZENLEME (Okunabilirlik artırıldı) */
+body, [data-testid="stAppViewContainer"], p, div, span, input { 
+    font-family: 'Inter', sans-serif !important; 
+    font-size: 15px !important;
+}
+
+/* SİDEBAR YAZI TİPLERİ VE BOYUTLARI */
+[data-testid="stSidebar"] * {
+    font-family: 'Inter', sans-serif !important;
+}
+
+[data-testid="stSidebar"] .stRadio div[role="radiogroup"] label {
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.5px;
+    color: #e6edf3 !important;
+}
+
+/* GİRİŞ EKRANI ÖZEL FONTU */
+.auth-header {
+    font-family: 'Orbitron', sans-serif !important;
+    font-size: 75px !important;
+    font-weight: 900;
+    color: #ff8c00;
+    letter-spacing: 22px;
+    text-shadow: 3px 3px 0px #331a00, 0 0 15px rgba(255, 140, 0, 0.4);
+    animation: float 3.5s ease-in-out infinite;
 }
 
 .auth-container {
-    padding: 4rem;
-    background: rgba(10, 10, 10, 0.95);
-    border: 1px solid rgba(204, 122, 0, 0.3);
-    border-top: 4px solid #cc7a00;
-    box-shadow: 0 20px 70px rgba(0,0,0,0.8), 0 0 20px rgba(204, 122, 0, 0.1);
+    padding: 5rem 2rem;
+    background: #000000;
+    border: 1px solid rgba(204, 122, 0, 0.4);
+    border-radius: 4px;
+    box-shadow: 0 0 80px rgba(0, 0, 0, 1), inset 0 0 40px rgba(204, 122, 0, 0.03);
     text-align: center;
+    margin-top: 30px;
     position: relative;
-    max-width: 600px;
-    width: 100%;
+    overflow: hidden;
 }
 
-/* SCANLINE EFEKTİ */
-.auth-container::before {
-    content: " ";
-    position: absolute;
-    top: 0; left: 0; bottom: 0; right: 0;
-    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), 
-                linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
-    background-size: 100% 4px, 3px 100%;
-    z-index: 2;
-    pointer-events: none;
-}
-
-.auth-header {
-    font-family: 'Orbitron', sans-serif !important;
-    font-size: 68px;
-    font-weight: 900;
-    color: #ffffff;
-    letter-spacing: 18px;
-    margin-bottom: 0px;
-    text-shadow: 0 0 15px rgba(255,255,255,0.3), 3px 3px 0px #cc7a00;
-}
-
-.glitch-text {
-    position: relative;
-    display: inline-block;
-}
-
-.auth-subtitle {
-    font-size: 11px;
-    color: #cc7a00;
-    letter-spacing: 8px;
+.auth-status {
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 12px !important;
+    color: #8b949e;
+    letter-spacing: 6px !important;
     margin-bottom: 50px;
     text-transform: uppercase;
-    font-weight: bold;
-    opacity: 0.8;
+    border-top: 1px solid rgba(204, 122, 0, 0.2);
+    display: inline-block;
+    padding-top: 10px;
 }
 
-/* INPUT TASARIMI */
+/* INPUT VE BUTONLARIN OKUNAKLILIĞI */
 .stTextInput > div > div > input {
-    background-color: rgba(255, 255, 255, 0.03) !important;
-    border: 1px solid #333 !important;
-    border-bottom: 2px solid #cc7a00 !important;
-    color: #ffffff !important;
+    background-color: #000000 !important;
+    border: 1px solid #222 !important;
+    border-left: 5px solid #cc7a00 !important;
+    color: #ff8c00 !important;
     text-align: center;
-    font-size: 24px !important;
-    font-weight: bold !important;
-    padding: 20px !important;
-    border-radius: 4px !important;
-    transition: all 0.4s;
+    font-size: 18px !important;
+    font-family: 'JetBrains Mono', monospace !important;
+    border-radius: 0px !important;
 }
 
-.stTextInput > div > div > input:focus {
-    background-color: rgba(204, 122, 0, 0.05) !important;
-    border-bottom: 2px solid #ffffff !important;
-    box-shadow: 0 5px 15px rgba(204, 122, 0, 0.2) !important;
-}
-
-/* BUTON TASARIMI */
 div.stButton > button {
-    background: #cc7a00 !important;
-    color: #000000 !important;
-    border: none !important;
+    background-color: transparent !important;
+    color: #ff8c00 !important;
+    border: 1px solid rgba(255, 140, 0, 0.5) !important;
     border-radius: 4px !important;
     width: 100% !important;
-    font-weight: 900 !important;
-    letter-spacing: 5px !important;
+    font-weight: 800 !important;
+    font-family: 'Orbitron', sans-serif !important;
+    font-size: 16px !important;
+    letter-spacing: 4px !important;
     height: 60px;
+    transition: 0.4s;
     margin-top: 20px;
-    text-transform: uppercase;
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 div.stButton > button:hover {
-    background-color: #ffffff !important;
-    box-shadow: 0 0 30px rgba(204, 122, 0, 0.4);
-    transform: scale(1.02);
+    background-color: #ff8c00 !important;
+    color: #000000 !important;
+    box-shadow: 0 0 50px rgba(255, 140, 0, 0.7) !important;
 }
 
-/* DİĞER SİSTEM BİLEŞENLERİ (KORUNDU) */
+/* SIDEBAR & CARDS */
+section[data-testid="stSidebar"] { background-color: #000000 !important; border-right: 1px solid #222; }
+
 .industrial-card { 
     background: rgba(255, 255, 255, 0.02); 
     border-left: 3px solid #cc7a00; 
-    padding: 15px; 
+    padding: 18px; 
     margin-bottom: 20px;
-    transition: transform 0.2s;
 }
-.industrial-card:hover { transform: scale(1.01); }
 
-.terminal-header { color: #cc7a00; font-size: 14px; font-weight: bold; border-bottom: 1px dashed #30363d; padding-bottom: 5px; margin-bottom: 10px; text-transform: uppercase; }
-.terminal-row { display: flex; justify-content: space-between; font-size: 13px; color: #e6edf3; margin-bottom: 6px; }
-.highlight { color: #cc7a00; font-weight: bold; }
-.win { color: #00ff41; font-weight: bold; }
-.loss { color: #ff4b4b; font-weight: bold; }
-
-.loot-wrapper { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px 25px 50px 25px; margin-bottom: 25px; position: relative; }
-.loot-track { background: #21262d; height: 14px; border-radius: 7px; width: 100%; position: relative; margin-top: 45px; }
-.loot-fill { 
-    background: linear-gradient(90deg, #cc7a00, #ffae00); 
-    height: 100%; border-radius: 7px; 
-    box-shadow: 0 0 15px rgba(204, 122, 0, 0.5);
-    transition: width 1s ease-in-out; 
+.terminal-header { 
+    font-family: 'Orbitron', sans-serif !important;
+    color: #cc7a00; 
+    font-size: 13px !important; 
+    font-weight: 800; 
+    border-bottom: 1px dashed #30363d; 
+    padding-bottom: 8px; 
+    margin-bottom: 12px; 
+    text-transform: uppercase; 
 }
-.milestone { position: absolute; top: 50%; transform: translate(-50%, -50%); width: 120px; display: flex; flex-direction: column; align-items: center; z-index: 10; }
-.milestone-label { position: absolute; top: 18px; font-size: 11px; font-weight: bold; color: #8b949e; text-align: center; }
 
-section[data-testid="stSidebar"] { background-color: #010409 !important; border-right: 1px solid #30363d; }
-.time-widget { display: block; width: 100%; padding: 0.5rem; font-size: 14px; font-weight: bold; color: #cc7a00; text-align: center; background-color: #0d1117; border: 1px solid #333; border-radius: 4px; }
+.terminal-row { font-size: 14px !important; line-height: 1.6; }
+
+/* SCANLINE VE ANIMASYONLAR */
+.scanline {
+    position: absolute;
+    width: 100%; height: 4px;
+    background: rgba(204, 122, 0, 0.15);
+    box-shadow: 0 0 25px #cc7a00;
+    animation: scanline-move 4s linear infinite;
+    z-index: 10;
+    pointer-events: none;
+}
+@keyframes scanline-move { 0% { top: -10%; } 100% { top: 110%; } }
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+
+/* LOOT BAR */
+.loot-wrapper { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 25px; margin-bottom: 25px; }
+.loot-fill { box-shadow: 0 0 20px rgba(204, 122, 0, 0.6); }
+
+.time-widget { 
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 18px !important; 
+    color: #cc7a00; 
+    background-color: #0d1117; 
+    border: 1px solid #333; 
+    border-radius: 8px;
+    padding: 10px;
+}
 </style>
 """
 
@@ -170,25 +174,22 @@ if "password_correct" not in st.session_state:
 def check_password():
     if not st.session_state["password_correct"]:
         st.markdown(custom_css, unsafe_allow_html=True)
-        # Ekranı ortalamak için wrapper
-        st.markdown('<div class="auth-wrapper">', unsafe_allow_html=True)
         _, col_mid, _ = st.columns([1, 2, 1])
         with col_mid:
             st.markdown("""
                 <div class="auth-container">
-                    <div class="auth-header"><span class="glitch-text">OG_CORE</span></div>
-                    <div class="auth-subtitle">CENTRAL INTELLIGENCE ACCESS PORTAL</div>
+                    <div class="scanline"></div>
+                    <div class="auth-header">OG_CORE</div><br>
+                    <div class="auth-status">SİSTEM DURUMU: ŞİFRELENDİ // GÜVENLİK: ALPHA-V8</div>
                 </div>
             """, unsafe_allow_html=True)
-            
-            pwd = st.text_input("VERIFY IDENTITY", type="password", placeholder="ENTER KEYCODE")
-            if st.button("EXECUTE AUTHENTICATION"):
+            pwd = st.text_input("GİRİŞ ANAHTARI", type="password", placeholder="ŞİFREYİ GİRİNİZ")
+            if st.button("SİSTEMİ BAŞLAT"):
                 if pwd == "1":
                     st.session_state["password_correct"] = True
                     st.rerun()
                 else:
-                    st.error("CORE_ERROR: ACCESS VIOLATION DETECTED")
-        st.markdown('</div>', unsafe_allow_html=True)
+                    st.error("ERİŞİM REDDEDİLDİ")
         return False
     return True
 
@@ -212,7 +213,7 @@ if check_password():
     game_data = load_game_data()
 
     with st.sidebar:
-        st.markdown("<h2 style='color:#cc7a00; font-family:Orbitron;'>🛡️ OG CORE</h2>", unsafe_allow_html=True)
+        st.markdown("<h2 style='color:#cc7a00; font-family:Orbitron; letter-spacing:2px;'>🛡️ OG CORE</h2>", unsafe_allow_html=True)
         page = st.radio("SİSTEM MODÜLLERİ", ["⚡ ULTRA FON", "⚽ FORMLINE", "📊 DASHDASH"])
         st.divider()
         kasa = st.number_input("KASA (USD)", value=game_data["kasa"], step=10.0, key="kasa_input", on_change=save_game_data)
@@ -222,7 +223,7 @@ if check_password():
         st.divider()
         tr_tz = pytz.timezone('Europe/Istanbul')
         st.markdown(f"<div class='time-widget'>{datetime.now(tr_tz).strftime('%H:%M:%S')}</div>", unsafe_allow_html=True)
-        if st.button("🔴 TERMINATE SESSION", use_container_width=True): 
+        if st.button("🔴 OTURUMU KAPAT", use_container_width=True): 
             st.session_state["password_correct"] = False
             st.rerun()
 
@@ -230,13 +231,12 @@ if check_password():
         net_kar = kasa - ana_para
         kar_yuzdesi = (net_kar / ana_para) * 100 if ana_para > 0 else 0
         
-        # HEDEF YOLCULUĞU (ANİMASYONLU BAR)
         targets = [{"val": 1000, "name": "TELEFON"}, {"val": 2500, "name": "TATİL"}, {"val": 5000, "name": "ARABA"}]
         max_target = 6500
         current_pct = min(100, (kasa / max_target) * 100)
         
         m_html = "".join([f"<div class='milestone' style='left:{(t['val']/max_target)*100}%'><div style='font-size:20px;'>{'✅' if kasa>=t['val'] else '🔒'}</div><div class='milestone-label'>{t['name']}</div></div>" for t in targets])
-        st.markdown(f"<div class='loot-wrapper'><div class='terminal-header'>TARGET PROGRESSION</div><div class='loot-track'><div class='loot-fill' style='width:{current_pct}%'></div>{m_html}</div></div>", unsafe_allow_html=True)
+        st.markdown(f"<div class='loot-wrapper'><div class='terminal-header'>HEDEF İLERLEMESİ</div><div class='loot-track'><div class='loot-fill' style='width:{current_pct}%'></div>{m_html}</div></div>", unsafe_allow_html=True)
         
         st.markdown(f"""
         <div class='industrial-card'>
@@ -250,12 +250,12 @@ if check_password():
         with c_market:
             try:
                 btc = yf.Ticker("BTC-USD").history(period="1d")['Close'].iloc[-1]
-                st.markdown(f"<div class='industrial-card'><div class='terminal-header'>MARKET DATA</div><div class='terminal-row'><span>BITCOIN</span><span>${btc:,.2f}</span></div></div>", unsafe_allow_html=True)
+                st.markdown(f"<div class='industrial-card'><div class='terminal-header'>PİYASA VERİSİ</div><div class='terminal-row'><span>BITCOIN</span><span>${btc:,.2f}</span></div></div>", unsafe_allow_html=True)
             except: st.error("Market data link lost.")
             
         with c_life:
             omur = int(kasa / yakim) if yakim > 0 else 999
-            st.markdown(f"<div class='industrial-card'><div class='terminal-header'>FUND LIFESPAN</div><h2 style='text-align:center;'>{omur} GÜN</h2></div>", unsafe_allow_html=True)
+            st.markdown(f"<div class='industrial-card'><div class='terminal-header'>KASA ÖMRÜ</div><h2 style='text-align:center; font-family:Orbitron;'>{omur} GÜN</h2></div>", unsafe_allow_html=True)
 
         st.subheader("🎯 Pay Dağılımı")
         cols = st.columns(3)
@@ -276,4 +276,4 @@ if check_password():
         df = pd.DataFrame({"Gün": range(sure), "Tahmin ($)": [kasa * ((1 + h_oran/100) ** (d / 7)) for d in range(sure)]})
         st.line_chart(df.set_index("Gün"))
 
-    st.caption("OG Core v8.8 | Fybey e aittir.")
+    st.caption("OG Core v8.8 | Fybey'e aittir.")
