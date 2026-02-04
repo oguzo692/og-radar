@@ -61,6 +61,16 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
     animation: tech-pulse 3s infinite;
 }
 
+.auth-motto {
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.6);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-top: -10px;
+    margin-bottom: 20px;
+}
+
 @keyframes tech-pulse {
     0% { transform: scale(1); opacity: 1; }
     50% { transform: scale(1.02); opacity: 0.9; }
@@ -168,6 +178,7 @@ def check_password():
             st.markdown("""
                 <div class="auth-container">
                     <div class="auth-header">OG_CORE</div>
+                    <div class="auth-motto">ARCHITECTING THE FUTURE OF WEALTH</div>
                 </div>
             """, unsafe_allow_html=True)
             
