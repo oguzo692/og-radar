@@ -195,7 +195,7 @@ if check_password():
 
     with st.sidebar:
         st.markdown("<h2 style='color:#cc7a00; font-family:Orbitron; letter-spacing:4px; text-align:center;'>🛡️ OG CORE</h2>", unsafe_allow_html=True)
-        page = st.radio("SİSTEM MODÜLLERİ", ["⚡ ULTRA FON", "⚽ FORMLINE", "📊 DASHDASH"])
+        page = st.radio("SİSTEM MODÜLLERİ", ["⚡ Ulrta Atak Fon", "⚽ Formlıne", "📊 Similasyon"])
         st.divider()
         kasa = st.number_input("KASA (USD)", value=game_data["kasa"], step=10.0, key="kasa_input", on_change=save_game_data)
         ana_para = st.number_input("ANA PARA", value=game_data["ana_para"], key="ana_input", on_change=save_game_data)
@@ -204,7 +204,7 @@ if check_password():
         st.divider()
         tr_tz = pytz.timezone('Europe/Istanbul')
         st.markdown(f"<div class='time-widget'>{datetime.now(tr_tz).strftime('%H:%M:%S')}</div>", unsafe_allow_html=True)
-        if st.button("🔴 TERMINATE SESSION", use_container_width=True): 
+        if st.button("🔴 Çıkış", use_container_width=True): 
             st.session_state["password_correct"] = False
             st.rerun()
 
