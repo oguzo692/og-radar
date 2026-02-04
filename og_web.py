@@ -25,22 +25,26 @@ custom_css = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
 .main { background-color: transparent !important; }
-[data-testid="stAppViewContainer"] { background-color: #050505 !important; }
+[data-testid="stAppViewContainer"] { background-color: #050505 !important; overflow: hidden !important; }
 body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, span, h1, h2, h3, button, input { font-family: 'JetBrains Mono', monospace !important; }
 
-/* --- 📺 GİRİŞ PANELİ SABİTLEME (TAM MERKEZ) --- */
+/* --- 📺 GİRİŞ PANELİ SABİTLEME (PC FIX) --- */
 .auth-wrapper {
     position: fixed;
-    top: 50%; left: 50%; 
-    transform: translate(-50%, -50%);
-    z-index: 9999;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    top: 50% !important; 
+    left: 50% !important; 
+    transform: translate(-50%, -50%) !important;
+    width: 450px;
+    z-index: 999999 !important;
+    text-align: center;
 }
 .auth-container {
-    width: 450px; text-align: center;
-    padding: 50px 40px; background: rgba(10, 10, 10, 0.95);
-    border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 4px;
-    box-shadow: 0 0 80px rgba(0,0,0,1); backdrop-filter: blur(20px);
+    padding: 50px 40px; 
+    background: rgba(10, 10, 10, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.1); 
+    border-radius: 4px;
+    box-shadow: 0 0 100px rgba(0,0,0,1); 
+    backdrop-filter: blur(20px);
 }
 .retro-title {
     font-size: 45px; font-weight: bold; letter-spacing: 15px; color: white;
@@ -111,19 +115,30 @@ if "password_correct" not in st.session_state:
 
 def check_password():
     if not st.session_state["password_correct"]:
-        components.html(particles_js, height=2000)
+        components.html(particles_js, height=1000) # Yükseklik kısıtlandı
         st.markdown(custom_css, unsafe_allow_html=True)
-        # Giriş Sekmesi Sabitlendi
-        st.markdown('<div class="auth-wrapper">', unsafe_allow_html=True)
-        st.markdown('<div class="auth-container"><div class="retro-title">OG_CORE</div>', unsafe_allow_html=True)
-        pwd = st.text_input("", type="password", placeholder="PASSWORD REQUIRED")
-        if st.button("Giriş"):
-            if pwd == "1":
-                st.session_state["password_correct"] = True
-                st.rerun()
-            else:
-                st.error("ACCESS DENIED")
-        st.markdown('</div></div>', unsafe_allow_html=True)
+        # Giriş Kutusunu fixed ile tam merkeze çaktık
+        st.markdown(f'''
+            <div class="auth-wrapper">
+                <div class="auth-container">
+                    <div class="retro-title">OG_CORE</div>
+                </div>
+            </div>
+        ''', unsafe_allow_html=True)
+        
+        # Streamlit input'larını auth-wrapper içine dikeyde denk gelecek şekilde konumlandırma
+        col1, col2, col3 = st.columns([1, 1.5, 1])
+        with col2:
+            st.write("##") # Üst boşluk ayarı
+            st.write("##")
+            st.write("##")
+            pwd = st.text_input("", type="password", placeholder="PASSWORD REQUIRED")
+            if st.button("Giriş"):
+                if pwd == "1":
+                    st.session_state["password_correct"] = True
+                    st.rerun()
+                else:
+                    st.error("ACCESS DENIED")
         return False
     return True
 
@@ -189,7 +204,7 @@ if check_password():
                 btc = yf.Ticker("BTC-USD").history(period="1d")['Close'].iloc[-1]
                 eth = yf.Ticker("ETH-USD").history(period="1d")['Close'].iloc[-1]
                 st.markdown(f"<div class='industrial-card'><div class='terminal-header'>📊 PİYASA</div><div class='terminal-row'><span>🟠 BTC</span><span>${btc:,.2f}</span></div><div class='terminal-row'><span>🔵 ETH</span><span>${eth:,.2f}</span></div></div>", unsafe_allow_html=True)
-            except: st.error("Veri çekilemedi")
+            except: st.error("Veri hatası")
         with col_omur:
             gun_omru = int(kasa / gunluk_yakim) if gunluk_yakim > 0 else 999
             st.markdown(f"<div class='industrial-card'><div class='terminal-header'>💀 FON ÖMRÜ</div><h2 style='text-align:center;'>{gun_omru} GÜN</h2></div>", unsafe_allow_html=True)
