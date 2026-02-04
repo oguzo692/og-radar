@@ -14,28 +14,28 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- 2. CSS STİLLERİ (ANİMASYONLU SİBER TASARIM) ---
+# --- 2. CSS STİLLERİ (YÜKSEK İŞÇİLİKLİ SİBER TASARIM) ---
 custom_css = """
 <style>
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@400;900&display=swap');
 
 /* ANA ARKA PLAN */
-.main { background-color: #050505 !important; }
+.main { background-color: #020202 !important; }
 
 /* GENEL FONT */
 body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, span, h1, h2, h3, button, input { 
     font-family: 'JetBrains Mono', monospace !important; 
 }
 
-/* --- 📺 ANİMASYONLU AUTH EKRANI --- */
+/* --- 📺 WOW EKRANI KONTEYNER --- */
 .auth-container {
-    padding: 3rem;
-    background: rgba(15, 15, 15, 0.95);
-    border: 1px solid #cc7a00;
+    padding: 4rem 2rem;
+    background: radial-gradient(circle, rgba(204, 122, 0, 0.08) 0%, rgba(0, 0, 0, 0) 80%);
+    border: 1px solid rgba(204, 122, 0, 0.4);
     border-radius: 4px;
-    box-shadow: 0 0 30px rgba(204, 122, 0, 0.1);
+    box-shadow: 0 0 50px rgba(0, 0, 0, 1), inset 0 0 25px rgba(204, 122, 0, 0.05);
     text-align: center;
-    margin-top: 50px;
+    margin-top: 30px;
     position: relative;
     overflow: hidden;
 }
@@ -45,9 +45,9 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
     content: " ";
     position: absolute;
     top: 0; left: 0; width: 100%; height: 2px;
-    background: rgba(204, 122, 0, 0.2);
-    box-shadow: 0 0 10px #cc7a00;
-    animation: scanline 4s linear infinite;
+    background: rgba(204, 122, 0, 0.3);
+    box-shadow: 0 0 15px #cc7a00;
+    animation: scanline 3s linear infinite;
     z-index: 5;
 }
 
@@ -56,73 +56,80 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
     100% { top: 100%; }
 }
 
-/* BAŞLIK TİTREME (FLICKER) */
+/* OG_CORE PARILDAYAN BAŞLIK (WOW EFFECT) */
 .auth-header {
     font-family: 'Orbitron', sans-serif !important;
-    font-size: 50px;
-    font-weight: bold;
-    color: #cc7a00;
-    letter-spacing: 12px;
-    margin-bottom: 10px;
-    text-shadow: 0 0 15px rgba(204, 122, 0, 0.6);
-    animation: flicker 2s infinite;
+    font-size: 65px;
+    font-weight: 900;
+    color: #ff8c00;
+    letter-spacing: 18px;
+    margin-bottom: 5px;
+    text-shadow: 
+        0 0 10px rgba(255, 140, 0, 0.8),
+        0 0 25px rgba(255, 140, 0, 0.5),
+        0 0 50px rgba(255, 140, 0, 0.3);
+    animation: neon-pulse 2s ease-in-out infinite alternate;
 }
 
-@keyframes flicker {
-    0% { opacity: 0.9; }
-    5% { opacity: 0.8; }
-    10% { opacity: 1; }
-    15% { opacity: 0.9; }
-    25% { opacity: 1; }
-    100% { opacity: 1; }
+@keyframes neon-pulse {
+    from { filter: drop-shadow(0 0 2px #ff8c00) brightness(1); }
+    to { filter: drop-shadow(0 0 15px #ff8c00) brightness(1.4); }
 }
 
 .auth-status {
     font-size: 11px;
-    color: #8b949e;
-    letter-spacing: 4px;
-    margin-bottom: 30px;
+    color: #cc7a00;
+    letter-spacing: 6px;
+    margin-bottom: 40px;
     text-transform: uppercase;
+    opacity: 0.7;
+    text-shadow: 0 0 8px #cc7a00;
 }
 
-/* INPUT VE BUTONLAR */
+/* INPUT TASARIMI - MATRIX TURUNCU */
 .stTextInput > div > div > input {
-    background-color: rgba(0,0,0,0.5) !important;
-    border: 1px solid #30363d !important;
-    color: #cc7a00 !important; /* Matrix Yeşili yerine turuncu uyumu */
+    background-color: rgba(10, 10, 10, 0.9) !important;
+    border: none !important;
+    border-bottom: 2px solid #333 !important;
+    color: #ff8c00 !important;
     text-align: center;
-    font-size: 20px !important;
-    transition: all 0.3s;
+    font-size: 22px !important;
+    border-radius: 0px !important;
+    transition: 0.4s all;
 }
 
 .stTextInput > div > div > input:focus {
-    border-color: #cc7a00 !important;
-    box-shadow: 0 0 10px rgba(204, 122, 0, 0.3) !important;
+    border-bottom: 2px solid #ff8c00 !important;
+    background-color: rgba(255, 140, 0, 0.05) !important;
+    box-shadow: 0 10px 20px -10px rgba(255, 140, 0, 0.3) !important;
 }
 
+/* BUTON - ULTRA GLOW & HOVER */
 div.stButton > button {
     background-color: transparent !important;
-    color: white !important;
-    border: 1px solid #cc7a00 !important;
-    border-radius: 0px !important;
+    color: #ff8c00 !important;
+    border: 1px solid #ff8c00 !important;
+    border-radius: 2px !important;
     width: 100% !important;
     font-weight: bold !important;
-    letter-spacing: 5px !important;
-    height: 50px;
-    transition: 0.4s;
-    margin-top: 10px;
+    letter-spacing: 6px !important;
+    height: 55px;
+    transition: 0.5s;
+    margin-top: 15px;
+    text-transform: uppercase;
 }
 
 div.stButton > button:hover {
-    background-color: #cc7a00 !important;
+    background-color: #ff8c00 !important;
     color: #000 !important;
-    box-shadow: 0 0 20px #cc7a00;
+    box-shadow: 0 0 40px #ff8c00 !important;
+    transform: translateY(-2px);
 }
 
 /* SIDEBAR & CARDS */
 .industrial-card { 
-    background: rgba(255, 255, 255, 0.02); 
-    border-left: 3px solid #cc7a00; 
+    background: rgba(255, 140, 0, 0.02); 
+    border-left: 4px solid #cc7a00; 
     padding: 15px; 
     margin-bottom: 20px;
     transition: transform 0.2s;
@@ -173,7 +180,7 @@ def check_password():
                 </div>
             """, unsafe_allow_html=True)
             
-            pwd = st.text_input("GİRİŞ ANAHTARI", type="password", placeholder="ŞİFRE")
+            pwd = st.text_input("GİRİŞ ANAHTARI", type="password", placeholder="ŞİFREYİ GİRİNİZ")
             if st.button("SİSTEMİ BAŞLAT"):
                 if pwd == "1":
                     st.session_state["password_correct"] = True
