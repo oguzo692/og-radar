@@ -33,6 +33,56 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
     color: #e0e0e0 !important;
 }
 
+/* --- 🔑 HEDEF İLERLEME BARI (MODERNİZE EDİLDİ) --- */
+.loot-wrapper {
+    background: rgba(18, 18, 18, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+    padding: 30px 25px 60px 25px;
+    margin-bottom: 30px;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.loot-track {
+    background: #111;
+    height: 12px;
+    border-radius: 6px;
+    width: 100%;
+    position: relative;
+    margin-top: 40px;
+    border: 1px solid #222;
+}
+
+.loot-fill { 
+    background: linear-gradient(90deg, #cc7a00, #ffae00); 
+    height: 100%;
+    border-radius: 6px; 
+    box-shadow: 0 0 15px rgba(204, 122, 0, 0.5);
+    transition: width 1s ease-in-out; 
+}
+
+.milestone {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 10;
+}
+
+.milestone-label {
+    position: absolute;
+    top: 25px;
+    font-size: 10px;
+    font-weight: bold;
+    color: #888;
+    text-align: center;
+    white-space: nowrap;
+    letter-spacing: 1px;
+}
+
 .auth-container {
     padding: 4rem;
     background: linear-gradient(145deg, rgba(15,15,15,0.95) 0%, rgba(5,5,5,1) 100%);
@@ -54,15 +104,6 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
     text-shadow: 0 0 30px rgba(204, 122, 0, 0.2);
 }
 
-.auth-motto {
-    font-size: 10px;
-    color: #cc7a00;
-    letter-spacing: 5px;
-    text-transform: uppercase;
-    margin-bottom: 40px;
-    opacity: 0.8;
-}
-
 .industrial-card { 
     background: rgba(18, 18, 18, 0.7) !important;
     backdrop-filter: blur(12px);
@@ -72,12 +113,6 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
     margin-bottom: 25px;
     box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     transition: all 0.4s ease;
-}
-
-.industrial-card:hover { 
-    border-top: 2px solid #cc7a00 !important;
-    transform: translateY(-5px);
-    background: rgba(22, 22, 22, 0.9) !important;
 }
 
 .terminal-header { 
@@ -99,26 +134,6 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
 }
 
 .highlight { color: #cc7a00 !important; font-weight: 700; font-size: 18px; }
-
-.stTextInput > div > div > input {
-    background-color: rgba(0,0,0,0.5) !important;
-    border: 1px solid rgba(255,255,255,0.1) !important;
-    color: #fff !important;
-    text-align: center;
-}
-
-div.stButton > button {
-    background: transparent !important;
-    color: #cc7a00 !important;
-    border: 1px solid #cc7a00 !important;
-    border-radius: 0px !important;
-    letter-spacing: 5px !important;
-    height: 55px;
-}
-div.stButton > button:hover {
-    background: #cc7a00 !important;
-    color: #000 !important;
-}
 
 section[data-testid="stSidebar"] { 
     background-color: #050505 !important; 
@@ -158,7 +173,6 @@ if "password_correct" not in st.session_state:
 def check_password():
     if not st.session_state["password_correct"]:
         st.markdown(custom_css, unsafe_allow_html=True)
-        # Sütun hatası düzeltildi, doğrudan kapsayıcı eklendi
         st.markdown(f"""
             <div class="auth-container">
                 <div class="auth-header">OG_CORE</div>
@@ -197,7 +211,6 @@ if check_password():
 
     with st.sidebar:
         st.markdown("<h2 style='color:#cc7a00; font-family:Orbitron; letter-spacing:4px; text-align:center;'>🛡️ OG CORE</h2>", unsafe_allow_html=True)
-        # İSİMLER DÜZELTİLDİ
         page = st.radio("Modüller", ["⚡ Ultra Atak Fon", "⚽ Formlıne", "📊 Similasyon"])
         st.divider()
         kasa = st.number_input("KASA (USD)", value=game_data["kasa"], step=10.0, key="kasa_input", on_change=save_game_data)
@@ -211,17 +224,40 @@ if check_password():
             st.session_state["password_correct"] = False
             st.rerun()
 
-    # KOŞULLAR RADYO BUTONLARIYLA EŞİTLENDİ
     if page == "⚡ Ultra Atak Fon":
         net_kar = kasa - ana_para
         kar_yuzdesi = (net_kar / ana_para) * 100 if ana_para > 0 else 0
         
-        targets = [{"val": 1000, "name": "TELEFON"}, {"val": 2500, "name": "TATİL"}, {"val": 5000, "name": "ARABA"}]
+        # --- 📈 HEDEF İLERLEME SİSTEMİ ---
+        targets = [
+            {"val": 1000, "name": "TELEFON", "icon": "📱"}, 
+            {"val": 2500, "name": "TATİL", "icon": "✈️"}, 
+            {"val": 5000, "name": "ARABA", "icon": "🏎️"}
+        ]
         max_target = 6500
         current_pct = min(100, (kasa / max_target) * 100)
         
-        m_html = "".join([f"<div class='milestone' style='left:{(t['val']/max_target)*100}%'><div style='font-size:20px;'>{'✅' if kasa>=t['val'] else '🔒'}</div><div class='milestone-label'>{t['name']}</div></div>" for t in targets])
-        st.markdown(f"<div class='loot-wrapper'><div class='terminal-header'>TARGET PROGRESSION</div><div class='loot-track'><div class='loot-fill' style='width:{current_pct}%'></div>{m_html}</div></div>", unsafe_allow_html=True)
+        m_html = ""
+        for t in targets:
+            is_unlocked = kasa >= t['val']
+            icon = t['icon'] if is_unlocked else "🔒"
+            pos = (t['val'] / max_target) * 100
+            m_html += f"""
+            <div class='milestone' style='left:{pos}%'>
+                <div style='font-size:22px;'>{icon}</div>
+                <div class='milestone-label'>{t['name']}<br>${t['val']}</div>
+            </div>
+            """
+            
+        st.markdown(f"""
+        <div class='loot-wrapper'>
+            <div class='terminal-header'>TARGET PROGRESSION</div>
+            <div class='loot-track'>
+                <div class='loot-fill' style='width:{current_pct}%'></div>
+                {m_html}
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
         
         st.markdown(f"""
         <div class='industrial-card'>
