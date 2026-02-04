@@ -215,7 +215,7 @@ def load_game_data():
 def save_game_data():
     data = {"kasa": st.session_state.kasa_input, "ana_para": st.session_state.ana_input, "yakim": st.session_state.yakim_input}
     with open(SAVE_FILE, "w") as f: json.dump(data, f)
-    st.toast("💾 DATABASE SYNCED", icon="✅")
+    st.toast("💾 Kaydedildi", icon="✅")
 
 # --- 6. ANA UYGULAMA ---
 if check_password():
@@ -224,7 +224,7 @@ if check_password():
 
     with st.sidebar:
         st.markdown("<h2 style='color:#cc7a00; font-family:Orbitron; letter-spacing:4px; text-align:center;'>🛡️ OG CORE</h2>", unsafe_allow_html=True)
-        page = st.radio("SİSTEM MODÜLLERİ", ["⚡ ULTRA FON", "⚽ FORMLINE", "📊 DASHDASH"])
+        page = st.radio("SİSTEM MODÜLLERİ", ["⚡ ULTRA FON", "⚽ FORMLINE", "📊 Similasyon"])
         st.divider()
         kasa = st.number_input("KASA (USD)", value=game_data["kasa"], step=10.0, key="kasa_input", on_change=save_game_data)
         ana_para = st.number_input("ANA PARA", value=game_data["ana_para"], key="ana_input", on_change=save_game_data)
