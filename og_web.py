@@ -32,7 +32,6 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
     padding: 3.5rem;
     background: linear-gradient(135deg, rgba(20,20,20,0.95) 0%, rgba(5,5,5,1) 100%);
     border: 2px solid #ffffff;
-    /* Çizgiler beyazla aynı kalınlığa (2px) çekildi */
     border-right: 2px solid #cc7a00;
     border-bottom: 2px solid #cc7a00;
     box-shadow: 0 0 50px rgba(204, 122, 0, 0.15);
@@ -82,9 +81,9 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
 
 /* --- 🔑 REVİZE EDİLEN ŞİFRE ALANI --- */
 .stTextInput > div > div > input {
-    background-color: rgba(255, 255, 255, 0.05) !important; /* Çiğ beyazlık gitti, şeffaf siyahımsı oldu */
+    background-color: rgba(255, 255, 255, 0.05) !important;
     border: 1px solid rgba(255, 255, 255, 0.2) !important;
-    color: #ffffff !important; /* Yazı artık beyaz */
+    color: #ffffff !important;
     text-align: center;
     font-size: 22px !important;
     font-weight: bold !important;
@@ -169,12 +168,11 @@ def check_password():
             st.markdown("""
                 <div class="auth-container">
                     <div class="auth-header">OG_CORE</div>
-                    <div class="auth-status">ESTABLISHING SECURE CONNECTION...</div>
                 </div>
             """, unsafe_allow_html=True)
             
-            pwd = st.text_input("ENTER ACCESS KEY", type="password", placeholder="••••••••")
-            if st.button("INITIALIZE"):
+            pwd = st.text_input("", type="password", placeholder="••••••••")
+            if st.button("GİRİŞ"):
                 if pwd == "1":
                     st.session_state["password_correct"] = True
                     st.rerun()
@@ -241,7 +239,15 @@ if check_password():
         with c_market:
             try:
                 btc = yf.Ticker("BTC-USD").history(period="1d")['Close'].iloc[-1]
-                st.markdown(f"<div class='industrial-card'><div class='terminal-header'>MARKET DATA</div><div class='terminal-row'><span>BITCOIN</span><span>${btc:,.2f}</span></div></div>", unsafe_allow_html=True)
+                eth = yf.Ticker("ETH-USD").history(period="1d")['Close'].iloc[-1]
+                sol = yf.Ticker("SOL-USD").history(period="1d")['Close'].iloc[-1]
+                st.markdown(f"""
+                <div class='industrial-card'>
+                    <div class='terminal-header'>MARKET DATA</div>
+                    <div class='terminal-row'><span>BITCOIN</span><span>${btc:,.2f}</span></div>
+                    <div class='terminal-row'><span>ETHEREUM</span><span>${eth:,.2f}</span></div>
+                    <div class='terminal-row'><span>SOLANA</span><span>${sol:,.2f}</span></div>
+                </div>""", unsafe_allow_html=True)
             except: st.error("Market data link lost.")
             
         with c_life:
