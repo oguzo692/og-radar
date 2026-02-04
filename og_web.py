@@ -14,7 +14,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- 2. CSS STİLLERİ (HATA DÜZELTİLDİ: custom_css) ---
+# --- 2. CSS STİLLERİ (GİRİŞ EKRANI JİLET GİBİ YAPILDI) ---
 custom_css = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
@@ -27,66 +27,48 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
     font-family: 'JetBrains Mono', monospace !important; 
 }
 
-/* --- 📺 RETRO AUTH EKRANI TASARIMI --- */
+/* --- 📺 GİRİŞ PANELİ SABİTLEME --- */
 .auth-wrapper {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 300px;
-    color: #ffffff;
-    overflow: hidden;
-    margin-top: 50px;
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    background: #050505;
+    z-index: 9999;
 }
 
-/* SCANLINE (TARAMA ÇİZGİSİ) EFECT */
-.auth-wrapper::before {
-    content: " ";
-    position: absolute;
-    top: 0; left: 0; bottom: 0; right: 0;
-    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
-                linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-    z-index: 2;
-    background-size: 100% 4px, 3px 100%;
-    pointer-events: none;
+.auth-container {
+    width: 450px; text-align: center;
+    padding: 60px 40px; 
+    background: rgba(15, 15, 15, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.1); 
+    border-radius: 4px;
+    box-shadow: 0 0 40px rgba(0,0,0,1); 
+    backdrop-filter: blur(10px);
 }
 
 .retro-title {
-    font-size: 40px;
-    font-weight: bold;
-    letter-spacing: 15px;
-    text-shadow: 0 0 10px rgba(255,255,255,0.5);
-    border-bottom: 2px solid #ffffff;
-    padding-bottom: 10px;
-    margin-bottom: 20px;
-    z-index: 3;
+    font-size: 50px; font-weight: bold; letter-spacing: 15px; color: white;
+    text-shadow: 0 0 15px rgba(255,255,255,0.5);
+    border-bottom: 2px solid white; padding-bottom: 10px; margin-bottom: 50px;
 }
 
-/* GİRİŞ KUTUSU */
+/* INPUT VE BUTON */
 .stTextInput > div > div > input {
-    background-color: transparent !important;
-    border: 1px solid #ffffff !important;
-    color: white !important;
-    text-align: center;
-    border-radius: 0px !important;
-    font-size: 18px !important;
+    background-color: rgba(255,255,255,0.05) !important;
+    border: 1px solid #333 !important; color: white !important;
+    text-align: center; border-radius: 0px !important; font-size: 20px !important;
 }
 
-/* EXECUTE BUTONU */
 div.stButton > button {
-    background-color: transparent !important;
-    color: white !important;
-    border: 1px solid #ffffff !important;
-    border-radius: 0px !important;
-    width: 100% !important;
-    font-weight: bold !important;
-    letter-spacing: 5px !important;
-    transition: all 0.2s ease !important;
+    background-color: transparent !important; color: white !important;
+    border: 1px solid white !important; border-radius: 0px !important;
+    width: 100% !important; font-weight: bold !important; letter-spacing: 5px !important;
+    height: 55px !important; transition: 0.3s;
 }
-div.stButton > button:hover {
-    background-color: #ffffff !important;
-    color: #000000 !important;
+div.stButton > button:hover { 
+    background-color: white !important; 
+    color: black !important; 
+    box-shadow: 0 0 20px rgba(255,255,255,0.4);
 }
 
 /* SİSTEMİN DİĞER TASARIMLARI (DOKUNULMADI) */
@@ -96,7 +78,6 @@ div.stButton > button:hover {
 [data-testid="stDecoration"] {display:none;}
 [data-testid="stSidebarNav"] {border-right: 1px solid #30363d;}
 
-/* SIDEBAR TOGGLE KURTARICI */
 [data-testid="stSidebarCollapsedControl"] {
     display: flex !important;
     background-color: #cc7a00 !important;
@@ -135,17 +116,19 @@ def check_password():
     if not st.session_state["password_correct"]:
         st.markdown(custom_css, unsafe_allow_html=True)
         
-        st.markdown('<div class="auth-wrapper"><div class="retro-title">OG_CORE</div></div>', unsafe_allow_html=True)
+        # Giriş Kapsayıcı
+        st.markdown('<div class="auth-wrapper"><div class="auth-container">', unsafe_allow_html=True)
+        st.markdown('<div class="retro-title">OG_CORE</div>', unsafe_allow_html=True)
         
-        col1, col2, col3 = st.columns([1,2,1])
-        with col2:
-            pwd = st.text_input("AUTHORIZATION REQUIRED", type="password")
-            if st.button("EXECUTE LOGIN"):
-                if pwd == "1":
-                    st.session_state["password_correct"] = True
-                    st.rerun()
-                else:
-                    st.error("ACCESS DENIED")
+        pwd = st.text_input("ŞİFRE GEREKLİ", type="password", label_visibility="collapsed", placeholder="PASSWORD REQUIRED")
+        if st.button("Giriş"):
+            if pwd == "1":
+                st.session_state["password_correct"] = True
+                st.rerun()
+            else:
+                st.error("ACCESS DENIED")
+        
+        st.markdown('</div></div>', unsafe_allow_html=True)
         return False
     return True
 
