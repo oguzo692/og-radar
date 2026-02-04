@@ -14,21 +14,25 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- 2. CSS STİLLERİ ---
+# --- 2. CSS STİLLERİ (ANİMASYONLU SİBER TASARIM) ---
 custom_css = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@400;700&display=swap');
 
+/* ANA ARKA PLAN */
 .main { background-color: #050505 !important; }
 
+/* GENEL FONT */
 body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, span, h1, h2, h3, button, input { 
     font-family: 'JetBrains Mono', monospace !important; 
 }
 
+/* --- 📺 WOW DEDİRTEN GİRİŞ EKRANI (DENGELENMİŞ TURUNCU & BEYAZ) --- */
 .auth-container {
     padding: 3.5rem;
     background: linear-gradient(135deg, rgba(20,20,20,0.95) 0%, rgba(5,5,5,1) 100%);
     border: 2px solid #ffffff;
+    /* Çizgiler beyazla aynı kalınlığa (2px) çekildi */
     border-right: 2px solid #cc7a00;
     border-bottom: 2px solid #cc7a00;
     box-shadow: 0 0 50px rgba(204, 122, 0, 0.15);
@@ -36,6 +40,15 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
     margin-top: 50px;
     position: relative;
     overflow: hidden;
+}
+
+/* TEKNOLOJİK PARLAMA EFEKTİ */
+.auth-container::after {
+    content: "";
+    position: absolute;
+    top: -50%; left: -50%; width: 200%; height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 70%);
+    pointer-events: none;
 }
 
 .auth-header {
@@ -67,15 +80,23 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
     display: inline-block;
 }
 
+/* --- 🔑 REVİZE EDİLEN ŞİFRE ALANI --- */
 .stTextInput > div > div > input {
-    background-color: rgba(255, 255, 255, 0.05) !important;
+    background-color: rgba(255, 255, 255, 0.05) !important; /* Çiğ beyazlık gitti, şeffaf siyahımsı oldu */
     border: 1px solid rgba(255, 255, 255, 0.2) !important;
-    color: #ffffff !important;
+    color: #ffffff !important; /* Yazı artık beyaz */
     text-align: center;
     font-size: 22px !important;
     font-weight: bold !important;
     letter-spacing: 10px;
     border-radius: 0px !important;
+    transition: all 0.3s;
+}
+
+.stTextInput > div > div > input:focus {
+    background-color: rgba(204, 122, 0, 0.1) !important;
+    border-color: #cc7a00 !important;
+    box-shadow: 0 0 15px rgba(204, 122, 0, 0.3) !important;
 }
 
 div.stButton > button {
@@ -87,6 +108,8 @@ div.stButton > button {
     font-weight: bold !important;
     letter-spacing: 10px !important;
     height: 55px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
 }
 
 div.stButton > button:hover {
@@ -94,14 +117,18 @@ div.stButton > button:hover {
     border-color: #cc7a00 !important;
     color: #000000 !important;
     box-shadow: 0 0 25px #cc7a00;
+    transform: translateY(-2px);
 }
 
+/* DİĞER SİSTEM BİLEŞENLERİ */
 .industrial-card { 
     background: rgba(255, 255, 255, 0.02); 
     border-left: 3px solid #cc7a00; 
     padding: 15px; 
     margin-bottom: 20px;
+    transition: transform 0.2s;
 }
+.industrial-card:hover { transform: scale(1.01); }
 
 .terminal-header { color: #cc7a00; font-size: 14px; font-weight: bold; border-bottom: 1px dashed #30363d; padding-bottom: 5px; margin-bottom: 10px; text-transform: uppercase; }
 .terminal-row { display: flex; justify-content: space-between; font-size: 13px; color: #e6edf3; margin-bottom: 6px; }
@@ -115,6 +142,7 @@ div.stButton > button:hover {
     background: linear-gradient(90deg, #cc7a00, #ffae00); 
     height: 100%; border-radius: 7px; 
     box-shadow: 0 0 15px rgba(204, 122, 0, 0.5);
+    transition: width 1s ease-in-out; 
 }
 .milestone { position: absolute; top: 50%; transform: translate(-50%, -50%); width: 120px; display: flex; flex-direction: column; align-items: center; z-index: 10; }
 .milestone-label { position: absolute; top: 18px; font-size: 11px; font-weight: bold; color: #8b949e; text-align: center; }
@@ -193,6 +221,7 @@ if check_password():
         net_kar = kasa - ana_para
         kar_yuzdesi = (net_kar / ana_para) * 100 if ana_para > 0 else 0
         
+        # HEDEF YOLCULUĞU (ANİMASYONLU BAR)
         targets = [{"val": 1000, "name": "TELEFON"}, {"val": 2500, "name": "TATİL"}, {"val": 5000, "name": "ARABA"}]
         max_target = 6500
         current_pct = min(100, (kasa / max_target) * 100)
@@ -211,22 +240,9 @@ if check_password():
         c_market, c_life = st.columns([2, 1])
         with c_market:
             try:
-                # Fiyatları toplu ve hızlı çekme metodu
-                tickers = yf.Tickers("BTC-USD ETH-USD SOL-USD")
-                btc = tickers.tickers["BTC-USD"].fast_info['last_price']
-                eth = tickers.tickers["ETH-USD"].fast_info['last_price']
-                sol = tickers.tickers["SOL-USD"].fast_info['last_price']
-                
-                st.markdown(f"""
-                <div class='industrial-card'>
-                    <div class='terminal-header'>MARKET DATA</div>
-                    <div class='terminal-row'><span>BITCOIN</span><span class='highlight'>${btc:,.2f}</span></div>
-                    <div class='terminal-row'><span>ETHEREUM</span><span class='highlight'>${eth:,.2f}</span></div>
-                    <div class='terminal-row'><span>SOLANA</span><span class='highlight'>${sol:,.2f}</span></div>
-                </div>
-                """, unsafe_allow_html=True)
-            except: 
-                st.error("Market data link lost.")
+                btc = yf.Ticker("BTC-USD").history(period="1d")['Close'].iloc[-1]
+                st.markdown(f"<div class='industrial-card'><div class='terminal-header'>MARKET DATA</div><div class='terminal-row'><span>BITCOIN</span><span>${btc:,.2f}</span></div></div>", unsafe_allow_html=True)
+            except: st.error("Market data link lost.")
             
         with c_life:
             omur = int(kasa / yakim) if yakim > 0 else 999
