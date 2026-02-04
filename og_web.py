@@ -20,142 +20,163 @@ custom_css = """
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Orbitron:wght@400;900&display=swap');
 
 /* ANA ARKA PLAN */
-.main { background-color: #020202 !important; }
+.main { 
+    background-color: #020202 !important;
+    background-image: radial-gradient(circle at center, #0a0a0a 0%, #020202 100%) !important;
+}
 
 /* GENEL FONT */
 body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, span, h1, h2, h3, button, input { 
     font-family: 'JetBrains Mono', monospace !important; 
 }
 
-/* --- 📺 WOW EKRANI KONTEYNER --- */
+/* --- 📺 GELİŞMİŞ SİBER AUTH EKRANI --- */
 .auth-container {
-    padding: 4rem 2rem;
-    background: radial-gradient(circle, rgba(204, 122, 0, 0.08) 0%, rgba(0, 0, 0, 0) 80%);
-    border: 1px solid rgba(204, 122, 0, 0.4);
-    border-radius: 4px;
-    box-shadow: 0 0 50px rgba(0, 0, 0, 1), inset 0 0 25px rgba(204, 122, 0, 0.05);
+    padding: 5rem 2rem;
+    background: rgba(5, 5, 5, 0.8);
+    border: 1px solid rgba(204, 122, 0, 0.3);
+    border-radius: 8px;
+    box-shadow: 0 0 60px rgba(0, 0, 0, 1), inset 0 0 30px rgba(204, 122, 0, 0.02);
     text-align: center;
     margin-top: 30px;
     position: relative;
     overflow: hidden;
+    backdrop-filter: blur(10px);
 }
 
-/* SCANLINE ANİMASYONU */
+/* ARKA PLAN HAREKETLİ IZGARA (GRID) */
 .auth-container::before {
-    content: " ";
+    content: "";
     position: absolute;
-    top: 0; left: 0; width: 100%; height: 2px;
-    background: rgba(204, 122, 0, 0.3);
-    box-shadow: 0 0 15px #cc7a00;
-    animation: scanline 3s linear infinite;
-    z-index: 5;
+    top: 0; left: 0; width: 200%; height: 200%;
+    background-image: linear-gradient(rgba(204, 122, 0, 0.05) 1px, transparent 1px), 
+                      linear-gradient(90deg, rgba(204, 122, 0, 0.05) 1px, transparent 1px);
+    background-size: 40px 40px;
+    animation: grid-move 20s linear infinite;
+    z-index: -1;
+    opacity: 0.5;
 }
 
-@keyframes scanline {
-    0% { top: 0%; }
-    100% { top: 100%; }
+@keyframes grid-move {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(-40px, -40px); }
 }
 
-/* OG_CORE PARILDAYAN BAŞLIK (WOW EFFECT) */
+/* SCANLINE (TARAMA ÇİZGİSİ) */
+.scanline {
+    position: absolute;
+    width: 100%; height: 4px;
+    background: rgba(204, 122, 0, 0.1);
+    box-shadow: 0 0 20px #cc7a00;
+    animation: scanline-move 4s linear infinite;
+    z-index: 10;
+    pointer-events: none;
+}
+
+@keyframes scanline-move {
+    0% { top: -10%; }
+    100% { top: 110%; }
+}
+
+/* OG_CORE BAŞLIK (TOK VE DERİN PARLAMA) */
 .auth-header {
     font-family: 'Orbitron', sans-serif !important;
-    font-size: 65px;
+    font-size: 70px;
     font-weight: 900;
     color: #ff8c00;
-    letter-spacing: 18px;
+    letter-spacing: 20px;
     margin-bottom: 5px;
+    position: relative;
+    display: inline-block;
+    /* Parlama kısılıp detay artırıldı */
     text-shadow: 
-        0 0 10px rgba(255, 140, 0, 0.8),
-        0 0 25px rgba(255, 140, 0, 0.5),
-        0 0 50px rgba(255, 140, 0, 0.3);
-    animation: neon-pulse 2s ease-in-out infinite alternate;
+        2px 2px 0px #663300,
+        0 0 10px rgba(255, 140, 0, 0.4);
+    animation: float 3s ease-in-out infinite;
 }
 
-@keyframes neon-pulse {
-    from { filter: drop-shadow(0 0 2px #ff8c00) brightness(1); }
-    to { filter: drop-shadow(0 0 15px #ff8c00) brightness(1.4); }
+/* GLITCH EFEKTİ (HAFİF TİTREŞİM) */
+.auth-header::after {
+    content: "OG_CORE";
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    color: #ff8c00;
+    opacity: 0.3;
+    animation: glitch 5s infinite;
+    z-index: -1;
+}
+
+@keyframes glitch {
+    0% { transform: translate(0); }
+    2% { transform: translate(-5px, 2px); color: #00ff41; }
+    4% { transform: translate(5px, -2px); color: #ff0000; }
+    6% { transform: translate(0); }
+    100% { transform: translate(0); }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
 }
 
 .auth-status {
-    font-size: 11px;
-    color: #cc7a00;
-    letter-spacing: 6px;
-    margin-bottom: 40px;
+    font-size: 10px;
+    color: #8b949e;
+    letter-spacing: 8px;
+    margin-bottom: 50px;
     text-transform: uppercase;
-    opacity: 0.7;
-    text-shadow: 0 0 8px #cc7a00;
+    border-top: 1px solid rgba(204, 122, 0, 0.2);
+    display: inline-block;
+    padding-top: 10px;
 }
 
-/* INPUT TASARIMI - MATRIX TURUNCU */
+/* INPUT VE BUTONLAR */
 .stTextInput > div > div > input {
-    background-color: rgba(10, 10, 10, 0.9) !important;
-    border: none !important;
-    border-bottom: 2px solid #333 !important;
+    background-color: rgba(0,0,0,0.7) !important;
+    border: 1px solid #333 !important;
+    border-left: 5px solid #cc7a00 !important;
     color: #ff8c00 !important;
     text-align: center;
-    font-size: 22px !important;
+    font-size: 20px !important;
     border-radius: 0px !important;
     transition: 0.4s all;
 }
 
 .stTextInput > div > div > input:focus {
-    border-bottom: 2px solid #ff8c00 !important;
-    background-color: rgba(255, 140, 0, 0.05) !important;
-    box-shadow: 0 10px 20px -10px rgba(255, 140, 0, 0.3) !important;
+    border-color: #ff8c00 !important;
+    box-shadow: 0 0 20px rgba(255, 140, 0, 0.1) !important;
 }
 
-/* BUTON - ULTRA GLOW & HOVER */
 div.stButton > button {
     background-color: transparent !important;
     color: #ff8c00 !important;
-    border: 1px solid #ff8c00 !important;
-    border-radius: 2px !important;
+    border: 1px solid rgba(255, 140, 0, 0.5) !important;
+    border-radius: 0px !important;
     width: 100% !important;
     font-weight: bold !important;
-    letter-spacing: 6px !important;
-    height: 55px;
-    transition: 0.5s;
-    margin-top: 15px;
-    text-transform: uppercase;
+    letter-spacing: 10px !important;
+    height: 60px;
+    transition: 0.4s;
+    margin-top: 20px;
+    overflow: hidden;
+    position: relative;
 }
 
 div.stButton > button:hover {
     background-color: #ff8c00 !important;
     color: #000 !important;
-    box-shadow: 0 0 40px #ff8c00 !important;
-    transform: translateY(-2px);
+    box-shadow: 0 0 40px rgba(255, 140, 0, 0.6) !important;
+    border: 1px solid #ff8c00 !important;
 }
 
 /* SIDEBAR & CARDS */
 .industrial-card { 
-    background: rgba(255, 140, 0, 0.02); 
+    background: rgba(255, 255, 255, 0.02); 
     border-left: 4px solid #cc7a00; 
     padding: 15px; 
     margin-bottom: 20px;
     transition: transform 0.2s;
 }
-.industrial-card:hover { transform: scale(1.01); }
-
-.terminal-header { color: #cc7a00; font-size: 14px; font-weight: bold; border-bottom: 1px dashed #30363d; padding-bottom: 5px; margin-bottom: 10px; text-transform: uppercase; }
-.terminal-row { display: flex; justify-content: space-between; font-size: 13px; color: #e6edf3; margin-bottom: 6px; }
-.highlight { color: #cc7a00; font-weight: bold; }
-.win { color: #00ff41; font-weight: bold; }
-.loss { color: #ff4b4b; font-weight: bold; }
-
-/* LOOT BAR */
-.loot-wrapper { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px 25px 50px 25px; margin-bottom: 25px; position: relative; }
-.loot-track { background: #21262d; height: 14px; border-radius: 7px; width: 100%; position: relative; margin-top: 45px; }
-.loot-fill { 
-    background: linear-gradient(90deg, #cc7a00, #ffae00); 
-    height: 100%; border-radius: 7px; 
-    box-shadow: 0 0 15px rgba(204, 122, 0, 0.5);
-    transition: width 1s ease-in-out; 
-}
-.milestone { position: absolute; top: 50%; transform: translate(-50%, -50%); width: 120px; display: flex; flex-direction: column; align-items: center; z-index: 10; }
-.milestone-label { position: absolute; top: 18px; font-size: 11px; font-weight: bold; color: #8b949e; text-align: center; }
-
-section[data-testid="stSidebar"] { background-color: #010409 !important; border-right: 1px solid #30363d; }
-.time-widget { display: block; width: 100%; padding: 0.5rem; font-size: 14px; font-weight: bold; color: #cc7a00; text-align: center; background-color: #0d1117; border: 1px solid #333; border-radius: 4px; }
 </style>
 """
 
@@ -175,7 +196,8 @@ def check_password():
         with col_mid:
             st.markdown("""
                 <div class="auth-container">
-                    <div class="auth-header">OG_CORE</div>
+                    <div class="scanline"></div>
+                    <div class="auth-header">OG_CORE</div><br>
                     <div class="auth-status">SİSTEM DURUMU: ŞİFRELENDİ // GÜVENLİK: ALPHA-V8</div>
                 </div>
             """, unsafe_allow_html=True)
@@ -228,7 +250,6 @@ if check_password():
         net_kar = kasa - ana_para
         kar_yuzdesi = (net_kar / ana_para) * 100 if ana_para > 0 else 0
         
-        # HEDEF YOLCULUĞU (ANİMASYONLU BAR)
         targets = [{"val": 1000, "name": "TELEFON"}, {"val": 2500, "name": "TATİL"}, {"val": 5000, "name": "ARABA"}]
         max_target = 6500
         current_pct = min(100, (kasa / max_target) * 100)
