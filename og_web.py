@@ -48,11 +48,11 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
 .auth-container::before {
     content: "";
     position: absolute;
-    top: 0; left: 0; width: 200%; height: 200%;
+    top: 0; left: 0; width: 2030%; height: 2030%;
     background-image: linear-gradient(rgba(204, 122, 0, 0.05) 1px, transparent 1px), 
                       linear-gradient(90deg, rgba(204, 122, 0, 0.05) 1px, transparent 1px);
-    background-size: 40px 40px;
-    animation: grid-move 20s linear infinite;
+    background-size: 60px 60px;
+    animation: grid-move 30s linear infinite;
     z-index: -1;
     opacity: 0.5;
 }
