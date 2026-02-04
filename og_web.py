@@ -22,7 +22,6 @@ custom_css = """
 /* TAM SİYAH ARKA PLAN */
 .main { 
     background-color: #000000 !important;
-    background-image: none !important;
 }
 
 /* GENEL FONT */
@@ -33,7 +32,7 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
 /* --- 📺 GELİŞMİŞ SİBER AUTH EKRANI --- */
 .auth-container {
     padding: 5rem 2rem;
-    background: #000000; /* Tam Siyah */
+    background: #000000;
     border: 1px solid rgba(204, 122, 0, 0.4);
     border-radius: 4px;
     box-shadow: 0 0 80px rgba(0, 0, 0, 1), inset 0 0 40px rgba(204, 122, 0, 0.03);
@@ -41,10 +40,9 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
     margin-top: 30px;
     position: relative;
     overflow: hidden;
-    backdrop-filter: blur(5px);
 }
 
-/* ARKA PLAN HAREKETLİ IZGARA (GRID) - DAHA KOYU */
+/* ARKA PLAN HAREKETLİ IZGARA (GRID) */
 .auth-container::before {
     content: "";
     position: absolute;
@@ -78,7 +76,7 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
     100% { top: 110%; }
 }
 
-/* OG_CORE BAŞLIK (TOK VE DERİN PARLAMA) */
+/* OG_CORE BAŞLIK (DETAYLI GLITCH VE FLOAT) */
 .auth-header {
     font-family: 'Orbitron', sans-serif !important;
     font-size: 70px;
@@ -88,29 +86,8 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
     margin-bottom: 5px;
     position: relative;
     display: inline-block;
-    text-shadow: 
-        3px 3px 0px #331a00,
-        0 0 15px rgba(255, 140, 0, 0.4);
+    text-shadow: 3px 3px 0px #331a00, 0 0 15px rgba(255, 140, 0, 0.4);
     animation: float 3.5s ease-in-out infinite;
-}
-
-/* GLITCH EFEKTİ */
-.auth-header::after {
-    content: "OG_CORE";
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    color: #ff8c00;
-    opacity: 0.2;
-    animation: glitch 6s infinite;
-    z-index: -1;
-}
-
-@keyframes glitch {
-    0% { transform: translate(0); }
-    2% { transform: translate(-4px, 1px); color: #00ff41; }
-    4% { transform: translate(4px, -1px); color: #ff0000; }
-    6% { transform: translate(0); }
-    100% { transform: translate(0); }
 }
 
 @keyframes float {
@@ -138,12 +115,6 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
     text-align: center;
     font-size: 20px !important;
     border-radius: 0px !important;
-    transition: 0.4s all;
-}
-
-.stTextInput > div > div > input:focus {
-    border-color: #ff8c00 !important;
-    box-shadow: 0 0 25px rgba(255, 140, 0, 0.15) !important;
 }
 
 div.stButton > button {
@@ -157,31 +128,45 @@ div.stButton > button {
     height: 60px;
     transition: 0.4s;
     margin-top: 20px;
-    overflow: hidden;
-    position: relative;
 }
 
 div.stButton > button:hover {
     background-color: #ff8c00 !important;
     color: #000000 !important;
     box-shadow: 0 0 50px rgba(255, 140, 0, 0.7) !important;
-    border: 1px solid #ff8c00 !important;
 }
 
-/* SIDEBAR & CARDS */
-section[data-testid="stSidebar"] { 
-    background-color: #000000 !important; 
-    border-right: 1px solid #222; 
-}
+/* --- 📊 SIDEBAR & CARDS (ORİJİNAL VERİ TASARIMI) --- */
+section[data-testid="stSidebar"] { background-color: #000000 !important; border-right: 1px solid #222; }
+
 .industrial-card { 
-    background: rgba(0, 0, 0, 0.5); 
-    border-left: 4px solid #cc7a00; 
+    background: rgba(255, 255, 255, 0.02); 
+    border-left: 3px solid #cc7a00; 
     padding: 15px; 
     margin-bottom: 20px;
-    border-right: 1px solid #222;
-    border-top: 1px solid #222;
-    border-bottom: 1px solid #222;
+    transition: transform 0.2s;
 }
+.industrial-card:hover { transform: scale(1.01); }
+
+.terminal-header { color: #cc7a00; font-size: 14px; font-weight: bold; border-bottom: 1px dashed #30363d; padding-bottom: 5px; margin-bottom: 10px; text-transform: uppercase; }
+.terminal-row { display: flex; justify-content: space-between; font-size: 13px; color: #e6edf3; margin-bottom: 6px; }
+.highlight { color: #cc7a00; font-weight: bold; }
+.win { color: #00ff41; font-weight: bold; }
+.loss { color: #ff4b4b; font-weight: bold; }
+
+/* LOOT BAR (GERİ GELDİ) */
+.loot-wrapper { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px 25px 50px 25px; margin-bottom: 25px; position: relative; }
+.loot-track { background: #21262d; height: 14px; border-radius: 7px; width: 100%; position: relative; margin-top: 45px; }
+.loot-fill { 
+    background: linear-gradient(90deg, #cc7a00, #ffae00); 
+    height: 100%; border-radius: 7px; 
+    box-shadow: 0 0 15px rgba(204, 122, 0, 0.5);
+    transition: width 1s ease-in-out; 
+}
+.milestone { position: absolute; top: 50%; transform: translate(-50%, -50%); width: 120px; display: flex; flex-direction: column; align-items: center; z-index: 10; }
+.milestone-label { position: absolute; top: 18px; font-size: 11px; font-weight: bold; color: #8b949e; text-align: center; }
+
+.time-widget { display: block; width: 100%; padding: 0.5rem; font-size: 14px; font-weight: bold; color: #cc7a00; text-align: center; background-color: #0d1117; border: 1px solid #333; border-radius: 4px; }
 </style>
 """
 
@@ -206,7 +191,6 @@ def check_password():
                     <div class="auth-status">SİSTEM DURUMU: ŞİFRELENDİ // GÜVENLİK: ALPHA-V8</div>
                 </div>
             """, unsafe_allow_html=True)
-            
             pwd = st.text_input("GİRİŞ ANAHTARI", type="password", placeholder="ŞİFREYİ GİRİNİZ")
             if st.button("SİSTEMİ BAŞLAT"):
                 if pwd == "1":
@@ -255,6 +239,7 @@ if check_password():
         net_kar = kasa - ana_para
         kar_yuzdesi = (net_kar / ana_para) * 100 if ana_para > 0 else 0
         
+        # HEDEF YOLCULUĞU (ANİMASYONLU BAR GERİ GELDİ)
         targets = [{"val": 1000, "name": "TELEFON"}, {"val": 2500, "name": "TATİL"}, {"val": 5000, "name": "ARABA"}]
         max_target = 6500
         current_pct = min(100, (kasa / max_target) * 100)
