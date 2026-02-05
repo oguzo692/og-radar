@@ -170,25 +170,36 @@ if check_password():
         for col, user in zip(cols, ["oguzo", "ero7", "fybey"]):
             col.markdown(f"<div class='industrial-card'><div class='terminal-header'>{user.upper()}</div><div class='terminal-row'><span>SHARE</span><span class='highlight'>${kasa/3:,.2f}</span></div><div class='terminal-row'><span>PROFIT</span><span>${(net_kar/3):,.2f}</span></div></div>", unsafe_allow_html=True)
 
-        # --- 📉 SAYFA ALTI GRAFİK (TAM GENİŞLİK - BOŞLUKSUZ) ---
-        st.markdown("<div class='industrial-card' style='min-height:350px; padding-top:10px;'><div class='terminal-header' style='margin-bottom:0px;'>📊 KASA GELİŞİM SEYRİ (EQUITY CURVE)</div>", unsafe_allow_html=True)
+        # --- 📉 SAYFA ALTI GRAFİK (TAM GENİŞLİK - DÜZENLENMİŞ) ---
+        st.markdown("<div class='industrial-card' style='min-height:350px; padding: 20px 10px 10px 10px;'><div class='terminal-header' style='margin-bottom:5px;'>📊 KASA GELİŞİM SEYRİ (EQUITY CURVE)</div>", unsafe_allow_html=True)
         
         fig = go.Figure()
         fig.add_trace(go.Scatter(
             y=gecmis_liste, 
             mode='lines+markers',
-            line=dict(color='#cc7a00', width=4),
-            marker=dict(size=8, color='#ffae00', line=dict(color='#030303', width=1)),
+            line=dict(color='#cc7a00', width=3),
+            marker=dict(size=6, color='#ffae00', line=dict(color='#030303', width=1)),
             fill='tozeroy',
-            fillcolor='rgba(204, 122, 0, 0.1)'
+            fillcolor='rgba(204, 122, 0, 0.1)',
+            hoverinfo='y'
         ))
+        
         fig.update_layout(
             paper_bgcolor='rgba(0,0,0,0)',
             plot_bgcolor='rgba(0,0,0,0)',
-            margin=dict(l=0, r=0, t=20, b=0), # Üst boşluğu 20'ye indirdim başlık için
-            height=300,
-            xaxis=dict(showgrid=False, showticklabels=False, zeroline=False),
-            yaxis=dict(showgrid=True, gridcolor='rgba(255,255,255,0.05)', tickfont=dict(color='#888', size=10), zeroline=False)
+            margin=dict(l=10, r=10, t=30, b=10),
+            height=280,
+            autosize=True,
+            xaxis=dict(showgrid=False, showticklabels=False, zeroline=False, fixedrange=True),
+            yaxis=dict(
+                showgrid=True, 
+                gridcolor='rgba(255,255,255,0.05)', 
+                tickfont=dict(color='#888', size=10), 
+                zeroline=False,
+                fixedrange=True,
+                side="right"
+            ),
+            showlegend=False
         )
         st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
         st.markdown("</div>", unsafe_allow_html=True)
