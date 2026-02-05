@@ -36,7 +36,7 @@ toplam_bahis_kar = w1_kar + w2_kar
 wr_oran = live_vars.get("win_rate", "0")
 son_islemler_raw = str(live_vars.get("son_islemler", ""))
 
-# --- 3. CSS STİLLERİ (TAM EŞİTLEME VE GÖRSEL REVİZE) ---
+# --- 3. CSS STİLLERİ (KESİN ÇÖZÜM VE TAM EŞİTLEME) ---
 custom_css = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&family=Orbitron:wght@400;700;900&display=swap');
@@ -59,12 +59,26 @@ section[data-testid="stSidebar"] {
 
 button[data-testid="sidebar-button"] { display: none !important; }
 
-/* Kutuların Genişlik ve Hizalamasını Sabitle */
-[data-testid="stSidebar"] .stVerticalBlock {
-    gap: 0.8rem !important;
+/* --- HAM METİN (keyboard_double vb.) TEMİZLİĞİ --- */
+[data-testid="stSidebar"] summary svg, 
+[data-testid="stSidebar"] [data-testid="stHeaderActionElements"],
+[data-testid="stSidebar"] svg {
+    display: none !important;
 }
 
-/* Radio Buton Kutularını Eşitle */
+/* Tüm sızıntıları kökten siler */
+[data-testid="stSidebar"] span:not(:has(p)), 
+[data-testid="stSidebar"] summary span,
+[data-testid="stSidebar"] div:not(:has(p)) > span {
+    font-size: 0 !important;
+    color: transparent !important;
+    line-height: 0 !important;
+    display: none !important;
+}
+
+/* Kutuların Genişlik ve Hizalamasını Sabitle */
+[data-testid="stSidebar"] .stVerticalBlock { gap: 0.8rem !important; }
+
 [data-testid="stSidebar"] label {
     background: rgba(255, 255, 255, 0.02) !important;
     border: 1px solid rgba(255, 255, 255, 0.05) !important;
@@ -74,32 +88,26 @@ button[data-testid="sidebar-button"] { display: none !important; }
     margin-bottom: 0px !important;
     display: flex !important;
     align-items: center !important;
-    transition: all 0.3s ease;
 }
 
-[data-testid="stSidebar"] label:hover {
-    border-color: rgba(204, 122, 0, 0.3) !important;
-    background: rgba(204, 122, 0, 0.05) !important;
-}
-
-/* Expander (Admin Paneli) Kutusunu Eşitle */
 [data-testid="stSidebar"] .stExpander {
     border: 1px solid rgba(255, 255, 255, 0.05) !important;
     background: rgba(255, 255, 255, 0.02) !important;
     border-radius: 6px !important;
-    overflow: hidden !important;
     width: 100% !important;
 }
 
-[data-testid="stSidebar"] summary {
-    padding: 15px !important;
+[data-testid="stSidebar"] summary { padding: 15px !important; }
+
+/* Yazıların tekrar görünür ve temiz olmasını sağla */
+[data-testid="stSidebar"] p, [data-testid="stSidebar"] label p {
+    font-size: 14px !important;
+    visibility: visible !important;
+    color: #d1d1d1 !important;
+    display: block !important;
+    margin: 0 !important;
 }
 
-/* Gereksiz İkon Metin Temizliği */
-[data-testid="stSidebar"] summary svg { display: none !important; }
-[data-testid="stSidebar"] summary span:not(:has(p)) { font-size: 0 !important; color: transparent !important; }
-
-/* Butonları Eşitle */
 .stButton button, .stLinkButton a {
     width: 100% !important;
     background: rgba(204, 122, 0, 0.1) !important;
@@ -108,13 +116,6 @@ button[data-testid="sidebar-button"] { display: none !important; }
     font-family: 'Orbitron' !important;
     padding: 12px !important;
     border-radius: 6px !important;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.stButton button:hover {
-    background: #cc7a00 !important;
-    color: black !important;
 }
 
 /* Genel Fontlar */
@@ -123,7 +124,6 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input {
     color: #d1d1d1 !important;
 }
 
-/* Kart Tasarımı */
 .industrial-card { 
     background: linear-gradient(145deg, rgba(15, 15, 15, 0.9), rgba(5, 5, 5, 1)) !important;
     border: 1px solid rgba(255, 255, 255, 0.03) !important;
@@ -139,7 +139,6 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input {
 .highlight { color: #cc7a00 !important; font-weight: 800; font-size: 19px; font-family: 'Orbitron'; }
 .val-std { font-size: 22px !important; font-weight: 800 !important; font-family: 'Orbitron'; }
 
-/* Ticker */
 .ticker-wrap {
     width: 100%; overflow: hidden; background: rgba(204, 122, 0, 0.03);
     border-bottom: 1px solid rgba(204, 122, 0, 0.2); padding: 10px 0; margin-bottom: 25px;
@@ -185,13 +184,9 @@ if check_password():
 
     with st.sidebar:
         st.markdown("<h1 style='color:white; font-family:Orbitron; font-size:24px; letter-spacing:5px; text-align:center; margin-bottom:40px;'>OG CORE</h1>", unsafe_allow_html=True)
-        
-        # Radio butonlar artık tam kutu ve eşit genişlikte
         page = st.radio("SİSTEM MODÜLLERİ", ["⚡ ULTRA ATAK", "⚽ KUPONLAR", "📊 SİMÜLASYON"])
-        
         st.markdown("<div style='margin-top: 20px;'></div>", unsafe_allow_html=True)
         
-        # Admin Paneli Expander (Genişliği diğerleriyle eşitlendi)
         with st.expander("📂 ADMİN PANELİ"):
             admin_pwd = st.text_input("PANEL ŞİFRESİ", type="password", key="admin_access_key")
             if admin_pwd == "fybey":
@@ -200,7 +195,6 @@ if check_password():
                 st.error("HATALI ŞİFRE")
 
         st.markdown("<div style='margin-top: 10px;'></div>", unsafe_allow_html=True)
-        
         if st.button("ÇIKIŞ"): 
             st.session_state["password_correct"] = False
             st.rerun()
