@@ -67,7 +67,8 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
 
 .auth-container {
     padding: 5rem; background: linear-gradient(145deg, rgba(15,15,15,0.98) 0%, rgba(0,0,0,1) 100%);
-    border: 1px solid rgba(204, 122, 0, 0.4); text-align: center; max-width: 700px; margin: 10vh auto; border-radius: 2px;
+    border: 1px solid rgba(204, 122, 0, 0.4); box-shadow: 0 0 80px rgba(0,0,0,1);
+    text-align: center; max-width: 700px; margin: 10vh auto; border-radius: 2px;
 }
 .auth-header { font-family: 'Orbitron', sans-serif !important; font-size: 55px; font-weight: 900; color: #ffffff; letter-spacing: 12px; }
 
