@@ -89,7 +89,10 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
     border-bottom: 1px solid rgba(255,255,255,0.02); padding-bottom: 8px; 
 }
 
-.highlight { color: #cc7a00 !important; font-weight: 700; font-size: 24px; }
+/* Sayı boyutlarını standartlaştıran class */
+.val-std { font-size: 22px !important; font-weight: 700 !important; }
+
+.highlight { color: #cc7a00 !important; font-weight: 700; font-size: 22px; }
 
 .loot-wrapper { background: rgba(18, 18, 18, 0.8); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 4px; padding: 30px 25px 60px 25px; margin-bottom: 30px; position: relative; }
 .loot-track { background: #111; height: 12px; border-radius: 6px; width: 100%; position: relative; margin-top: 40px; border: 1px solid #222; }
@@ -158,7 +161,7 @@ if check_password():
         
         col1, col2, col3 = st.columns(3)
         with col1:
-            st.markdown(f"""<div class='industrial-card'><div class='terminal-header'>💎 TİCARET RADARI</div><div class='terminal-row'><span>NET K/Z</span><span style='color:{'#00ff41' if net_kar >=0 else '#ff4b4b'}; font-size:24px; font-weight:bold;'>${net_kar:,.2f} (%{kar_yuzdesi:.1f})</span></div><div class='terminal-row'><span>GÜNCEL KASA</span><span class='highlight'>${kasa:,.2f}</span></div></div>""", unsafe_allow_html=True)
+            st.markdown(f"""<div class='industrial-card'><div class='terminal-header'>💎 TİCARET RADARI</div><div class='terminal-row'><span>NET K/Z</span><span style='color:{'#00ff41' if net_kar >=0 else '#ff4b4b'};' class='val-std'>${net_kar:,.2f} (%{kar_yuzdesi:.1f})</span></div><div class='terminal-row'><span>GÜNCEL KASA</span><span class='highlight'>${kasa:,.2f}</span></div></div>""", unsafe_allow_html=True)
         
         with col2:
             try:
@@ -168,7 +171,7 @@ if check_password():
                 b_change = ((b_price - btc['Close'].iloc[-2]) / btc['Close'].iloc[-2]) * 100
                 e_price = eth['Close'].iloc[-1]
                 e_change = ((e_price - eth['Close'].iloc[-2]) / eth['Close'].iloc[-2]) * 100
-                st.markdown(f"""<div class='industrial-card'><div class='terminal-header'>⚡ PİYASA NABZI</div><div class='terminal-row'><span>BITCOIN</span><span style='color:{'#00ff41' if b_change >=0 else '#ff4b4b'};'>${b_price:,.0f} ({b_change:+.2f}%)</span></div><div class='terminal-row'><span>ETHEREUM</span><span style='color:{'#00ff41' if e_change >=0 else '#ff4b4b'};'>${e_price:,.0f} ({e_change:+.2f}%)</span></div></div>""", unsafe_allow_html=True)
+                st.markdown(f"""<div class='industrial-card'><div class='terminal-header'>⚡ PİYASA NABZI</div><div class='terminal-row'><span>BITCOIN</span><span style='color:{'#00ff41' if b_change >=0 else '#ff4b4b'}; font-size:16px;'>${b_price:,.0f} ({b_change:+.2f}%)</span></div><div class='terminal-row'><span>ETHEREUM</span><span style='color:{'#00ff41' if e_change >=0 else '#ff4b4b'}; font-size:16px;'>${e_price:,.0f} ({e_change:+.2f}%)</span></div></div>""", unsafe_allow_html=True)
             except: st.markdown("<div class='industrial-card'>Piyasa verileri senkronize ediliyor...</div>", unsafe_allow_html=True)
             
         with col3:
@@ -177,9 +180,9 @@ if check_password():
         st.subheader("🎯 Pay Dağılımı")
         cols = st.columns(3)
         for col, user in zip(cols, ["oguzo", "ero7", "fybey"]):
-            col.markdown(f"<div class='industrial-card' style='min-height:140px;'><div class='terminal-header'>{user.upper()}</div><div class='terminal-row'><span>HİSSE</span><span class='highlight'>${kasa/3:,.2f}</span></div><div class='terminal-row'><span>KÂR</span><span>${(net_kar/3):,.2f}</span></div></div>", unsafe_allow_html=True)
+            col.markdown(f"<div class='industrial-card' style='min-height:140px;'><div class='terminal-header'>{user.upper()}</div><div class='terminal-row'><span>HİSSE</span><span class='highlight'>${kasa/3:,.2f}</span></div><div class='terminal-row'><span>KÂR</span><span style='font-size:18px;'>${(net_kar/3):,.2f}</span></div></div>", unsafe_allow_html=True)
 
-        # --- 🕒 SON İŞLEMLER (DÜZELTİLMİŞ KISIM) ---
+        # --- 🕒 SON İŞLEMLER ---
         son_islemler_html = "<div class='industrial-card' style='min-height:120px;'><div class='terminal-header'>🕒 SON İŞLEMLER</div>"
         
         if son_islemler_raw:
@@ -189,13 +192,12 @@ if check_password():
                 amount = parts[1].strip() if len(parts) > 1 else ""
                 status = parts[2].strip() if len(parts) > 2 else (parts[1] if len(parts) == 2 else "✅")
                 color = "#00ff41" if "+" in amount or "+" in coin else "#ff4b4b"
-                # Satırı HTML stringine ekliyoruz
-                son_islemler_html += f"<div class='terminal-row'><span>{coin}</span><span style='color:{color}; font-weight:bold;'>{amount}</span><span>{status}</span></div>"
+                son_islemler_html += f"<div class='terminal-row'><span>{coin}</span><span style='color:{color}; font-weight:bold; font-size:18px;'>{amount}</span><span>{status}</span></div>"
         else: 
             son_islemler_html += "<div style='color:#555; text-align:center; padding:20px;'>İşlem verisi bekleniyor...</div>"
         
-        son_islemler_html += "</div>" # Kartı kapatıyoruz
-        st.markdown(son_islemler_html, unsafe_allow_html=True) # Hepsini tek seferde basıyoruz
+        son_islemler_html += "</div>"
+        st.markdown(son_islemler_html, unsafe_allow_html=True)
 
     elif page == "⚽ FORMLINE":
         st.markdown(f"""<div class='industrial-card' style='border-top: 2px solid #cc7a00; min-height:100px;'><div class='terminal-header'>📈 GENEL PERFORMANS</div><div class='terminal-row'><span style='font-size:16px; color:#888;'>NET BAHİS K/Z MİKTARI:</span><span style='color:{'#00ff41' if toplam_bahis_kar >=0 else '#ff4b4b'}; font-size:32px; font-weight:900;'>{'+' if toplam_bahis_kar > 0 else ''}${toplam_bahis_kar:,.2f}</span></div></div>""", unsafe_allow_html=True)
