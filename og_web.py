@@ -121,7 +121,7 @@ if check_password():
     st.markdown(f'<div class="ticker-wrap"><div class="ticker"><span class="ticker-item">{duyuru_metni}</span><span class="ticker-item">{duyuru_metni}</span></div></div>', unsafe_allow_html=True)
 
     with st.sidebar:
-        st.markdown("<h2 style='color:#cc7a00; font-family:Orbitron; letter-spacing:4px; text-align:center;'>🛡️ OG CORE</h2>", unsafe_allow_html=True)
+        st.markdown("<h2 style='color:#cc7a00; font-family:Orbitron; letter-spacing:4px; text-align:center;'>OG CORE</h2>", unsafe_allow_html=True)
         page = st.radio("MODÜLLER", ["⚡ ULTRA ATAK FON", "⚽ FORMLINE", "📊 SIMULASYON"])
         st.divider()
         admin_key = st.text_input("ADMİN", type="password", placeholder="Admin Key...")
@@ -129,7 +129,7 @@ if check_password():
             st.success("Admin Active")
             st.link_button("📊 Tabloyu Düzenle", "https://docs.google.com/spreadsheets/d/15izevdpRjs8Om5BAHKVWmdL3FxEHml35DGECfhQUG_s/edit")
         st.divider()
-        if st.button("🔴 ÇIKALIM"): 
+        if st.button("Çıkış"): 
             st.session_state["password_correct"] = False
             st.rerun()
 
@@ -147,7 +147,7 @@ if check_password():
         # Upper Layout
         col1, col2 = st.columns(2)
         with col1:
-            st.markdown(f"""<div class='industrial-card'><div class='terminal-header'>💎 TRADE RADAR</div><div class='terminal-row'><span>NET KAR/ZARAR</span><span style='color:{'#00ff41' if net_kar >=0 else '#ff4b4b'}; font-size:24px; font-weight:bold;'>${net_kar:,.2f} (%{kar_yuzdesi:.1f})</span></div><div class='terminal-row'><span>GÜNCEL KASA</span><span class='highlight'>${kasa:,.2f}</span></div></div>""", unsafe_allow_html=True)
+            st.markdown(f"""<div class='industrial-card'><div class='terminal-header'>💎 TRADE RADAR</div><div class='terminal-row'><span>NET P/L</span><span style='color:{'#00ff41' if net_kar >=0 else '#ff4b4b'}; font-size:24px; font-weight:bold;'>${net_kar:,.2f} (%{kar_yuzdesi:.1f})</span></div><div class='terminal-row'><span>GÜNCEL KASA</span><span class='highlight'>${kasa:,.2f}</span></div></div>""", unsafe_allow_html=True)
         
         with col2:
             try:
@@ -169,9 +169,9 @@ if check_password():
         # --- YENİ KAR/ZARAR TABELASI ---
         st.markdown(f"""
         <div class='industrial-card' style='border-top: 2px solid #cc7a00; min-height:100px;'>
-            <div class='terminal-header'>📈 FORMLINE TOTAL PERFORMANCE</div>
+            <div class='terminal-header'>📈 Genel Performans</div>
             <div class='terminal-row'>
-                <span style='font-size:14px; color:#888;'>Net Kar Miktarı:</span>
+                <span style='font-size:14px; color:#888;'>Net P/L Miktarı:</span>
                 <span style='color:{'#00ff41' if toplam_bahis_kar >=0 else '#ff4b4b'}; font-size:28px; font-weight:900;'>
                     {'+' if toplam_bahis_kar > 0 else ''}${toplam_bahis_kar:,.2f}
                 </span>
