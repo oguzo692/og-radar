@@ -3,6 +3,7 @@ import yfinance as yf
 from datetime import datetime
 import pandas as pd
 import pytz
+import plotly.graph_objects as go
 
 # --- 1. AYARLAR ---
 st.set_page_config(
@@ -25,7 +26,7 @@ def get_live_data():
 live_vars = get_live_data()
 kasa = float(live_vars.get("kasa", 600))
 ana_para = float(live_vars.get("ana_para", 600))
-duyuru_metni = live_vars.get("duyuru", "SİSTEM ÇEVRİMİÇİ... VERİLER SENKRONİZE EDİLDİ... OG CORE V8.8 READY...")
+duyuru_metni = live_vars.get("duyuru", "SİSTEM ÇEVRİMİÇİ... OG CORE V8.8 READY...")
 
 # --- 🛠️ HATA KORUMALI GEÇMİŞ VERİ ÇEKİCİ ---
 gecmis_raw = str(live_vars.get("gecmis_kasa", str(kasa)))
@@ -41,11 +42,7 @@ custom_css = """
 
 .stApp { 
     background-color: #030303 !important;
-    background-image: 
-        radial-gradient(circle at 50% 50%, rgba(204, 122, 0, 0.05) 0%, transparent 60%),
-        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-    background-size: 100% 100%, 30px 30px, 30px 30px;
+    background-image: radial-gradient(circle at 50% 50%, rgba(204, 122, 0, 0.05) 0%, transparent 60%);
 }
 
 body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, span, h1, h2, h3, button, input { 
@@ -53,7 +50,6 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
     color: #e0e0e0 !important;
 }
 
-/* Ticker */
 .ticker-wrap {
     width: 100%; overflow: hidden; background: rgba(0, 0, 0, 0.6);
     border-bottom: 1px solid rgba(204, 122, 0, 0.3); padding: 12px 0;
@@ -63,15 +59,13 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
 .ticker-item {
     font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #cc7a00;
     text-transform: uppercase; letter-spacing: 3px; padding-right: 100%;
-    text-shadow: 0 0 10px rgba(204, 122, 0, 0.5);
 }
 @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
-/* Cards */
 .industrial-card { 
     background: rgba(18, 18, 18, 0.7) !important; backdrop-filter: blur(12px);
     border: 1px solid rgba(255, 255, 255, 0.05) !important; border-top: 2px solid rgba(204, 122, 0, 0.4) !important;
-    padding: 25px; margin-bottom: 25px; height: 100%;
+    padding: 25px; margin-bottom: 25px; height: 300px; /* Sabit yükseklik ile eşitledik */
 }
 
 .terminal-header { color: #888; font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 20px; }
@@ -80,7 +74,6 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
 .win { color: #00ff41 !important; font-weight: bold; }
 .loss { color: #ff4b4b !important; font-weight: bold; }
 
-/* Progress Bar */
 .loot-wrapper {
     background: rgba(18, 18, 18, 0.8); border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: 4px; padding: 30px 25px 60px 25px; margin-bottom: 30px; position: relative;
@@ -100,8 +93,8 @@ w2_matches = """<div class='terminal-row'><span>Tarih: 1-2 şubat</span><span>B�
 w1_matches = """<div class='terminal-row'><span>Tarih: 24-25 ocak</span><span>Bütçe: 100 usd</span></div><div class='terminal-row'><span>karagümrük - gs</span><span class='win'>gs w & +2 ✅</span></div><div class='terminal-row'><span>bournemouth - lıve</span><span class='win'>kg var ✅</span></div><div class='terminal-row'><span>unıon berlin - bvb</span><span class='win'>bvb iy 0.5 üst ✅</span></div><div class='terminal-row'><span>new - aston villa</span><span class='loss'>new +2 ❌</span></div><div class='terminal-row'><span>fb - göztepe</span><span class='loss'>fb w ❌</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>oran: 7.09</span><span>bet: 100 USD</span></div>"""
 
 w3_coupon_html = f"<div class='industrial-card'><div class='terminal-header'>🔥 W3 KUPONU (AKTİF)</div>{w3_matches}<span style='color:#cc7a00'>BEKLENİYOR ⏳</span></div>"
-w2_coupon_html = f"<div class='industrial-card' style='border-top-color: #00ff41 !important;'><div class='terminal-header' style='color:#00ff41;'>✅ W2 KUPONU (1-2 ŞUBAT)</div>{w2_matches}<span class='win'>SONUÇLANDI ✅</span></div>"
-w1_coupon_html = f"<div class='industrial-card' style='border-top-color: #ff4b4b !important;'><div class='terminal-header' style='color:#ff4b4b;'>❌ W1 KUPONU (24-25 OCAK)</div>{w1_matches}<span class='loss'>SONUÇLANDI ❌</span></div>"
+w2_coupon_html = f"<div class='industrial-card' style='border-top-color: #00ff41 !important; height:auto;'><div class='terminal-header' style='color:#00ff41;'>✅ W2 KUPONU (1-2 ŞUBAT)</div>{w2_matches}<span class='win'>SONUÇLANDI ✅</span></div>"
+w1_coupon_html = f"<div class='industrial-card' style='border-top-color: #ff4b4b !important; height:auto;'><div class='terminal-header' style='color:#ff4b4b;'>❌ W1 KUPONU (24-25 OCAK)</div>{w1_matches}<span class='loss'>SONUÇLANDI ❌</span></div>"
 
 # --- 5. GÜVENLİK ---
 if "password_correct" not in st.session_state:
@@ -124,7 +117,6 @@ def check_password():
 # --- 6. ANA UYGULAMA ---
 if check_password():
     st.markdown(custom_css, unsafe_allow_html=True)
-    
     st.markdown(f'<div class="ticker-wrap"><div class="ticker"><span class="ticker-item">{duyuru_metni}</span><span class="ticker-item">{duyuru_metni}</span></div></div>', unsafe_allow_html=True)
 
     with st.sidebar:
@@ -144,15 +136,15 @@ if check_password():
         net_kar = kasa - ana_para
         kar_yuzdesi = (net_kar / ana_para) * 100 if ana_para > 0 else 0
         
+        # --- TARGET PROGRESSION ---
         targets = [{"val": 1000, "name": "TELEFON", "icon": "📱"}, {"val": 2500, "name": "TATİL", "icon": "✈️"}, {"val": 5000, "name": "ARABA", "icon": "🏎️"}]
         max_target = 6500
         current_pct = min(100, (kasa / max_target) * 100)
         m_html = "".join([f"<div class='milestone' style='left:{(t['val']/max_target)*100}%'><div style='font-size:22px;'>{t['icon'] if kasa>=t['val'] else '🔒'}</div><div class='milestone-label'>{t['name']}<br>${t['val']}</div></div>" for t in targets])
-        
         st.markdown(f"<div class='loot-wrapper'><div class='terminal-header'>TARGET PROGRESSION</div><div class='loot-track'><div class='loot-fill' style='width:{current_pct}%'></div>{m_html}</div></div>", unsafe_allow_html=True)
         
-        # --- 📊 KASA KARTI VE GELİŞMİŞ EQUITY CURVE ---
-        col_stats, col_graph = st.columns([1, 1.3])
+        # --- 📊 KASA KARTI VE PLOTLY EQUITY CURVE ---
+        col_stats, col_graph = st.columns([1, 1.5])
         
         with col_stats:
             st.markdown(f"""
@@ -164,25 +156,46 @@ if check_password():
             """, unsafe_allow_html=True)
         
         with col_graph:
-            # Grafiği de kartın içine alıyoruz ki boyutları eşleşsin
-            with st.container(border=False):
-                st.markdown("<div class='industrial-card'><div class='terminal-header'>📉 EQUITY CURVE (PRO)</div>", unsafe_allow_html=True)
-                # Çizgi grafik ayarları
-                chart_data = pd.DataFrame(gecmis_liste, columns=["USD"])
-                st.line_chart(chart_data, color="#cc7a00", height=160, use_container_width=True)
-                st.markdown("</div>", unsafe_allow_html=True)
+            # --- NEON GRAFİK SİSTEMİ (PLOTLY) ---
+            fig = go.Figure()
+            fig.add_trace(go.Scatter(
+                y=gecmis_liste, 
+                mode='lines+markers',
+                line=dict(color='#cc7a00', width=3),
+                marker=dict(size=6, color='#ffae00'),
+                fill='tozeroy',
+                fillcolor='rgba(204, 122, 0, 0.1)'
+            ))
+            fig.update_layout(
+                paper_bgcolor='rgba(0,0,0,0)',
+                plot_bgcolor='rgba(0,0,0,0)',
+                margin=dict(l=10, r=10, t=30, b=10),
+                height=250,
+                xaxis=dict(showgrid=False, showticklabels=False),
+                yaxis=dict(showgrid=True, gridcolor='rgba(255,255,255,0.05)', tickfont=dict(color='#888', size=10)),
+                title=dict(text="EQUITY CURVE (PRO)", font=dict(color='#888', size=11, family='JetBrains Mono'), x=0.05)
+            )
+            st.markdown("<div class='industrial-card'>", unsafe_allow_html=True)
+            st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+            st.markdown("</div>", unsafe_allow_html=True)
 
         try:
             btc = yf.Ticker("BTC-USD").history(period="1d")['Close'].iloc[-1]
             eth = yf.Ticker("ETH-USD").history(period="1d")['Close'].iloc[-1]
             sol = yf.Ticker("SOL-USD").history(period="1d")['Close'].iloc[-1]
-            st.markdown(f"<div class='industrial-card'><div class='terminal-header'>GÜNCEL FİYATLAR</div><div class='terminal-row'><span>BITCOIN</span><span class='highlight'>${btc:,.2f}</span></div><div class='terminal-row'><span>ETHEREUM</span><span>${eth:,.2f}</span></div><div class='terminal-row'><span>SOLANA</span><span>${sol:,.2f}</span></div></div>", unsafe_allow_html=True)
+            st.markdown(f"""
+            <div class='industrial-card' style='height:auto;'>
+                <div class='terminal-header'>GÜNCEL FİYATLAR</div>
+                <div class='terminal-row'><span>BITCOIN</span><span class='highlight'>${btc:,.2f}</span></div>
+                <div class='terminal-row'><span>ETHEREUM</span><span>${eth:,.2f}</span></div>
+                <div class='terminal-row'><span>SOLANA</span><span>${sol:,.2f}</span></div>
+            </div>""", unsafe_allow_html=True)
         except: st.error("Market data connection lost.")
 
         st.subheader("🎯 Pay Dağılımı")
         cols = st.columns(3)
         for col, user in zip(cols, ["oguzo", "ero7", "fybey"]):
-            col.markdown(f"<div class='industrial-card'><div class='terminal-header'>{user.upper()}</div><div class='terminal-row'><span>SHARE</span><span class='highlight'>${kasa/3:,.2f}</span></div><div class='terminal-row'><span>PROFIT</span><span>${(net_kar/3):,.2f}</span></div></div>", unsafe_allow_html=True)
+            col.markdown(f"<div class='industrial-card' style='height:auto;'><div class='terminal-header'>{user.upper()}</div><div class='terminal-row'><span>SHARE</span><span class='highlight'>${kasa/3:,.2f}</span></div><div class='terminal-row'><span>PROFIT</span><span>${(net_kar/3):,.2f}</span></div></div>", unsafe_allow_html=True)
 
     elif page == "⚽ Formlıne":
         st.title("⚽ FORMLINE")
