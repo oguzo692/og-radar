@@ -34,9 +34,9 @@ toplam_bahis_kar = w1_kar + w2_kar
 
 # --- 📊 PERFORMANS VERİLERİ ---
 wr_oran = live_vars.get("win_rate", "0")
-son_islemler_raw = live_vars.get("son_islemler", "Veri Bekleniyor...")
+son_islemler_raw = str(live_vars.get("son_islemler", ""))
 
-# --- 3. CSS STİLLERİ (PREMIUM STABİLİZE) ---
+# --- 3. CSS STİLLERİ (STANDARTLAŞTIRILMIŞ BOYUTLAR) ---
 custom_css = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&family=Orbitron:wght@400;900&display=swap');
@@ -68,23 +68,42 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
     border: 1px solid rgba(204, 122, 0, 0.4); box-shadow: 0 0 80px rgba(0,0,0,1);
     text-align: center; max-width: 700px; margin: 15vh auto; border-radius: 2px;
 }
-.auth-header { font-family: 'Orbitron', sans-serif !important; font-size: 60px; font-weight: 900; color: #ffffff; letter-spacing: 15px; }
+.auth-header { font-family: 'Orbitron', sans-serif !important; font-size: 55px; font-weight: 900; color: #ffffff; letter-spacing: 12px; }
 
 .industrial-card { 
     background: rgba(18, 18, 18, 0.8) !important; backdrop-filter: blur(15px);
     border: 1px solid rgba(255, 255, 255, 0.05) !important; border-top: 2px solid rgba(204, 122, 0, 0.5) !important;
-    padding: 25px; margin-bottom: 25px; border-radius: 4px; min-height: 180px;
+    padding: 22px; margin-bottom: 25px; border-radius: 4px; min-height: 180px;
 }
 
-.terminal-header { color: #888; font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 20px; }
-.terminal-row { display: flex; justify-content: space-between; font-size: 16px; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.02); padding-bottom: 8px; }
-.highlight { color: #cc7a00 !important; font-weight: 700; font-size: 20px; }
+/* STANDART YAZI BOYUTLARI */
+.terminal-header { 
+    color: #888; 
+    font-size: 12px; 
+    font-weight: 700; 
+    letter-spacing: 3px; 
+    text-transform: uppercase; 
+    margin-bottom: 20px;
+    border-left: 3px solid #cc7a00;
+    padding-left: 10px;
+}
+
+.terminal-row { 
+    display: flex; 
+    justify-content: space-between; 
+    font-size: 16px; 
+    margin-bottom: 12px; 
+    border-bottom: 1px solid rgba(255,255,255,0.02); 
+    padding-bottom: 8px; 
+}
+
+.highlight { color: #cc7a00 !important; font-weight: 700; font-size: 22px; }
 
 .loot-wrapper { background: rgba(18, 18, 18, 0.8); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 4px; padding: 30px 25px 60px 25px; margin-bottom: 30px; position: relative; }
 .loot-track { background: #111; height: 12px; border-radius: 6px; width: 100%; position: relative; margin-top: 40px; border: 1px solid #222; }
 .loot-fill { background: linear-gradient(90deg, #cc7a00, #ffae00); height: 100%; border-radius: 6px; box-shadow: 0 0 15px rgba(204, 122, 0, 0.5); }
 .milestone { position: absolute; top: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; z-index: 10; }
-.milestone-label { position: absolute; top: 25px; font-size: 10px; font-weight: bold; color: #888; text-align: center; white-space: nowrap; }
+.milestone-label { position: absolute; top: 25px; font-size: 11px; font-weight: bold; color: #888; text-align: center; white-space: nowrap; }
 
 section[data-testid="stSidebar"] { background-color: #050505 !important; border-right: 1px solid rgba(204, 122, 0, 0.2); }
 div.stButton > button { background: transparent !important; color: #cc7a00 !important; border: 1px solid #cc7a00 !important; letter-spacing: 5px !important; height: 50px; width: 100%; text-transform: uppercase; }
@@ -165,13 +184,12 @@ if check_password():
             except: st.markdown("<div class='industrial-card'>Piyasa verileri senkronize ediliyor...</div>", unsafe_allow_html=True)
             
         with col3:
-            # Başarı Oranı Paneli
             st.markdown(f"""
             <div class='industrial-card'>
                 <div class='terminal-header'>📊 İŞLEM BAŞARISI</div>
-                <div style='text-align:center; padding: 10px 0;'>
-                    <span style='font-size:45px; font-weight:900; color:#cc7a00; text-shadow: 0 0 15px rgba(204,122,0,0.4);'>%{wr_oran}</span>
-                    <div style='font-size:10px; color:#888; letter-spacing:2px; margin-top:5px;'>GENEL BAŞARI ORANI</div>
+                <div style='text-align:center; padding: 5px 0;'>
+                    <span style='font-size:55px; font-weight:900; color:#cc7a00; text-shadow: 0 0 15px rgba(204,122,0,0.4);'>%{wr_oran}</span>
+                    <div style='font-size:11px; color:#888; letter-spacing:2px; margin-top:5px;'>TOPLAM BAŞARI ORANI</div>
                 </div>
             </div>
             """, unsafe_allow_html=True)
@@ -179,25 +197,33 @@ if check_password():
         st.subheader("🎯 Pay Dağılımı")
         cols = st.columns(3)
         for col, user in zip(cols, ["oguzo", "ero7", "fybey"]):
-            col.markdown(f"<div class='industrial-card'><div class='terminal-header'>{user.upper()}</div><div class='terminal-row'><span>HİSSE</span><span class='highlight'>${kasa/3:,.2f}</span></div><div class='terminal-row'><span>KÂR</span><span>${(net_kar/3):,.2f}</span></div></div>", unsafe_allow_html=True)
+            col.markdown(f"<div class='industrial-card' style='min-height:140px;'><div class='terminal-header'>{user.upper()}</div><div class='terminal-row'><span>HİSSE</span><span class='highlight'>${kasa/3:,.2f}</span></div><div class='terminal-row'><span>KÂR</span><span>${(net_kar/3):,.2f}</span></div></div>", unsafe_allow_html=True)
 
-        # Son İşlemler Paneli
-        st.markdown(f"""
-        <div class='industrial-card' style='min-height:100px;'>
-            <div class='terminal-header'>🕒 SON İŞLEMLER</div>
-            <div style='padding: 10px 0;'>
-                {"".join([f"<div class='terminal-row'><span>{item.split('|')[0]}</span><span style='color:{'#00ff41' if '+' in item else '#ff4b4b'}'>{item.split('|')[1]}</span><span>{item.split('|')[2]}</span></div>" for item in son_islemler_raw.split(',') if '|' in item])}
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+        # --- 🕒 SON İŞLEMLER PANELİ (STANDARTLAŞTIRILMIŞ) ---
+        st.markdown("<div class='industrial-card' style='min-height:120px;'><div class='terminal-header'>🕒 SON İŞLEMLER</div>", unsafe_allow_html=True)
+        
+        if son_islemler_raw and "|" in son_islemler_raw:
+            items = son_islemler_raw.split(',')
+            for item in items:
+                if "|" in item:
+                    parts = item.split('|')
+                    coin = parts[0].strip() if len(parts) > 0 else "?"
+                    amount = parts[1].strip() if len(parts) > 1 else ""
+                    status = parts[2].strip() if len(parts) > 2 else ""
+                    color = "#00ff41" if "+" in amount else "#ff4b4b"
+                    st.markdown(f"<div class='terminal-row'><span>{coin}</span><span style='color:{color}; font-weight:bold;'>{amount}</span><span>{status}</span></div>", unsafe_allow_html=True)
+        else:
+            st.markdown("<div style='color:#555; text-align:center; padding:20px;'>İşlem verisi bekleniyor...</div>", unsafe_allow_html=True)
+            
+        st.markdown("</div>", unsafe_allow_html=True)
 
     elif page == "⚽ FORMLINE":
         st.markdown(f"""
         <div class='industrial-card' style='border-top: 2px solid #cc7a00; min-height:100px;'>
             <div class='terminal-header'>📈 GENEL PERFORMANS</div>
             <div class='terminal-row'>
-                <span style='font-size:14px; color:#888;'>NET BAHİS K/Z MİKTARI:</span>
-                <span style='color:{'#00ff41' if toplam_bahis_kar >=0 else '#ff4b4b'}; font-size:28px; font-weight:900;'>
+                <span style='font-size:16px; color:#888;'>NET BAHİS K/Z MİKTARI:</span>
+                <span style='color:{'#00ff41' if toplam_bahis_kar >=0 else '#ff4b4b'}; font-size:32px; font-weight:900;'>
                     {'+' if toplam_bahis_kar > 0 else ''}${toplam_bahis_kar:,.2f}
                 </span>
             </div>
