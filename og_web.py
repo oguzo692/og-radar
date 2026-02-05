@@ -105,8 +105,8 @@ def check_password():
     if not st.session_state["password_correct"]:
         st.markdown(custom_css, unsafe_allow_html=True)
         st.markdown('<div class="auth-container"><div class="auth-header">OG_CORE</div><div style="font-size: 10px; color: #cc7a00; letter-spacing: 5px; text-transform: uppercase; margin-bottom: 40px; opacity: 0.8;">ARCHITECTING THE FUTURE OF WEALTH</div></div>', unsafe_allow_html=True)
-        pwd = st.text_input("ERİŞİM ANAHTARI", type="password", placeholder="Enter System Key...", label_visibility="collapsed")
-        if st.button("TERMİNALİ INITIALIZE ET"):
+        pwd = st.text_input("ERİŞİM ANAHTARI", type="password", placeholder="Şifre...", label_visibility="collapsed")
+        if st.button("Giriş"):
             if pwd == "1":
                 st.session_state["password_correct"] = True
                 st.rerun()
