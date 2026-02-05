@@ -171,7 +171,7 @@ if check_password():
         <div class='industrial-card' style='border-top: 2px solid #cc7a00; min-height:100px;'>
             <div class='terminal-header'>📈 FORMLINE TOTAL PERFORMANCE</div>
             <div class='terminal-row'>
-                <span style='font-size:14px; color:#888;'>NET BAHİS KAR/ZARAR:</span>
+                <span style='font-size:14px; color:#888;'>Net Kar Miktarı:</span>
                 <span style='color:{'#00ff41' if toplam_bahis_kar >=0 else '#ff4b4b'}; font-size:28px; font-weight:900;'>
                     {'+' if toplam_bahis_kar > 0 else ''}${toplam_bahis_kar:,.2f}
                 </span>
