@@ -25,6 +25,8 @@ def get_live_data():
 live_vars = get_live_data()
 kasa = float(live_vars.get("kasa", 600))
 ana_para = float(live_vars.get("ana_para", 600))
+# Duyuru metnini çek, yoksa varsayılanı kullan
+duyuru_metni = live_vars.get("duyuru", "SİSTEM ÇEVRİMİÇİ... VERİLER SENKRONİZE EDİLDİ... OG CORE V8.8 READY...")
 
 # --- 3. CSS STİLLERİ ---
 custom_css = """
@@ -43,6 +45,35 @@ custom_css = """
 body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, span, h1, h2, h3, button, input { 
     font-family: 'JetBrains Mono', monospace !important; 
     color: #e0e0e0 !important;
+}
+
+/* --- 🎞️ MATRIX TICKER (DUYURU BANDI) CSS --- */
+.ticker-wrap {
+    width: 100%;
+    overflow: hidden;
+    background: rgba(0, 0, 0, 0.6);
+    border-bottom: 1px solid rgba(204, 122, 0, 0.3);
+    padding: 12px 0;
+    margin-bottom: 25px;
+    backdrop-filter: blur(5px);
+}
+.ticker {
+    display: flex;
+    white-space: nowrap;
+    animation: ticker 40s linear infinite;
+}
+.ticker-item {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: #cc7a00;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    padding-right: 100%; /* Yazılar arası mesafe */
+    text-shadow: 0 0 10px rgba(204, 122, 0, 0.5);
+}
+@keyframes ticker {
+    0% { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
 }
 
 .loot-wrapper {
@@ -95,7 +126,6 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
     padding: 4rem;
     background: linear-gradient(145deg, rgba(15,15,15,0.95) 0%, rgba(5,5,5,1) 100%);
     border: 1px solid rgba(204, 122, 0, 0.3);
-    box-shadow: 0 0 60px rgba(0,0,0,1);
     text-align: center;
     max-width: 650px;
     margin: 10vh auto;
@@ -149,7 +179,6 @@ section[data-testid="stSidebar"] {
 """
 
 # --- 4. HTML ŞABLONLARI ---
-# W3 - AKTİF KUPON (DOKUNULMADI)
 w3_matches = """
 <div class='terminal-row'><span>Wolfsburg - Bvb</span><span class='highlight'>bvb x2 & 1.5 üst</span></div>
 <div class='terminal-row'><span>Newcastle - Brentford</span><span class='highlight'>newcastle 1.5 üst</span></div>
@@ -160,7 +189,6 @@ w3_matches = """
 <div class='terminal-row'><span>oran: 8.79</span><span>bet: 100 USD</span></div>
 """
 
-# W2 - 1-2 ŞUBAT KAZANAN KUPON (DÜZENLENDİ)
 w2_matches = """
 <div class='terminal-row'><span>Tarih: 1-2 şubat</span><span>Bütçe: 100 usd</span></div>
 <div class='terminal-row'><span>gs - kayserispor</span><span class='win'>iy +0.5 & W & 2+ ✅</span></div>
@@ -171,7 +199,6 @@ w2_matches = """
 <div class='terminal-row'><span>oran: 5.53</span><span>bet: 100 USD</span></div>
 """
 
-# W1 - 24-25 OCAK KAYBEDEN KUPON (DÜZENLENDİ)
 w1_matches = """
 <div class='terminal-row'><span>Tarih: 24-25 ocak</span><span>Bütçe: 100 usd</span></div>
 <div class='terminal-row'><span>karagümrük - gs</span><span class='win'>gs w & +2 ✅</span></div>
@@ -213,6 +240,16 @@ def check_password():
 # --- 6. ANA UYGULAMA ---
 if check_password():
     st.markdown(custom_css, unsafe_allow_html=True)
+    
+    # --- 🌌 MATRIX TICKER GÖRÜNÜMÜ ---
+    st.markdown(f"""
+        <div class="ticker-wrap">
+            <div class="ticker">
+                <span class="ticker-item">{duyuru_metni}</span>
+                <span class="ticker-item">{duyuru_metni}</span>
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
 
     with st.sidebar:
         st.markdown("<h2 style='color:#cc7a00; font-family:Orbitron; letter-spacing:4px; text-align:center;'>🛡️ OG CORE</h2>", unsafe_allow_html=True)
