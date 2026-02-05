@@ -36,7 +36,7 @@ toplam_bahis_kar = w1_kar + w2_kar
 wr_oran = live_vars.get("win_rate", "0")
 son_islemler_raw = str(live_vars.get("son_islemler", ""))
 
-# --- 3. CSS STİLLERİ (NOKTA ATIŞI DÜZELTME) ---
+# --- 3. CSS STİLLERİ (SABİTLEME VE TEMİZLİK EKLENDİ) ---
 custom_css = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&family=Orbitron:wght@400;700;900&display=swap');
@@ -48,10 +48,18 @@ custom_css = """
     background-image: radial-gradient(circle at 50% 50%, rgba(204, 122, 0, 0.07) 0%, transparent 70%);
 }
 
+/* --- SIDEBAR SABİTLEME VE BUTON GİZLEME --- */
 section[data-testid="stSidebar"] {
     background-color: #050505 !important;
     border-right: 1px solid rgba(204, 122, 0, 0.15);
     padding-top: 20px;
+    min-width: 320px !important;
+    max-width: 320px !important;
+}
+
+/* Sidebar açma-kapama butonunu tamamen yok eder */
+button[data-testid="sidebar-button"] {
+    display: none !important;
 }
 
 /* Sidebar içindeki gereksiz ikon yazılarını ve ham metinleri gizler */
@@ -60,7 +68,8 @@ section[data-testid="stSidebar"] {
     display: none !important;
 }
 
-[data-testid="stSidebar"] summary span:not(:has(p)) {
+/* Expander başlığındaki bozuk ok metinlerini siler */
+[data-testid="stSidebar"] summary span {
     font-size: 0 !important;
     color: transparent !important;
 }
@@ -188,7 +197,6 @@ if check_password():
             st.session_state["password_correct"] = False
             st.rerun()
 
-    # --- SAYFA EŞLEŞMESİ DÜZELTİLDİ ---
     if page == "⚡ ULTRA ATAK":
         net_kar = kasa - ana_para
         current_pct = min(100, (kasa / 6500) * 100)
