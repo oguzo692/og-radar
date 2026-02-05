@@ -124,7 +124,7 @@ if check_password():
         st.markdown("<h2 style='color:#cc7a00; font-family:Orbitron; letter-spacing:4px; text-align:center;'>OG CORE</h2>", unsafe_allow_html=True)
         page = st.radio("MODÜLLER", ["⚡ ULTRA ATAK FON", "⚽ FORMLINE", "📊 SIMULASYON"])
         st.divider()
-        admin_key = st.text_input("ADMİN", type="password", placeholder="Admin Key...")
+        admin_key = st.text_input("ADMİN", type="password", placeholder="Admin Şifresi")
         if admin_key == "1":
             st.success("Admin Active")
             st.link_button("📊 Tabloyu Düzenle", "https://docs.google.com/spreadsheets/d/15izevdpRjs8Om5BAHKVWmdL3FxEHml35DGECfhQUG_s/edit")
@@ -185,7 +185,7 @@ if check_password():
         with t3: st.markdown(w1_coupon_html, unsafe_allow_html=True)
 
     elif page == "📊 SIMULASYON":
-        st.title("📈 Projeksiyon")
+        st.title("📈 Sımılasyon Grafiği")
         df = pd.DataFrame({"Gün": range(30), "Tahmin ($)": [kasa * (1.05 ** (d / 7)) for d in range(30)]})
         st.line_chart(df.set_index("Gün"))
 
