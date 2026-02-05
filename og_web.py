@@ -203,14 +203,24 @@ if check_password():
         
         col1, col2, col3 = st.columns(3)
         with col1:
-            st.markdown(f"<div class='industrial-card' style='height:200px;'><div class='terminal-header'>💎 KASA DURUMU</div><div class='terminal-row'><span>TOPLAM</span><span class='highlight'>${kasa:,.2f}</span></div><div class='terminal-row'><span>K/Z</span><span style='color:{'#00ff41' if net_kar >=0 else '#ff4b4b'};' class='val-std'>${net_kar:,.2f}</span></div></div>", unsafe_allow_html=True)
+            st.markdown(f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>💎 KASA DURUMU</div><div class='terminal-row'><span>TOPLAM</span><span class='highlight'>${kasa:,.2f}</span></div><div class='terminal-row'><span>K/Z</span><span style='color:{'#00ff41' if net_kar >=0 else '#ff4b4b'};' class='val-std'>${net_kar:,.2f}</span></div></div>", unsafe_allow_html=True)
         with col2:
             try:
+                # Canlı veri çekimi
                 btc = yf.Ticker("BTC-USD").history(period="2d")
-                st.markdown(f"<div class='industrial-card' style='height:200px;'><div class='terminal-header'>⚡ MARKET</div><div class='terminal-row'><span>BITCOIN</span><span class='highlight'>${btc['Close'].iloc[-1]:,.0f}</span></div><div class='terminal-row'><span>DURUM</span><span style='color:#00ff41'>ACTIVE</span></div></div>", unsafe_allow_html=True)
+                eth = yf.Ticker("ETH-USD").history(period="2d")
+                sol = yf.Ticker("SOL-USD").history(period="2d")
+                
+                st.markdown(f"""
+                <div class='industrial-card' style='height:230px;'>
+                    <div class='terminal-header'>⚡ MARKET</div>
+                    <div class='terminal-row'><span>BITCOIN</span><span class='highlight'>${btc['Close'].iloc[-1]:,.0f}</span></div>
+                    <div class='terminal-row'><span>ETHEREUM</span><span class='highlight'>${eth['Close'].iloc[-1]:,.2f}</span></div>
+                    <div class='terminal-row'><span>SOLANA</span><span class='highlight'>${sol['Close'].iloc[-1]:,.2f}</span></div>
+                </div>""", unsafe_allow_html=True)
             except: st.markdown("<div class='industrial-card'>Piyasa verisi bekleniyor...</div>", unsafe_allow_html=True)
         with col3:
-            st.markdown(f"<div class='industrial-card' style='height:200px;'><div class='terminal-header'>📊 SCORE</div><div style='text-align:center; padding-top:10px;'><span style='font-size:45px; font-weight:900; color:#cc7a00; font-family:Orbitron;'>%{wr_oran}</span><br><span style='font-size:10px; color:#666;'>WIN RATE</span></div></div>", unsafe_allow_html=True)
+            st.markdown(f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>📊 SCORE</div><div style='text-align:center; padding-top:10px;'><span style='font-size:45px; font-weight:900; color:#cc7a00; font-family:Orbitron;'>%{wr_oran}</span><br><span style='font-size:10px; color:#666;'>WIN RATE</span></div></div>", unsafe_allow_html=True)
 
         st.markdown("### 🎯 PAY DAĞILIMI")
         cols = st.columns(3)
