@@ -36,7 +36,7 @@ toplam_bahis_kar = w1_kar + w2_kar
 wr_oran = live_vars.get("win_rate", "0")
 son_islemler_raw = str(live_vars.get("son_islemler", ""))
 
-# --- 3. CSS STİLLERİ (YENİLENMİŞ) ---
+# --- 3. CSS STİLLERİ ---
 custom_css = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&family=Orbitron:wght@400;700;900&display=swap');
@@ -48,24 +48,18 @@ custom_css = """
     background-image: radial-gradient(circle at 50% 50%, rgba(204, 122, 0, 0.07) 0%, transparent 70%);
 }
 
-/* Sidebar Tasarımı */
 section[data-testid="stSidebar"] {
     background-color: #050505 !important;
     border-right: 1px solid rgba(204, 122, 0, 0.15);
     padding-top: 20px;
 }
 
-/* Sidebar Radio Butonları Güzelleştirme */
 div[data-testid="stWidgetLabel"] p {
     font-family: 'Orbitron', sans-serif !important;
     font-size: 11px !important;
     letter-spacing: 2px;
     color: #888 !important;
     margin-bottom: 20px !important;
-}
-
-[data-testid="stSidebar"] .stRadio div[role="radiogroup"] {
-    gap: 12px !important;
 }
 
 [data-testid="stSidebar"] label {
@@ -76,32 +70,18 @@ div[data-testid="stWidgetLabel"] p {
     transition: 0.3s all;
 }
 
-[data-testid="stSidebar"] label:hover {
-    background: rgba(204, 122, 0, 0.1);
-    border-color: rgba(204, 122, 0, 0.3);
-}
-
-/* Tab Tasarımı */
-div[data-testid="stTabContent"], div[data-testid="stTabs"], .stTabs, [data-baseweb="tab-panel"], [data-baseweb="tab-list"] {
-    background-color: transparent !important;
-    border: none !important;
-}
 [data-baseweb="tab-highlight"] { background-color: #cc7a00 !important; }
-[data-baseweb="tab"] { font-family: 'JetBrains Mono' !important; font-size: 13px !important; color: #666 !important; }
 [aria-selected="true"] { color: #cc7a00 !important; font-weight: bold !important; }
 
-/* Yazı Tipleri */
 body, [data-testid="stAppViewContainer"], p, div, span, button, input { 
     font-family: 'JetBrains Mono', monospace !important; 
     color: #d1d1d1 !important;
-    letter-spacing: -0.2px;
 }
 
-/* Ticker Animasyonu */
 .ticker-wrap {
     width: 100%; overflow: hidden; background: rgba(204, 122, 0, 0.03);
     border-bottom: 1px solid rgba(204, 122, 0, 0.2); padding: 10px 0;
-    margin-bottom: 25px; backdrop-filter: blur(10px);
+    margin-bottom: 25px;
 }
 .ticker { display: flex; white-space: nowrap; animation: ticker 30s linear infinite; }
 .ticker-item {
@@ -110,13 +90,11 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input {
 }
 @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
-/* Kartlar */
 .industrial-card { 
     background: linear-gradient(145deg, rgba(15, 15, 15, 0.9), rgba(5, 5, 5, 1)) !important;
     border: 1px solid rgba(255, 255, 255, 0.03) !important;
     border-top: 2px solid rgba(204, 122, 0, 0.4) !important;
     padding: 22px; margin-bottom: 20px; border-radius: 4px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
 }
 
 .terminal-header { 
@@ -126,26 +104,17 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input {
 
 .terminal-row { 
     display: flex; justify-content: space-between; align-items: center; font-size: 14px; margin-bottom: 10px; 
-    border-bottom: 1px solid rgba(255,255,255,0.02); padding-bottom: 8px; 
 }
 
 .highlight { color: #cc7a00 !important; font-weight: 800; font-size: 19px; font-family: 'Orbitron'; }
 .val-std { font-size: 22px !important; font-weight: 800 !important; font-family: 'Orbitron'; }
 
-/* Buton */
 .stButton button, .stLinkButton a {
     width: 100%;
     background: rgba(204, 122, 0, 0.1) !important;
     border: 1px solid rgba(204, 122, 0, 0.3) !important;
     color: #cc7a00 !important;
     font-family: 'Orbitron' !important;
-    font-size: 12px !important;
-    letter-spacing: 2px !important;
-    transition: 0.4s;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
     padding: 10px;
 }
 .stButton button:hover, .stLinkButton a:hover {
@@ -164,22 +133,24 @@ w3_coupon_html = f"<div class='industrial-card'><div class='terminal-header'>�
 w2_coupon_html = f"<div class='industrial-card' style='border-top-color: #00ff41 !important;'><div class='terminal-header' style='color:#00ff41;'>✅ W2 KUPONU (BAŞARILI)</div>{w2_matches}<span style='color:#00ff41; font-weight:bold;'>SONUÇLANDI ✅</span></div>"
 w1_coupon_html = f"<div class='industrial-card' style='border-top-color: #ff4b4b !important;'><div class='terminal-header' style='color:#ff4b4b;'>❌ W1 KUPONU (BAŞARISIZ)</div>{w1_matches}<span style='color:#ff4b4b; font-weight:bold;'>SONUÇLANDI ❌</span></div>"
 
-# --- 5. GÜVENLİK ---
+# --- 5. GÜVENLİK VE GİRİŞ ---
 if "password_correct" not in st.session_state:
     st.session_state["password_correct"] = False
+if "admin_authenticated" not in st.session_state:
+    st.session_state["admin_authenticated"] = False
 
 def check_password():
     if not st.session_state["password_correct"]:
         st.markdown(custom_css, unsafe_allow_html=True)
-        st.markdown('<div class="auth-container" style="text-align:center; margin-top:15vh;"><div style="font-family:Orbitron; font-size:60px; font-weight:900; color:white; letter-spacing:15px;">OG CORE</div><div style="font-size:10px; color:#cc7a00; letter-spacing:8px; margin-bottom:40px;">SECURE ACCESS TERMINAL</div></div>', unsafe_allow_html=True)
+        st.markdown('<div class="auth-container" style="text-align:center; margin-top:15vh;"><div style="font-family:Orbitron; font-size:60px; font-weight:900; color:white; letter-spacing:15px;">OG CORE</div><div style="font-size:10px; color:#cc7a00; letter-spacing:8px; margin-bottom:40px;">GÜVENLİ ERİŞİM TERMİNALİ</div></div>', unsafe_allow_html=True)
         col_a, col_b, col_c = st.columns([1,1,1])
         with col_b:
-            pwd = st.text_input("ACCESS_KEY", type="password", placeholder="••••", label_visibility="collapsed")
-            if st.button("AUTHENTICATE"):
+            pwd = st.text_input("ERİŞİM ANAHTARI", type="password", placeholder="••••", label_visibility="collapsed")
+            if st.button("KİMLİK DOĞRULA"):
                 if pwd == "1":
                     st.session_state["password_correct"] = True
                     st.rerun()
-                else: st.error("ACCESS DENIED")
+                else: st.error("ERİŞİM REDDEDİLDİ")
         return False
     return True
 
@@ -195,52 +166,52 @@ if check_password():
             st.markdown("<div style='height:20px'></div>", unsafe_allow_html=True)
             
         st.markdown("<h1 style='color:white; font-family:Orbitron; font-size:22px; letter-spacing:5px; text-align:center; margin-bottom:30px;'>OG CORE</h1>", unsafe_allow_html=True)
-        page = st.radio("SİSTEM MODÜLLERİ", ["⚡ ULTRA ATAK", "⚽ FORMLINE", "📊 SİMÜLASYON"])
+        page = st.radio("SİSTEM MODÜLLERİ", ["⚡ ULTRA ATAK", "⚽ KUPONLAR", "📊 SİMÜLASYON"])
         
-        # --- SOL ALT ADMIN VE TERMINATE KISMI ---
-        st.markdown("<div style='margin-top: 100px;'></div>", unsafe_allow_html=True) # Boşluk bırakmak için
+        st.markdown("<div style='margin-top: 50px;'></div>", unsafe_allow_html=True)
         
-        # Admin Database Link Butonu
-        st.link_button("📂 ADMIN DATABASE", "https://docs.google.com/spreadsheets/d/15izevdpRjs8Om5BAHKVWmdL3FxEHml35DGECfhQUG_s/edit")
-        
-        st.markdown("<div style='margin-top: 10px;'></div>", unsafe_allow_html=True)
-        
-        if st.button("TERMINATE SESSION"): 
+        # --- ŞİFRELİ ADMİN PANELİ ---
+        with st.expander("📂 ADMİN PANELİ"):
+            admin_pwd = st.text_input("PANEL ŞİFRESİ", type="password", key="admin_pwd")
+            if admin_pwd == "fybey16":
+                st.link_button("VERİ TABANINA GİT", "https://docs.google.com/spreadsheets/d/15izevdpRjs8Om5BAHKVWmdL3FxEHml35DGECfhQUG_s/edit")
+            elif admin_pwd:
+                st.error("HATALI ŞİFRE")
+
+        if st.button("OTURUMU KAPAT"): 
             st.session_state["password_correct"] = False
             st.rerun()
 
     if page == "⚡ ULTRA ATAK":
         net_kar = kasa - ana_para
         current_pct = min(100, (kasa / 6500) * 100)
-        st.markdown(f"<div class='industrial-card'><div class='terminal-header'>HEDEF YOLCULUĞU ($6,500)</div><div style='background:#111; height:8px; border-radius:10px; margin-top:10px;'><div style='background:linear-gradient(90deg, #cc7a00, #ffae00); width:{current_pct}%; height:100%; border-radius:10px; box-shadow: 0 0 10px rgba(204,122,0,0.5);'></div></div><div style='text-align:right; font-size:10px; margin-top:5px; color:#666;'>%{current_pct:.1f} TAMAMLANDI</div></div>", unsafe_allow_html=True)
+        st.markdown(f"<div class='industrial-card'><div class='terminal-header'>HEDEF YOLCULUĞU ($6,500)</div><div style='background:#111; height:8px; border-radius:10px; margin-top:10px;'><div style='background:linear-gradient(90deg, #cc7a00, #ffae00); width:{current_pct}%; height:100%; border-radius:10px;'></div></div><div style='text-align:right; font-size:10px; margin-top:5px; color:#666;'>%{current_pct:.1f} TAMAMLANDI</div></div>", unsafe_allow_html=True)
         
         col1, col2, col3 = st.columns(3)
         with col1:
             st.markdown(f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>💎 KASA DURUMU</div><div class='terminal-row'><span>TOPLAM</span><span class='highlight'>${kasa:,.2f}</span></div><div class='terminal-row'><span>K/Z</span><span style='color:{'#00ff41' if net_kar >=0 else '#ff4b4b'};' class='val-std'>${net_kar:,.2f}</span></div></div>", unsafe_allow_html=True)
         with col2:
             try:
-                # Canlı veri çekimi
                 btc = yf.Ticker("BTC-USD").history(period="2d")
                 eth = yf.Ticker("ETH-USD").history(period="2d")
                 sol = yf.Ticker("SOL-USD").history(period="2d")
-                
                 st.markdown(f"""
                 <div class='industrial-card' style='height:230px;'>
-                    <div class='terminal-header'>⚡ MARKET</div>
+                    <div class='terminal-header'>⚡ PİYASA</div>
                     <div class='terminal-row'><span>BITCOIN</span><span class='highlight'>${btc['Close'].iloc[-1]:,.0f}</span></div>
                     <div class='terminal-row'><span>ETHEREUM</span><span class='highlight'>${eth['Close'].iloc[-1]:,.2f}</span></div>
                     <div class='terminal-row'><span>SOLANA</span><span class='highlight'>${sol['Close'].iloc[-1]:,.2f}</span></div>
                 </div>""", unsafe_allow_html=True)
             except: st.markdown("<div class='industrial-card'>Piyasa verisi bekleniyor...</div>", unsafe_allow_html=True)
         with col3:
-            st.markdown(f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>📊 SCORE</div><div style='text-align:center; padding-top:10px;'><span style='font-size:45px; font-weight:900; color:#cc7a00; font-family:Orbitron;'>%{wr_oran}</span><br><span style='font-size:10px; color:#666;'>WIN RATE</span></div></div>", unsafe_allow_html=True)
+            st.markdown(f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>📊 BAŞARI SKORU</div><div style='text-align:center; padding-top:10px;'><span style='font-size:45px; font-weight:900; color:#cc7a00; font-family:Orbitron;'>%{wr_oran}</span><br><span style='font-size:10px; color:#666;'>KAZANMA ORANI</span></div></div>", unsafe_allow_html=True)
 
         st.markdown("### 🎯 PAY DAĞILIMI")
         cols = st.columns(3)
         for col, user in zip(cols, ["oguzo", "ero7", "fybey"]):
             col.markdown(f"<div class='industrial-card'><div class='terminal-header'>{user.upper()}</div><div class='terminal-row'><span>BAKİYE</span><span class='highlight'>${kasa/3:,.2f}</span></div></div>", unsafe_allow_html=True)
 
-        son_islemler_html = "<div class='industrial-card'><div class='terminal-header'>🕒 LOG KAYITLARI</div>"
+        son_islemler_html = "<div class='industrial-card'><div class='terminal-header'>🕒 İŞLEM KAYITLARI</div>"
         if son_islemler_raw:
             for item in son_islemler_raw.split(','):
                 parts = item.split('|') if '|' in item else item.strip().split(' ')
@@ -248,16 +219,16 @@ if check_password():
         son_islemler_html += "</div>"
         st.markdown(son_islemler_html, unsafe_allow_html=True)
 
-    elif page == "⚽ FORMLINE":
-        st.markdown(f"<div class='industrial-card' style='border-top: 2px solid #cc7a00;'><div class='terminal-header'>📈 BAHİS PERFORMANSI</div><div class='terminal-row'><span>NET KAZANÇ:</span><span style='color:{'#00ff41' if toplam_bahis_kar >=0 else '#ff4b4b'}; font-size:32px; font-weight:900; font-family:Orbitron;'>${toplam_bahis_kar:,.2f}</span></div></div>", unsafe_allow_html=True)
+    elif page == "⚽ KUPONLAR":
+        st.markdown(f"<div class='industrial-card' style='border-top: 2px solid #cc7a00;'><div class='terminal-header'>📈 PERFORMANS</div><div class='terminal-row'><span>NET KAZANÇ:</span><span style='color:{'#00ff41' if toplam_bahis_kar >=0 else '#ff4b4b'}; font-size:32px; font-weight:900; font-family:Orbitron;'>${toplam_bahis_kar:,.2f}</span></div></div>", unsafe_allow_html=True)
         t1, t2, t3 = st.tabs(["⏳ AKTİF", "✅ KAZANANLAR", "❌ KAYBEDENLER"])
         with t1: st.markdown(w3_coupon_html, unsafe_allow_html=True)
         with t2: st.markdown(w2_coupon_html, unsafe_allow_html=True)
         with t3: st.markdown(w1_coupon_html, unsafe_allow_html=True)
 
     elif page == "📊 SİMÜLASYON":
-        st.markdown("<div class='industrial-card'><div class='terminal-header'>PROJEKSİYON</div></div>", unsafe_allow_html=True)
+        st.markdown("<div class='industrial-card'><div class='terminal-header'>GELECEK TAHMİNİ</div></div>", unsafe_allow_html=True)
         df = pd.DataFrame({"Gün": range(30), "Tahmin ($)": [kasa * (1.05 ** (d / 7)) for d in range(30)]})
         st.line_chart(df.set_index("Gün"))
 
-    st.markdown(f"<div style='text-align:center; color:#444; font-size:10px; margin-top:50px;'>CORE_ENGINE_V9.9 // {datetime.now().year} // ENCRYPTED_CONNECTION</div>", unsafe_allow_html=True)
+    st.markdown(f"<div style='text-align:center; color:#444; font-size:10px; margin-top:50px;'>ÇEKİRDEK_MOTOR_V9.9 // {datetime.now().year} // ŞİFRELİ_BAĞLANTI</div>", unsafe_allow_html=True)
