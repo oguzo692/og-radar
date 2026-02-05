@@ -6,7 +6,7 @@ import pytz
 
 # --- 1. AYARLAR ---
 st.set_page_config(
-    page_title="OG Core v9.9", 
+    page_title="OG Core", 
     page_icon="🛡️", 
     layout="wide", 
     initial_sidebar_state="expanded"
@@ -180,18 +180,18 @@ if check_password():
         st.markdown("<div style='margin-top: 30px;'></div>", unsafe_allow_html=True)
         
         # --- ADMİN PANELİ ---
-        with st.expander("📂 ADMİN PANELİ"):
+        with st.expander("📂ADMİN PANELİ"):
             admin_pwd = st.text_input("PANEL ŞİFRESİ", type="password", key="admin_access_key")
             if admin_pwd == "fybey":
                 st.link_button("VERİ TABANINA GİT", "https://docs.google.com/spreadsheets/d/15izevdpRjs8Om5BAHKVWmdL3FxEHml35DGECfhQUG_s/edit")
             elif admin_pwd:
                 st.error("götten sallama aq ya")
 
-        if st.button("OTURUMU KAPAT"): 
+        if st.button("çıkış"): 
             st.session_state["password_correct"] = False
             st.rerun()
 
-    if page == "⚡ ULTRA ATAK":
+    if page == "⚡ULTRA ATAK":
         net_kar = kasa - ana_para
         current_pct = min(100, (kasa / 6500) * 100)
         st.markdown(f"<div class='industrial-card'><div class='terminal-header'>HEDEF YOLCULUĞU ($6,500)</div><div style='background:#111; height:8px; border-radius:10px; margin-top:10px;'><div style='background:linear-gradient(90deg, #cc7a00, #ffae00); width:{current_pct}%; height:100%; border-radius:10px;'></div></div><div style='text-align:right; font-size:10px; margin-top:5px; color:#666;'>%{current_pct:.1f} TAMAMLANDI</div></div>", unsafe_allow_html=True)
@@ -215,12 +215,12 @@ if check_password():
         with col3:
             st.markdown(f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>📊 WİN RATE</div><div style='text-align:center; padding-top:10px;'><span style='font-size:45px; font-weight:900; color:#cc7a00; font-family:Orbitron;'>%{wr_oran}</span><br><span style='font-size:10px; color:#666;'>KAZANMA ORANI</span></div></div>", unsafe_allow_html=True)
 
-        st.markdown("### 🎯 PAY DAĞILIMI")
+        st.markdown("### 🎯PAY DAĞILIMI")
         cols = st.columns(3)
         for col, user in zip(cols, ["oguzo", "ero7", "fybey"]):
             col.markdown(f"<div class='industrial-card'><div class='terminal-header'>{user.upper()}</div><div class='terminal-row'><span>BAKİYE</span><span class='highlight'>${kasa/3:,.2f}</span></div></div>", unsafe_allow_html=True)
 
-        son_islemler_html = "<div class='industrial-card'><div class='terminal-header'>🕒 İŞLEM KAYITLARI</div>"
+        son_islemler_html = "<div class='industrial-card'><div class='terminal-header'>Son İşlemler</div>"
         if son_islemler_raw:
             for item in son_islemler_raw.split(','):
                 parts = item.split('|') if '|' in item else item.strip().split(' ')
