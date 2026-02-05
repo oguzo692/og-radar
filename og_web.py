@@ -95,6 +95,7 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
     padding: 4rem;
     background: linear-gradient(145deg, rgba(15,15,15,0.95) 0%, rgba(5,5,5,1) 100%);
     border: 1px solid rgba(204, 122, 0, 0.3);
+    box-shadow: 0 0 60px rgba(0,0,0,1);
     text-align: center;
     max-width: 650px;
     margin: 10vh auto;
@@ -148,6 +149,7 @@ section[data-testid="stSidebar"] {
 """
 
 # --- 4. HTML ŞABLONLARI ---
+# W3 - AKTİF KUPON (DOKUNULMADI)
 w3_matches = """
 <div class='terminal-row'><span>Wolfsburg - Bvb</span><span class='highlight'>bvb x2 & 1.5 üst</span></div>
 <div class='terminal-row'><span>Newcastle - Brentford</span><span class='highlight'>newcastle 1.5 üst</span></div>
@@ -158,29 +160,32 @@ w3_matches = """
 <div class='terminal-row'><span>oran: 8.79</span><span>bet: 100 USD</span></div>
 """
 
+# W2 - 1-2 ŞUBAT KAZANAN KUPON (DÜZENLENDİ)
 w2_matches = """
-<div class='terminal-row'><span>Wolfsburg - Bvb</span><span class='win'>bvb x2 & 1.5 üst ✅</span></div>
-<div class='terminal-row'><span>Newcastle - Brentford</span><span class='win'>newcastle 1.5 üst ✅</span></div>
-<div class='terminal-row'><span>Rizespor - Gala</span><span class='win'>gala w & 1.5 üst ✅</span></div>
-<div class='terminal-row'><span>Lıve - Man City</span><span class='win'>lıve gol atar ✅</span></div>
-<div class='terminal-row'><span>Fenerbahçe - Gençlerbirliği</span><span class='win'>fenerbahçe w & 2.5 üst ✅</span></div>
+<div class='terminal-row'><span>Tarih: 1-2 şubat</span><span>Bütçe: 100 usd</span></div>
+<div class='terminal-row'><span>gs - kayserispor</span><span class='win'>iy +0.5 & W & 2+ ✅</span></div>
+<div class='terminal-row'><span>lıve - new</span><span class='win'>+2 & liverpool 1x ✅</span></div>
+<div class='terminal-row'><span>bvb - heidenheim</span><span class='win'>iy +0.5 & W & 2+ ✅</span></div>
+<div class='terminal-row'><span>kocaelispor - fb</span><span class='win'>fb W & 2+ ✅</span></div>
 <hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'>
-<div class='terminal-row'><span>oran: 8.79</span><span>bet: 100 USD</span></div>
+<div class='terminal-row'><span>oran: 5.53</span><span>bet: 100 USD</span></div>
 """
 
+# W1 - 24-25 OCAK KAYBEDEN KUPON (DÜZENLENDİ)
 w1_matches = """
-<div class='terminal-row'><span>Wolfsburg - Bvb</span><span class='win'>bvb x2 & 1.5 üst ✅</span></div>
-<div class='terminal-row'><span>Newcastle - Brentford</span><span class='win'>newcastle 1.5 üst ✅</span></div>
-<div class='terminal-row'><span>Rizespor - Gala</span><span class='win'>gala w & 1.5 üst ✅</span></div>
-<div class='terminal-row'><span>Lıve - Man City</span><span class='loss'>lıve gol atar ❌</span></div>
-<div class='terminal-row'><span>Fenerbahçe - Gençlerbirliği</span><span class='loss'>fenerbahçe w & 2.5 üst ❌</span></div>
+<div class='terminal-row'><span>Tarih: 24-25 ocak</span><span>Bütçe: 100 usd</span></div>
+<div class='terminal-row'><span>karagümrük - gs</span><span class='win'>gs w & +2 ✅</span></div>
+<div class='terminal-row'><span>bournemouth - lıve</span><span class='win'>kg var ✅</span></div>
+<div class='terminal-row'><span>unıon berlin - bvb</span><span class='win'>bvb iy 0.5 üst ✅</span></div>
+<div class='terminal-row'><span>new - aston villa</span><span class='loss'>new +2 ❌</span></div>
+<div class='terminal-row'><span>fb - göztepe</span><span class='loss'>fb w ❌</span></div>
 <hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'>
-<div class='terminal-row'><span>oran: 8.79</span><span>bet: 100 USD</span></div>
+<div class='terminal-row'><span>oran: 7.09</span><span>bet: 100 USD</span></div>
 """
 
-w3_coupon_html = f"<div class='industrial-card'><div class='terminal-header'>🔥 W3 KUPONU</div>{w3_matches}<span style='color:#cc7a00'>BEKLENİYOR ⏳</span></div>"
-w2_coupon_html = f"<div class='industrial-card' style='border-top-color: #00ff41 !important;'><div class='terminal-header' style='color:#00ff41;'>✅ W2 KUPONU - KAZANDI</div>{w2_matches}<span class='win'>SONUÇLANDI +879 USD</span></div>"
-w1_coupon_html = f"<div class='industrial-card' style='border-top-color: #ff4b4b !important;'><div class='terminal-header' style='color:#ff4b4b;'>❌ W1 KUPONU - KAYBETTİ</div>{w1_matches}<span class='loss'>SONUÇLANDI -100 USD</span></div>"
+w3_coupon_html = f"<div class='industrial-card'><div class='terminal-header'>🔥 W3 KUPONU (AKTİF)</div>{w3_matches}<span style='color:#cc7a00'>BEKLENİYOR ⏳</span></div>"
+w2_coupon_html = f"<div class='industrial-card' style='border-top-color: #00ff41 !important;'><div class='terminal-header' style='color:#00ff41;'>✅ W2 KUPONU (1-2 ŞUBAT)</div>{w2_matches}<span class='win'>SONUÇLANDI ✅</span></div>"
+w1_coupon_html = f"<div class='industrial-card' style='border-top-color: #ff4b4b !important;'><div class='terminal-header' style='color:#ff4b4b;'>❌ W1 KUPONU (24-25 OCAK)</div>{w1_matches}<span class='loss'>SONUÇLANDI ❌</span></div>"
 
 # --- 5. GÜVENLİK ---
 if "password_correct" not in st.session_state:
@@ -252,7 +257,7 @@ if check_password():
         st.subheader("🎯 Pay Dağılımı")
         cols = st.columns(3)
         for col, user in zip(cols, ["oguzo", "ero7", "fybey"]):
-            col.markdown(f"<div class='industrial-card'><div class='terminal-header'>{user.upper()}</div><div class='terminal-row'><span>SHARE</span><span class='highlight'>${kasa/3:,.2f}</span></div><div class='terminal-row'><span>PROFIT</span><span>${(net_kar/3):,.2f}</span></div></div>", unsafe_allow_html=True)
+            col.markdown(f"""<div class='industrial-card'><div class='terminal-header'>{user.upper()}</div><div class='terminal-row'><span>SHARE</span><span class='highlight'>${kasa/3:,.2f}</span></div><div class='terminal-row'><span>PROFIT</span><span>${(net_kar/3):,.2f}</span></div></div>""", unsafe_allow_html=True)
 
     elif page == "⚽ Formlıne":
         st.title("⚽ FORMLINE")
