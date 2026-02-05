@@ -181,7 +181,7 @@ if check_password():
 
     with st.sidebar:
         st.markdown("<h1 style='color:white; font-family:Orbitron; font-size:24px; letter-spacing:5px; text-align:center; margin-bottom:40px;'>OG CORE</h1>", unsafe_allow_html=True)
-        page = st.radio("SİSTEM MODÜLLERİ", ["⚡ ULTRA ATAK", "⚽ KUPONLAR", "📊 SİMÜLASYON"])
+        page = st.radio("SİSTEM MODÜLLERİ", ["⚡ ULTRA ATAK", "⚽ FORMLINE", "📊 SİMÜLASYON"])
         st.markdown("<div style='margin-top: 20px;'></div>", unsafe_allow_html=True)
         
         with st.expander("📂 ADMİN"):
@@ -234,9 +234,9 @@ if check_password():
         son_islemler_html += "</div>"
         st.markdown(son_islemler_html, unsafe_allow_html=True)
 
-    elif page == "⚽ KUPONLAR":
+    elif page == "⚽ FORMLINE":
         st.markdown(f"<div class='industrial-card' style='border-top: 2px solid #cc7a00;'><div class='terminal-header'>📈 PERFORMANS</div><div class='terminal-row'><span>NET KAZANÇ:</span><span style='color:{'#00ff41' if toplam_bahis_kar >=0 else '#ff4b4b'}; font-size:32px; font-weight:900; font-family:Orbitron;'>${toplam_bahis_kar:,.2f}</span></div></div>", unsafe_allow_html=True)
-        t1, t2, t3 = st.tabs(["⏳ W3 (AKTİF)", "✅ W2 (KAZANANLAR)", "❌ W1 (KAYBEDENLER)"])
+        t1, t2, t3 = st.tabs(["⏳ W3 (AKTİF)", "✅ W2", "❌ W1"])
         with t1: st.markdown(w3_coupon_html, unsafe_allow_html=True)
         with t2: st.markdown(w2_coupon_html, unsafe_allow_html=True)
         with t3: st.markdown(w1_coupon_html, unsafe_allow_html=True)
