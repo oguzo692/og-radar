@@ -36,7 +36,7 @@ toplam_bahis_kar = w1_kar + w2_kar
 wr_oran = live_vars.get("win_rate", "0")
 son_islemler_raw = str(live_vars.get("son_islemler", ""))
 
-# --- 3. CSS STİLLERİ (KESİN ÇÖZÜM VE TAM EŞİTLEME) ---
+# --- 3. CSS STİLLERİ (GİZLEME İKONU DÜZELTİLDİ) ---
 custom_css = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&family=Orbitron:wght@400;700;900&display=swap');
@@ -48,7 +48,7 @@ custom_css = """
     background-image: radial-gradient(circle at 50% 50%, rgba(204, 122, 0, 0.07) 0%, transparent 70%);
 }
 
-/* --- SIDEBAR SABİTLEME VE KUTU EŞİTLEME --- */
+/* --- SIDEBAR AYARLARI --- */
 section[data-testid="stSidebar"] {
     background-color: #050505 !important;
     border-right: 1px solid rgba(204, 122, 0, 0.15);
@@ -57,16 +57,20 @@ section[data-testid="stSidebar"] {
     max-width: 340px !important;
 }
 
-button[data-testid="sidebar-button"] { display: none !important; }
+/* --- GİZLEME İKONU GÖRÜNÜRLÜK AYARI --- */
+/* İkonun rengini turuncu yap ve görünür kıl */
+button[kind="headerNoPadding"] svg {
+    fill: #cc7a00 !important;
+    width: 30px !important;
+    height: 30px !important;
+}
 
-/* --- HAM METİN (keyboard_double vb.) TEMİZLİĞİ --- */
+/* --- HAM METİN TEMİZLİĞİ --- */
 [data-testid="stSidebar"] summary svg, 
-[data-testid="stSidebar"] [data-testid="stHeaderActionElements"],
-[data-testid="stSidebar"] svg {
+[data-testid="stSidebar"] [data-testid="stHeaderActionElements"] {
     display: none !important;
 }
 
-/* Tüm sızıntıları kökten siler */
 [data-testid="stSidebar"] span:not(:has(p)), 
 [data-testid="stSidebar"] summary span,
 [data-testid="stSidebar"] div:not(:has(p)) > span {
@@ -76,7 +80,6 @@ button[data-testid="sidebar-button"] { display: none !important; }
     display: none !important;
 }
 
-/* Kutuların Genişlik ve Hizalamasını Sabitle */
 [data-testid="stSidebar"] .stVerticalBlock { gap: 0.8rem !important; }
 
 [data-testid="stSidebar"] label {
@@ -99,7 +102,6 @@ button[data-testid="sidebar-button"] { display: none !important; }
 
 [data-testid="stSidebar"] summary { padding: 15px !important; }
 
-/* Yazıların tekrar görünür ve temiz olmasını sağla */
 [data-testid="stSidebar"] p, [data-testid="stSidebar"] label p {
     font-size: 14px !important;
     visibility: visible !important;
@@ -118,7 +120,6 @@ button[data-testid="sidebar-button"] { display: none !important; }
     border-radius: 6px !important;
 }
 
-/* Genel Fontlar */
 body, [data-testid="stAppViewContainer"], p, div, span, button, input { 
     font-family: 'JetBrains Mono', monospace !important; 
     color: #d1d1d1 !important;
