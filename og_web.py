@@ -172,15 +172,15 @@ if "password_correct" not in st.session_state:
 def check_password():
     if not st.session_state["password_correct"]:
         st.markdown(custom_css, unsafe_allow_html=True)
-        st.markdown('<div class="auth-container" style="text-align:center; margin-top:15vh;"><div style="font-family:Orbitron; font-size:60px; font-weight:900; color:white; letter-spacing:15px;">OG CORE</div><div style="font-size:10px; color:#cc7a00; letter-spacing:8px; margin-bottom:40px;">GÜVENLİ ERİŞİM TERMİNALİ</div></div>', unsafe_allow_html=True)
+        st.markdown('<div class="auth-container" style="text-align:center; margin-top:15vh;"><div style="font-family:Orbitron; font-size:60px; font-weight:900; color:white; letter-spacing:15px;">OG CORE</div><div style="font-size:10px; color:#cc7a00; letter-spacing:8px; margin-bottom:40px;">gelecek inşa ediyoruz</div></div>', unsafe_allow_html=True)
         col_a, col_b, col_c = st.columns([1,1,1])
         with col_b:
             pwd = st.text_input("ERİŞİM ANAHTARI", type="password", placeholder="••••", label_visibility="collapsed")
             if st.button("KİMLİK DOĞRULA"):
-                if pwd == "1":
+                if pwd == "fybey16":
                     st.session_state["password_correct"] = True
                     st.rerun()
-                else: st.error("ERİŞİM REDDEDİLDİ")
+                else: st.error("şifre yanlış")
         return False
     return True
 
