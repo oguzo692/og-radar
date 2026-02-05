@@ -4,17 +4,13 @@ from datetime import datetime
 import pandas as pd
 import pytz
 
-# --- 1. AYARLAR & OTO YENİLEME ---
+# --- 1. AYARLAR ---
 st.set_page_config(
-    page_title="OG Core v9.0", 
+    page_title="OG Core v9.5", 
     page_icon="🛡️", 
     layout="wide", 
     initial_sidebar_state="expanded"
 )
-
-# Her 60 saniyede bir verileri tazeler
-if "last_refresh" not in st.session_state:
-    st.session_state.last_refresh = datetime.now()
 
 # --- 2. VERİ BAĞLANTISI (GOOGLE SHEETS) ---
 def get_live_data():
@@ -29,7 +25,7 @@ def get_live_data():
 live_vars = get_live_data()
 kasa = float(live_vars.get("kasa", 600))
 ana_para = float(live_vars.get("ana_para", 600))
-duyuru_metni = live_vars.get("duyuru", "SYSTEM ONLINE... CRYPTO MARKETS CONNECTED... V9.0 DEPLOYED...")
+duyuru_metni = live_vars.get("duyuru", "SYSTEM ONLINE... OG CORE V9.5 READY FOR DEPLOYMENT...")
 
 # --- 3. CSS STİLLERİ (PREMIUM STABİLİZE) ---
 custom_css = """
@@ -68,7 +64,7 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
 .industrial-card { 
     background: rgba(18, 18, 18, 0.8) !important; backdrop-filter: blur(15px);
     border: 1px solid rgba(255, 255, 255, 0.05) !important; border-top: 2px solid rgba(204, 122, 0, 0.5) !important;
-    padding: 25px; margin-bottom: 25px; border-radius: 4px;
+    padding: 25px; margin-bottom: 25px; border-radius: 4px; min-height: 180px;
 }
 
 .terminal-header { color: #888; font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 20px; }
@@ -87,7 +83,7 @@ div.stButton > button:hover { background: #cc7a00 !important; color: #000 !impor
 </style>
 """
 
-# --- 4. HTML ŞABLONLARI (KUPONLAR) ---
+# --- 4. HTML ŞABLONLARI ---
 w3_matches = """<div class='terminal-row'><span>Wolfsburg - Bvb</span><span class='highlight'>bvb x2 & 1.5 üst</span></div><div class='terminal-row'><span>Newcastle - Brentford</span><span class='highlight'>newcastle 1.5 üst</span></div><div class='terminal-row'><span>Rizespor - Gala</span><span class='highlight'>gala w & 1.5 üst</span></div><div class='terminal-row'><span>Lıve - Man City</span><span class='highlight'>lıve gol atar</span></div><div class='terminal-row'><span>Fenerbahçe - Gençlerbirliği</span><span class='highlight'>fenerbahçe w & 2.5 üst</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>oran: 8.79</span><span>bet: 100 USD</span></div>"""
 w2_matches = """<div class='terminal-row'><span>Tarih: 1-2 şubat</span><span>Bütçe: 100 usd</span></div><div class='terminal-row'><span>gs - kayserispor</span><span style='color:#00ff41;'>iy +0.5 & W & 2+ ✅</span></div><div class='terminal-row'><span>lıve - new</span><span style='color:#00ff41;'>+2 & liverpool 1x ✅</span></div><div class='terminal-row'><span>bvb - heidenheim</span><span style='color:#00ff41;'>iy +0.5 & W & 2+ ✅</span></div><div class='terminal-row'><span>kocaelispor - fb</span><span style='color:#00ff41;'>fb W & 2+ ✅</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>oran: 5.53</span><span>bet: 100 USD</span></div>"""
 w1_matches = """<div class='terminal-row'><span>Tarih: 24-25 ocak</span><span>Bütçe: 100 usd</span></div><div class='terminal-row'><span>karagümrük - gs</span><span style='color:#00ff41;'>gs w & +2 ✅</span></div><div class='terminal-row'><span>bournemouth - lıve</span><span style='color:#00ff41;'>kg var ✅</span></div><div class='terminal-row'><span>unıon berlin - bvb</span><span style='color:#00ff41;'>bvb iy 0.5 üst ✅</span></div><div class='terminal-row'><span>new - aston villa</span><span style='color:#ff4b4b;'>new +2 ❌</span></div><div class='terminal-row'><span>fb - göztepe</span><span style='color:#ff4b4b;'>fb w ❌</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>oran: 7.09</span><span>bet: 100 USD</span></div>"""
@@ -128,7 +124,7 @@ if check_password():
             st.success("Admin Active")
             st.link_button("📊 Tabloyu Düzenle", "https://docs.google.com/spreadsheets/d/15izevdpRjs8Om5BAHKVWmdL3FxEHml35DGECfhQUG_s/edit")
         st.divider()
-        if st.button("🔴 SİSTEMDEN ÇIK"): 
+        if st.button("🔴 ÇIKALIM"): 
             st.session_state["password_correct"] = False
             st.rerun()
 
@@ -141,33 +137,34 @@ if check_password():
         max_target = 6500
         current_pct = min(100, (kasa / max_target) * 100)
         m_html = "".join([f"<div class='milestone' style='left:{(t['val']/max_target)*100}%'><div style='font-size:22px;'>{t['icon'] if kasa>=t['val'] else '🔒'}</div><div class='milestone-label'>{t['name']}<br>${t['val']}</div></div>" for t in targets])
-        st.markdown(f"<div class='loot-wrapper'><div class='terminal-header'>HEDEF İLERLEME DURUMU</div><div class='loot-track'><div class='loot-fill' style='width:{current_pct}%'></div>{m_html}</div></div>", unsafe_allow_html=True)
+        st.markdown(f"<div class='loot-wrapper'><div class='terminal-header'>TARGET PROGRESSION</div><div class='loot-track'><div class='loot-fill' style='width:{current_pct}%'></div>{m_html}</div></div>", unsafe_allow_html=True)
         
-        # Kasa & Market
+        # Upper Layout (Kasa ve Market Pulse)
         col1, col2 = st.columns(2)
         with col1:
-            st.markdown(f"""<div class='industrial-card'><div class='terminal-header'>💎 TRADE RADAR V9.0</div><div class='terminal-row'><span>NET KAR/ZARAR</span><span style='color:{'#00ff41' if net_kar >=0 else '#ff4b4b'}; font-size:24px; font-weight:bold;'>${net_kar:,.2f} (%{kar_yuzdesi:.1f})</span></div><div class='terminal-row'><span>GÜNCEL KASA</span><span class='highlight'>${kasa:,.2f}</span></div></div>""", unsafe_allow_html=True)
+            st.markdown(f"""<div class='industrial-card'><div class='terminal-header'>💎 TRADE RADAR V9.5</div><div class='terminal-row'><span>NET KAR/ZARAR</span><span style='color:{'#00ff41' if net_kar >=0 else '#ff4b4b'}; font-size:24px; font-weight:bold;'>${net_kar:,.2f} (%{kar_yuzdesi:.1f})</span></div><div class='terminal-row'><span>GÜNCEL KASA</span><span class='highlight'>${kasa:,.2f}</span></div></div>""", unsafe_allow_html=True)
         
         with col2:
             try:
-                # Market Pulse (Isı Haritası Mantığı)
-                btc_data = yf.Ticker("BTC-USD").history(period="2d")
-                eth_data = yf.Ticker("ETH-USD").history(period="2d")
+                # Market Data (Safe Fetch)
+                btc = yf.Ticker("BTC-USD").history(period="2d")
+                eth = yf.Ticker("ETH-USD").history(period="2d")
                 
-                btc_price = btc_data['Close'].iloc[-1]
-                btc_change = ((btc_price - btc_data['Close'].iloc[-2]) / btc_data['Close'].iloc[-2]) * 100
-                eth_price = eth_data['Close'].iloc[-1]
-                eth_change = ((eth_price - eth_data['Close'].iloc[-2]) / eth_data['Close'].iloc[-2]) * 100
+                b_price = btc['Close'].iloc[-1]
+                b_change = ((b_price - btc['Close'].iloc[-2]) / btc['Close'].iloc[-2]) * 100
+                e_price = eth['Close'].iloc[-1]
+                e_change = ((e_price - eth['Close'].iloc[-2]) / eth['Close'].iloc[-2]) * 100
 
                 st.markdown(f"""
                 <div class='industrial-card'>
                     <div class='terminal-header'>⚡ MARKET PULSE (24H)</div>
-                    <div class='terminal-row'><span>BITCOIN</span><span style='color:{'#00ff41' if btc_change >=0 else '#ff4b4b'}; font-weight:bold;'>${btc_price:,.0f} ({btc_change:+.2f}%)</span></div>
-                    <div class='terminal-row'><span>ETHEREUM</span><span style='color:{'#00ff41' if eth_change >=0 else '#ff4b4b'}; font-weight:bold;'>${eth_price:,.0f} ({eth_change:+.2f}%)</span></div>
+                    <div class='terminal-row'><span>BITCOIN</span><span style='color:{'#00ff41' if b_change >=0 else '#ff4b4b'};'>${b_price:,.0f} ({b_change:+.2f}%)</span></div>
+                    <div class='terminal-row'><span>ETHEREUM</span><span style='color:{'#00ff41' if e_change >=0 else '#ff4b4b'};'>${e_price:,.0f} ({e_change:+.2f}%)</span></div>
                 </div>""", unsafe_allow_html=True)
-            except: st.error("Market data connection lost.")
+            except:
+                st.markdown("<div class='industrial-card'><div class='terminal-header'>⚡ MARKET PULSE</div><div style='color:#ff4b4b'>Syncing market data...</div></div>", unsafe_allow_html=True)
 
-        # Shares Section
+        # Shares
         st.subheader("🎯 Pay Dağılımı")
         cols = st.columns(3)
         for col, user in zip(cols, ["oguzo", "ero7", "fybey"]):
@@ -187,4 +184,4 @@ if check_password():
         df = pd.DataFrame({"Gün": range(sure), "Tahmin ($)": [kasa * ((1 + h_oran/100) ** (d / 7)) for d in range(sure)]})
         st.line_chart(df.set_index("Gün"))
 
-    st.caption(f"OG Core v9.0 | Son Senkronizasyon: {datetime.now().strftime('%H:%M:%S')}")
+    st.caption(f"OG Core v9.5 | Veriler merkezi sistemden çekilmektedir.")
