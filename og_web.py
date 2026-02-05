@@ -179,18 +179,23 @@ if check_password():
         for col, user in zip(cols, ["oguzo", "ero7", "fybey"]):
             col.markdown(f"<div class='industrial-card' style='min-height:140px;'><div class='terminal-header'>{user.upper()}</div><div class='terminal-row'><span>HİSSE</span><span class='highlight'>${kasa/3:,.2f}</span></div><div class='terminal-row'><span>KÂR</span><span>${(net_kar/3):,.2f}</span></div></div>", unsafe_allow_html=True)
 
-        # --- 🕒 SON İŞLEMLER ---
-        st.markdown("<div class='industrial-card' style='min-height:120px;'><div class='terminal-header'>🕒 SON İŞLEMLER</div>", unsafe_allow_html=True)
+        # --- 🕒 SON İŞLEMLER (DÜZELTİLMİŞ KISIM) ---
+        son_islemler_html = "<div class='industrial-card' style='min-height:120px;'><div class='terminal-header'>🕒 SON İŞLEMLER</div>"
+        
         if son_islemler_raw:
             for item in son_islemler_raw.split(','):
                 parts = item.split('|') if '|' in item else item.strip().split(' ')
                 coin = parts[0].strip() if len(parts) > 0 else "?"
                 amount = parts[1].strip() if len(parts) > 1 else ""
-                status = parts[2].strip() if len(parts) > 2 else (parts[1] if len(parts) == 2 else "")
+                status = parts[2].strip() if len(parts) > 2 else (parts[1] if len(parts) == 2 else "✅")
                 color = "#00ff41" if "+" in amount or "+" in coin else "#ff4b4b"
-                st.markdown(f"<div class='terminal-row'><span>{coin}</span><span style='color:{color}; font-weight:bold;'>{amount}</span><span>{status}</span></div>", unsafe_allow_html=True)
-        else: st.markdown("<div style='color:#555; text-align:center; padding:20px;'>İşlem verisi bekleniyor...</div>", unsafe_allow_html=True)
-        st.markdown("</div>", unsafe_allow_html=True)
+                # Satırı HTML stringine ekliyoruz
+                son_islemler_html += f"<div class='terminal-row'><span>{coin}</span><span style='color:{color}; font-weight:bold;'>{amount}</span><span>{status}</span></div>"
+        else: 
+            son_islemler_html += "<div style='color:#555; text-align:center; padding:20px;'>İşlem verisi bekleniyor...</div>"
+        
+        son_islemler_html += "</div>" # Kartı kapatıyoruz
+        st.markdown(son_islemler_html, unsafe_allow_html=True) # Hepsini tek seferde basıyoruz
 
     elif page == "⚽ FORMLINE":
         st.markdown(f"""<div class='industrial-card' style='border-top: 2px solid #cc7a00; min-height:100px;'><div class='terminal-header'>📈 GENEL PERFORMANS</div><div class='terminal-row'><span style='font-size:16px; color:#888;'>NET BAHİS K/Z MİKTARI:</span><span style='color:{'#00ff41' if toplam_bahis_kar >=0 else '#ff4b4b'}; font-size:32px; font-weight:900;'>{'+' if toplam_bahis_kar > 0 else ''}${toplam_bahis_kar:,.2f}</span></div></div>""", unsafe_allow_html=True)
