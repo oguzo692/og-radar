@@ -128,7 +128,17 @@ def check_password():
 # --- 6. ANA UYGULAMA ---
 if check_password():
     st.markdown(custom_css, unsafe_allow_html=True)
-    st.markdown(f'<div class="ticker-wrap"><div class="ticker"><span class="ticker-item">{duyuru_metni}</span><span class="ticker-item">{duyuru_metni}</span></div></div>', unsafe_allow_html=True)
+    
+    # --- LOGO VE TİCKER DÜZENİ ---
+    col_t1, col_t2 = st.columns([0.9, 0.1])
+    with col_t1:
+        st.markdown(f'<div class="ticker-wrap"><div class="ticker"><span class="ticker-item">{duyuru_metni}</span><span class="ticker-item">{duyuru_metni}</span></div></div>', unsafe_allow_html=True)
+    with col_t2:
+        # Buraya kendi logo dosya yolunu yaz kanka
+        try:
+            st.image("logo.png", width=70)
+        except:
+            st.markdown("<div style='color:white; font-size:10px; text-align:right;'>[LOGO]</div>", unsafe_allow_html=True)
 
     with st.sidebar:
         st.markdown("<h2 style='color:#cc7a00; font-family:Orbitron; letter-spacing:4px; text-align:center;'>OG CORE</h2>", unsafe_allow_html=True)
