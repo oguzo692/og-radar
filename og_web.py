@@ -63,16 +63,11 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
 }
 @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
-/* Login Container */
+/* Login */
 .auth-container {
-    padding: 4rem;
-    background: linear-gradient(145deg, rgba(15,15,15,0.95) 0%, rgba(5,5,5,1) 100%);
-    border: 1px solid rgba(204, 122, 0, 0.3);
-    box-shadow: 0 0 60px rgba(0,0,0,1);
-    text-align: center;
-    max-width: 650px;
-    margin: 10vh auto;
-    border-radius: 4px;
+    padding: 4rem; background: linear-gradient(145deg, rgba(15,15,15,0.95) 0%, rgba(5,5,5,1) 100%);
+    border: 1px solid rgba(204, 122, 0, 0.3); box-shadow: 0 0 60px rgba(0,0,0,1);
+    text-align: center; max-width: 650px; margin: 10vh auto; border-radius: 4px;
 }
 .auth-header { font-family: 'Orbitron', sans-serif !important; font-size: 55px; font-weight: 900; color: #ffffff; letter-spacing: 12px; }
 
@@ -80,19 +75,14 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
 .industrial-card { 
     background: rgba(18, 18, 18, 0.7) !important; backdrop-filter: blur(12px);
     border: 1px solid rgba(255, 255, 255, 0.05) !important; border-top: 2px solid rgba(204, 122, 0, 0.4) !important;
-    padding: 20px; margin-bottom: 25px; min-height: 260px; overflow: hidden;
+    padding: 20px; margin-bottom: 25px; min-height: 100px; overflow: hidden;
 }
 
 .terminal-header { color: #888; font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 15px; }
 .terminal-row { display: flex; justify-content: space-between; font-size: 15px; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.02); padding-bottom: 8px; }
 .highlight { color: #cc7a00 !important; font-weight: 700; font-size: 18px; }
-.win { color: #00ff41 !important; font-weight: bold; }
-.loss { color: #ff4b4b !important; font-weight: bold; }
 
-/* Plotly Graph Fix */
-[data-testid="stPlotlyChart"] { margin-top: -15px !important; }
-
-/* Loot/Target Bar */
+/* Progress Bar */
 .loot-wrapper {
     background: rgba(18, 18, 18, 0.8); border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: 4px; padding: 30px 25px 60px 25px; margin-bottom: 30px; position: relative;
@@ -102,21 +92,19 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
 .milestone { position: absolute; top: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; z-index: 10; }
 .milestone-label { position: absolute; top: 25px; font-size: 10px; font-weight: bold; color: #888; text-align: center; white-space: nowrap; }
 
-/* Sidebar & Buttons */
 section[data-testid="stSidebar"] { background-color: #050505 !important; border-right: 1px solid rgba(204, 122, 0, 0.2); }
-div.stButton > button { background: transparent !important; color: #cc7a00 !important; border: 1px solid #cc7a00 !important; border-radius: 0px !important; letter-spacing: 5px !important; height: 50px; width: 100%; transition: 0.3s; }
-div.stButton > button:hover { background: #cc7a00 !important; color: #000 !important; }
+div.stButton > button { background: transparent !important; color: #cc7a00 !important; border: 1px solid #cc7a00 !important; letter-spacing: 5px !important; height: 50px; width: 100%; }
 </style>
 """
 
 # --- 4. HTML ŞABLONLARI ---
 w3_matches = """<div class='terminal-row'><span>Wolfsburg - Bvb</span><span class='highlight'>bvb x2 & 1.5 üst</span></div><div class='terminal-row'><span>Newcastle - Brentford</span><span class='highlight'>newcastle 1.5 üst</span></div><div class='terminal-row'><span>Rizespor - Gala</span><span class='highlight'>gala w & 1.5 üst</span></div><div class='terminal-row'><span>Lıve - Man City</span><span class='highlight'>lıve gol atar</span></div><div class='terminal-row'><span>Fenerbahçe - Gençlerbirliği</span><span class='highlight'>fenerbahçe w & 2.5 üst</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>oran: 8.79</span><span>bet: 100 USD</span></div>"""
-w2_matches = """<div class='terminal-row'><span>Tarih: 1-2 şubat</span><span>Bütçe: 100 usd</span></div><div class='terminal-row'><span>gs - kayserispor</span><span class='win'>iy +0.5 & W & 2+ ✅</span></div><div class='terminal-row'><span>lıve - new</span><span class='win'>+2 & liverpool 1x ✅</span></div><div class='terminal-row'><span>bvb - heidenheim</span><span class='win'>iy +0.5 & W & 2+ ✅</span></div><div class='terminal-row'><span>kocaelispor - fb</span><span class='win'>fb W & 2+ ✅</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>oran: 5.53</span><span>bet: 100 USD</span></div>"""
-w1_matches = """<div class='terminal-row'><span>Tarih: 24-25 ocak</span><span>Bütçe: 100 usd</span></div><div class='terminal-row'><span>karagümrük - gs</span><span class='win'>gs w & +2 ✅</span></div><div class='terminal-row'><span>bournemouth - lıve</span><span class='win'>kg var ✅</span></div><div class='terminal-row'><span>unıon berlin - bvb</span><span class='win'>bvb iy 0.5 üst ✅</span></div><div class='terminal-row'><span>new - aston villa</span><span class='loss'>new +2 ❌</span></div><div class='terminal-row'><span>fb - göztepe</span><span class='loss'>fb w ❌</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>oran: 7.09</span><span>bet: 100 USD</span></div>"""
+w2_matches = """<div class='terminal-row'><span>Tarih: 1-2 şubat</span><span>Bütçe: 100 usd</span></div><div class='terminal-row'><span>gs - kayserispor</span><span style='color:#00ff41;'>iy +0.5 & W & 2+ ✅</span></div><div class='terminal-row'><span>lıve - new</span><span style='color:#00ff41;'>+2 & liverpool 1x ✅</span></div><div class='terminal-row'><span>bvb - heidenheim</span><span style='color:#00ff41;'>iy +0.5 & W & 2+ ✅</span></div><div class='terminal-row'><span>kocaelispor - fb</span><span style='color:#00ff41;'>fb W & 2+ ✅</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>oran: 5.53</span><span>bet: 100 USD</span></div>"""
+w1_matches = """<div class='terminal-row'><span>Tarih: 24-25 ocak</span><span>Bütçe: 100 usd</span></div><div class='terminal-row'><span>karagümrük - gs</span><span style='color:#00ff41;'>gs w & +2 ✅</span></div><div class='terminal-row'><span>bournemouth - lıve</span><span style='color:#00ff41;'>kg var ✅</span></div><div class='terminal-row'><span>unıon berlin - bvb</span><span style='color:#00ff41;'>bvb iy 0.5 üst ✅</span></div><div class='terminal-row'><span>new - aston villa</span><span style='color:#ff4b4b;'>new +2 ❌</span></div><div class='terminal-row'><span>fb - göztepe</span><span style='color:#ff4b4b;'>fb w ❌</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>oran: 7.09</span><span>bet: 100 USD</span></div>"""
 
 w3_coupon_html = f"<div class='industrial-card'><div class='terminal-header'>🔥 W3 KUPONU (AKTİF)</div>{w3_matches}<span style='color:#cc7a00'>BEKLENİYOR ⏳</span></div>"
-w2_coupon_html = f"<div class='industrial-card' style='border-top-color: #00ff41 !important; min-height:auto;'><div class='terminal-header' style='color:#00ff41;'>✅ W2 KUPONU (1-2 ŞUBAT)</div>{w2_matches}<span class='win'>SONUÇLANDI ✅</span></div>"
-w1_coupon_html = f"<div class='industrial-card' style='border-top-color: #ff4b4b !important; min-height:auto;'><div class='terminal-header' style='color:#ff4b4b;'>❌ W1 KUPONU (24-25 OCAK)</div>{w1_matches}<span class='loss'>SONUÇLANDI ❌</span></div>"
+w2_coupon_html = f"<div class='industrial-card' style='border-top-color: #00ff41 !important;'><div class='terminal-header' style='color:#00ff41;'>✅ W2 KUPONU (1-2 ŞUBAT)</div>{w2_matches}<span style='color:#00ff41;'>SONUÇLANDI ✅</span></div>"
+w1_coupon_html = f"<div class='industrial-card' style='border-top-color: #ff4b4b !important;'><div class='terminal-header' style='color:#ff4b4b;'>❌ W1 KUPONU (24-25 OCAK)</div>{w1_matches}<span style='color:#ff4b4b;'>SONUÇLANDI ❌</span></div>"
 
 # --- 5. GÜVENLİK ---
 if "password_correct" not in st.session_state:
@@ -165,38 +153,46 @@ if check_password():
         m_html = "".join([f"<div class='milestone' style='left:{(t['val']/max_target)*100}%'><div style='font-size:22px;'>{t['icon'] if kasa>=t['val'] else '🔒'}</div><div class='milestone-label'>{t['name']}<br>${t['val']}</div></div>" for t in targets])
         st.markdown(f"<div class='loot-wrapper'><div class='terminal-header'>TARGET PROGRESSION</div><div class='loot-track'><div class='loot-fill' style='width:{current_pct}%'></div>{m_html}</div></div>", unsafe_allow_html=True)
         
-        # Layout
-        col_stats, col_graph = st.columns([1, 1.3])
-        
-        with col_stats:
-            st.markdown(f"""
-            <div class='industrial-card'>
-                <div class='terminal-header'>💎 OG TRADE RADAR — V8.8</div>
-                <div class='terminal-row'><span style='color:#888;'>NET KAR/ZARAR</span><span style='color:{'#00ff41' if net_kar >=0 else '#ff4b4b'}; font-size:22px; font-weight:900;'>${net_kar:,.2f} (%{kar_yuzdesi:.1f})</span></div>
-                <div class='terminal-row' style='font-size:18px;'><span style='color:#888;'>TOPLAM KASA</span><span class='highlight'>${kasa:,.2f}</span></div>
-            </div>
-            """, unsafe_allow_html=True)
-        
-        with col_graph:
-            # Grafik Kartı (Boşluksuz versiyon)
-            st.markdown("<div class='industrial-card'><div class='terminal-header'>📉 EQUITY CURVE (PRO)</div>", unsafe_allow_html=True)
-            fig = go.Figure()
-            fig.add_trace(go.Scatter(y=gecmis_liste, mode='lines+markers', line=dict(color='#cc7a00', width=4), marker=dict(size=8, color='#ffae00', line=dict(color='#030303', width=1)), fill='tozeroy', fillcolor='rgba(204, 122, 0, 0.1)'))
-            fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', margin=dict(l=0, r=0, t=10, b=0), height=190, xaxis=dict(showgrid=False, showticklabels=False, zeroline=False), yaxis=dict(showgrid=True, gridcolor='rgba(255,255,255,0.05)', tickfont=dict(color='#888', size=10), zeroline=False))
-            st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
-            st.markdown("</div>", unsafe_allow_html=True)
+        # Upper Stats Section
+        col1, col2 = st.columns(2)
+        with col1:
+            st.markdown(f"""<div class='industrial-card'><div class='terminal-header'>💎 OG TRADE RADAR</div><div class='terminal-row'><span>NET KAR/ZARAR</span><span style='color:{'#00ff41' if net_kar >=0 else '#ff4b4b'}; font-size:22px;'>${net_kar:,.2f} (%{kar_yuzdesi:.1f})</span></div><div class='terminal-row'><span>TOPLAM KASA</span><span class='highlight'>${kasa:,.2f}</span></div></div>""", unsafe_allow_html=True)
+        with col2:
+            try:
+                btc = yf.Ticker("BTC-USD").history(period="1d")['Close'].iloc[-1]
+                eth = yf.Ticker("ETH-USD").history(period="1d")['Close'].iloc[-1]
+                st.markdown(f"<div class='industrial-card'><div class='terminal-header'>GÜNCEL FİYATLAR</div><div class='terminal-row'><span>BITCOIN</span><span class='highlight'>${btc:,.2f}</span></div><div class='terminal-row'><span>ETHEREUM</span><span>${eth:,.2f}</span></div></div>", unsafe_allow_html=True)
+            except: st.error("Market data link lost.")
 
-        try:
-            btc = yf.Ticker("BTC-USD").history(period="1d")['Close'].iloc[-1]
-            eth = yf.Ticker("ETH-USD").history(period="1d")['Close'].iloc[-1]
-            sol = yf.Ticker("SOL-USD").history(period="1d")['Close'].iloc[-1]
-            st.markdown(f"<div class='industrial-card' style='min-height:auto;'><div class='terminal-header'>GÜNCEL FİYATLAR</div><div class='terminal-row'><span>BITCOIN</span><span class='highlight'>${btc:,.2f}</span></div><div class='terminal-row'><span>ETHEREUM</span><span>${eth:,.2f}</span></div><div class='terminal-row'><span>SOLANA</span><span>${sol:,.2f}</span></div></div>", unsafe_allow_html=True)
-        except: st.error("Market data link lost.")
-
+        # Shares Section
         st.subheader("🎯 Pay Dağılımı")
         cols = st.columns(3)
         for col, user in zip(cols, ["oguzo", "ero7", "fybey"]):
-            col.markdown(f"<div class='industrial-card' style='min-height:auto;'><div class='terminal-header'>{user.upper()}</div><div class='terminal-row'><span>SHARE</span><span class='highlight'>${kasa/3:,.2f}</span></div><div class='terminal-row'><span>PROFIT</span><span>${(net_kar/3):,.2f}</span></div></div>", unsafe_allow_html=True)
+            col.markdown(f"<div class='industrial-card'><div class='terminal-header'>{user.upper()}</div><div class='terminal-row'><span>SHARE</span><span class='highlight'>${kasa/3:,.2f}</span></div><div class='terminal-row'><span>PROFIT</span><span>${(net_kar/3):,.2f}</span></div></div>", unsafe_allow_html=True)
+
+        # --- 📉 SAYFA ALTI GRAFİK (FULL WIDTH) ---
+        st.divider()
+        st.markdown("<div class='industrial-card' style='min-height:350px;'><div class='terminal-header'>📊 KASA GELİŞİM SEYRİ (EQUITY CURVE)</div>", unsafe_allow_html=True)
+        
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(
+            y=gecmis_liste, 
+            mode='lines+markers',
+            line=dict(color='#cc7a00', width=4),
+            marker=dict(size=8, color='#ffae00', line=dict(color='#030303', width=1)),
+            fill='tozeroy',
+            fillcolor='rgba(204, 122, 0, 0.1)'
+        ))
+        fig.update_layout(
+            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor='rgba(0,0,0,0)',
+            margin=dict(l=0, r=0, t=20, b=0),
+            height=300,
+            xaxis=dict(showgrid=False, showticklabels=False, zeroline=False),
+            yaxis=dict(showgrid=True, gridcolor='rgba(255,255,255,0.05)', tickfont=dict(color='#888', size=10), zeroline=False)
+        )
+        st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+        st.markdown("</div>", unsafe_allow_html=True)
 
     elif page == "⚽ Formlıne":
         st.title("⚽ FORMLINE")
