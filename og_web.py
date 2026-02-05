@@ -44,17 +44,24 @@ custom_css = """
 /* Üst Barı Gizleme */
 #MainMenu, footer, header, .stAppDeployButton {visibility: hidden;}
 
+/* ANA ARKAPLAN VE SEKME DÜZENLEMESİ */
 .stApp { 
     background-color: #030303 !important;
     background-image: radial-gradient(circle at 50% 50%, rgba(204, 122, 0, 0.05) 0%, transparent 60%);
 }
 
-/* Formline Sekmelerindeki Arkaplan Farklılığını Giderme */
-div[data-testid="stTabContent"] {
+/* Tüm Sekme (Tab) Bileşenlerini Zorla Şeffaf Yapma */
+div[data-testid="stExpander"], div[data-testid="stTabContent"], div[data-testid="stTabs"], .stTabs, [data-baseweb="tab-panel"] {
     background-color: transparent !important;
 }
-div[data-testid="stTabs"] {
+
+[data-baseweb="tab-list"] {
     background-color: transparent !important;
+}
+
+[data-baseweb="tab"] {
+    background-color: transparent !important;
+    border-radius: 4px 4px 0 0 !important;
 }
 
 body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, span, h1, h2, h3, button, input { 
@@ -85,7 +92,7 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
     background: rgba(18, 18, 18, 0.8) !important; backdrop-filter: blur(15px);
     border: 1px solid rgba(255, 255, 255, 0.05) !important; border-top: 2px solid rgba(204, 122, 0, 0.5) !important;
     padding: 15px; margin-bottom: 25px; border-radius: 4px; 
-    height: 210px !important; /* KUTULARI EŞİTLEYEN SABİT YÜKSEKLİK */
+    height: 210px !important; 
 }
 
 .terminal-header { 
