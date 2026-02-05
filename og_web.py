@@ -36,7 +36,7 @@ toplam_bahis_kar = w1_kar + w2_kar
 wr_oran = live_vars.get("win_rate", "0")
 son_islemler_raw = str(live_vars.get("son_islemler", ""))
 
-# --- 3. CSS STİLLERİ (REVİZE EDİLDİ) ---
+# --- 3. CSS STİLLERİ ---
 custom_css = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&family=Orbitron:wght@400;700;900&display=swap');
@@ -60,9 +60,6 @@ div[data-testid="stWidgetLabel"] p {
     font-size: 11px !important;
     letter-spacing: 2px;
     color: #888 !important;
-    margin-bottom: 10px !important;
-    line-height: 1.5 !important;
-    position: relative !important;
 }
 
 [data-testid="stSidebar"] label {
@@ -71,26 +68,12 @@ div[data-testid="stWidgetLabel"] p {
     padding: 12px 15px !important;
     border-radius: 4px;
     margin-bottom: 8px !important;
-    display: flex !important;
-    align-items: center !important;
-    min-height: 50px !important;
-    position: relative !important;
 }
 
-/* HATA DÜZELTME: "arrow_right" gibi bozuk ikon metinlerini temizle */
+/* Sidebar ikon metni hatalarını gizle */
+[data-testid="stSidebar"] span[data-testid="stHeaderActionElements"], 
 [data-testid="stSidebar"] label span {
-    font-size: 0 !important;
     display: none !important;
-}
-
-/* Radio text kayma engelleme */
-[data-testid="stSidebar"] label div[data-testid="stMarkdownContainer"] p {
-    margin: 0 !important;
-    line-height: 1.2 !important;
-    font-size: 14px !important;
-    color: inherit !important;
-    display: block !important;
-    position: relative !important;
 }
 
 [data-baseweb="tab-highlight"] { background-color: #cc7a00 !important; }
@@ -132,7 +115,6 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input {
 .highlight { color: #cc7a00 !important; font-weight: 800; font-size: 19px; font-family: 'Orbitron'; }
 .val-std { font-size: 22px !important; font-weight: 800 !important; font-family: 'Orbitron'; }
 
-/* Buton Düzeltmeleri */
 .stButton button, .stLinkButton a {
     width: 100% !important;
     background: rgba(204, 122, 0, 0.1) !important;
@@ -140,14 +122,7 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input {
     color: #cc7a00 !important;
     font-family: 'Orbitron' !important;
     padding: 10px !important;
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
     text-decoration: none !important;
-}
-.stButton button:hover, .stLinkButton a:hover {
-    background: #cc7a00 !important;
-    color: black !important;
 }
 </style>
 """
@@ -196,10 +171,11 @@ if check_password():
         
         st.markdown("<div style='margin-top: 30px;'></div>", unsafe_allow_html=True)
         
-        # --- ŞİFRELİ ADMİN PANELİ ---
+        # --- GÜNCELLENEN ADMİN PANELİ ---
         with st.expander("📂 ADMİN PANELİ"):
-            admin_pwd = st.text_input("PANEL ŞİFRESİ", type="password", key="admin_pwd")
-            if admin_pwd == "fybey16":
+            admin_pwd = st.text_input("PANEL ŞİFRESİ", type="password", key="admin_key")
+            if admin_pwd == "fybey":
+                st.success("ERİŞİM ONAYLANDI")
                 st.link_button("VERİ TABANINA GİT", "https://docs.google.com/spreadsheets/d/15izevdpRjs8Om5BAHKVWmdL3FxEHml35DGECfhQUG_s/edit")
             elif admin_pwd:
                 st.error("HATALI ŞİFRE")
@@ -241,7 +217,8 @@ if check_password():
         if son_islemler_raw:
             for item in son_islemler_raw.split(','):
                 parts = item.split('|') if '|' in item else item.strip().split(' ')
-                son_islemler_html += f"<div class='terminal-row' style='font-size:12px;'><span>{parts[0]}</span><span style='color:#cc7a00;'>{parts[1] if len(parts)>1 else ''}</span></div>"
+                if len(parts) >= 2:
+                    son_islemler_html += f"<div class='terminal-row' style='font-size:12px;'><span>{parts[0]}</span><span style='color:#cc7a00;'>{parts[1]}</span></div>"
         son_islemler_html += "</div>"
         st.markdown(son_islemler_html, unsafe_allow_html=True)
 
@@ -254,7 +231,7 @@ if check_password():
 
     elif page == "📊 SİMÜLASYON":
         st.markdown("<div class='industrial-card'><div class='terminal-header'>GELECEK TAHMİNİ</div></div>", unsafe_allow_html=True)
-        df = pd.DataFrame({"Gün": range(30), "Tahmin ($)": [kasa * (1.05 ** (d / 7)) for d in range(30)]})
-        st.line_chart(df.set_index("Gün"))
+        sim_df = pd.DataFrame({"Gün": range(30), "Tahmin ($)": [kasa * (1.05 ** (d / 7)) for d in range(30)]})
+        st.line_chart(sim_df.set_index("Gün"))
 
     st.markdown(f"<div style='text-align:center; color:#444; font-size:10px; margin-top:50px;'>ÇEKİRDEK_MOTOR_V9.9 // {datetime.now().year} // ŞİFRELİ_BAĞLANTI</div>", unsafe_allow_html=True)
