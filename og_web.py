@@ -76,7 +76,8 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
 .industrial-card { 
     background: rgba(18, 18, 18, 0.8) !important; backdrop-filter: blur(15px);
     border: 1px solid rgba(255, 255, 255, 0.05) !important; border-top: 2px solid rgba(204, 122, 0, 0.5) !important;
-    padding: 22px; margin-bottom: 25px; border-radius: 4px; min-height: 140px;
+    padding: 22px; margin-bottom: 25px; border-radius: 4px; 
+    height: 250px !important; /* KUTULARI EŞİTLEYEN SABİT YÜKSEKLİK */
 }
 
 .terminal-header { 
@@ -89,7 +90,6 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
     border-bottom: 1px solid rgba(255,255,255,0.02); padding-bottom: 8px; 
 }
 
-/* Sayı boyutlarını standartlaştıran class */
 .val-std { font-size: 22px !important; font-weight: 700 !important; }
 
 .highlight { color: #cc7a00 !important; font-weight: 700; font-size: 22px; }
@@ -165,17 +165,14 @@ if check_password():
         
         with col2:
             try:
-                # BTC, ETH ve SOL verilerini çekiyoruz
                 btc = yf.Ticker("BTC-USD").history(period="2d")
                 eth = yf.Ticker("ETH-USD").history(period="2d")
                 sol = yf.Ticker("SOL-USD").history(period="2d")
                 
                 b_price = btc['Close'].iloc[-1]
                 b_change = ((b_price - btc['Close'].iloc[-2]) / btc['Close'].iloc[-2]) * 100
-                
                 e_price = eth['Close'].iloc[-1]
                 e_change = ((e_price - eth['Close'].iloc[-2]) / eth['Close'].iloc[-2]) * 100
-                
                 s_price = sol['Close'].iloc[-1]
                 s_change = ((s_price - sol['Close'].iloc[-2]) / sol['Close'].iloc[-2]) * 100
                 
@@ -190,15 +187,15 @@ if check_password():
                 st.markdown("<div class='industrial-card'>Piyasa verileri senkronize ediliyor...</div>", unsafe_allow_html=True)
             
         with col3:
-            st.markdown(f"""<div class='industrial-card'><div class='terminal-header'>📊 İŞLEM BAŞARISI</div><div style='text-align:center; padding: 5px 0;'><span style='font-size:55px; font-weight:900; color:#cc7a00; text-shadow: 0 0 15px rgba(204,122,0,0.4);'>%{wr_oran}</span><div style='font-size:11px; color:#888; letter-spacing:2px; margin-top:5px;'>TOPLAM BAŞARI ORANI</div></div></div>""", unsafe_allow_html=True)
+            st.markdown(f"""<div class='industrial-card'><div class='terminal-header'>📊 İŞLEM BAŞARISI</div><div style='text-align:center; padding-top: 20px;'><span style='font-size:55px; font-weight:900; color:#cc7a00; text-shadow: 0 0 15px rgba(204,122,0,0.4);'>%{wr_oran}</span><div style='font-size:11px; color:#888; letter-spacing:2px; margin-top:10px;'>TOPLAM BAŞARI ORANI</div></div></div>""", unsafe_allow_html=True)
 
         st.subheader("🎯 Pay Dağılımı")
         cols = st.columns(3)
         for col, user in zip(cols, ["oguzo", "ero7", "fybey"]):
-            col.markdown(f"<div class='industrial-card' style='min-height:140px;'><div class='terminal-header'>{user.upper()}</div><div class='terminal-row'><span>HİSSE</span><span class='highlight'>${kasa/3:,.2f}</span></div><div class='terminal-row'><span>KÂR</span><span style='font-size:18px;'>${(net_kar/3):,.2f}</span></div></div>", unsafe_allow_html=True)
+            col.markdown(f"<div class='industrial-card' style='height:160px !important;'><div class='terminal-header'>{user.upper()}</div><div class='terminal-row'><span>HİSSE</span><span class='highlight'>${kasa/3:,.2f}</span></div><div class='terminal-row'><span>KÂR</span><span style='font-size:18px;'>${(net_kar/3):,.2f}</span></div></div>", unsafe_allow_html=True)
 
         # --- 🕒 SON İŞLEMLER ---
-        son_islemler_html = "<div class='industrial-card' style='min-height:120px;'><div class='terminal-header'>🕒 SON İŞLEMLER</div>"
+        son_islemler_html = "<div class='industrial-card' style='height:auto !important; min-height:120px;'><div class='terminal-header'>🕒 SON İŞLEMLER</div>"
         
         if son_islemler_raw:
             for item in son_islemler_raw.split(','):
@@ -215,7 +212,7 @@ if check_password():
         st.markdown(son_islemler_html, unsafe_allow_html=True)
 
     elif page == "⚽ FORMLINE":
-        st.markdown(f"""<div class='industrial-card' style='border-top: 2px solid #cc7a00; min-height:100px;'><div class='terminal-header'>📈 GENEL PERFORMANS</div><div class='terminal-row'><span style='font-size:16px; color:#888;'>NET BAHİS K/Z MİKTARI:</span><span style='color:{'#00ff41' if toplam_bahis_kar >=0 else '#ff4b4b'}; font-size:32px; font-weight:900;'>{'+' if toplam_bahis_kar > 0 else ''}${toplam_bahis_kar:,.2f}</span></div></div>""", unsafe_allow_html=True)
+        st.markdown(f"""<div class='industrial-card' style='border-top: 2px solid #cc7a00; height:120px !important;'><div class='terminal-header'>📈 GENEL PERFORMANS</div><div class='terminal-row'><span style='font-size:16px; color:#888;'>NET BAHİS K/Z MİKTARI:</span><span style='color:{'#00ff41' if toplam_bahis_kar >=0 else '#ff4b4b'}; font-size:32px; font-weight:900;'>{'+' if toplam_bahis_kar > 0 else ''}${toplam_bahis_kar:,.2f}</span></div></div>""", unsafe_allow_html=True)
         t1, t2, t3 = st.tabs(["⏳ AKTİF (W3)", "✅ KAZANAN (W2)", "❌ KAYBEDEN (W1)"])
         with t1: st.markdown(w3_coupon_html, unsafe_allow_html=True)
         with t2: st.markdown(w2_coupon_html, unsafe_allow_html=True)
