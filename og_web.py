@@ -36,7 +36,7 @@ toplam_bahis_kar = w1_kar + w2_kar
 wr_oran = live_vars.get("win_rate", "0")
 son_islemler_raw = str(live_vars.get("son_islemler", ""))
 
-# --- 3. CSS STİLLERİ (SABİTLEME VE TEMİZLİK EKLENDİ) ---
+# --- 3. CSS STİLLERİ (TAM EŞİTLEME VE GÖRSEL REVİZE) ---
 custom_css = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&family=Orbitron:wght@400;700;900&display=swap');
@@ -48,73 +48,82 @@ custom_css = """
     background-image: radial-gradient(circle at 50% 50%, rgba(204, 122, 0, 0.07) 0%, transparent 70%);
 }
 
-/* --- SIDEBAR SABİTLEME VE BUTON GİZLEME --- */
+/* --- SIDEBAR SABİTLEME VE KUTU EŞİTLEME --- */
 section[data-testid="stSidebar"] {
     background-color: #050505 !important;
     border-right: 1px solid rgba(204, 122, 0, 0.15);
     padding-top: 20px;
-    min-width: 320px !important;
-    max-width: 320px !important;
+    min-width: 340px !important;
+    max-width: 340px !important;
 }
 
-/* Sidebar açma-kapama butonunu tamamen yok eder */
-button[data-testid="sidebar-button"] {
-    display: none !important;
+button[data-testid="sidebar-button"] { display: none !important; }
+
+/* Kutuların Genişlik ve Hizalamasını Sabitle */
+[data-testid="stSidebar"] .stVerticalBlock {
+    gap: 0.8rem !important;
 }
 
-/* Sidebar içindeki gereksiz ikon yazılarını ve ham metinleri gizler */
-[data-testid="stSidebar"] summary svg, 
-[data-testid="stSidebar"] [data-testid="stHeaderActionElements"] {
-    display: none !important;
-}
-
-/* Expander başlığındaki bozuk ok metinlerini siler */
-[data-testid="stSidebar"] summary span {
-    font-size: 0 !important;
-    color: transparent !important;
-}
-
-[data-testid="stSidebar"] label div[data-testid="stMarkdownContainer"] p {
-    font-size: 14px !important;
-    margin: 0 !important;
-}
-
-div[data-testid="stWidgetLabel"] p {
-    font-family: 'Orbitron', sans-serif !important;
-    font-size: 11px !important;
-    letter-spacing: 2px;
-    color: #888 !important;
-    margin-bottom: 10px !important;
-}
-
+/* Radio Buton Kutularını Eşitle */
 [data-testid="stSidebar"] label {
     background: rgba(255, 255, 255, 0.02) !important;
     border: 1px solid rgba(255, 255, 255, 0.05) !important;
-    padding: 12px 15px !important;
-    border-radius: 4px;
-    margin-bottom: 8px !important;
+    padding: 15px !important;
+    border-radius: 6px !important;
+    width: 100% !important;
+    margin-bottom: 0px !important;
+    display: flex !important;
+    align-items: center !important;
+    transition: all 0.3s ease;
 }
 
-[data-baseweb="tab-highlight"] { background-color: #cc7a00 !important; }
-[aria-selected="true"] { color: #cc7a00 !important; font-weight: bold !important; }
+[data-testid="stSidebar"] label:hover {
+    border-color: rgba(204, 122, 0, 0.3) !important;
+    background: rgba(204, 122, 0, 0.05) !important;
+}
 
+/* Expander (Admin Paneli) Kutusunu Eşitle */
+[data-testid="stSidebar"] .stExpander {
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    background: rgba(255, 255, 255, 0.02) !important;
+    border-radius: 6px !important;
+    overflow: hidden !important;
+    width: 100% !important;
+}
+
+[data-testid="stSidebar"] summary {
+    padding: 15px !important;
+}
+
+/* Gereksiz İkon Metin Temizliği */
+[data-testid="stSidebar"] summary svg { display: none !important; }
+[data-testid="stSidebar"] summary span:not(:has(p)) { font-size: 0 !important; color: transparent !important; }
+
+/* Butonları Eşitle */
+.stButton button, .stLinkButton a {
+    width: 100% !important;
+    background: rgba(204, 122, 0, 0.1) !important;
+    border: 1px solid rgba(204, 122, 0, 0.3) !important;
+    color: #cc7a00 !important;
+    font-family: 'Orbitron' !important;
+    padding: 12px !important;
+    border-radius: 6px !important;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.stButton button:hover {
+    background: #cc7a00 !important;
+    color: black !important;
+}
+
+/* Genel Fontlar */
 body, [data-testid="stAppViewContainer"], p, div, span, button, input { 
     font-family: 'JetBrains Mono', monospace !important; 
     color: #d1d1d1 !important;
 }
 
-.ticker-wrap {
-    width: 100%; overflow: hidden; background: rgba(204, 122, 0, 0.03);
-    border-bottom: 1px solid rgba(204, 122, 0, 0.2); padding: 10px 0;
-    margin-bottom: 25px;
-}
-.ticker { display: flex; white-space: nowrap; animation: ticker 30s linear infinite; }
-.ticker-item {
-    font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #cc7a00;
-    text-transform: uppercase; letter-spacing: 4px; padding-right: 50%;
-}
-@keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
-
+/* Kart Tasarımı */
 .industrial-card { 
     background: linear-gradient(145deg, rgba(15, 15, 15, 0.9), rgba(5, 5, 5, 1)) !important;
     border: 1px solid rgba(255, 255, 255, 0.03) !important;
@@ -127,22 +136,17 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input {
     margin-bottom: 18px; border-left: 3px solid #cc7a00; padding-left: 12px;
 }
 
-.terminal-row { 
-    display: flex; justify-content: space-between; align-items: center; font-size: 14px; margin-bottom: 10px; 
-}
-
 .highlight { color: #cc7a00 !important; font-weight: 800; font-size: 19px; font-family: 'Orbitron'; }
 .val-std { font-size: 22px !important; font-weight: 800 !important; font-family: 'Orbitron'; }
 
-.stButton button, .stLinkButton a {
-    width: 100% !important;
-    background: rgba(204, 122, 0, 0.1) !important;
-    border: 1px solid rgba(204, 122, 0, 0.3) !important;
-    color: #cc7a00 !important;
-    font-family: 'Orbitron' !important;
-    padding: 10px !important;
-    text-decoration: none !important;
+/* Ticker */
+.ticker-wrap {
+    width: 100%; overflow: hidden; background: rgba(204, 122, 0, 0.03);
+    border-bottom: 1px solid rgba(204, 122, 0, 0.2); padding: 10px 0; margin-bottom: 25px;
 }
+.ticker { display: flex; white-space: nowrap; animation: ticker 30s linear infinite; }
+.ticker-item { font-size: 12px; color: #cc7a00; letter-spacing: 4px; padding-right: 50%; }
+@keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 </style>
 """
 
@@ -180,12 +184,14 @@ if check_password():
     st.markdown(f'<div class="ticker-wrap"><div class="ticker"><span class="ticker-item">{duyuru_metni}</span><span class="ticker-item">{duyuru_metni}</span></div></div>', unsafe_allow_html=True)
 
     with st.sidebar:
-        st.markdown("<h1 style='color:white; font-family:Orbitron; font-size:22px; letter-spacing:5px; text-align:center; margin-bottom:30px;'>OG CORE</h1>", unsafe_allow_html=True)
+        st.markdown("<h1 style='color:white; font-family:Orbitron; font-size:24px; letter-spacing:5px; text-align:center; margin-bottom:40px;'>OG CORE</h1>", unsafe_allow_html=True)
+        
+        # Radio butonlar artık tam kutu ve eşit genişlikte
         page = st.radio("SİSTEM MODÜLLERİ", ["⚡ ULTRA ATAK", "⚽ KUPONLAR", "📊 SİMÜLASYON"])
         
-        st.markdown("<div style='margin-top: 30px;'></div>", unsafe_allow_html=True)
+        st.markdown("<div style='margin-top: 20px;'></div>", unsafe_allow_html=True)
         
-        # --- ADMİN PANELİ ---
+        # Admin Paneli Expander (Genişliği diğerleriyle eşitlendi)
         with st.expander("📂 ADMİN PANELİ"):
             admin_pwd = st.text_input("PANEL ŞİFRESİ", type="password", key="admin_access_key")
             if admin_pwd == "fybey":
@@ -193,6 +199,8 @@ if check_password():
             elif admin_pwd:
                 st.error("HATALI ŞİFRE")
 
+        st.markdown("<div style='margin-top: 10px;'></div>", unsafe_allow_html=True)
+        
         if st.button("ÇIKIŞ"): 
             st.session_state["password_correct"] = False
             st.rerun()
