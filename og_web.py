@@ -36,7 +36,7 @@ toplam_bahis_kar = w1_kar + w2_kar
 wr_oran = live_vars.get("win_rate", "0")
 son_islemler_raw = str(live_vars.get("son_islemler", ""))
 
-# --- 3. CSS STİLLERİ (GİZLEME İKONU DÜZELTİLDİ) ---
+# --- 3. CSS STİLLERİ ---
 custom_css = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&family=Orbitron:wght@400;700;900&display=swap');
@@ -48,7 +48,6 @@ custom_css = """
     background-image: radial-gradient(circle at 50% 50%, rgba(204, 122, 0, 0.07) 0%, transparent 70%);
 }
 
-/* --- SIDEBAR AYARLARI --- */
 section[data-testid="stSidebar"] {
     background-color: #050505 !important;
     border-right: 1px solid rgba(204, 122, 0, 0.15);
@@ -57,15 +56,12 @@ section[data-testid="stSidebar"] {
     max-width: 340px !important;
 }
 
-/* --- GİZLEME İKONU GÖRÜNÜRLÜK AYARI --- */
-/* İkonun rengini turuncu yap ve görünür kıl */
 button[kind="headerNoPadding"] svg {
     fill: #cc7a00 !important;
     width: 30px !important;
     height: 30px !important;
 }
 
-/* --- HAM METİN TEMİZLİĞİ --- */
 [data-testid="stSidebar"] summary svg, 
 [data-testid="stSidebar"] [data-testid="stHeaderActionElements"] {
     display: none !important;
@@ -188,7 +184,7 @@ if check_password():
         page = st.radio("SİSTEM MODÜLLERİ", ["⚡ ULTRA ATAK", "⚽ KUPONLAR", "📊 SİMÜLASYON"])
         st.markdown("<div style='margin-top: 20px;'></div>", unsafe_allow_html=True)
         
-        with st.expander("📂 ADMİN PANELİ"):
+        with st.expander("📂 ADMİN"):
             admin_pwd = st.text_input("PANEL ŞİFRESİ", type="password", key="admin_access_key")
             if admin_pwd == "fybey":
                 st.link_button("VERİ TABANINA GİT", "https://docs.google.com/spreadsheets/d/15izevdpRjs8Om5BAHKVWmdL3FxEHml35DGECfhQUG_s/edit")
@@ -240,7 +236,7 @@ if check_password():
 
     elif page == "⚽ KUPONLAR":
         st.markdown(f"<div class='industrial-card' style='border-top: 2px solid #cc7a00;'><div class='terminal-header'>📈 PERFORMANS</div><div class='terminal-row'><span>NET KAZANÇ:</span><span style='color:{'#00ff41' if toplam_bahis_kar >=0 else '#ff4b4b'}; font-size:32px; font-weight:900; font-family:Orbitron;'>${toplam_bahis_kar:,.2f}</span></div></div>", unsafe_allow_html=True)
-        t1, t2, t3 = st.tabs(["⏳ AKTİF", "✅ KAZANANLAR", "❌ KAYBEDENLER"])
+        t1, t2, t3 = st.tabs(["⏳ W3 (AKTİF)", "✅ W2 (KAZANANLAR)", "❌ W1 (KAYBEDENLER)"])
         with t1: st.markdown(w3_coupon_html, unsafe_allow_html=True)
         with t2: st.markdown(w2_coupon_html, unsafe_allow_html=True)
         with t3: st.markdown(w1_coupon_html, unsafe_allow_html=True)
