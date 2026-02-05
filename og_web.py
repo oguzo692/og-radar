@@ -165,14 +165,29 @@ if check_password():
         
         with col2:
             try:
+                # BTC, ETH ve SOL verilerini çekiyoruz
                 btc = yf.Ticker("BTC-USD").history(period="2d")
                 eth = yf.Ticker("ETH-USD").history(period="2d")
+                sol = yf.Ticker("SOL-USD").history(period="2d")
+                
                 b_price = btc['Close'].iloc[-1]
                 b_change = ((b_price - btc['Close'].iloc[-2]) / btc['Close'].iloc[-2]) * 100
+                
                 e_price = eth['Close'].iloc[-1]
                 e_change = ((e_price - eth['Close'].iloc[-2]) / eth['Close'].iloc[-2]) * 100
-                st.markdown(f"""<div class='industrial-card'><div class='terminal-header'>⚡ PİYASA NABZI</div><div class='terminal-row'><span>BITCOIN</span><span style='color:{'#00ff41' if b_change >=0 else '#ff4b4b'}; font-size:16px;'>${b_price:,.0f} ({b_change:+.2f}%)</span></div><div class='terminal-row'><span>ETHEREUM</span><span style='color:{'#00ff41' if e_change >=0 else '#ff4b4b'}; font-size:16px;'>${e_price:,.0f} ({e_change:+.2f}%)</span></div></div>""", unsafe_allow_html=True)
-            except: st.markdown("<div class='industrial-card'>Piyasa verileri senkronize ediliyor...</div>", unsafe_allow_html=True)
+                
+                s_price = sol['Close'].iloc[-1]
+                s_change = ((s_price - sol['Close'].iloc[-2]) / sol['Close'].iloc[-2]) * 100
+                
+                st.markdown(f"""
+                <div class='industrial-card'>
+                    <div class='terminal-header'>⚡ PİYASA NABZI</div>
+                    <div class='terminal-row'><span>BITCOIN</span><span style='color:{'#00ff41' if b_change >=0 else '#ff4b4b'}; font-size:16px;'>${b_price:,.0f} ({b_change:+.2f}%)</span></div>
+                    <div class='terminal-row'><span>ETHEREUM</span><span style='color:{'#00ff41' if e_change >=0 else '#ff4b4b'}; font-size:16px;'>${e_price:,.0f} ({e_change:+.2f}%)</span></div>
+                    <div class='terminal-row'><span>SOLANA</span><span style='color:{'#00ff41' if s_change >=0 else '#ff4b4b'}; font-size:16px;'>${s_price:,.2f} ({s_change:+.2f}%)</span></div>
+                </div>""", unsafe_allow_html=True)
+            except: 
+                st.markdown("<div class='industrial-card'>Piyasa verileri senkronize ediliyor...</div>", unsafe_allow_html=True)
             
         with col3:
             st.markdown(f"""<div class='industrial-card'><div class='terminal-header'>📊 İŞLEM BAŞARISI</div><div style='text-align:center; padding: 5px 0;'><span style='font-size:55px; font-weight:900; color:#cc7a00; text-shadow: 0 0 15px rgba(204,122,0,0.4);'>%{wr_oran}</span><div style='font-size:11px; color:#888; letter-spacing:2px; margin-top:5px;'>TOPLAM BAŞARI ORANI</div></div></div>""", unsafe_allow_html=True)
