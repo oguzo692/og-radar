@@ -25,8 +25,10 @@ def get_live_data():
 live_vars = get_live_data()
 kasa = float(live_vars.get("kasa", 600))
 ana_para = float(live_vars.get("ana_para", 600))
-# Duyuru metnini çek, yoksa varsayılanı kullan
 duyuru_metni = live_vars.get("duyuru", "SİSTEM ÇEVRİMİÇİ... VERİLER SENKRONİZE EDİLDİ... OG CORE V8.8 READY...")
+# Geçmiş kasa verilerini çekip listeye çevir
+gecmis_raw = live_vars.get("gecmis_kasa", str(kasa))
+gecmis_liste = [float(x) for x in gecmis_raw.split(",")]
 
 # --- 3. CSS STİLLERİ ---
 custom_css = """
@@ -47,134 +49,46 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
     color: #e0e0e0 !important;
 }
 
-/* --- 🎞️ MATRIX TICKER (DUYURU BANDI) CSS --- */
 .ticker-wrap {
-    width: 100%;
-    overflow: hidden;
-    background: rgba(0, 0, 0, 0.6);
-    border-bottom: 1px solid rgba(204, 122, 0, 0.3);
-    padding: 12px 0;
-    margin-bottom: 25px;
-    backdrop-filter: blur(5px);
+    width: 100%; overflow: hidden; background: rgba(0, 0, 0, 0.6);
+    border-bottom: 1px solid rgba(204, 122, 0, 0.3); padding: 12px 0;
+    margin-bottom: 25px; backdrop-filter: blur(5px);
 }
-.ticker {
-    display: flex;
-    white-space: nowrap;
-    animation: ticker 40s linear infinite;
-}
+.ticker { display: flex; white-space: nowrap; animation: ticker 40s linear infinite; }
 .ticker-item {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
-    color: #cc7a00;
-    text-transform: uppercase;
-    letter-spacing: 3px;
-    padding-right: 100%; /* Yazılar arası mesafe */
+    font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #cc7a00;
+    text-transform: uppercase; letter-spacing: 3px; padding-right: 100%;
     text-shadow: 0 0 10px rgba(204, 122, 0, 0.5);
 }
-@keyframes ticker {
-    0% { transform: translateX(100%); }
-    100% { transform: translateX(-100%); }
-}
+@keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
 .loot-wrapper {
-    background: rgba(18, 18, 18, 0.8);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 4px;
-    padding: 30px 25px 60px 25px;
-    margin-bottom: 30px;
-    position: relative;
+    background: rgba(18, 18, 18, 0.8); border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 4px; padding: 30px 25px 60px 25px; margin-bottom: 30px; position: relative;
 }
 
-.loot-track {
-    background: #111;
-    height: 12px;
-    border-radius: 6px;
-    width: 100%;
-    position: relative;
-    margin-top: 40px;
-    border: 1px solid #222;
-}
+.loot-track { background: #111; height: 12px; border-radius: 6px; width: 100%; position: relative; margin-top: 40px; border: 1px solid #222; }
+.loot-fill { background: linear-gradient(90deg, #cc7a00, #ffae00); height: 100%; border-radius: 6px; box-shadow: 0 0 15px rgba(204, 122, 0, 0.5); }
+.milestone { position: absolute; top: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; z-index: 10; }
+.milestone-label { position: absolute; top: 25px; font-size: 10px; font-weight: bold; color: #888; text-align: center; white-space: nowrap; }
 
-.loot-fill { 
-    background: linear-gradient(90deg, #cc7a00, #ffae00); 
-    height: 100%;
-    border-radius: 6px; 
-    box-shadow: 0 0 15px rgba(204, 122, 0, 0.5);
-}
-
-.milestone {
-    position: absolute;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    z-index: 10;
-}
-
-.milestone-label {
-    position: absolute;
-    top: 25px;
-    font-size: 10px;
-    font-weight: bold;
-    color: #888;
-    text-align: center;
-    white-space: nowrap;
-}
-
-.auth-container {
-    padding: 4rem;
-    background: linear-gradient(145deg, rgba(15,15,15,0.95) 0%, rgba(5,5,5,1) 100%);
-    border: 1px solid rgba(204, 122, 0, 0.3);
-    text-align: center;
-    max-width: 650px;
-    margin: 10vh auto;
-    border-radius: 4px;
-}
-
-.auth-header {
-    font-family: 'Orbitron', sans-serif !important;
-    font-size: 55px;
-    font-weight: 900;
-    color: #ffffff;
-    letter-spacing: 12px;
-}
+.auth-container { padding: 4rem; background: linear-gradient(145deg, rgba(15,15,15,0.95) 0%, rgba(5,5,5,1) 100%); border: 1px solid rgba(204, 122, 0, 0.3); text-align: center; max-width: 650px; margin: 10vh auto; border-radius: 4px; }
+.auth-header { font-family: 'Orbitron', sans-serif !important; font-size: 55px; font-weight: 900; color: #ffffff; letter-spacing: 12px; }
 
 .industrial-card { 
-    background: rgba(18, 18, 18, 0.7) !important;
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.05) !important;
-    border-top: 2px solid rgba(204, 122, 0, 0.4) !important;
-    padding: 25px; 
-    margin-bottom: 25px;
+    background: rgba(18, 18, 18, 0.7) !important; backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.05) !important; border-top: 2px solid rgba(204, 122, 0, 0.4) !important;
+    padding: 25px; margin-bottom: 25px;
 }
 
-.terminal-header { 
-    color: #888; 
-    font-size: 11px; 
-    font-weight: 700; 
-    letter-spacing: 3px;
-    text-transform: uppercase; 
-    margin-bottom: 20px;
-}
-
-.terminal-row { 
-    display: flex; 
-    justify-content: space-between; 
-    font-size: 15px; 
-    margin-bottom: 12px; 
-    border-bottom: 1px solid rgba(255,255,255,0.02);
-    padding-bottom: 8px;
-}
+.terminal-header { color: #888; font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 20px; }
+.terminal-row { display: flex; justify-content: space-between; font-size: 15px; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.02); padding-bottom: 8px; }
 
 .highlight { color: #cc7a00 !important; font-weight: 700; font-size: 18px; }
 .win { color: #00ff41 !important; font-weight: bold; }
 .loss { color: #ff4b4b !important; font-weight: bold; }
 
-section[data-testid="stSidebar"] { 
-    background-color: #050505 !important; 
-    border-right: 1px solid rgba(204, 122, 0, 0.2); 
-}
+section[data-testid="stSidebar"] { background-color: #050505 !important; border-right: 1px solid rgba(204, 122, 0, 0.2); }
 </style>
 """
 
@@ -241,7 +155,6 @@ def check_password():
 if check_password():
     st.markdown(custom_css, unsafe_allow_html=True)
     
-    # --- 🌌 MATRIX TICKER GÖRÜNÜMÜ ---
     st.markdown(f"""
         <div class="ticker-wrap">
             <div class="ticker">
@@ -270,13 +183,29 @@ if check_password():
         net_kar = kasa - ana_para
         kar_yuzdesi = (net_kar / ana_para) * 100 if ana_para > 0 else 0
         
+        # --- 📈 HEDEF İLERLEME SİSTEMİ ---
         targets = [{"val": 1000, "name": "TELEFON", "icon": "📱"}, {"val": 2500, "name": "TATİL", "icon": "✈️"}, {"val": 5000, "name": "ARABA", "icon": "🏎️"}]
         max_target = 6500
         current_pct = min(100, (kasa / max_target) * 100)
         m_html = "".join([f"<div class='milestone' style='left:{(t['val']/max_target)*100}%'><div style='font-size:22px;'>{t['icon'] if kasa>=t['val'] else '🔒'}</div><div class='milestone-label'>{t['name']}<br>${t['val']}</div></div>" for t in targets])
         
         st.markdown(f"<div class='loot-wrapper'><div class='terminal-header'>TARGET PROGRESSION</div><div class='loot-track'><div class='loot-fill' style='width:{current_pct}%'></div>{m_html}</div></div>", unsafe_allow_html=True)
-        st.markdown(f"<div class='industrial-card'><div class='terminal-header'>💎 OG TRADE RADAR — V8.8</div><div class='terminal-row'><span style='color:#888;'>NET KAR/ZARAR</span><span style='color:{'#00ff41' if net_kar >=0 else '#ff4b4b'}; font-size:22px; font-weight:900;'>${net_kar:,.2f} (%{kar_yuzdesi:.1f})</span></div><div class='terminal-row' style='font-size:18px;'><span style='color:#888;'>TOPLAM KASA</span><span class='highlight'>${kasa:,.2f}</span></div></div>", unsafe_allow_html=True)
+        
+        # --- 📊 KASA KARTI VE EQUITY CURVE ---
+        col_stats, col_graph = st.columns([1, 1.5])
+        with col_stats:
+            st.markdown(f"""
+            <div class='industrial-card'>
+                <div class='terminal-header'>💎 OG TRADE RADAR — V8.8</div>
+                <div class='terminal-row'><span style='color:#888;'>NET KAR/ZARAR</span><span style='color:{'#00ff41' if net_kar >=0 else '#ff4b4b'}; font-size:22px; font-weight:900;'>${net_kar:,.2f} (%{kar_yuzdesi:.1f})</span></div>
+                <div class='terminal-row' style='font-size:18px;'><span style='color:#888;'>TOPLAM KASA</span><span class='highlight'>${kasa:,.2f}</span></div>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        with col_graph:
+            st.markdown("<div style='margin-bottom:-40px;' class='terminal-header'>📉 EQUITY CURVE (LIVE)</div>", unsafe_allow_html=True)
+            # Siber Renkli Çizgi Grafiği
+            st.line_chart(pd.DataFrame(gecmis_liste, columns=["$"]), color="#cc7a00")
 
         try:
             btc = yf.Ticker("BTC-USD").history(period="1d")['Close'].iloc[-1]
