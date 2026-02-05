@@ -63,7 +63,7 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
 }
 @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
-/* Login Container Fix */
+/* Login Container */
 .auth-container {
     padding: 4rem;
     background: linear-gradient(145deg, rgba(15,15,15,0.95) 0%, rgba(5,5,5,1) 100%);
@@ -80,14 +80,17 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
 .industrial-card { 
     background: rgba(18, 18, 18, 0.7) !important; backdrop-filter: blur(12px);
     border: 1px solid rgba(255, 255, 255, 0.05) !important; border-top: 2px solid rgba(204, 122, 0, 0.4) !important;
-    padding: 25px; margin-bottom: 25px; min-height: 250px;
+    padding: 20px; margin-bottom: 25px; min-height: 260px; overflow: hidden;
 }
 
-.terminal-header { color: #888; font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 20px; }
+.terminal-header { color: #888; font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 15px; }
 .terminal-row { display: flex; justify-content: space-between; font-size: 15px; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.02); padding-bottom: 8px; }
 .highlight { color: #cc7a00 !important; font-weight: 700; font-size: 18px; }
 .win { color: #00ff41 !important; font-weight: bold; }
 .loss { color: #ff4b4b !important; font-weight: bold; }
+
+/* Plotly Graph Fix */
+[data-testid="stPlotlyChart"] { margin-top: -15px !important; }
 
 /* Loot/Target Bar */
 .loot-wrapper {
@@ -162,7 +165,7 @@ if check_password():
         m_html = "".join([f"<div class='milestone' style='left:{(t['val']/max_target)*100}%'><div style='font-size:22px;'>{t['icon'] if kasa>=t['val'] else '🔒'}</div><div class='milestone-label'>{t['name']}<br>${t['val']}</div></div>" for t in targets])
         st.markdown(f"<div class='loot-wrapper'><div class='terminal-header'>TARGET PROGRESSION</div><div class='loot-track'><div class='loot-fill' style='width:{current_pct}%'></div>{m_html}</div></div>", unsafe_allow_html=True)
         
-        # Main Dashboard Layout
+        # Layout
         col_stats, col_graph = st.columns([1, 1.3])
         
         with col_stats:
@@ -175,21 +178,20 @@ if check_password():
             """, unsafe_allow_html=True)
         
         with col_graph:
-            # Grafik kartı ve Plotly entegrasyonu
-            st.markdown("<div class='industrial-card'><div class='terminal-header' style='margin-bottom:0px;'>📉 EQUITY CURVE (PRO)</div>", unsafe_allow_html=True)
+            # Grafik Kartı (Boşluksuz versiyon)
+            st.markdown("<div class='industrial-card'><div class='terminal-header'>📉 EQUITY CURVE (PRO)</div>", unsafe_allow_html=True)
             fig = go.Figure()
-            fig.add_trace(go.Scatter(y=gecmis_liste, mode='lines+markers', line=dict(color='#cc7a00', width=3), marker=dict(size=6, color='#ffae00'), fill='tozeroy', fillcolor='rgba(204, 122, 0, 0.1)'))
-            fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', margin=dict(l=0, r=0, t=20, b=0), height=180, xaxis=dict(showgrid=False, showticklabels=False), yaxis=dict(showgrid=True, gridcolor='rgba(255,255,255,0.05)', tickfont=dict(color='#888', size=10)))
+            fig.add_trace(go.Scatter(y=gecmis_liste, mode='lines+markers', line=dict(color='#cc7a00', width=4), marker=dict(size=8, color='#ffae00', line=dict(color='#030303', width=1)), fill='tozeroy', fillcolor='rgba(204, 122, 0, 0.1)'))
+            fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', margin=dict(l=0, r=0, t=10, b=0), height=190, xaxis=dict(showgrid=False, showticklabels=False, zeroline=False), yaxis=dict(showgrid=True, gridcolor='rgba(255,255,255,0.05)', tickfont=dict(color='#888', size=10), zeroline=False))
             st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
             st.markdown("</div>", unsafe_allow_html=True)
 
-        # Markets & Shares
         try:
             btc = yf.Ticker("BTC-USD").history(period="1d")['Close'].iloc[-1]
             eth = yf.Ticker("ETH-USD").history(period="1d")['Close'].iloc[-1]
             sol = yf.Ticker("SOL-USD").history(period="1d")['Close'].iloc[-1]
             st.markdown(f"<div class='industrial-card' style='min-height:auto;'><div class='terminal-header'>GÜNCEL FİYATLAR</div><div class='terminal-row'><span>BITCOIN</span><span class='highlight'>${btc:,.2f}</span></div><div class='terminal-row'><span>ETHEREUM</span><span>${eth:,.2f}</span></div><div class='terminal-row'><span>SOLANA</span><span>${sol:,.2f}</span></div></div>", unsafe_allow_html=True)
-        except: st.error("Market data connection lost.")
+        except: st.error("Market data link lost.")
 
         st.subheader("🎯 Pay Dağılımı")
         cols = st.columns(3)
