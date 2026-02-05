@@ -133,7 +133,7 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input {
 .val-std { font-size: 22px !important; font-weight: 800 !important; font-family: 'Orbitron'; }
 
 /* Buton */
-.stButton button {
+.stButton button, .stLinkButton a {
     width: 100%;
     background: rgba(204, 122, 0, 0.1) !important;
     border: 1px solid rgba(204, 122, 0, 0.3) !important;
@@ -142,8 +142,13 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input {
     font-size: 12px !important;
     letter-spacing: 2px !important;
     transition: 0.4s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
 }
-.stButton button:hover {
+.stButton button:hover, .stLinkButton a:hover {
     background: #cc7a00 !important;
     color: black !important;
 }
@@ -191,7 +196,15 @@ if check_password():
             
         st.markdown("<h1 style='color:white; font-family:Orbitron; font-size:22px; letter-spacing:5px; text-align:center; margin-bottom:30px;'>OG CORE</h1>", unsafe_allow_html=True)
         page = st.radio("SİSTEM MODÜLLERİ", ["⚡ ULTRA ATAK", "⚽ FORMLINE", "📊 SİMÜLASYON"])
-        st.markdown("<br><br>", unsafe_allow_html=True)
+        
+        # --- SOL ALT ADMIN VE TERMINATE KISMI ---
+        st.markdown("<div style='margin-top: 100px;'></div>", unsafe_allow_html=True) # Boşluk bırakmak için
+        
+        # Admin Database Link Butonu
+        st.link_button("📂 ADMIN DATABASE", "https://docs.google.com/spreadsheets/d/15izevdpRjs8Om5BAHKVWmdL3FxEHml35DGECfhQUG_s/edit")
+        
+        st.markdown("<div style='margin-top: 10px;'></div>", unsafe_allow_html=True)
+        
         if st.button("TERMINATE SESSION"): 
             st.session_state["password_correct"] = False
             st.rerun()
