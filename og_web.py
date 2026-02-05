@@ -15,7 +15,6 @@ st.set_page_config(
 # --- 2. VERİ BAĞLANTISI (GOOGLE SHEETS) ---
 def get_live_data():
     try:
-        # Paylaştığın linkin CSV export hali
         sheet_url = "https://docs.google.com/spreadsheets/d/15izevdpRjs8Om5BAHKVWmdL3FxEHml35DGECfhQUG_s/export?format=csv"
         df = pd.read_csv(sheet_url)
         data = dict(zip(df['key'], df['value']))
@@ -23,12 +22,11 @@ def get_live_data():
     except Exception as e:
         return {"kasa": 600.0, "ana_para": 600.0}
 
-# Verileri Sheets'ten çek
 live_vars = get_live_data()
 kasa = float(live_vars.get("kasa", 600))
 ana_para = float(live_vars.get("ana_para", 600))
 
-# --- 3. CSS STİLLERİ (PREMIUM SİBER TERMİNAL) ---
+# --- 3. CSS STİLLERİ ---
 custom_css = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&family=Orbitron:wght@400;900&display=swap');
@@ -97,7 +95,6 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
     padding: 4rem;
     background: linear-gradient(145deg, rgba(15,15,15,0.95) 0%, rgba(5,5,5,1) 100%);
     border: 1px solid rgba(204, 122, 0, 0.3);
-    box-shadow: 0 0 60px rgba(0,0,0,1);
     text-align: center;
     max-width: 650px;
     margin: 10vh auto;
@@ -147,15 +144,6 @@ section[data-testid="stSidebar"] {
     background-color: #050505 !important; 
     border-right: 1px solid rgba(204, 122, 0, 0.2); 
 }
-
-.time-widget { 
-    padding: 15px; 
-    font-size: 20px; 
-    color: #cc7a00; 
-    text-align: center; 
-    background: rgba(204, 122, 0, 0.03); 
-    border: 1px solid rgba(204, 122, 0, 0.1); 
-}
 </style>
 """
 
@@ -169,6 +157,7 @@ w3_matches = """
 <hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'>
 <div class='terminal-row'><span>oran: 8.79</span><span>bet: 100 USD</span></div>
 """
+
 w2_matches = """
 <div class='terminal-row'><span>Wolfsburg - Bvb</span><span class='win'>bvb x2 & 1.5 üst ✅</span></div>
 <div class='terminal-row'><span>Newcastle - Brentford</span><span class='win'>newcastle 1.5 üst ✅</span></div>
@@ -178,6 +167,7 @@ w2_matches = """
 <hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'>
 <div class='terminal-row'><span>oran: 8.79</span><span>bet: 100 USD</span></div>
 """
+
 w1_matches = """
 <div class='terminal-row'><span>Wolfsburg - Bvb</span><span class='win'>bvb x2 & 1.5 üst ✅</span></div>
 <div class='terminal-row'><span>Newcastle - Brentford</span><span class='win'>newcastle 1.5 üst ✅</span></div>
@@ -230,8 +220,6 @@ if check_password():
             st.link_button("📊 Tabloyu Düzenle", "https://docs.google.com/spreadsheets/d/15izevdpRjs8Om5BAHKVWmdL3FxEHml35DGECfhQUG_s/edit", use_container_width=True)
 
         st.divider()
-        tr_tz = pytz.timezone('Europe/Istanbul')
-        st.markdown(f"<div class='time-widget'>{datetime.now(tr_tz).strftime('%H:%M:%S')}</div>", unsafe_allow_html=True)
         if st.button("🔴 Çıkış", use_container_width=True): 
             st.session_state["password_correct"] = False
             st.rerun()
@@ -240,23 +228,14 @@ if check_password():
         net_kar = kasa - ana_para
         kar_yuzdesi = (net_kar / ana_para) * 100 if ana_para > 0 else 0
         
-        # --- 📈 HEDEF İLERLEME SİSTEMİ ---
         targets = [{"val": 1000, "name": "TELEFON", "icon": "📱"}, {"val": 2500, "name": "TATİL", "icon": "✈️"}, {"val": 5000, "name": "ARABA", "icon": "🏎️"}]
         max_target = 6500
         current_pct = min(100, (kasa / max_target) * 100)
         m_html = "".join([f"<div class='milestone' style='left:{(t['val']/max_target)*100}%'><div style='font-size:22px;'>{t['icon'] if kasa>=t['val'] else '🔒'}</div><div class='milestone-label'>{t['name']}<br>${t['val']}</div></div>" for t in targets])
         
         st.markdown(f"<div class='loot-wrapper'><div class='terminal-header'>TARGET PROGRESSION</div><div class='loot-track'><div class='loot-fill' style='width:{current_pct}%'></div>{m_html}</div></div>", unsafe_allow_html=True)
-        
-        st.markdown(f"""
-        <div class='industrial-card'>
-            <div class='terminal-header'>💎 OG TRADE RADAR — V8.8</div>
-            <div class='terminal-row'><span style='color:#888;'>NET KAR/ZARAR</span><span style='color:{'#00ff41' if net_kar >=0 else '#ff4b4b'}; font-size:22px; font-weight:900;'>${net_kar:,.2f} (%{kar_yuzdesi:.1f})</span></div>
-            <div class='terminal-row' style='font-size:18px;'><span style='color:#888;'>TOPLAM KASA</span><span class='highlight'>${kasa:,.2f}</span></div>
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown(f"<div class='industrial-card'><div class='terminal-header'>💎 OG TRADE RADAR — V8.8</div><div class='terminal-row'><span style='color:#888;'>NET KAR/ZARAR</span><span style='color:{'#00ff41' if net_kar >=0 else '#ff4b4b'}; font-size:22px; font-weight:900;'>${net_kar:,.2f} (%{kar_yuzdesi:.1f})</span></div><div class='terminal-row' style='font-size:18px;'><span style='color:#888;'>TOPLAM KASA</span><span class='highlight'>${kasa:,.2f}</span></div></div>", unsafe_allow_html=True)
 
-        # Market Verileri (Kayıpsız)
         try:
             btc = yf.Ticker("BTC-USD").history(period="1d")['Close'].iloc[-1]
             eth = yf.Ticker("ETH-USD").history(period="1d")['Close'].iloc[-1]
