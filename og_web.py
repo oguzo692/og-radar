@@ -185,7 +185,7 @@ if check_password():
             if admin_pwd == "fybey":
                 st.link_button("VERİ TABANINA GİT", "https://docs.google.com/spreadsheets/d/15izevdpRjs8Om5BAHKVWmdL3FxEHml35DGECfhQUG_s/edit")
             elif admin_pwd:
-                st.error("HATALI ŞİFRE")
+                st.error("götten sallama aq ya")
 
         if st.button("OTURUMU KAPAT"): 
             st.session_state["password_correct"] = False
@@ -213,7 +213,7 @@ if check_password():
                 </div>""", unsafe_allow_html=True)
             except: st.markdown("<div class='industrial-card'>Piyasa verisi bekleniyor...</div>", unsafe_allow_html=True)
         with col3:
-            st.markdown(f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>📊 BAŞARI SKORU</div><div style='text-align:center; padding-top:10px;'><span style='font-size:45px; font-weight:900; color:#cc7a00; font-family:Orbitron;'>%{wr_oran}</span><br><span style='font-size:10px; color:#666;'>KAZANMA ORANI</span></div></div>", unsafe_allow_html=True)
+            st.markdown(f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>📊 WİN RATE</div><div style='text-align:center; padding-top:10px;'><span style='font-size:45px; font-weight:900; color:#cc7a00; font-family:Orbitron;'>%{wr_oran}</span><br><span style='font-size:10px; color:#666;'>KAZANMA ORANI</span></div></div>", unsafe_allow_html=True)
 
         st.markdown("### 🎯 PAY DAĞILIMI")
         cols = st.columns(3)
