@@ -6,7 +6,7 @@ import pytz
 
 # --- 1. AYARLAR ---
 st.set_page_config(
-    page_title="OG Core v9.6", 
+    page_title="OG Core v9.7", 
     page_icon="🛡️", 
     layout="wide", 
     initial_sidebar_state="expanded"
@@ -32,6 +32,10 @@ w1_kar = float(live_vars.get("w1_sonuc", -100))
 w2_kar = float(live_vars.get("w2_sonuc", 453))
 toplam_bahis_kar = w1_kar + w2_kar
 
+# --- 📊 YENİ PERFORMANS VERİLERİ ---
+wr_oran = live_vars.get("win_rate", "0")
+son_islemler_raw = live_vars.get("son_islemler", "Veri Bekleniyor...")
+
 # --- 3. CSS STİLLERİ (PREMIUM STABİLİZE) ---
 custom_css = """
 <style>
@@ -52,7 +56,7 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
     border-bottom: 1px solid rgba(204, 122, 0, 0.3); padding: 12px 0;
     margin-bottom: 25px; backdrop-filter: blur(10px);
 }
-.ticker { display: flex; white-space: nowrap; animation: ticker 50s linear infinite; }
+.ticker { display: flex; white-space: nowrap; animation: ticker 40s linear infinite; }
 .ticker-item {
     font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #cc7a00;
     text-transform: uppercase; letter-spacing: 3px; padding-right: 100%;
@@ -90,8 +94,8 @@ div.stButton > button:hover { background: #cc7a00 !important; color: #000 !impor
 
 # --- 4. HTML ŞABLONLARI ---
 w3_matches = """<div class='terminal-row'><span>Wolfsburg - Bvb</span><span class='highlight'>bvb x2 & 1.5 üst</span></div><div class='terminal-row'><span>Newcastle - Brentford</span><span class='highlight'>newcastle 1.5 üst</span></div><div class='terminal-row'><span>Rizespor - Gala</span><span class='highlight'>gala w & 1.5 üst</span></div><div class='terminal-row'><span>Lıve - Man City</span><span class='highlight'>lıve gol atar</span></div><div class='terminal-row'><span>Fenerbahçe - Gençlerbirliği</span><span class='highlight'>fenerbahçe w & 2.5 üst</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>oran: 8.79</span><span>bet: 100 USD</span></div>"""
-w2_matches = """<div class='terminal-row'><span>Tarih: 1-2 şubat</span><span>Bütçe: 100 usd</span></div><div class='terminal-row'><span>gs - kayserispor</span><span style='color:#00ff41;'>iy +0.5 & W & 2+ ✅</span></div><div class='terminal-row'><span>lıve - new</span><span style='color:#00ff41;'>+2 & liverpool 1x ✅</span></div><div class='terminal-row'><span>bvb - heidenheim</span><span style='color:#00ff41;'>iy +0.5 & W & 2+ ✅</span></div><div class='terminal-row'><span>kocaelispor - fb</span><span style='color:#00ff41;'>fb W & 2+ ✅</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>oran: 5.53</span><span>bet: 100 USD</span></div>"""
-w1_matches = """<div class='terminal-row'><span>Tarih: 24-25 ocak</span><span>Bütçe: 100 usd</span></div><div class='terminal-row'><span>karagümrük - gs</span><span style='color:#00ff41;'>gs w & +2 ✅</span></div><div class='terminal-row'><span>bournemouth - lıve</span><span style='color:#00ff41;'>kg var ✅</span></div><div class='terminal-row'><span>unıon berlin - bvb</span><span style='color:#00ff41;'>bvb iy 0.5 üst ✅</span></div><div class='terminal-row'><span>new - aston villa</span><span style='color:#ff4b4b;'>new +2 ❌</span></div><div class='terminal-row'><span>fb - göztepe</span><span style='color:#ff4b4b;'>fb w ❌</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>oran: 7.09</span><span>bet: 100 USD</span></div>"""
+w2_matches = """<div class='terminal-row'><span>gs - kayserispor</span><span style='color:#00ff41;'>iy +0.5 & W & 2+ ✅</span></div><div class='terminal-row'><span>lıve - new</span><span style='color:#00ff41;'>+2 & liverpool 1x ✅</span></div><div class='terminal-row'><span>bvb - heidenheim</span><span style='color:#00ff41;'>iy +0.5 & W & 2+ ✅</span></div><div class='terminal-row'><span>kocaelispor - fb</span><span style='color:#00ff41;'>fb W & 2+ ✅</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>oran: 5.53</span><span>bet: 100 USD</span></div>"""
+w1_matches = """<div class='terminal-row'><span>karagümrük - gs</span><span style='color:#00ff41;'>gs w & +2 ✅</span></div><div class='terminal-row'><span>bournemouth - lıve</span><span style='color:#00ff41;'>kg var ✅</span></div><div class='terminal-row'><span>unıon berlin - bvb</span><span style='color:#00ff41;'>bvb iy 0.5 üst ✅</span></div><div class='terminal-row'><span>new - aston villa</span><span style='color:#ff4b4b;'>new +2 ❌</span></div><div class='terminal-row'><span>fb - göztepe</span><span style='color:#ff4b4b;'>fb w ❌</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>oran: 7.09</span><span>bet: 100 USD</span></div>"""
 
 w3_coupon_html = f"<div class='industrial-card'><div class='terminal-header'>🔥 W3 KUPONU (AKTİF)</div>{w3_matches}<span style='color:#cc7a00'>BEKLENİYOR ⏳</span></div>"
 w2_coupon_html = f"<div class='industrial-card' style='border-top-color: #00ff41 !important;'><div class='terminal-header' style='color:#00ff41;'>✅ W2 KUPONU (1-2 ŞUBAT)</div>{w2_matches}<span style='color:#00ff41;'>SONUÇLANDI ✅</span></div>"
@@ -144,8 +148,8 @@ if check_password():
         m_html = "".join([f"<div class='milestone' style='left:{(t['val']/max_target)*100}%'><div style='font-size:22px;'>{t['icon'] if kasa>=t['val'] else '🔒'}</div><div class='milestone-label'>{t['name']}<br>${t['val']}</div></div>" for t in targets])
         st.markdown(f"<div class='loot-wrapper'><div class='terminal-header'>TARGET PROGRESSION</div><div class='loot-track'><div class='loot-fill' style='width:{current_pct}%'></div>{m_html}</div></div>", unsafe_allow_html=True)
         
-        # Upper Layout
-        col1, col2 = st.columns(2)
+        # --- 📊 ÜST PANEL (3 KOLON) ---
+        col1, col2, col3 = st.columns(3)
         with col1:
             st.markdown(f"""<div class='industrial-card'><div class='terminal-header'>💎 TRADE RADAR</div><div class='terminal-row'><span>NET P/L</span><span style='color:{'#00ff41' if net_kar >=0 else '#ff4b4b'}; font-size:24px; font-weight:bold;'>${net_kar:,.2f} (%{kar_yuzdesi:.1f})</span></div><div class='terminal-row'><span>GÜNCEL KASA</span><span class='highlight'>${kasa:,.2f}</span></div></div>""", unsafe_allow_html=True)
         
@@ -159,14 +163,35 @@ if check_password():
                 e_change = ((e_price - eth['Close'].iloc[-2]) / eth['Close'].iloc[-2]) * 100
                 st.markdown(f"""<div class='industrial-card'><div class='terminal-header'>⚡ MARKET PULSE</div><div class='terminal-row'><span>BITCOIN</span><span style='color:{'#00ff41' if b_change >=0 else '#ff4b4b'};'>${b_price:,.0f} ({b_change:+.2f}%)</span></div><div class='terminal-row'><span>ETHEREUM</span><span style='color:{'#00ff41' if e_change >=0 else '#ff4b4b'};'>${e_price:,.0f} ({e_change:+.2f}%)</span></div></div>""", unsafe_allow_html=True)
             except: st.markdown("<div class='industrial-card'>Syncing market data...</div>", unsafe_allow_html=True)
+            
+        with col3:
+            # --- 📈 WIN RATE PANEL ---
+            st.markdown(f"""
+            <div class='industrial-card'>
+                <div class='terminal-header'>📊 ACCURACY RATE</div>
+                <div style='text-align:center; padding: 10px 0;'>
+                    <span style='font-size:45px; font-weight:900; color:#cc7a00; text-shadow: 0 0 15px rgba(204,122,0,0.4);'>%{wr_oran}</span>
+                    <div style='font-size:10px; color:#888; letter-spacing:2px; margin-top:5px;'>OVERALL WIN RATE</div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
 
         st.subheader("🎯 Pay Dağılımı")
         cols = st.columns(3)
         for col, user in zip(cols, ["oguzo", "ero7", "fybey"]):
             col.markdown(f"<div class='industrial-card'><div class='terminal-header'>{user.upper()}</div><div class='terminal-row'><span>SHARE</span><span class='highlight'>${kasa/3:,.2f}</span></div><div class='terminal-row'><span>PROFIT</span><span>${(net_kar/3):,.2f}</span></div></div>", unsafe_allow_html=True)
 
+        # --- 📜 SON İŞLEMLER PANELİ (EN ALTA) ---
+        st.markdown(f"""
+        <div class='industrial-card' style='min-height:100px;'>
+            <div class='terminal-header'>🕒 RECENT EXECUTIONS</div>
+            <div style='padding: 10px 0;'>
+                {"".join([f"<div class='terminal-row'><span>{item.split('|')[0]}</span><span style='color:{'#00ff41' if '+' in item else '#ff4b4b'}'>{item.split('|')[1]}</span><span>{item.split('|')[2]}</span></div>" for item in son_islemler_raw.split(',') if '|' in item])}
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
     elif page == "⚽ FORMLINE":
-        # --- YENİ KAR/ZARAR TABELASI ---
         st.markdown(f"""
         <div class='industrial-card' style='border-top: 2px solid #cc7a00; min-height:100px;'>
             <div class='terminal-header'>📈 Genel Performans</div>
@@ -189,4 +214,4 @@ if check_password():
         df = pd.DataFrame({"Gün": range(30), "Tahmin ($)": [kasa * (1.05 ** (d / 7)) for d in range(30)]})
         st.line_chart(df.set_index("Gün"))
 
-    st.caption(f"OG Core v9.6 | Veriler merkezi sistemden çekilmektedir.")
+    st.caption(f"OG Core v9.7 | Veriler merkezi sistemden çekilmektedir.")
