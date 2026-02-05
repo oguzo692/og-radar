@@ -36,7 +36,7 @@ toplam_bahis_kar = w1_kar + w2_kar
 wr_oran = live_vars.get("win_rate", "0")
 son_islemler_raw = str(live_vars.get("son_islemler", ""))
 
-# --- 3. CSS STİLLERİ ---
+# --- 3. CSS STİLLERİ (REVİZE EDİLDİ) ---
 custom_css = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&family=Orbitron:wght@400;700;900&display=swap');
@@ -62,24 +62,35 @@ div[data-testid="stWidgetLabel"] p {
     color: #888 !important;
     margin-bottom: 10px !important;
     line-height: 1.5 !important;
+    position: relative !important;
 }
 
 [data-testid="stSidebar"] label {
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    padding: 10px 15px !important;
+    background: rgba(255, 255, 255, 0.02) !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    padding: 12px 15px !important;
     border-radius: 4px;
-    margin-bottom: 5px !important;
+    margin-bottom: 8px !important;
     display: flex !important;
     align-items: center !important;
-    min-height: 45px !important;
+    min-height: 50px !important;
+    position: relative !important;
+}
+
+/* HATA DÜZELTME: "arrow_right" gibi bozuk ikon metinlerini temizle */
+[data-testid="stSidebar"] label span {
+    font-size: 0 !important;
+    display: none !important;
 }
 
 /* Radio text kayma engelleme */
 [data-testid="stSidebar"] label div[data-testid="stMarkdownContainer"] p {
-    margin-bottom: 0px !important;
-    line-height: 1 !important;
+    margin: 0 !important;
+    line-height: 1.2 !important;
     font-size: 14px !important;
+    color: inherit !important;
+    display: block !important;
+    position: relative !important;
 }
 
 [data-baseweb="tab-highlight"] { background-color: #cc7a00 !important; }
