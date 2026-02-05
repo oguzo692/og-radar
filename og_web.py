@@ -76,7 +76,7 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
 .industrial-card { 
     background: rgba(18, 18, 18, 0.8) !important; backdrop-filter: blur(15px);
     border: 1px solid rgba(255, 255, 255, 0.05) !important; border-top: 2px solid rgba(204, 122, 0, 0.5) !important;
-    padding: 22px; margin-bottom: 25px; border-radius: 4px; 
+    padding: 15px; margin-bottom: 25px; border-radius: 4px; 
     height: 210px !important; /* KUTULARI EŞİTLEYEN SABİT YÜKSEKLİK */
 }
 
