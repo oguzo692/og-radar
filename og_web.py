@@ -36,7 +36,7 @@ toplam_bahis_kar = w1_kar + w2_kar
 wr_oran = live_vars.get("win_rate", "0")
 son_islemler_raw = str(live_vars.get("son_islemler", ""))
 
-# --- 3. CSS STİLLERİ ---
+# --- 3. CSS STİLLERİ (DÜZELTİLDİ) ---
 custom_css = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&family=Orbitron:wght@400;700;900&display=swap');
@@ -54,7 +54,25 @@ section[data-testid="stSidebar"] {
     padding-top: 20px;
 }
 
-/* Sidebar Radio Buton Düzeltmesi */
+/* --- KRİTİK DÜZELTME: ÜST ÜSTE BİNEN YAZILARI SİLER --- */
+[data-testid="stSidebar"] svg, 
+[data-testid="stSidebar"] .st-emotion-cache-p5msec,
+[data-testid="stSidebar"] span[data-testid="stHeaderActionElements"] {
+    display: none !important;
+}
+
+/* Expander başlığındaki ham metinleri gizle */
+.st-emotion-cache-p5msec {
+    font-size: 0 !important;
+    color: transparent !important;
+}
+
+div[data-testid="stExpander"] p {
+    font-size: 14px !important;
+    color: #d1d1d1 !important;
+}
+/* --------------------------------------------------- */
+
 div[data-testid="stWidgetLabel"] p {
     font-family: 'Orbitron', sans-serif !important;
     font-size: 11px !important;
@@ -70,12 +88,6 @@ div[data-testid="stWidgetLabel"] p {
     margin-bottom: 8px !important;
 }
 
-/* Sidebar ikon metni hatalarını gizle */
-[data-testid="stSidebar"] span[data-testid="stHeaderActionElements"], 
-[data-testid="stSidebar"] label span {
-    display: none !important;
-}
-
 [data-baseweb="tab-highlight"] { background-color: #cc7a00 !important; }
 [aria-selected="true"] { color: #cc7a00 !important; font-weight: bold !important; }
 
@@ -83,18 +95,6 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input {
     font-family: 'JetBrains Mono', monospace !important; 
     color: #d1d1d1 !important;
 }
-
-.ticker-wrap {
-    width: 100%; overflow: hidden; background: rgba(204, 122, 0, 0.03);
-    border-bottom: 1px solid rgba(204, 122, 0, 0.2); padding: 10px 0;
-    margin-bottom: 25px;
-}
-.ticker { display: flex; white-space: nowrap; animation: ticker 30s linear infinite; }
-.ticker-item {
-    font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #cc7a00;
-    text-transform: uppercase; letter-spacing: 4px; padding-right: 50%;
-}
-@keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
 .industrial-card { 
     background: linear-gradient(145deg, rgba(15, 15, 15, 0.9), rgba(5, 5, 5, 1)) !important;
@@ -161,24 +161,18 @@ if check_password():
     st.markdown(f'<div class="ticker-wrap"><div class="ticker"><span class="ticker-item">{duyuru_metni}</span><span class="ticker-item">{duyuru_metni}</span></div></div>', unsafe_allow_html=True)
 
     with st.sidebar:
-        try:
-            st.image("logo.png", width=100)
-        except:
-            st.markdown("<div style='height:20px'></div>", unsafe_allow_html=True)
-            
         st.markdown("<h1 style='color:white; font-family:Orbitron; font-size:22px; letter-spacing:5px; text-align:center; margin-bottom:30px;'>OG CORE</h1>", unsafe_allow_html=True)
         page = st.radio("SİSTEM MODÜLLERİ", ["⚡ ULTRA ATAK", "⚽ KUPONLAR", "📊 SİMÜLASYON"])
         
         st.markdown("<div style='margin-top: 30px;'></div>", unsafe_allow_html=True)
         
-        # --- GÜNCELLENEN ADMİN PANELİ ---
+        # --- ŞİFRELİ ADMİN PANELİ ---
         with st.expander("📂 ADMİN PANELİ"):
-            admin_pwd = st.text_input("PANEL ŞİFRESİ", type="password", key="admin_key")
+            admin_pwd = st.text_input("ŞİFRE", type="password", key="admin_auth")
             if admin_pwd == "fybey":
-                st.success("ERİŞİM ONAYLANDI")
-                st.link_button("VERİ TABANINA GİT", "https://docs.google.com/spreadsheets/d/15izevdpRjs8Om5BAHKVWmdL3FxEHml35DGECfhQUG_s/edit")
+                st.link_button("VERİ TABANI", "https://docs.google.com/spreadsheets/d/15izevdpRjs8Om5BAHKVWmdL3FxEHml35DGECfhQUG_s/edit")
             elif admin_pwd:
-                st.error("HATALI ŞİFRE")
+                st.error("HATALI")
 
         if st.button("OTURUMU KAPAT"): 
             st.session_state["password_correct"] = False
