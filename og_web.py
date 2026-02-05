@@ -54,20 +54,32 @@ section[data-testid="stSidebar"] {
     padding-top: 20px;
 }
 
+/* Sidebar Radio Buton Düzeltmesi */
 div[data-testid="stWidgetLabel"] p {
     font-family: 'Orbitron', sans-serif !important;
     font-size: 11px !important;
     letter-spacing: 2px;
     color: #888 !important;
-    margin-bottom: 20px !important;
+    margin-bottom: 10px !important;
+    line-height: 1.5 !important;
 }
 
 [data-testid="stSidebar"] label {
     background: rgba(255, 255, 255, 0.02);
     border: 1px solid rgba(255, 255, 255, 0.05);
-    padding: 12px 15px !important;
+    padding: 10px 15px !important;
     border-radius: 4px;
-    transition: 0.3s all;
+    margin-bottom: 5px !important;
+    display: flex !important;
+    align-items: center !important;
+    min-height: 45px !important;
+}
+
+/* Radio text kayma engelleme */
+[data-testid="stSidebar"] label div[data-testid="stMarkdownContainer"] p {
+    margin-bottom: 0px !important;
+    line-height: 1 !important;
+    font-size: 14px !important;
 }
 
 [data-baseweb="tab-highlight"] { background-color: #cc7a00 !important; }
@@ -109,13 +121,18 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input {
 .highlight { color: #cc7a00 !important; font-weight: 800; font-size: 19px; font-family: 'Orbitron'; }
 .val-std { font-size: 22px !important; font-weight: 800 !important; font-family: 'Orbitron'; }
 
+/* Buton Düzeltmeleri */
 .stButton button, .stLinkButton a {
-    width: 100%;
+    width: 100% !important;
     background: rgba(204, 122, 0, 0.1) !important;
     border: 1px solid rgba(204, 122, 0, 0.3) !important;
     color: #cc7a00 !important;
     font-family: 'Orbitron' !important;
-    padding: 10px;
+    padding: 10px !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    text-decoration: none !important;
 }
 .stButton button:hover, .stLinkButton a:hover {
     background: #cc7a00 !important;
@@ -136,8 +153,6 @@ w1_coupon_html = f"<div class='industrial-card' style='border-top-color: #ff4b4b
 # --- 5. GÜVENLİK VE GİRİŞ ---
 if "password_correct" not in st.session_state:
     st.session_state["password_correct"] = False
-if "admin_authenticated" not in st.session_state:
-    st.session_state["admin_authenticated"] = False
 
 def check_password():
     if not st.session_state["password_correct"]:
@@ -168,7 +183,7 @@ if check_password():
         st.markdown("<h1 style='color:white; font-family:Orbitron; font-size:22px; letter-spacing:5px; text-align:center; margin-bottom:30px;'>OG CORE</h1>", unsafe_allow_html=True)
         page = st.radio("SİSTEM MODÜLLERİ", ["⚡ ULTRA ATAK", "⚽ KUPONLAR", "📊 SİMÜLASYON"])
         
-        st.markdown("<div style='margin-top: 50px;'></div>", unsafe_allow_html=True)
+        st.markdown("<div style='margin-top: 30px;'></div>", unsafe_allow_html=True)
         
         # --- ŞİFRELİ ADMİN PANELİ ---
         with st.expander("📂 ADMİN PANELİ"):
