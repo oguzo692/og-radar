@@ -6,7 +6,7 @@ import pytz
 
 # --- 1. AYARLAR ---
 st.set_page_config(
-    page_title="OG Core v9.8", 
+    page_title="OG Core v9.9", 
     page_icon="🛡️", 
     layout="wide", 
     initial_sidebar_state="expanded"
@@ -25,7 +25,7 @@ def get_live_data():
 live_vars = get_live_data()
 kasa = float(live_vars.get("kasa", 600))
 ana_para = float(live_vars.get("ana_para", 600))
-duyuru_metni = live_vars.get("duyuru", "SİSTEM ÇEVRİMİÇİ... OG CORE V9.8 AKTİF...")
+duyuru_metni = live_vars.get("duyuru", "SİSTEM ÇEVRİMİÇİ... OG CORE V9.9 AKTİF...")
 
 # --- 💰 FORMLINE HESAPLAMA ---
 w1_kar = float(live_vars.get("w1_sonuc", -100)) 
@@ -36,11 +36,12 @@ toplam_bahis_kar = w1_kar + w2_kar
 wr_oran = live_vars.get("win_rate", "0")
 son_islemler_raw = str(live_vars.get("son_islemler", ""))
 
-# --- 3. CSS STİLLERİ ---
+# --- 3. CSS STİLLERİ (GİZLEME VE STANDARTLAŞTIRMA) ---
 custom_css = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&family=Orbitron:wght@400;900&display=swap');
 
+/* Üst Barı Gizleme */
 #MainMenu, footer, header, .stAppDeployButton {visibility: hidden;}
 
 .stApp { 
@@ -75,7 +76,7 @@ body, [data-testid="stAppViewContainer"], [data-testid="stSidebar"], p, div, spa
 .industrial-card { 
     background: rgba(18, 18, 18, 0.8) !important; backdrop-filter: blur(15px);
     border: 1px solid rgba(255, 255, 255, 0.05) !important; border-top: 2px solid rgba(204, 122, 0, 0.5) !important;
-    padding: 22px; margin-bottom: 25px; border-radius: 4px; min-height: 160px;
+    padding: 22px; margin-bottom: 25px; border-radius: 4px; min-height: 140px;
 }
 
 .terminal-header { 
@@ -101,7 +102,7 @@ div.stButton > button { background: transparent !important; color: #cc7a00 !impo
 </style>
 """
 
-# --- 4. HTML ŞABLONLARI (KUPONLAR) ---
+# --- 4. HTML ŞABLONLARI ---
 w3_matches = """<div class='terminal-row'><span>Wolfsburg - Bvb</span><span class='highlight'>bvb x2 & 1.5 üst</span></div><div class='terminal-row'><span>Newcastle - Brentford</span><span class='highlight'>newcastle 1.5 üst</span></div><div class='terminal-row'><span>Rizespor - GS</span><span class='highlight'>gala w & 1.5 üst</span></div><div class='terminal-row'><span>Liverpool - Man City</span><span class='highlight'>lıve gol atar</span></div><div class='terminal-row'><span>Fenerbahçe - Gençlerbirliği</span><span class='highlight'>fenerbahçe w & 2.5 üst</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 8.79</span><span>Bet: 100 USD</span></div>"""
 w2_matches = """<div class='terminal-row'><span>Tarih: 1-2 Şubat</span><span>Bütçe: 100 USD</span></div><div class='terminal-row'><span>GS - Kayserispor</span><span style='color:#00ff41;'>İY +0.5 & W & 2+ ✅</span></div><div class='terminal-row'><span>Liverpool - Newcastle</span><span style='color:#00ff41;'>+2 & Liverpool 1X ✅</span></div><div class='terminal-row'><span>BVB - Heidenheim</span><span style='color:#00ff41;'>İY +0.5 & W & 2+ ✅</span></div><div class='terminal-row'><span>Kocaelispor - FB</span><span style='color:#00ff41;'>FB W & 2+ ✅</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 5.53</span><span>Bet: 100 USD</span></div>"""
 w1_matches = """<div class='terminal-row'><span>Tarih: 24-25 Ocak</span><span>Bütçe: 100 USD</span></div><div class='terminal-row'><span>Karagümrük - GS</span><span style='color:#00ff41;'>GS W & +2 ✅</span></div><div class='terminal-row'><span>Bournemouth - Liverpool</span><span style='color:#00ff41;'>KG VAR ✅</span></div><div class='terminal-row'><span>Union Berlin - BVB</span><span style='color:#00ff41;'>BVB İY 0.5 Üst ✅</span></div><div class='terminal-row'><span>Newcastle - Aston Villa</span><span style='color:#ff4b4b;'>New +2 ❌</span></div><div class='terminal-row'><span>FB - Göztepe</span><span style='color:#ff4b4b;'>FB W ❌</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 7.09</span><span>Bet: 100 USD</span></div>"""
@@ -171,7 +172,7 @@ if check_password():
             except: st.markdown("<div class='industrial-card'>Piyasa verileri senkronize ediliyor...</div>", unsafe_allow_html=True)
             
         with col3:
-            st.markdown(f"""<div class='industrial-card'><div class='terminal-header'>📊 İŞLEM BAŞARISI</div><div style='text-align:center; padding: 5px 0;'><span style='font-size:55px; font-weight:900; color:#cc7a00; text-shadow: 0 0 15px rgba(204,122,0,0.4);'>%{wr_oran}</span><div style='font-size:11px; color:#888; letter-spacing:2px; margin-top:5px;'>GENEL BAŞARI ORANI</div></div></div>""", unsafe_allow_html=True)
+            st.markdown(f"""<div class='industrial-card'><div class='terminal-header'>📊 İŞLEM BAŞARISI</div><div style='text-align:center; padding: 5px 0;'><span style='font-size:55px; font-weight:900; color:#cc7a00; text-shadow: 0 0 15px rgba(204,122,0,0.4);'>%{wr_oran}</span><div style='font-size:11px; color:#888; letter-spacing:2px; margin-top:5px;'>TOPLAM BAŞARI ORANI</div></div></div>""", unsafe_allow_html=True)
 
         st.subheader("🎯 Pay Dağılımı")
         cols = st.columns(3)
@@ -203,4 +204,4 @@ if check_password():
         df = pd.DataFrame({"Gün": range(30), "Tahmin ($)": [kasa * (1.05 ** (d / 7)) for d in range(30)]})
         st.line_chart(df.set_index("Gün"))
 
-    st.caption(f"OG Core v9.8 | Veriler merkezi sistemden çekilmektedir.")
+    st.caption(f"OG Core v9.9 | Veriler merkezi sistemden çekilmektedir.")
