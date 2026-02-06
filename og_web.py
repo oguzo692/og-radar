@@ -110,7 +110,6 @@ if check_password():
 
     with st.sidebar:
         st.markdown("<h1 style='color:white; font-family:Orbitron; font-size:24px; letter-spacing:5px; text-align:center; margin-bottom:40px;'>OG CORE</h1>", unsafe_allow_html=True)
-        
         page = st.radio("SİSTEM MODÜLLERİ", ["⚡ ULTRA ATAK", "⚽ FORMLINE", "📊 SİMÜLASYON", "🎲 TAHMİN"])
         
         with st.expander("📂 ADMİN"):
@@ -150,12 +149,12 @@ if check_password():
 
     elif page == "🎲 TAHMİN":
         # Aktif Soru başlığını tek kartta tutuyoruz
-        st.markdown(f"<div class='industrial-card'><div class='terminal-header'>📢 AKTİF SORU</div><h2 style='color:white;'>{aktif_soru}</h2></div>", unsafe_allow_html=True)
+        st.markdown(f"<div class='industrial-card'><div class='terminal-header'>📢 AKTİF SORU</div><h2 style='color:white; font-family:Orbitron; letter-spacing:2px;'>{aktif_soru}</h2></div>", unsafe_allow_html=True)
         
         # İçeriği 2 sütuna bölüyoruz
         col_v1, col_v2 = st.columns(2)
         with col_v1:
-            st.markdown("<div class='industrial-card' style='border-top: 2px solid #cc7a00; min-height:350px;'>", unsafe_allow_html=True)
+            st.markdown("<div class='industrial-card' style='border-top: 2px solid #cc7a00; min-height:400px;'>", unsafe_allow_html=True)
             st.markdown("<div class='terminal-header'>🗳️ OY KULLAN</div>", unsafe_allow_html=True)
             u_name = st.selectbox("İsim", ["oguzo", "ero7", "fybey"])
             u_vote = st.radio("Tahmin", ["Üstünde", "Altında"])
@@ -164,22 +163,28 @@ if check_password():
             final_link = f"{base_url}?isim={u_name}&tahmin={u_vote}"
             
             st.markdown(f"""
-                <div style='margin-top:20px;'>
+                <div style='margin-top:40px;'>
+                    <p style='font-size:12px; color:#666; margin-bottom:15px;'>1. İsim ve tahminini seçip butona bas kanka.</p>
                     <a href='{final_link}' target='_blank' style='text-decoration:none;'>
-                        <div style='background:rgba(204, 122, 0, 0.2); border: 1px solid #cc7a00; color:#cc7a00; text-align:center; padding:15px; border-radius:5px; font-family:Orbitron; font-weight:bold; cursor:pointer;'>
+                        <div style='background:rgba(204, 122, 0, 0.2); border: 1px solid #cc7a00; color:#cc7a00; text-align:center; padding:18px; border-radius:5px; font-family:Orbitron; font-weight:bold; cursor:pointer; letter-spacing:2px;'>
                             OYU ONAYLA VE GÖNDER
                         </div>
                     </a>
+                    <p style='font-size:10px; color:#444; margin-top:20px;'>* Onay sayfasında 'Tamamdır' yazısını görünce işlem tamamdır.</p>
                 </div>
             """, unsafe_allow_html=True)
             st.markdown("</div>", unsafe_allow_html=True)
 
         with col_v2:
-            st.markdown("<div class='industrial-card' style='border-top: 2px solid #cc7a00; min-height:350px;'>", unsafe_allow_html=True)
+            st.markdown("<div class='industrial-card' style='border-top: 2px solid #cc7a00; min-height:400px;'>", unsafe_allow_html=True)
             st.markdown("<div class='terminal-header'>🏆 RÜTBE SIRALAMASI</div>", unsafe_allow_html=True)
-            st.markdown(f"<div class='terminal-row'><span>Oğuz:</span><span class='highlight'>{og_p} - {rutbe_getir(og_p)}</span></div>", unsafe_allow_html=True)
-            st.markdown(f"<div class='terminal-row'><span>Eren:</span><span class='highlight'>{er_p} - {rutbe_getir(er_p)}</span></div>", unsafe_allow_html=True)
-            st.markdown(f"<div class='terminal-row'><span>Fybey:</span><span class='highlight'>{fy_p} - {rutbe_getir(fy_p)}</span></div>", unsafe_allow_html=True)
+            st.markdown("<div style='margin-top:20px;'>", unsafe_allow_html=True)
+            st.markdown(f"<div class='terminal-row'><span style='font-size:16px;'>Oğuz</span><span class='highlight' style='font-size:16px;'>{og_p} - {rutbe_getir(og_p)}</span></div>", unsafe_allow_html=True)
+            st.markdown("<hr style='border:0; height:1px; background:rgba(255,255,255,0.05); margin:15px 0;'>", unsafe_allow_html=True)
+            st.markdown(f"<div class='terminal-row'><span style='font-size:16px;'>Eren</span><span class='highlight' style='font-size:16px;'>{er_p} - {rutbe_getir(er_p)}</span></div>", unsafe_allow_html=True)
+            st.markdown("<hr style='border:0; height:1px; background:rgba(255,255,255,0.05); margin:15px 0;'>", unsafe_allow_html=True)
+            st.markdown(f"<div class='terminal-row'><span style='font-size:16px;'>Fybey</span><span class='highlight' style='font-size:16px;'>{fy_p} - {rutbe_getir(fy_p)}</span></div>", unsafe_allow_html=True)
+            st.markdown("</div>", unsafe_allow_html=True)
             st.markdown("</div>", unsafe_allow_html=True)
 
     elif page == "⚽ FORMLINE":
