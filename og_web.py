@@ -96,7 +96,7 @@ def check_password():
         with col_b:
             pwd = st.text_input("ERİŞİM ANAHTARI", type="password", placeholder="••••", label_visibility="collapsed")
             if st.button("KİMLİK DOĞRULA"):
-                if pwd == "fybey16":
+                if pwd == "16":
                     st.session_state["password_correct"] = True
                     st.rerun()
                 else: st.error("şifre yanlış")
