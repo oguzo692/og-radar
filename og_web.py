@@ -46,8 +46,8 @@ og_p = live_vars.get("oguzo_puan", "0")
 er_p = live_vars.get("ero7_puan", "0")
 fy_p = live_vars.get("fybey_puan", "0")
 
-aktif_soru_1 = live_vars.get("aktif_soru", "Gala maçı gala w ?")
-aktif_soru_2 = live_vars.get("aktif_soru2", "BTC 7 Şubat günlük kapanış 70k")
+aktif_soru_1 = live_vars.get("aktif_soru", "yeni soru hazırlanıyor..")
+aktif_soru_2 = live_vars.get("aktif_soru2", "yeni soru hazırlanıyor..")
 
 w1_kar = float(live_vars.get("w1_sonuc", -100)) 
 w2_kar = float(live_vars.get("w2_sonuc", 453))
