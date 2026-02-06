@@ -15,7 +15,6 @@ st.set_page_config(
 # --- 2. VERİ BAĞLANTISI (GOOGLE SHEETS) ---
 def get_live_data():
     try:
-        # Sayfa1 verilerini çekiyoruz
         sheet_url = "https://docs.google.com/spreadsheets/d/15izevdpRjs8Om5BAHKVWmdL3FxEHml35DGECfhQUG_s/export?format=csv&gid=0"
         df = pd.read_csv(sheet_url)
         data = dict(zip(df['key'].astype(str), df['value'].astype(str)))
@@ -40,7 +39,6 @@ kasa = float(live_vars.get("kasa", 600))
 ana_para = float(live_vars.get("ana_para", 600))
 duyuru_metni = live_vars.get("duyuru", "SİSTEM ÇEVRİMİÇİ... OG CORE V9.9")
 
-# --- SORU DEĞİŞKENLERİ DÜZELTİLDİ ---
 aktif_soru_1 = live_vars.get("aktif_soru", "Gala maçı gala w ?")
 aktif_soru_2 = live_vars.get("aktif_soru2", "BTC 7 Şubat günlük kapanış 70k")
 
@@ -53,7 +51,6 @@ w1_kar = float(live_vars.get("w1_sonuc", -100))
 w2_kar = float(live_vars.get("w2_sonuc", 453))
 toplam_bahis_kar = w1_kar + w2_kar
 
-# --- 📊 PERFORMANS VERİLERİ ---
 wr_oran = live_vars.get("win_rate", "0")
 son_islemler_raw = str(live_vars.get("son_islemler", "Veri yok"))
 
@@ -78,7 +75,6 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input { font-fam
 .ticker { display: flex; white-space: nowrap; animation: ticker 30s linear infinite; }
 .ticker-item { font-size: 12px; color: #cc7a00; letter-spacing: 4px; padding-right: 50%; }
 @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
-
 .equal-card { min-height: 180px; display: flex; flex-direction: column; justify-content: space-between; }
 </style>
 """
@@ -115,10 +111,7 @@ if check_password():
 
     with st.sidebar:
         st.markdown("<h1 style='color:white; font-family:Orbitron; font-size:24px; letter-spacing:5px; text-align:center; margin-bottom:40px;'>OG CORE</h1>", unsafe_allow_html=True)
-        st.markdown("<div class='terminal-header'>🏆 RÜTBE SIRALAMASI</div>", unsafe_allow_html=True)
-        st.markdown(f"<p>Oğuz: {og_p} - <b>{rutbe_getir(og_p)}</b></p>", unsafe_allow_html=True)
-        st.markdown(f"<p>Eren: {er_p} - <b>{rutbe_getir(er_p)}</b></p>", unsafe_allow_html=True)
-        st.markdown(f"<p>Fybey: {fy_p} - <b>{rutbe_getir(fy_p)}</b></p>", unsafe_allow_html=True)
+        # RÜTBE SIRALAMASI BURADAN KALDIRILDI
         page = st.radio("SİSTEM MODÜLLERİ", ["⚡ ULTRA ATAK", "⚽ FORMLINE", "🎲 TAHMİN"])
         with st.expander("📂 ADMİN"):
             admin_pwd = st.text_input("PANEL ŞİFRESİ", type="password")
@@ -144,8 +137,16 @@ if check_password():
         st.markdown("### 📜 SON İŞLEMLER")
         st.markdown(f"<div class='industrial-card'><div class='terminal-header'>AKTİVİTE LOGLARI</div><p style='font-family:JetBrains Mono; color:#888;'>{son_islemler_raw}</p></div>", unsafe_allow_html=True)
 
-    ### TAHMİN BÖLÜMÜ (NUMARALAR VE SORULAR DÜZELTİLDİ) ###
     elif page == "🎲 TAHMİN":
+        # --- YENİ EKLENEN SKOR PANELİ ---
+        st.markdown("<div class='terminal-header'>🏆 GÜNCEL RÜTBE SIRALAMASI</div>", unsafe_allow_html=True)
+        s1, s2, s3 = st.columns(3)
+        with s1: st.markdown(f"<div class='industrial-card' style='padding:15px; text-align:center; border-top: 2px solid #cc7a00;'><div style='font-size:11px; color:#666;'>OĞUZ</div><div class='highlight'>{og_p}</div><div style='font-size:12px;'>{rutbe_getir(og_p)}</div></div>", unsafe_allow_html=True)
+        with s2: st.markdown(f"<div class='industrial-card' style='padding:15px; text-align:center; border-top: 2px solid #cc7a00;'><div style='font-size:11px; color:#666;'>EREN</div><div class='highlight'>{er_p}</div><div style='font-size:12px;'>{rutbe_getir(er_p)}</div></div>", unsafe_allow_html=True)
+        with s3: st.markdown(f"<div class='industrial-card' style='padding:15px; text-align:center; border-top: 2px solid #cc7a00;'><div style='font-size:11px; color:#666;'>FYBEY</div><div class='highlight'>{fy_p}</div><div style='font-size:12px;'>{rutbe_getir(fy_p)}</div></div>", unsafe_allow_html=True)
+        
+        st.divider()
+
         q_col1, q_col2 = st.columns(2)
         base_url = "https://script.google.com/macros/s/AKfycbz0cvMHSrHchkksvFCixr9NDnMsvfLQ6T_K2jsXfohgs7eFXP5x-wxTX_YQej1EZhSX/exec"
         
