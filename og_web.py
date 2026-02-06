@@ -39,13 +39,12 @@ kasa = float(live_vars.get("kasa", 600))
 ana_para = float(live_vars.get("ana_para", 600))
 duyuru_metni = live_vars.get("duyuru", "SİSTEM ÇEVRİMİÇİ... OG CORE V9.9")
 
-# --- KİŞİSEL KASA VERİLERİ (DÜZELTİLDİ) ---
-# Sabit %20 hatası giderildi. Sheets'ten veri yoksa kasa/3 yapar.
+# --- KİŞİSEL KASA VERİLERİ ---
 og_kasa = float(live_vars.get("oguzo_kasa", kasa / 3))
 er_kasa = float(live_vars.get("ero7_kasa", kasa / 3))
 fy_kasa = float(live_vars.get("fybey_kasa", kasa / 3))
 
-# --- RÜTBE VERİLERİ (TAHMİN İÇİN) ---
+# --- RÜTBE VERİLERİ ---
 og_p = live_vars.get("oguzo_puan", "0")
 er_p = live_vars.get("ero7_puan", "0")
 fy_p = live_vars.get("fybey_puan", "0")
@@ -135,10 +134,38 @@ if check_password():
 
         st.divider()
 
+        # --- YENİ DİNAMİK HEDEF BARI ENTEGRASYONU ---
+        if kasa < 900:
+            alt_sinir, ust_hedef, ikon = 600, 900, "🎯"
+        elif kasa < 1200:
+            alt_sinir, ust_hedef, ikon = 900, 1200, "🚀"
+        else:
+            alt_sinir, ust_hedef, ikon = 1200, 1800, "👑"
+
+        # Başlangıç noktası 600$ olacak şekilde yüzde hesaplama
+        if kasa <= alt_sinir:
+            yuzde = 0
+        else:
+            yuzde = min((kasa - alt_sinir) / (ust_hedef - alt_sinir), 1.0) * 100
+
+        st.markdown(f"""
+            <div class='industrial-card'>
+                <div style='display: flex; justify-content: space-between; align-items: center;'>
+                    <div class='terminal-header' style='margin-bottom:0;'>HEDEF YOLCULUĞU (${ust_hedef:,.0f}) {ikon}</div>
+                    <span style='color: #cc7a00; font-size: 12px; font-family: "JetBrains Mono";'>KASA: ${kasa:,.2f}</span>
+                </div>
+                <div style='background:#111; height:10px; border-radius:10px; margin-top:15px; position:relative;'>
+                    <div style='background:linear-gradient(90deg, #cc7a00, #ffae00); width:{yuzde}%; height:100%; border-radius:10px; box-shadow: 0px 0px 10px rgba(204, 122, 0, 0.3); transition: width 1s ease;'></div>
+                </div>
+                <div style='display: flex; justify-content: space-between; margin-top: 8px; font-size: 10px; color: #444; font-family: "JetBrains Mono";'>
+                    <span>BAŞLANGIÇ: ${alt_sinir}</span>
+                    <span>HEDEF: ${ust_hedef}</span>
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
+        # --- ENTEGRASYON BİTİŞ ---
+
         net_kar = kasa - ana_para
-        current_pct = min(100, (kasa / 6500) * 100)
-        st.markdown(f"<div class='industrial-card'><div class='terminal-header'>HEDEF YOLCULUĞU ($6,500)</div><div style='background:#111; height:8px; border-radius:10px;'><div style='background:linear-gradient(90deg, #cc7a00, #ffae00); width:{current_pct}%; height:100%; border-radius:10px;'></div></div></div>", unsafe_allow_html=True)
-        
         col1, col2, col3 = st.columns(3)
         with col1: st.markdown(f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>💎 KASA</div><div class='terminal-row'><span>TOPLAM</span><span class='highlight'>${kasa:,.2f}</span></div><div class='terminal-row'><span>K/Z</span><span style='color:{'#00ff41' if net_kar >=0 else '#ff4b4b'};' class='val-std'>${net_kar:,.2f}</span></div></div>", unsafe_allow_html=True)
         with col2:
