@@ -29,7 +29,6 @@ def rutbe_getir(puan_str):
         p = int(float(puan_str))
     except:
         p = 0
-    # Senin yeni skalan:
     if p <= 3: return "Hılez"
     elif p <= 6: return "Çırak"
     elif p <= 9: return "Bu Abi Biri Mi?"
@@ -53,9 +52,9 @@ toplam_bahis_kar = w1_kar + w2_kar
 
 # --- 📊 PERFORMANS VERİLERİ ---
 wr_oran = live_vars.get("win_rate", "0")
-son_islemler_raw = str(live_vars.get("son_islemler", ""))
+son_islemler_raw = str(live_vars.get("son_islemler", "Veri yok"))
 
-# --- 3. CSS STİLLERİ (HİÇ DOKUNULMADI) ---
+# --- 3. CSS STİLLERİ ---
 custom_css = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&family=Orbitron:wght@400;700;900&display=swap');
@@ -133,13 +132,28 @@ if check_password():
         st.markdown(f"<div class='industrial-card'><div class='terminal-header'>HEDEF YOLCULUĞU ($6,500)</div><div style='background:#111; height:8px; border-radius:10px;'><div style='background:linear-gradient(90deg, #cc7a00, #ffae00); width:{current_pct}%; height:100%; border-radius:10px;'></div></div></div>", unsafe_allow_html=True)
         
         col1, col2, col3 = st.columns(3)
-        with col1: st.markdown(f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>💎 KASA</div><div class='terminal-row'><span>TOPLAM</span><span class='highlight'>${kasa:,.2f}</span></div><div class='terminal-row'><span>K/Z</span><span style='color:{'#00ff41' if net_kar >=0 else '#ff4b4b'};' class='val-std'>${net_kar:,.2f}</span></div></div>", unsafe_allow_html=True)
+        with col1: 
+            st.markdown(f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>💎 KASA</div><div class='terminal-row'><span>TOPLAM</span><span class='highlight'>${kasa:,.2f}</span></div><div class='terminal-row'><span>K/Z</span><span style='color:{'#00ff41' if net_kar >=0 else '#ff4b4b'};' class='val-std'>${net_kar:,.2f}</span></div></div>", unsafe_allow_html=True)
         with col2:
             try:
+                # BTC, ETH ve SOL fiyatlarını çekiyoruz
                 btc = yf.Ticker("BTC-USD").history(period="1d")['Close'].iloc[-1]
-                st.markdown(f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>⚡ PİYASA</div><div class='terminal-row'><span>BITCOIN</span><span class='highlight'>${btc:,.0f}</span></div></div>", unsafe_allow_html=True)
-            except: st.write("Veri bekleniyor...")
-        with col3: st.markdown(f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>📊 WİN RATE</div><div style='text-align:center;'><span style='font-size:45px; font-weight:900; color:#cc7a00; font-family:Orbitron;'>%{wr_oran}</span></div></div>", unsafe_allow_html=True)
+                eth = yf.Ticker("ETH-USD").history(period="1d")['Close'].iloc[-1]
+                sol = yf.Ticker("SOL-USD").history(period="1d")['Close'].iloc[-1]
+                st.markdown(f"""
+                <div class='industrial-card' style='height:230px;'>
+                    <div class='terminal-header'>⚡ PİYASA</div>
+                    <div class='terminal-row'><span>BITCOIN</span><span class='highlight'>${btc:,.0f}</span></div>
+                    <div class='terminal-row'><span>ETHEREUM</span><span style='color:#cc7a00;'>${eth:,.0f}</span></div>
+                    <div class='terminal-row'><span>SOLANA</span><span style='color:#cc7a00;'>${sol:,.2f}</span></div>
+                </div>""", unsafe_allow_html=True)
+            except: st.write("Piyasa verisi bekleniyor...")
+        with col3: 
+            st.markdown(f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>📊 WİN RATE</div><div style='text-align:center;'><span style='font-size:45px; font-weight:900; color:#cc7a00; font-family:Orbitron;'>%{wr_oran}</span></div></div>", unsafe_allow_html=True)
+
+        # SON İŞLEMLER SEKMESİ (GERİ GELDİ)
+        st.markdown("### 📜 SON İŞLEMLER")
+        st.markdown(f"<div class='industrial-card'><div class='terminal-header'>AKTİVİTE LOGLARI</div><p style='font-family:JetBrains Mono; color:#888;'>{son_islemler_raw}</p></div>", unsafe_allow_html=True)
 
         st.markdown("### 🎯 PAY DAĞILIMI")
         cols = st.columns(3)
@@ -155,19 +169,15 @@ if check_password():
             
             if st.button("TAHMİNİ GÖNDER"):
                 import requests
-                # Apps Script URL'si
                 script_url = "https://script.google.com/macros/s/AKfycbz0cvMHSrHchkksvFCixr9NDnMsvfLQ6T_K2jsXfohgs7eFXP5x-wxTX_YQej1EZhSX/exec"
-                
                 try:
                     params = {'isim': u_name, 'tahmin': u_vote}
                     response = requests.get(script_url, params=params, timeout=10)
                     if response.status_code == 200:
                         st.success(f"Tamamdır {u_name}, oyu Sheets'e fırlattım! ✅")
                         st.balloons()
-                    else:
-                        st.error(f"Google tarafında sorun var. Kod: {response.status_code}")
-                except Exception as e:
-                    st.error(f"Bağlantı hatası: {e}")
+                    else: st.error(f"Hata kodu: {response.status_code}")
+                except Exception as e: st.error(f"Bağlantı hatası: {e}")
 
     elif page == "⚽ FORMLINE":
         st.markdown(f"<div class='industrial-card'><div class='terminal-header'>📈 PERFORMANS</div><div class='terminal-row'><span>NET:</span><span style='color:#00ff41; font-size:32px; font-family:Orbitron;'>${toplam_bahis_kar:,.2f}</span></div></div>", unsafe_allow_html=True)
