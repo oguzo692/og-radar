@@ -136,6 +136,7 @@ if check_password():
             st.markdown(f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>💎 KASA</div><div class='terminal-row'><span>TOPLAM</span><span class='highlight'>${kasa:,.2f}</span></div><div class='terminal-row'><span>K/Z</span><span style='color:{'#00ff41' if net_kar >=0 else '#ff4b4b'};' class='val-std'>${net_kar:,.2f}</span></div></div>", unsafe_allow_html=True)
         with col2:
             try:
+                # BTC, ETH ve SOL fiyatlarını çekiyoruz
                 btc = yf.Ticker("BTC-USD").history(period="1d")['Close'].iloc[-1]
                 eth = yf.Ticker("ETH-USD").history(period="1d")['Close'].iloc[-1]
                 sol = yf.Ticker("SOL-USD").history(period="1d")['Close'].iloc[-1]
@@ -165,26 +166,21 @@ if check_password():
             u_name = st.selectbox("İsim", ["oguzo", "ero7", "fybey"])
             u_vote = st.radio("Tahmin", ["Üstünde", "Altında"])
             
-            if st.button("TAHMİNİ GÖNDER"):
-                import requests
-                # Kanka tarayıcı formatını taklit eden en güçlü yapı:
-                script_url = "https://script.google.com/macros/s/AKfycbz0cvMHSrHchkksvFCixr9NDnMsvfLQ6T_K2jsXfohgs7eFXP5x-wxTX_YQej1EZhSX/exec"
-                full_url = f"{script_url}?isim={u_name}&tahmin={u_vote}"
-                
-                # Tarayıcı gibi davranması için headers ekledik:
-                headers = {"User-Agent": "Mozilla/5.0"}
-                
-                try:
-                    # stream=True ve allow_redirects=True Google'ın yönlendirmelerini yakalar
-                    response = requests.get(full_url, headers=headers, timeout=15, allow_redirects=True)
-                    
-                    if response.status_code == 200:
-                        st.success(f"Tamamdır {u_name}, oyu Sheets'e fırlattım! ✅")
-                        st.balloons()
-                    else:
-                        st.warning(f"Google 200 vermedi ama tarayıcıda çalışıyorsa işlem tamamdır. Kod: {response.status_code}")
-                except Exception as e:
-                    st.error(f"Bağlantı hatası: {e}")
+            # Kanka tarayıcı formatında tam URL simülasyonu
+            base_url = "https://script.google.com/macros/s/AKfycbz0cvMHSrHchkksvFCixr9NDnMsvfLQ6T_K2jsXfohgs7eFXP5x-wxTX_YQej1EZhSX/exec"
+            final_link = f"{base_url}?isim={u_name}&tahmin={u_vote}"
+            
+            st.markdown(f"""
+                <div style='margin-top:20px;'>
+                    <p style='font-size:12px; color:#666;'>1. İsim ve tahminini seç.</p>
+                    <a href='{final_link}' target='_blank' style='text-decoration:none;'>
+                        <div style='background:rgba(204, 122, 0, 0.2); border: 1px solid #cc7a00; color:#cc7a00; text-align:center; padding:15px; border-radius:5px; font-family:Orbitron; font-weight:bold; cursor:pointer;'>
+                            OYU ONAYLA VE GÖNDER
+                        </div>
+                    </a>
+                    <p style='font-size:11px; color:#444; margin-top:10px;'>* Tıkladığında yeni bir sekme açılır, 'Tamamdır' yazısını görünce oyu düşmüş demektir.</p>
+                </div>
+            """, unsafe_allow_html=True)
 
     elif page == "⚽ FORMLINE":
         st.markdown(f"<div class='industrial-card'><div class='terminal-header'>📈 PERFORMANS</div><div class='terminal-row'><span>NET:</span><span style='color:#00ff41; font-size:32px; font-family:Orbitron;'>${toplam_bahis_kar:,.2f}</span></div></div>", unsafe_allow_html=True)
