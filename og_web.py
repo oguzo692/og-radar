@@ -39,19 +39,18 @@ kasa = float(live_vars.get("kasa", 600))
 ana_para = float(live_vars.get("ana_para", 600))
 duyuru_metni = live_vars.get("duyuru", "SİSTEM ÇEVRİMİÇİ... OG CORE V9.9")
 
-aktif_soru_1 = live_vars.get("aktif_soru", "Gala maçı gala w ?")
-aktif_soru_2 = live_vars.get("aktif_soru2", "BTC 7 Şubat günlük kapanış 70k")
+# --- KİŞİSEL KASA VERİLERİ (ULTRA ATAK İÇİN) ---
+og_kasa = float(live_vars.get("oguzo_kasa", kasa * 0.40))
+er_kasa = float(live_vars.get("ero7_kasa", kasa * 0.40))
+fy_kasa = float(live_vars.get("fybey_kasa", kasa * 0.20))
 
+# --- RÜTBE VERİLERİ (TAHMİN İÇİN) ---
 og_p = live_vars.get("oguzo_puan", "0")
 er_p = live_vars.get("ero7_puan", "0")
 fy_p = live_vars.get("fybey_puan", "0")
 
-# --- 💰 PAY HESAPLAMA (SHEETS'TEN GELEN VERİYE GÖRE) ---
-# Sheets'te 'oguzo_kasa', 'ero7_kasa', 'fybey_kasa' anahtarları olduğunu varsayıyorum
-# Eğer yoksa toplam kasa üzerinden %40, %40, %20 dağıtıyor:
-og_kasa_val = float(live_vars.get("oguzo_kasa", kasa * 0.40))
-er_kasa_val = float(live_vars.get("ero7_kasa", kasa * 0.40))
-fy_kasa_val = float(live_vars.get("fybey_kasa", kasa * 0.20))
+aktif_soru_1 = live_vars.get("aktif_soru", "Gala maçı gala w ?")
+aktif_soru_2 = live_vars.get("aktif_soru2", "BTC 7 Şubat günlük kapanış 70k")
 
 # --- 💰 FORMLINE HESAPLAMA ---
 w1_kar = float(live_vars.get("w1_sonuc", -100)) 
@@ -127,9 +126,19 @@ if check_password():
             st.rerun()
 
     if page == "⚡ ULTRA ATAK":
+        # --- 🟢 KASA DAĞILIMI BÖLÜMÜ (BURAYA GELDİ) ---
+        st.markdown("<div class='terminal-header'>💰 KİŞİSEL KASA DAĞILIMI</div>", unsafe_allow_html=True)
+        k1, k2, k3 = st.columns(3)
+        with k1: st.markdown(f"<div class='industrial-card' style='text-align:center; border-top-color: #cc7a00;'><div style='font-size:11px; color:#666;'>OĞUZ BAKİYE</div><div class='highlight'>${og_kasa:,.2f}</div></div>", unsafe_allow_html=True)
+        with k2: st.markdown(f"<div class='industrial-card' style='text-align:center; border-top-color: #cc7a00;'><div style='font-size:11px; color:#666;'>EREN BAKİYE</div><div class='highlight'>${er_kasa:,.2f}</div></div>", unsafe_allow_html=True)
+        with k3: st.markdown(f"<div class='industrial-card' style='text-align:center; border-top-color: #cc7a00;'><div style='font-size:11px; color:#666;'>FYBEY BAKİYE</div><div class='highlight'>${fy_kasa:,.2f}</div></div>", unsafe_allow_html=True)
+
+        st.divider()
+
         net_kar = kasa - ana_para
         current_pct = min(100, (kasa / 6500) * 100)
         st.markdown(f"<div class='industrial-card'><div class='terminal-header'>HEDEF YOLCULUĞU ($6,500)</div><div style='background:#111; height:8px; border-radius:10px;'><div style='background:linear-gradient(90deg, #cc7a00, #ffae00); width:{current_pct}%; height:100%; border-radius:10px;'></div></div></div>", unsafe_allow_html=True)
+        
         col1, col2, col3 = st.columns(3)
         with col1: st.markdown(f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>💎 KASA</div><div class='terminal-row'><span>TOPLAM</span><span class='highlight'>${kasa:,.2f}</span></div><div class='terminal-row'><span>K/Z</span><span style='color:{'#00ff41' if net_kar >=0 else '#ff4b4b'};' class='val-std'>${net_kar:,.2f}</span></div></div>", unsafe_allow_html=True)
         with col2:
@@ -140,23 +149,23 @@ if check_password():
                 st.markdown(f"""<div class='industrial-card' style='height:230px;'><div class='terminal-header'>⚡ PİYASA</div><div class='terminal-row'><span>BITCOIN</span><span class='highlight'>${btc:,.0f}</span></div><div class='terminal-row'><span>ETHEREUM</span><span style='color:#cc7a00;'>${eth:,.0f}</span></div><div class='terminal-row'><span>SOLANA</span><span style='color:#cc7a00;'>${sol:,.2f}</span></div></div>""", unsafe_allow_html=True)
             except: st.write("Piyasa verisi bekleniyor...")
         with col3: st.markdown(f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>📊 WİN RATE</div><div style='text-align:center;'><span style='font-size:45px; font-weight:900; color:#cc7a00; font-family:Orbitron;'>%{wr_oran}</span></div></div>", unsafe_allow_html=True)
+        
         st.markdown("### 📜 SON İŞLEMLER")
         st.markdown(f"<div class='industrial-card'><div class='terminal-header'>AKTİVİTE LOGLARI</div><p style='font-family:JetBrains Mono; color:#888;'>{son_islemler_raw}</p></div>", unsafe_allow_html=True)
 
     elif page == "🎲 TAHMİN":
-        # --- 🟢 ANLIK KASA DAĞILIMI (İSTEDİĞİN BÖLÜM) ---
-        st.markdown("<div class='terminal-header'>💰 ANLIK KASA DAĞILIMI (G-SHEETS)</div>", unsafe_allow_html=True)
+        # --- 🏆 RÜTBE SIRALAMASI BÖLÜMÜ (BURAYA GELDİ) ---
+        st.markdown("<div class='terminal-header'>🏆 GÜNCEL RÜTBE SIRALAMASI</div>", unsafe_allow_html=True)
         s1, s2, s3 = st.columns(3)
-        with s1: st.markdown(f"<div class='industrial-card' style='padding:15px; text-align:center; border-top: 2px solid #cc7a00;'><div style='font-size:11px; color:#666;'>OĞUZ KASA</div><div class='highlight'>${og_kasa_val:,.2f}</div><div style='font-size:12px;'>{rutbe_getir(og_p)}</div></div>", unsafe_allow_html=True)
-        with s2: st.markdown(f"<div class='industrial-card' style='padding:15px; text-align:center; border-top: 2px solid #cc7a00;'><div style='font-size:11px; color:#666;'>EREN KASA</div><div class='highlight'>${er_kasa_val:,.2f}</div><div style='font-size:12px;'>{rutbe_getir(er_p)}</div></div>", unsafe_allow_html=True)
-        with s3: st.markdown(f"<div class='industrial-card' style='padding:15px; text-align:center; border-top: 2px solid #cc7a00;'><div style='font-size:11px; color:#666;'>FYBEY KASA</div><div class='highlight'>${fy_kasa_val:,.2f}</div><div style='font-size:12px;'>{rutbe_getir(fy_p)}</div></div>", unsafe_allow_html=True)
+        with s1: st.markdown(f"<div class='industrial-card' style='padding:15px; text-align:center; border-top: 2px solid #cc7a00;'><div style='font-size:11px; color:#666;'>OĞUZ</div><div class='highlight'>{og_p} P</div><div style='font-size:12px;'>{rutbe_getir(og_p)}</div></div>", unsafe_allow_html=True)
+        with s2: st.markdown(f"<div class='industrial-card' style='padding:15px; text-align:center; border-top: 2px solid #cc7a00;'><div style='font-size:11px; color:#666;'>EREN</div><div class='highlight'>{er_p} P</div><div style='font-size:12px;'>{rutbe_getir(er_p)}</div></div>", unsafe_allow_html=True)
+        with s3: st.markdown(f"<div class='industrial-card' style='padding:15px; text-align:center; border-top: 2px solid #cc7a00;'><div style='font-size:11px; color:#666;'>FYBEY</div><div class='highlight'>{fy_p} P</div><div style='font-size:12px;'>{rutbe_getir(fy_p)}</div></div>", unsafe_allow_html=True)
         
         st.divider()
 
         q_col1, q_col2 = st.columns(2)
         base_url = "https://script.google.com/macros/s/AKfycbz0cvMHSrHchkksvFCixr9NDnMsvfLQ6T_K2jsXfohgs7eFXP5x-wxTX_YQej1EZhSX/exec"
         
-        # --- SORU 1 ---
         with q_col1:
             st.markdown(f"<div class='industrial-card equal-card'><div class='terminal-header'>📢 AKTİF SORU 1</div><h3 style='color:white; margin:0;'>{aktif_soru_1}</h3><span></span></div>", unsafe_allow_html=True)
             u_name_1 = st.selectbox("İsim (Soru 1)", ["oguzo", "ero7", "fybey"], key="n1")
@@ -164,7 +173,6 @@ if check_password():
             final_link_1 = f"{base_url}?isim={u_name_1}&tahmin={u_vote_1}&soru=1"
             st.markdown(f"""<a href='{final_link_1}' target='_blank' style='text-decoration:none;'><div style='background:rgba(204, 122, 0, 0.2); border: 1px solid #cc7a00; color:#cc7a00; text-align:center; padding:15px; border-radius:5px; font-family:Orbitron; font-weight:bold; cursor:pointer;'>1. OYU ONAYLA</div></a>""", unsafe_allow_html=True)
 
-        # --- SORU 2 ---
         with q_col2:
             st.markdown(f"<div class='industrial-card equal-card'><div class='terminal-header'>📢 AKTİF SORU 2</div><h3 style='color:white; margin:0;'>{aktif_soru_2}</h3><span></span></div>", unsafe_allow_html=True)
             u_name_2 = st.selectbox("İsim (Soru 2)", ["oguzo", "ero7", "fybey"], key="n2")
