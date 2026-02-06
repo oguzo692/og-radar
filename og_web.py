@@ -55,7 +55,7 @@ toplam_bahis_kar = w1_kar + w2_kar
 wr_oran = live_vars.get("win_rate", "0")
 son_islemler_raw = str(live_vars.get("son_islemler", ""))
 
-# --- 3. CSS STİLLERİ (TEMİZLENMİŞ) ---
+# --- 3. CSS STİLLERİ (HİÇ DOKUNULMADI) ---
 custom_css = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&family=Orbitron:wght@400;700;900&display=swap');
@@ -155,16 +155,19 @@ if check_password():
             
             if st.button("TAHMİNİ GÖNDER"):
                 import requests
-                # Kopyaladığın URL'yi buraya ekledim kanka:
-                script_url = "https://script.google.com/macros/s/AKfycbxG7a354qQUSLkkKTiCDZaptFub8yT2h-qkKcyBgUk0tHJUUk1eXmEA5dCc5ei76hj/exec"
+                # Apps Script URL'si
+                script_url = "https://script.google.com/macros/s/AKfycbz0cvMHSrHchkksvFCixr9NDnMsvfLQ6T_K2jsXfohgs7eFXP5x-wxTX_YQej1EZhSX/exec"
                 
                 try:
-                    payload = {'isim': u_name, 'tahmin': u_vote}
-                    requests.get(script_url, params=payload)
-                    st.success(f"Tamamdır {u_name}, tahminin sisteme işlendi! ✅")
-                    st.balloons()
-                except:
-                    st.error("Bir sorun çıktı kanka, internetini kontrol et.")
+                    params = {'isim': u_name, 'tahmin': u_vote}
+                    response = requests.get(script_url, params=params, timeout=10)
+                    if response.status_code == 200:
+                        st.success(f"Tamamdır {u_name}, oyu Sheets'e fırlattım! ✅")
+                        st.balloons()
+                    else:
+                        st.error(f"Google tarafında sorun var. Kod: {response.status_code}")
+                except Exception as e:
+                    st.error(f"Bağlantı hatası: {e}")
 
     elif page == "⚽ FORMLINE":
         st.markdown(f"<div class='industrial-card'><div class='terminal-header'>📈 PERFORMANS</div><div class='terminal-row'><span>NET:</span><span style='color:#00ff41; font-size:32px; font-family:Orbitron;'>${toplam_bahis_kar:,.2f}</span></div></div>", unsafe_allow_html=True)
