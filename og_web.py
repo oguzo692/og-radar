@@ -29,7 +29,7 @@ def rutbe_getir(puan_str):
     except:
         p = 0
     if p <= 3: return "Hılez"
-    elif p <= 6: return "Çırak"
+    elif p <= 6: return "Tecrübeli Hılez"
     elif p <= 9: return "Bu Abi Biri Mi?"
     elif p <= 11: return "Miço"
     else: return "Grand Miço"
