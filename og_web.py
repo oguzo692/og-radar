@@ -15,7 +15,6 @@ st.set_page_config(
 # --- 2. VERİ BAĞLANTISI (GOOGLE SHEETS) ---
 def get_live_data():
     try:
-        # Sayfa1 verilerini çekiyoruz
         sheet_url = "https://docs.google.com/spreadsheets/d/15izevdpRjs8Om5BAHKVWmdL3FxEHml35DGECfhQUG_s/export?format=csv&gid=0"
         df = pd.read_csv(sheet_url)
         data = dict(zip(df['key'].astype(str), df['value'].astype(str)))
@@ -23,7 +22,6 @@ def get_live_data():
     except Exception:
         return {"kasa": "600.0", "ana_para": "600.0"}
 
-# --- RÜTBE FONKSİYONU (Sadece hesaplama yapar) ---
 def rutbe_getir(puan_str):
     try:
         p = int(float(puan_str))
@@ -39,7 +37,6 @@ kasa = float(live_vars.get("kasa", 600))
 ana_para = float(live_vars.get("ana_para", 600))
 duyuru_metni = live_vars.get("duyuru", "SİSTEM ÇEVRİMİÇİ... OG CORE V9.9")
 
-# Yeni Veriler (Senin Sheets'e eklediğin satırlar)
 aktif_soru = live_vars.get("aktif_soru", "SORU YÜKLENİYOR...")
 og_p = live_vars.get("oguzo_puan", "0")
 er_p = live_vars.get("ero7_puan", "0")
@@ -54,14 +51,19 @@ toplam_bahis_kar = w1_kar + w2_kar
 wr_oran = live_vars.get("win_rate", "0")
 son_islemler_raw = str(live_vars.get("son_islemler", ""))
 
-# --- 3. CSS STİLLERİ (Senin orijinal CSS'in, hiç dokunmadım) ---
+# --- 3. CSS STİLLERİ (TEMİZLENMİŞ VE ARINDIRILMIŞ) ---
 custom_css = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&family=Orbitron:wght@400;700;900&display=swap');
+
+/* TÜM GEREKSİZ STREAMLİT METİNLERİNİ GİZLE */
 #MainMenu, footer, header, .stAppDeployButton {visibility: hidden;}
+[data-testid="stSidebar"] svg, [data-testid="stHeaderActionElements"], .st-emotion-cache-10trblm {display: none !important;}
+[data-testid="stSidebar"] span, [data-testid="stSidebar"] small {font-size: 0 !important; color: transparent !important;}
+[data-testid="stSidebar"] p {font-size: 14px !important; color: #d1d1d1 !important; visibility: visible !important;}
+
 .stApp { background-color: #030303 !important; background-image: radial-gradient(circle at 50% 50%, rgba(204, 122, 0, 0.07) 0%, transparent 70%);}
 section[data-testid="stSidebar"] { background-color: #050505 !important; border-right: 1px solid rgba(204, 122, 0, 0.15); padding-top: 20px; min-width: 340px !important; max-width: 340px !important;}
-[data-testid="stSidebar"] .stVerticalBlock { gap: 0.8rem !important; }
 .stButton button, .stLinkButton a { width: 100% !important; background: rgba(204, 122, 0, 0.1) !important; border: 1px solid rgba(204, 122, 0, 0.3) !important; color: #cc7a00 !important; font-family: 'Orbitron' !important; padding: 12px !important; border-radius: 6px !important;}
 body, [data-testid="stAppViewContainer"], p, div, span, button, input { font-family: 'JetBrains Mono', monospace !important; color: #d1d1d1 !important;}
 .terminal-row { display: flex; justify-content: space-between; align-items: center; font-size: 14px; margin-bottom: 12px; line-height: 1.6;}
@@ -109,11 +111,10 @@ if check_password():
     with st.sidebar:
         st.markdown("<h1 style='color:white; font-family:Orbitron; font-size:24px; letter-spacing:5px; text-align:center; margin-bottom:40px;'>OG CORE</h1>", unsafe_allow_html=True)
         
-        # --- RÜTBE SCOREBOARD (Sidebar'a eklendi) ---
         st.markdown("<div class='terminal-header'>🏆 RÜTBE SIRALAMASI</div>", unsafe_allow_html=True)
-        st.markdown(f"<div style='font-size:12px; margin-bottom:8px;'>Oğuz: {og_p} - <b>{rutbe_getir(og_p)}</b></div>", unsafe_allow_html=True)
-        st.markdown(f"<div style='font-size:12px; margin-bottom:8px;'>Eren: {er_p} - <b>{rutbe_getir(er_p)}</b></div>", unsafe_allow_html=True)
-        st.markdown(f"<div style='font-size:12px; margin-bottom:20px;'>Fybey: {fy_p} - <b>{rutbe_getir(fy_p)}</b></div>", unsafe_allow_html=True)
+        st.markdown(f"<p>Oğuz: {og_p} - <b>{rutbe_getir(og_p)}</b></p>", unsafe_allow_html=True)
+        st.markdown(f"<p>Eren: {er_p} - <b>{rutbe_getir(er_p)}</b></p>", unsafe_allow_html=True)
+        st.markdown(f"<p>Fybey: {fy_p} - <b>{rutbe_getir(fy_p)}</b></p>", unsafe_allow_html=True)
         
         page = st.radio("SİSTEM MODÜLLERİ", ["⚡ ULTRA ATAK", "⚽ FORMLINE", "📊 SİMÜLASYON", "🎲 TAHMİN"])
         
