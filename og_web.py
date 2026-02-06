@@ -41,7 +41,7 @@ kasa = float(live_vars.get("kasa", 600))
 ana_para = float(live_vars.get("ana_para", 600))
 duyuru_metni = live_vars.get("duyuru", "SİSTEM ÇEVRİMİÇİ... OG CORE V9.9")
 
-aktif_soru = live_vars.get("aktif_soru", "SORU YÜKLENİYOR...")
+aktif_soru = live_vars.get("aktif_soru", "BTC yarın günlük kapanışı 70k üstü/altı")
 og_p = live_vars.get("oguzo_puan", "0")
 er_p = live_vars.get("ero7_puan", "0")
 fy_p = live_vars.get("fybey_puan", "0")
