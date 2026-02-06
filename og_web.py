@@ -98,8 +98,8 @@ def check_password():
         st.markdown('<div style="text-align:center; margin-top:15vh; font-family:Orbitron; font-size:60px; color:white;">OG CORE</div>', unsafe_allow_html=True)
         col_a, col_b, col_c = st.columns([1,1,1])
         with col_b:
-            pwd = st.text_input("şifre", type="password", placeholder="••••", label_visibility="collapsed")
-            if st.button("go"):
+            pwd = st.text_input("şifre", type="password", placeholder="•••••••", label_visibility="collapsed")
+            if st.button("giriş"):
                 if pwd == "1608": 
                     st.session_state["password_correct"] = True
                     st.rerun()
