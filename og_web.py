@@ -111,7 +111,6 @@ if check_password():
     with st.sidebar:
         st.markdown("<h1 style='color:white; font-family:Orbitron; font-size:24px; letter-spacing:5px; text-align:center; margin-bottom:40px;'>OG CORE</h1>", unsafe_allow_html=True)
         
-        # Rütbeler buradan kaldırıldı (Tahmin sekmesine taşındı)
         page = st.radio("SİSTEM MODÜLLERİ", ["⚡ ULTRA ATAK", "⚽ FORMLINE", "📊 SİMÜLASYON", "🎲 TAHMİN"])
         
         with st.expander("📂 ADMİN"):
@@ -150,11 +149,13 @@ if check_password():
         st.markdown(f"<div class='industrial-card'><div class='terminal-header'>AKTİVİTE LOGLARI</div><p style='font-family:JetBrains Mono; color:#888;'>{son_islemler_raw}</p></div>", unsafe_allow_html=True)
 
     elif page == "🎲 TAHMİN":
-        # Tahmin sekmesine rütbe sıralamasını ekliyoruz
+        # Aktif Soru başlığını tek kartta tutuyoruz
         st.markdown(f"<div class='industrial-card'><div class='terminal-header'>📢 AKTİF SORU</div><h2 style='color:white;'>{aktif_soru}</h2></div>", unsafe_allow_html=True)
         
+        # İçeriği 2 sütuna bölüyoruz
         col_v1, col_v2 = st.columns(2)
         with col_v1:
+            st.markdown("<div class='industrial-card' style='border-top: 2px solid #cc7a00; min-height:350px;'>", unsafe_allow_html=True)
             st.markdown("<div class='terminal-header'>🗳️ OY KULLAN</div>", unsafe_allow_html=True)
             u_name = st.selectbox("İsim", ["oguzo", "ero7", "fybey"])
             u_vote = st.radio("Tahmin", ["Üstünde", "Altında"])
@@ -171,9 +172,10 @@ if check_password():
                     </a>
                 </div>
             """, unsafe_allow_html=True)
+            st.markdown("</div>", unsafe_allow_html=True)
 
         with col_v2:
-            st.markdown("<div class='industrial-card' style='border-top: 2px solid #cc7a00;'>", unsafe_allow_html=True)
+            st.markdown("<div class='industrial-card' style='border-top: 2px solid #cc7a00; min-height:350px;'>", unsafe_allow_html=True)
             st.markdown("<div class='terminal-header'>🏆 RÜTBE SIRALAMASI</div>", unsafe_allow_html=True)
             st.markdown(f"<div class='terminal-row'><span>Oğuz:</span><span class='highlight'>{og_p} - {rutbe_getir(og_p)}</span></div>", unsafe_allow_html=True)
             st.markdown(f"<div class='terminal-row'><span>Eren:</span><span class='highlight'>{er_p} - {rutbe_getir(er_p)}</span></div>", unsafe_allow_html=True)
