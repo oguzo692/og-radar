@@ -42,7 +42,7 @@ duyuru_metni = live_vars.get("duyuru", "SİSTEM ÇEVRİMİÇİ... OG CORE V9.9")
 
 # SORU VERİLERİ
 aktif_soru = live_vars.get("aktif_soru", "Gala maçı gala w ?")
-aktif_soru_2 = live_vars.get("aktif_soru_2", "İkinci soru henüz girilmedi...") # Yeni Soru Alanı
+aktif_soru_2 = live_vars.get("aktif_soru_2", "BTC 7 Şubat günlük kapannış 70k") # Yeni Soru Alanı
 
 og_p = live_vars.get("oguzo_puan", "0")
 er_p = live_vars.get("ero7_puan", "0")
@@ -194,7 +194,7 @@ if check_password():
                 </a>
             """, unsafe_allow_html=True)
         
-        st.info("💡 Not: İkinci sorunun görünmesi için Google Sheets dosyanızda 'key' sütununa 'aktif_soru_2' eklemeyi unutmayın.")
+      
 
     elif page == "⚽ FORMLINE":
         st.markdown(f"<div class='industrial-card'><div class='terminal-header'>📈 PERFORMANS</div><div class='terminal-row'><span>NET:</span><span style='color:#00ff41; font-size:32px; font-family:Orbitron;'>${toplam_bahis_kar:,.2f}</span></div></div>", unsafe_allow_html=True)
