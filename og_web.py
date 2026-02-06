@@ -39,10 +39,11 @@ kasa = float(live_vars.get("kasa", 600))
 ana_para = float(live_vars.get("ana_para", 600))
 duyuru_metni = live_vars.get("duyuru", "SİSTEM ÇEVRİMİÇİ... OG CORE V9.9")
 
-# --- KİŞİSEL KASA VERİLERİ (ULTRA ATAK İÇİN) ---
-og_kasa = float(live_vars.get("oguzo_kasa", kasa * 0.40))
-er_kasa = float(live_vars.get("ero7_kasa", kasa * 0.40))
-fy_kasa = float(live_vars.get("fybey_kasa", kasa * 0.20))
+# --- KİŞİSEL KASA VERİLERİ (DÜZELTİLDİ) ---
+# Sabit %20 hatası giderildi. Sheets'ten veri yoksa kasa/3 yapar.
+og_kasa = float(live_vars.get("oguzo_kasa", kasa / 3))
+er_kasa = float(live_vars.get("ero7_kasa", kasa / 3))
+fy_kasa = float(live_vars.get("fybey_kasa", kasa / 3))
 
 # --- RÜTBE VERİLERİ (TAHMİN İÇİN) ---
 og_p = live_vars.get("oguzo_puan", "0")
@@ -126,7 +127,6 @@ if check_password():
             st.rerun()
 
     if page == "⚡ ULTRA ATAK":
-        # --- 🟢 KASA DAĞILIMI BÖLÜMÜ (BURAYA GELDİ) ---
         st.markdown("<div class='terminal-header'>💰 KİŞİSEL KASA DAĞILIMI</div>", unsafe_allow_html=True)
         k1, k2, k3 = st.columns(3)
         with k1: st.markdown(f"<div class='industrial-card' style='text-align:center; border-top-color: #cc7a00;'><div style='font-size:11px; color:#666;'>OĞUZ BAKİYE</div><div class='highlight'>${og_kasa:,.2f}</div></div>", unsafe_allow_html=True)
@@ -154,7 +154,6 @@ if check_password():
         st.markdown(f"<div class='industrial-card'><div class='terminal-header'>AKTİVİTE LOGLARI</div><p style='font-family:JetBrains Mono; color:#888;'>{son_islemler_raw}</p></div>", unsafe_allow_html=True)
 
     elif page == "🎲 TAHMİN":
-        # --- 🏆 RÜTBE SIRALAMASI BÖLÜMÜ (BURAYA GELDİ) ---
         st.markdown("<div class='terminal-header'>🏆 GÜNCEL RÜTBE SIRALAMASI</div>", unsafe_allow_html=True)
         s1, s2, s3 = st.columns(3)
         with s1: st.markdown(f"<div class='industrial-card' style='padding:15px; text-align:center; border-top: 2px solid #cc7a00;'><div style='font-size:11px; color:#666;'>OĞUZ</div><div class='highlight'>{og_p} P</div><div style='font-size:12px;'>{rutbe_getir(og_p)}</div></div>", unsafe_allow_html=True)
