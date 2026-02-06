@@ -9,10 +9,10 @@ st.set_page_config(
     page_title="OG Core", 
     page_icon="🛡️", 
     layout="wide", 
-    initial_sidebar_state="auto" # Mobilde daha stabil çalışması için auto yaptık
+    initial_sidebar_state="expanded"
 )
 
-# --- 2. VERİ BAĞLANTISI ---
+# --- 2. VERİ BAĞLANTISI (GOOGLE SHEETS) ---
 def get_live_data():
     try:
         sheet_url = "https://docs.google.com/spreadsheets/d/15izevdpRjs8Om5BAHKVWmdL3FxEHml35DGECfhQUG_s/export?format=csv&gid=0"
@@ -22,6 +22,7 @@ def get_live_data():
     except Exception:
         return {"kasa": "600.0", "ana_para": "600.0"}
 
+# --- GÜNCELLENMİŞ RÜTBE FONKSİYONU ---
 def rutbe_getir(puan_str):
     try:
         p = int(float(puan_str))
@@ -38,64 +39,50 @@ kasa = float(live_vars.get("kasa", 600))
 ana_para = float(live_vars.get("ana_para", 600))
 duyuru_metni = live_vars.get("duyuru", "SİSTEM ÇEVRİMİÇİ... OG CORE V9.9")
 
+# --- KİŞİSEL KASA VERİLERİ (DÜZELTİLDİ) ---
+# Sabit %20 hatası giderildi. Sheets'ten veri yoksa kasa/3 yapar.
 og_kasa = float(live_vars.get("oguzo_kasa", kasa / 3))
-ahmet_kasa = float(live_vars.get("ero7_kasa", kasa / 3))
-mehmet_kasa = float(live_vars.get("fybey_kasa", kasa / 3))
+er_kasa = float(live_vars.get("ero7_kasa", kasa / 3))
+fy_kasa = float(live_vars.get("fybey_kasa", kasa / 3))
 
+# --- RÜTBE VERİLERİ (TAHMİN İÇİN) ---
 og_p = live_vars.get("oguzo_puan", "0")
-ahmet_p = live_vars.get("ero7_puan", "0")
-mehmet_p = live_vars.get("fybey_puan", "0")
+er_p = live_vars.get("ero7_puan", "0")
+fy_p = live_vars.get("fybey_puan", "0")
 
 aktif_soru_1 = live_vars.get("aktif_soru", "Gala maçı gala w ?")
 aktif_soru_2 = live_vars.get("aktif_soru2", "BTC 7 Şubat günlük kapanış 70k")
 
+# --- 💰 FORMLINE HESAPLAMA ---
 w1_kar = float(live_vars.get("w1_sonuc", -100)) 
 w2_kar = float(live_vars.get("w2_sonuc", 453))
 toplam_bahis_kar = w1_kar + w2_kar
+
 wr_oran = live_vars.get("win_rate", "0")
 son_islemler_raw = str(live_vars.get("son_islemler", "Veri yok"))
 
-# --- 3. CSS STİLLERİ (SIDEBAR FIX) ---
+# --- 3. CSS STİLLERİ ---
 custom_css = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&family=Orbitron:wght@400;700;900&display=swap');
-
-/* Header gizleme ama sidebar butonunu koruma */
-header[data-testid="stHeader"] { background: transparent !important; }
-.stAppDeployButton { display: none !important; }
-
-/* Sidebar genel görünüm */
-section[data-testid="stSidebar"] { 
-    background-color: #050505 !important; 
-    border-right: 1px solid rgba(204, 122, 0, 0.15);
-}
-
-/* Sidebar içindeki metinleri görünür yap */
-[data-testid="stSidebar"] p {
-    color: #d1d1d1 !important;
-    font-size: 14px !important;
-}
-
+#MainMenu, footer, header, .stAppDeployButton {visibility: hidden;}
+[data-testid="stSidebar"] svg, [data-testid="stHeaderActionElements"], .st-emotion-cache-10trblm {display: none !important;}
+[data-testid="stSidebar"] span, [data-testid="stSidebar"] small {font-size: 0 !important; color: transparent !important;}
+[data-testid="stSidebar"] p {font-size: 14px !important; color: #d1d1d1 !important; visibility: visible !important;}
 .stApp { background-color: #030303 !important; background-image: radial-gradient(circle at 50% 50%, rgba(204, 122, 0, 0.07) 0%, transparent 70%);}
-.stButton button, .stLinkButton a { width: 100% !important; background: rgba(204, 122, 0, 0.1) !important; border: 1px solid rgba(204, 122, 0, 0.3) !important; color: #cc7a00 !important; font-family: 'Orbitron' !important;}
+section[data-testid="stSidebar"] { background-color: #050505 !important; border-right: 1px solid rgba(204, 122, 0, 0.15); padding-top: 20px; min-width: 340px !important; max-width: 340px !important;}
+.stButton button, .stLinkButton a { width: 100% !important; background: rgba(204, 122, 0, 0.1) !important; border: 1px solid rgba(204, 122, 0, 0.3) !important; color: #cc7a00 !important; font-family: 'Orbitron' !important; padding: 12px !important; border-radius: 6px !important;}
 body, [data-testid="stAppViewContainer"], p, div, span, button, input { font-family: 'JetBrains Mono', monospace !important; color: #d1d1d1 !important;}
-
+.terminal-row { display: flex; justify-content: space-between; align-items: center; font-size: 14px; margin-bottom: 12px; line-height: 1.6;}
 .industrial-card { background: linear-gradient(145deg, rgba(15, 15, 15, 0.9), rgba(5, 5, 5, 1)) !important; border: 1px solid rgba(255, 255, 255, 0.03) !important; border-top: 2px solid rgba(204, 122, 0, 0.4) !important; padding: 22px; margin-bottom: 20px; border-radius: 4px;}
 .terminal-header { color: #666; font-size: 11px; font-weight: 800; letter-spacing: 2.5px; text-transform: uppercase; margin-bottom: 18px; border-left: 3px solid #cc7a00; padding-left: 12px;}
 .highlight { color: #cc7a00 !important; font-weight: 800; font-size: 19px; font-family: 'Orbitron'; }
-.terminal-row { display: flex; justify-content: space-between; align-items: center; font-size: 14px; margin-bottom: 12px;}
-
+.val-std { font-size: 22px !important; font-weight: 800 !important; font-family: 'Orbitron'; }
 .ticker-wrap { width: 100%; overflow: hidden; background: rgba(204, 122, 0, 0.03); border-bottom: 1px solid rgba(204, 122, 0, 0.2); padding: 10px 0; margin-bottom: 25px;}
 .ticker { display: flex; white-space: nowrap; animation: ticker 30s linear infinite; }
 .ticker-item { font-size: 12px; color: #cc7a00; letter-spacing: 4px; padding-right: 50%; }
 @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
-
-/* MOBİL ÖZEL FIX */
-@media (max-width: 768px) {
-    [data-testid="column"] { width: 100% !important; flex: 1 1 100% !important; }
-    /* Menü butonu görünürlüğü için */
-    .st-emotion-cache-15ec60s { background-color: rgba(204, 122, 0, 0.2) !important; border-radius: 50%; }
-}
+.equal-card { min-height: 180px; display: flex; flex-direction: column; justify-content: space-between; }
 </style>
 """
 
@@ -112,8 +99,8 @@ if "password_correct" not in st.session_state: st.session_state["password_correc
 def check_password():
     if not st.session_state["password_correct"]:
         st.markdown(custom_css, unsafe_allow_html=True)
-        st.markdown('<div style="text-align:center; margin-top:10vh;"><div style="font-family:Orbitron; font-size:clamp(30px, 10vw, 60px); font-weight:900; color:white; letter-spacing:10px;">OG CORE</div></div>', unsafe_allow_html=True)
-        col_a, col_b, col_c = st.columns([0.1, 0.8, 0.1])
+        st.markdown('<div style="text-align:center; margin-top:15vh;"><div style="font-family:Orbitron; font-size:60px; font-weight:900; color:white; letter-spacing:15px;">OG CORE</div></div>', unsafe_allow_html=True)
+        col_a, col_b, col_c = st.columns([1,1,1])
         with col_b:
             pwd = st.text_input("ERİŞİM ANAHTARI", type="password", placeholder="••••", label_visibility="collapsed")
             if st.button("KİMLİK DOĞRULA"):
@@ -130,7 +117,7 @@ if check_password():
     st.markdown(f'<div class="ticker-wrap"><div class="ticker"><span class="ticker-item">{duyuru_metni}</span><span class="ticker-item">{duyuru_metni}</span></div></div>', unsafe_allow_html=True)
 
     with st.sidebar:
-        st.markdown("<h1 style='color:white; font-family:Orbitron; font-size:24px; letter-spacing:5px; text-align:center;'>OG CORE</h1>", unsafe_allow_html=True)
+        st.markdown("<h1 style='color:white; font-family:Orbitron; font-size:24px; letter-spacing:5px; text-align:center; margin-bottom:40px;'>OG CORE</h1>", unsafe_allow_html=True)
         page = st.radio("SİSTEM MODÜLLERİ", ["⚡ ULTRA ATAK", "⚽ FORMLINE", "🎲 TAHMİN"])
         with st.expander("📂 ADMİN"):
             admin_pwd = st.text_input("PANEL ŞİFRESİ", type="password")
@@ -139,36 +126,61 @@ if check_password():
             st.session_state["password_correct"] = False
             st.rerun()
 
-    # Sayfa içerikleri (Aynı kaldı, sadece grid yapıları responsive hale geldi)
     if page == "⚡ ULTRA ATAK":
         st.markdown("<div class='terminal-header'>💰 KİŞİSEL KASA DAĞILIMI</div>", unsafe_allow_html=True)
         k1, k2, k3 = st.columns(3)
-        with k1: st.markdown(f"<div class='industrial-card' style='text-align:center;'><div style='font-size:11px; color:#666;'>OGUZ</div><div class='highlight'>${og_kasa:,.2f}</div></div>", unsafe_allow_html=True)
-        with k2: st.markdown(f"<div class='industrial-card' style='text-align:center;'><div style='font-size:11px; color:#666;'>AHMET</div><div class='highlight'>${ahmet_kasa:,.2f}</div></div>", unsafe_allow_html=True)
-        with k3: st.markdown(f"<div class='industrial-card' style='text-align:center;'><div style='font-size:11px; color:#666;'>MEHMET</div><div class='highlight'>${mehmet_kasa:,.2f}</div></div>", unsafe_allow_html=True)
-        
+        with k1: st.markdown(f"<div class='industrial-card' style='text-align:center; border-top-color: #cc7a00;'><div style='font-size:11px; color:#666;'>OĞUZ BAKİYE</div><div class='highlight'>${og_kasa:,.2f}</div></div>", unsafe_allow_html=True)
+        with k2: st.markdown(f"<div class='industrial-card' style='text-align:center; border-top-color: #cc7a00;'><div style='font-size:11px; color:#666;'>EREN BAKİYE</div><div class='highlight'>${er_kasa:,.2f}</div></div>", unsafe_allow_html=True)
+        with k3: st.markdown(f"<div class='industrial-card' style='text-align:center; border-top-color: #cc7a00;'><div style='font-size:11px; color:#666;'>FYBEY BAKİYE</div><div class='highlight'>${fy_kasa:,.2f}</div></div>", unsafe_allow_html=True)
+
+        st.divider()
+
         net_kar = kasa - ana_para
         current_pct = min(100, (kasa / 6500) * 100)
-        st.markdown(f"<div class='industrial-card'><div class='terminal-header'>HEDEF ($6,500)</div><div style='background:#111; height:8px; border-radius:10px;'><div style='background:linear-gradient(90deg, #cc7a00, #ffae00); width:{current_pct}%; height:100%; border-radius:10px;'></div></div></div>", unsafe_allow_html=True)
+        st.markdown(f"<div class='industrial-card'><div class='terminal-header'>HEDEF YOLCULUĞU ($6,500)</div><div style='background:#111; height:8px; border-radius:10px;'><div style='background:linear-gradient(90deg, #cc7a00, #ffae00); width:{current_pct}%; height:100%; border-radius:10px;'></div></div></div>", unsafe_allow_html=True)
         
-        c1, c2, c3 = st.columns(3)
-        with c1: st.markdown(f"<div class='industrial-card'><div class='terminal-header'>💎 KASA</div><div class='terminal-row'><span>TOPLAM</span><span class='highlight'>${kasa:,.2f}</span></div></div>", unsafe_allow_html=True)
-        with c2:
+        col1, col2, col3 = st.columns(3)
+        with col1: st.markdown(f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>💎 KASA</div><div class='terminal-row'><span>TOPLAM</span><span class='highlight'>${kasa:,.2f}</span></div><div class='terminal-row'><span>K/Z</span><span style='color:{'#00ff41' if net_kar >=0 else '#ff4b4b'};' class='val-std'>${net_kar:,.2f}</span></div></div>", unsafe_allow_html=True)
+        with col2:
             try:
                 btc = yf.Ticker("BTC-USD").history(period="1d")['Close'].iloc[-1]
-                st.markdown(f"<div class='industrial-card'><div class='terminal-header'>⚡ BTC</div><div class='highlight'>${btc:,.0f}</div></div>", unsafe_allow_html=True)
-            except: st.write("...")
-        with c3: st.markdown(f"<div class='industrial-card'><div class='terminal-header'>📊 WIN RATE</div><div class='highlight'>%{wr_oran}</div></div>", unsafe_allow_html=True)
+                eth = yf.Ticker("ETH-USD").history(period="1d")['Close'].iloc[-1]
+                sol = yf.Ticker("SOL-USD").history(period="1d")['Close'].iloc[-1]
+                st.markdown(f"""<div class='industrial-card' style='height:230px;'><div class='terminal-header'>⚡ PİYASA</div><div class='terminal-row'><span>BITCOIN</span><span class='highlight'>${btc:,.0f}</span></div><div class='terminal-row'><span>ETHEREUM</span><span style='color:#cc7a00;'>${eth:,.0f}</span></div><div class='terminal-row'><span>SOLANA</span><span style='color:#cc7a00;'>${sol:,.2f}</span></div></div>""", unsafe_allow_html=True)
+            except: st.write("Piyasa verisi bekleniyor...")
+        with col3: st.markdown(f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>📊 WİN RATE</div><div style='text-align:center;'><span style='font-size:45px; font-weight:900; color:#cc7a00; font-family:Orbitron;'>%{wr_oran}</span></div></div>", unsafe_allow_html=True)
+        
+        st.markdown("### 📜 SON İŞLEMLER")
+        st.markdown(f"<div class='industrial-card'><div class='terminal-header'>AKTİVİTE LOGLARI</div><p style='font-family:JetBrains Mono; color:#888;'>{son_islemler_raw}</p></div>", unsafe_allow_html=True)
 
     elif page == "🎲 TAHMİN":
-        st.markdown("<div class='terminal-header'>🏆 RÜTBELER</div>", unsafe_allow_html=True)
+        st.markdown("<div class='terminal-header'>🏆 GÜNCEL RÜTBE SIRALAMASI</div>", unsafe_allow_html=True)
         s1, s2, s3 = st.columns(3)
-        with s1: st.markdown(f"<div class='industrial-card' style='text-align:center;'><div style='font-size:11px; color:#666;'>OGUZ</div><div class='highlight'>{og_p} P</div></div>", unsafe_allow_html=True)
-        with s2: st.markdown(f"<div class='industrial-card' style='text-align:center;'><div style='font-size:11px; color:#666;'>AHMET</div><div class='highlight'>{ahmet_p} P</div></div>", unsafe_allow_html=True)
-        with s3: st.markdown(f"<div class='industrial-card' style='text-align:center;'><div style='font-size:11px; color:#666;'>MEHMET</div><div class='highlight'>{mehmet_p} P</div></div>", unsafe_allow_html=True)
+        with s1: st.markdown(f"<div class='industrial-card' style='padding:15px; text-align:center; border-top: 2px solid #cc7a00;'><div style='font-size:11px; color:#666;'>OĞUZ</div><div class='highlight'>{og_p} P</div><div style='font-size:12px;'>{rutbe_getir(og_p)}</div></div>", unsafe_allow_html=True)
+        with s2: st.markdown(f"<div class='industrial-card' style='padding:15px; text-align:center; border-top: 2px solid #cc7a00;'><div style='font-size:11px; color:#666;'>EREN</div><div class='highlight'>{er_p} P</div><div style='font-size:12px;'>{rutbe_getir(er_p)}</div></div>", unsafe_allow_html=True)
+        with s3: st.markdown(f"<div class='industrial-card' style='padding:15px; text-align:center; border-top: 2px solid #cc7a00;'><div style='font-size:11px; color:#666;'>FYBEY</div><div class='highlight'>{fy_p} P</div><div style='font-size:12px;'>{rutbe_getir(fy_p)}</div></div>", unsafe_allow_html=True)
+        
+        st.divider()
+
+        q_col1, q_col2 = st.columns(2)
+        base_url = "https://script.google.com/macros/s/AKfycbz0cvMHSrHchkksvFCixr9NDnMsvfLQ6T_K2jsXfohgs7eFXP5x-wxTX_YQej1EZhSX/exec"
+        
+        with q_col1:
+            st.markdown(f"<div class='industrial-card equal-card'><div class='terminal-header'>📢 AKTİF SORU 1</div><h3 style='color:white; margin:0;'>{aktif_soru_1}</h3><span></span></div>", unsafe_allow_html=True)
+            u_name_1 = st.selectbox("İsim (Soru 1)", ["oguzo", "ero7", "fybey"], key="n1")
+            u_vote_1 = st.radio("Tahmin (Soru 1)", ["👍", "👎"], key="v1")
+            final_link_1 = f"{base_url}?isim={u_name_1}&tahmin={u_vote_1}&soru=1"
+            st.markdown(f"""<a href='{final_link_1}' target='_blank' style='text-decoration:none;'><div style='background:rgba(204, 122, 0, 0.2); border: 1px solid #cc7a00; color:#cc7a00; text-align:center; padding:15px; border-radius:5px; font-family:Orbitron; font-weight:bold; cursor:pointer;'>1. OYU ONAYLA</div></a>""", unsafe_allow_html=True)
+
+        with q_col2:
+            st.markdown(f"<div class='industrial-card equal-card'><div class='terminal-header'>📢 AKTİF SORU 2</div><h3 style='color:white; margin:0;'>{aktif_soru_2}</h3><span></span></div>", unsafe_allow_html=True)
+            u_name_2 = st.selectbox("İsim (Soru 2)", ["oguzo", "ero7", "fybey"], key="n2")
+            u_vote_2 = st.radio("Tahmin (Soru 2)", ["👍", "👎"], key="v2")
+            final_link_2 = f"{base_url}?isim={u_name_2}&tahmin={u_vote_2}&soru=2"
+            st.markdown(f"""<a href='{final_link_2}' target='_blank' style='text-decoration:none;'><div style='background:rgba(204, 122, 0, 0.2); border: 1px solid #cc7a00; color:#cc7a00; text-align:center; padding:15px; border-radius:5px; font-family:Orbitron; font-weight:bold; cursor:pointer;'>2. OYU ONAYLA</div></a>""", unsafe_allow_html=True)
 
     elif page == "⚽ FORMLINE":
-        st.markdown(f"<div class='industrial-card'><div class='terminal-header'>📈 PERFORMANS</div><div class='highlight'>${toplam_bahis_kar:,.2f}</div></div>", unsafe_allow_html=True)
+        st.markdown(f"<div class='industrial-card'><div class='terminal-header'>📈 PERFORMANS</div><div class='terminal-row'><span>NET:</span><span style='color:#00ff41; font-size:32px; font-family:Orbitron;'>${toplam_bahis_kar:,.2f}</span></div></div>", unsafe_allow_html=True)
         t1, t2, t3 = st.tabs(["⏳ W3", "✅ W2", "❌ W1"])
         with t1: st.markdown(w3_coupon_html, unsafe_allow_html=True)
         with t2: st.markdown(w2_coupon_html, unsafe_allow_html=True)
