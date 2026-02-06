@@ -40,7 +40,10 @@ kasa = float(live_vars.get("kasa", 600))
 ana_para = float(live_vars.get("ana_para", 600))
 duyuru_metni = live_vars.get("duyuru", "SİSTEM ÇEVRİMİÇİ... OG CORE V9.9")
 
-aktif_soru = live_vars.get("aktif_soru", "Gala maçı gala w ? ")
+# SORU VERİLERİ
+aktif_soru = live_vars.get("aktif_soru", "Gala maçı gala w ?")
+aktif_soru_2 = live_vars.get("aktif_soru_2", "İkinci soru henüz girilmedi...") # Yeni Soru Alanı
+
 og_p = live_vars.get("oguzo_puan", "0")
 er_p = live_vars.get("ero7_puan", "0")
 fy_p = live_vars.get("fybey_puan", "0")
@@ -116,7 +119,6 @@ if check_password():
         st.markdown(f"<p>Eren: {er_p} - <b>{rutbe_getir(er_p)}</b></p>", unsafe_allow_html=True)
         st.markdown(f"<p>Fybey: {fy_p} - <b>{rutbe_getir(fy_p)}</b></p>", unsafe_allow_html=True)
         
-        # SİMÜLASYON sekmesi kaldırıldı
         page = st.radio("SİSTEM MODÜLLERİ", ["⚡ ULTRA ATAK", "⚽ FORMLINE", "🎲 TAHMİN"])
         
         with st.expander("📂 ADMİN"):
@@ -137,7 +139,6 @@ if check_password():
             st.markdown(f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>💎 KASA</div><div class='terminal-row'><span>TOPLAM</span><span class='highlight'>${kasa:,.2f}</span></div><div class='terminal-row'><span>K/Z</span><span style='color:{'#00ff41' if net_kar >=0 else '#ff4b4b'};' class='val-std'>${net_kar:,.2f}</span></div></div>", unsafe_allow_html=True)
         with col2:
             try:
-                # BTC, ETH ve SOL fiyatlarını çekiyoruz
                 btc = yf.Ticker("BTC-USD").history(period="1d")['Close'].iloc[-1]
                 eth = yf.Ticker("ETH-USD").history(period="1d")['Close'].iloc[-1]
                 sol = yf.Ticker("SOL-USD").history(period="1d")['Close'].iloc[-1]
@@ -155,34 +156,45 @@ if check_password():
         st.markdown("### 📜 SON İŞLEMLER")
         st.markdown(f"<div class='industrial-card'><div class='terminal-header'>AKTİVİTE LOGLARI</div><p style='font-family:JetBrains Mono; color:#888;'>{son_islemler_raw}</p></div>", unsafe_allow_html=True)
 
-        st.markdown("### 🎯 PAY DAĞILIMI")
-        cols = st.columns(3)
-        for col, user in zip(cols, ["oguzo", "ero7", "fybey"]):
-            col.markdown(f"<div class='industrial-card'><div class='terminal-header'>{user.upper()}</div><div class='terminal-row'><span>BAKİYE</span><span class='highlight'>${kasa/3:,.2f}</span></div></div>", unsafe_allow_html=True)
-
     elif page == "🎲 TAHMİN":
-        st.markdown(f"<div class='industrial-card'><div class='terminal-header'>📢 AKTİF SORU</div><h2 style='color:white;'>{aktif_soru}</h2></div>", unsafe_allow_html=True)
-        col_v1, col_v2 = st.columns(2)
-        with col_v1:
-            u_name = st.selectbox("İsim", ["oguzo", "ero7", "fybey"])
-            # Seçenekler ikonlarla güncellendi: 👍 ve 👎
-            u_vote = st.radio("Tahmin", ["👍", "👎"])
+        # İki soru alanı için yan yana kolonlar
+        q_col1, q_col2 = st.columns(2)
+        
+        # --- SORU 1 ---
+        with q_col1:
+            st.markdown(f"<div class='industrial-card'><div class='terminal-header'>📢 AKTİF SORU 1</div><h3 style='color:white; min-height:60px;'>{aktif_soru}</h3></div>", unsafe_allow_html=True)
+            u_name_1 = st.selectbox("İsim (Soru 1)", ["oguzo", "ero7", "fybey"], key="n1")
+            u_vote_1 = st.radio("Tahmin (Soru 1)", ["👍", "👎"], key="v1")
             
-            # Kanka tarayıcı formatında tam URL simülasyonu
             base_url = "https://script.google.com/macros/s/AKfycbz0cvMHSrHchkksvFCixr9NDnMsvfLQ6T_K2jsXfohgs7eFXP5x-wxTX_YQej1EZhSX/exec"
-            final_link = f"{base_url}?isim={u_name}&tahmin={u_vote}"
+            final_link_1 = f"{base_url}?isim={u_name_1}&tahmin={u_vote_1}&soru=1"
             
             st.markdown(f"""
-                <div style='margin-top:20px;'>
-                    <p style='font-size:12px; color:#666;'>1. İsim ve tahminini seç.</p>
-                    <a href='{final_link}' target='_blank' style='text-decoration:none;'>
-                        <div style='background:rgba(204, 122, 0, 0.2); border: 1px solid #cc7a00; color:#cc7a00; text-align:center; padding:15px; border-radius:5px; font-family:Orbitron; font-weight:bold; cursor:pointer;'>
-                            OYU ONAYLA VE GÖNDER
-                        </div>
-                    </a>
-                    <p style='font-size:11px; color:#444; margin-top:10px;'>* Tıkladığında yeni bir sekme açılır, 'Tamamdır' yazısını görünce oyu düşmüş demektir.</p>
-                </div>
+                <a href='{final_link_1}' target='_blank' style='text-decoration:none;'>
+                    <div style='background:rgba(204, 122, 0, 0.2); border: 1px solid #cc7a00; color:#cc7a00; text-align:center; padding:15px; border-radius:5px; font-family:Orbitron; font-weight:bold; cursor:pointer;'>
+                        1. OYU ONAYLA
+                    </div>
+                </a>
             """, unsafe_allow_html=True)
+
+        # --- SORU 2 ---
+        with q_col2:
+            st.markdown(f"<div class='industrial-card'><div class='terminal-header'>📢 AKTİF SORU 2</div><h3 style='color:white; min-height:60px;'>{aktif_soru_2}</h3></div>", unsafe_allow_html=True)
+            u_name_2 = st.selectbox("İsim (Soru 2)", ["oguzo", "ero7", "fybey"], key="n2")
+            u_vote_2 = st.radio("Tahmin (Soru 2)", ["👍", "👎"], key="v2")
+            
+            # Not: Eğer ikinci bir Google Scriptin varsa URL'yi buraya girebilirsin, şimdilik aynı script'e '&soru=2' ekleyerek gönderiyoruz.
+            final_link_2 = f"{base_url}?isim={u_name_2}&tahmin={u_vote_2}&soru=2"
+            
+            st.markdown(f"""
+                <a href='{final_link_2}' target='_blank' style='text-decoration:none;'>
+                    <div style='background:rgba(204, 122, 0, 0.2); border: 1px solid #cc7a00; color:#cc7a00; text-align:center; padding:15px; border-radius:5px; font-family:Orbitron; font-weight:bold; cursor:pointer;'>
+                        2. OYU ONAYLA
+                    </div>
+                </a>
+            """, unsafe_allow_html=True)
+        
+        st.info("💡 Not: İkinci sorunun görünmesi için Google Sheets dosyanızda 'key' sütununa 'aktif_soru_2' eklemeyi unutmayın.")
 
     elif page == "⚽ FORMLINE":
         st.markdown(f"<div class='industrial-card'><div class='terminal-header'>📈 PERFORMANS</div><div class='terminal-row'><span>NET:</span><span style='color:#00ff41; font-size:32px; font-family:Orbitron;'>${toplam_bahis_kar:,.2f}</span></div></div>", unsafe_allow_html=True)
