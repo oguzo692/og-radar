@@ -45,7 +45,7 @@ er_p = live_vars.get("ero7_puan", "0")
 fy_p = live_vars.get("fybey_puan", "0")
 
 aktif_soru_1 = live_vars.get("aktif_soru", "BIST 100 endeksi günü 13.430 puanın üzerinde mi kapatacak?")
-aktif_soru_2 = live_vars.get("aktif_soru2", 'Soru: "Gram altın bugün haftalık kapanışını 6.900 TL üzerinde mi yapacak?"')
+aktif_soru_2 = live_vars.get("aktif_soru2", "Gram altın bugün haftalık kapanışını 6.900 TL üzerinde mi yapacak?"')
 
 w1_kar = float(live_vars.get("w1_sonuc", -100)) 
 w2_kar = float(live_vars.get("w2_sonuc", 453))
