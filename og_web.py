@@ -116,7 +116,8 @@ if check_password():
         st.markdown(f"<p>Eren: {er_p} - <b>{rutbe_getir(er_p)}</b></p>", unsafe_allow_html=True)
         st.markdown(f"<p>Fybey: {fy_p} - <b>{rutbe_getir(fy_p)}</b></p>", unsafe_allow_html=True)
         
-        page = st.radio("SİSTEM MODÜLLERİ", ["⚡ ULTRA ATAK", "⚽ FORMLINE", "📊 SİMÜLASYON", "🎲 TAHMİN"])
+        # SİMÜLASYON sekmesi kaldırıldı
+        page = st.radio("SİSTEM MODÜLLERİ", ["⚡ ULTRA ATAK", "⚽ FORMLINE", "🎲 TAHMİN"])
         
         with st.expander("📂 ADMİN"):
             admin_pwd = st.text_input("PANEL ŞİFRESİ", type="password")
@@ -164,7 +165,8 @@ if check_password():
         col_v1, col_v2 = st.columns(2)
         with col_v1:
             u_name = st.selectbox("İsim", ["oguzo", "ero7", "fybey"])
-            u_vote = st.radio("Tahmin", ["Üstünde", "Altında"])
+            # Seçenekler ikonlarla güncellendi: 👍 ve 👎
+            u_vote = st.radio("Tahmin", ["👍", "👎"])
             
             # Kanka tarayıcı formatında tam URL simülasyonu
             base_url = "https://script.google.com/macros/s/AKfycbz0cvMHSrHchkksvFCixr9NDnMsvfLQ6T_K2jsXfohgs7eFXP5x-wxTX_YQej1EZhSX/exec"
@@ -188,8 +190,5 @@ if check_password():
         with t1: st.markdown(w3_coupon_html, unsafe_allow_html=True)
         with t2: st.markdown(w2_coupon_html, unsafe_allow_html=True)
         with t3: st.markdown(w1_coupon_html, unsafe_allow_html=True)
-
-    elif page == "📊 SİMÜLASYON":
-        st.line_chart(pd.DataFrame({"Tahmin": [kasa * (1.05 ** (d / 7)) for d in range(30)]}))
 
     st.markdown(f"<div style='text-align:center; color:#444; font-size:10px; margin-top:50px;'>OG_CORE_V9.9 // {datetime.now().year}</div>", unsafe_allow_html=True)
