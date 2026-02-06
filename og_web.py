@@ -111,11 +111,20 @@ if check_password():
 
     with st.sidebar:
         st.markdown("<h1 style='color:white; font-family:Orbitron; font-size:24px; letter-spacing:5px; text-align:center; margin-bottom:40px;'>OG CORE</h1>", unsafe_allow_html=True)
-        # RÜTBE SIRALAMASI BURADAN KALDIRILDI
+        
+        # --- RÜTBE SIRALAMASI (SİDEBARDA GERİ GETİRİLDİ) ---
+        st.markdown("<div class='terminal-header'>🏆 RÜTBE SIRALAMASI</div>", unsafe_allow_html=True)
+        st.markdown(f"<p>Oğuz: {og_p} - <b>{rutbe_getir(og_p)}</b></p>", unsafe_allow_html=True)
+        st.markdown(f"<p>Eren: {er_p} - <b>{rutbe_getir(er_p)}</b></p>", unsafe_allow_html=True)
+        st.markdown(f"<p>Fybey: {fy_p} - <b>{rutbe_getir(fy_p)}</b></p>", unsafe_allow_html=True)
+        
+        st.divider()
         page = st.radio("SİSTEM MODÜLLERİ", ["⚡ ULTRA ATAK", "⚽ FORMLINE", "🎲 TAHMİN"])
+        
         with st.expander("📂 ADMİN"):
             admin_pwd = st.text_input("PANEL ŞİFRESİ", type="password")
             if admin_pwd == "fybey": st.link_button("VERİ TABANI", "https://docs.google.com/spreadsheets/d/15izevdpRjs8Om5BAHKVWmdL3FxEHml35DGECfhQUG_s/edit")
+        
         if st.button("ÇIKIŞ"): 
             st.session_state["password_correct"] = False
             st.rerun()
@@ -124,8 +133,12 @@ if check_password():
         net_kar = kasa - ana_para
         current_pct = min(100, (kasa / 6500) * 100)
         st.markdown(f"<div class='industrial-card'><div class='terminal-header'>HEDEF YOLCULUĞU ($6,500)</div><div style='background:#111; height:8px; border-radius:10px;'><div style='background:linear-gradient(90deg, #cc7a00, #ffae00); width:{current_pct}%; height:100%; border-radius:10px;'></div></div></div>", unsafe_allow_html=True)
+        
         col1, col2, col3 = st.columns(3)
-        with col1: st.markdown(f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>💎 KASA</div><div class='terminal-row'><span>TOPLAM</span><span class='highlight'>${kasa:,.2f}</span></div><div class='terminal-row'><span>K/Z</span><span style='color:{'#00ff41' if net_kar >=0 else '#ff4b4b'};' class='val-std'>${net_kar:,.2f}</span></div></div>", unsafe_allow_html=True)
+        with col1: 
+            # PAY DAĞILIMI BURADA (HİÇBİR ŞEY SİLİNMEDİ)
+            st.markdown(f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>💎 KASA</div><div class='terminal-row'><span>TOPLAM</span><span class='highlight'>${kasa:,.2f}</span></div><div class='terminal-row'><span>K/Z</span><span style='color:{'#00ff41' if net_kar >=0 else '#ff4b4b'};' class='val-std'>${net_kar:,.2f}</span></div><hr style='border:0; border-top:1px solid rgba(255,255,255,0.05); margin:10px 0;'><div style='font-size:10px; color:#666;'>PAY: OĞUZ %40 | EREN %40 | FY %20</div></div>", unsafe_allow_html=True)
+        
         with col2:
             try:
                 btc = yf.Ticker("BTC-USD").history(period="1d")['Close'].iloc[-1]
@@ -133,13 +146,15 @@ if check_password():
                 sol = yf.Ticker("SOL-USD").history(period="1d")['Close'].iloc[-1]
                 st.markdown(f"""<div class='industrial-card' style='height:230px;'><div class='terminal-header'>⚡ PİYASA</div><div class='terminal-row'><span>BITCOIN</span><span class='highlight'>${btc:,.0f}</span></div><div class='terminal-row'><span>ETHEREUM</span><span style='color:#cc7a00;'>${eth:,.0f}</span></div><div class='terminal-row'><span>SOLANA</span><span style='color:#cc7a00;'>${sol:,.2f}</span></div></div>""", unsafe_allow_html=True)
             except: st.write("Piyasa verisi bekleniyor...")
+        
         with col3: st.markdown(f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>📊 WİN RATE</div><div style='text-align:center;'><span style='font-size:45px; font-weight:900; color:#cc7a00; font-family:Orbitron;'>%{wr_oran}</span></div></div>", unsafe_allow_html=True)
+        
         st.markdown("### 📜 SON İŞLEMLER")
         st.markdown(f"<div class='industrial-card'><div class='terminal-header'>AKTİVİTE LOGLARI</div><p style='font-family:JetBrains Mono; color:#888;'>{son_islemler_raw}</p></div>", unsafe_allow_html=True)
 
     elif page == "🎲 TAHMİN":
-        # --- YENİ EKLENEN SKOR PANELİ ---
-        st.markdown("<div class='terminal-header'>🏆 GÜNCEL RÜTBE SIRALAMASI</div>", unsafe_allow_html=True)
+        # --- TAHMİN SAYFASI ÜST PANEL (HEM BURADA HEM SİDEBARDA) ---
+        st.markdown("<div class='terminal-header'>🏆 GÜNCEL PUAN DURUMU</div>", unsafe_allow_html=True)
         s1, s2, s3 = st.columns(3)
         with s1: st.markdown(f"<div class='industrial-card' style='padding:15px; text-align:center; border-top: 2px solid #cc7a00;'><div style='font-size:11px; color:#666;'>OĞUZ</div><div class='highlight'>{og_p}</div><div style='font-size:12px;'>{rutbe_getir(og_p)}</div></div>", unsafe_allow_html=True)
         with s2: st.markdown(f"<div class='industrial-card' style='padding:15px; text-align:center; border-top: 2px solid #cc7a00;'><div style='font-size:11px; color:#666;'>EREN</div><div class='highlight'>{er_p}</div><div style='font-size:12px;'>{rutbe_getir(er_p)}</div></div>", unsafe_allow_html=True)
@@ -150,7 +165,6 @@ if check_password():
         q_col1, q_col2 = st.columns(2)
         base_url = "https://script.google.com/macros/s/AKfycbz0cvMHSrHchkksvFCixr9NDnMsvfLQ6T_K2jsXfohgs7eFXP5x-wxTX_YQej1EZhSX/exec"
         
-        # --- SORU 1 ---
         with q_col1:
             st.markdown(f"<div class='industrial-card equal-card'><div class='terminal-header'>📢 AKTİF SORU 1</div><h3 style='color:white; margin:0;'>{aktif_soru_1}</h3><span></span></div>", unsafe_allow_html=True)
             u_name_1 = st.selectbox("İsim (Soru 1)", ["oguzo", "ero7", "fybey"], key="n1")
@@ -158,7 +172,6 @@ if check_password():
             final_link_1 = f"{base_url}?isim={u_name_1}&tahmin={u_vote_1}&soru=1"
             st.markdown(f"""<a href='{final_link_1}' target='_blank' style='text-decoration:none;'><div style='background:rgba(204, 122, 0, 0.2); border: 1px solid #cc7a00; color:#cc7a00; text-align:center; padding:15px; border-radius:5px; font-family:Orbitron; font-weight:bold; cursor:pointer;'>1. OYU ONAYLA</div></a>""", unsafe_allow_html=True)
 
-        # --- SORU 2 ---
         with q_col2:
             st.markdown(f"<div class='industrial-card equal-card'><div class='terminal-header'>📢 AKTİF SORU 2</div><h3 style='color:white; margin:0;'>{aktif_soru_2}</h3><span></span></div>", unsafe_allow_html=True)
             u_name_2 = st.selectbox("İsim (Soru 2)", ["oguzo", "ero7", "fybey"], key="n2")
