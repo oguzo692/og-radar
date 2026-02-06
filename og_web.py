@@ -61,7 +61,6 @@ custom_css = """
 [data-testid="stSidebarNav"] {display: none !important;}
 [data-testid="stSidebar"] span, [data-testid="stSidebar"] small {font-size: 0 !important; color: transparent !important;}
 [data-testid="stSidebar"] p {font-size: 14px !important; color: #d1d1d1 !important; visibility: visible !important;}
-/* Mobil Menü Butonu Rengi */
 button[kind="headerNoContext"] svg { fill: #cc7a00 !important; visibility: visible !important; }
 
 .stApp { background-color: #030303 !important; background-image: radial-gradient(circle at 50% 50%, rgba(204, 122, 0, 0.07) 0%, transparent 70%);}
@@ -83,11 +82,39 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input { font-fam
 </style>
 """
 
-# --- 4. HTML ŞABLONLARI ---
-w3_matches = """<div class='terminal-row'><span>Wolfsburg - Bvb</span><span class='highlight'>bvb x2 & 1.5</span></div><div class='terminal-row'><span>Newcastle - Brentford</span><span class='highlight'>newcastle 1.5 üst</span></div><div class='terminal-row'><span>Rizespor - GS</span><span class='highlight'>gala w & 1.5 üst</span></div>"""
-w3_coupon_html = f"<div class='industrial-card'><div class='terminal-header'>🔥 W3 KUPONU (AKTİF)</div>{w3_matches}<span>BEKLENİYOR ⏳</span></div>"
-w2_coupon_html = f"<div class='industrial-card' style='border-top-color: #00ff41 !important;'><div class='terminal-header' style='color:#00ff41;'>✅ W2 KUPONU</div><span style='color:#00ff41; font-weight:bold;'>SONUÇLANDI ✅</span></div>"
-w1_coupon_html = f"<div class='industrial-card' style='border-top-color: #ff4b4b !important;'><div class='terminal-header' style='color:#ff4b4b;'>❌ W1 KUPONU</div><span style='color:#ff4b4b; font-weight:bold;'>SONUÇLANDI ❌</span></div>"
+# --- 4. HTML ŞABLONLARI (MAÇLAR GERİ GELDİ) ---
+w3_matches = """
+<div class='terminal-row'><span>Wolfsburg - Bvb</span><span class='highlight'>bvb x2 & 1.5</span></div>
+<div class='terminal-row'><span>Newcastle - Brentford</span><span class='highlight'>newcastle 1.5 üst</span></div>
+<div class='terminal-row'><span>Rizespor - GS</span><span class='highlight'>gala w & 1.5 üst</span></div>
+<div class='terminal-row'><span>Liverpool - Man City</span><span class='highlight'>lıve gol atar</span></div>
+<div class='terminal-row'><span>Fenerbahçe - Gençlerbirliği</span><span class='highlight'>fenerbahçe w & 2.5 üst</span></div>
+<hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'>
+<div class='terminal-row'><span>Oran: 8.79</span><span>Bet: 100 USD</span></div>
+"""
+
+w2_matches = """
+<div class='terminal-row'><span>GS - Kayserispor</span><span style='color:#00ff41;'>İY +0.5 & W & 2+ ✅</span></div>
+<div class='terminal-row'><span>Liverpool - Newcastle</span><span style='color:#00ff41;'>+2 & Liverpool 1X ✅</span></div>
+<div class='terminal-row'><span>BVB - Heidenheim</span><span style='color:#00ff41;'>İY +0.5 & W & 2+ ✅</span></div>
+<div class='terminal-row'><span>Kocaelispor - FB</span><span style='color:#00ff41;'>FB W & 2+ ✅</span></div>
+<hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'>
+<div class='terminal-row'><span>Oran: 5.53</span><span>Bet: 100 USD</span></div>
+"""
+
+w1_matches = """
+<div class='terminal-row'><span>Karagümrük - GS</span><span style='color:#ff4b4b;'>GS W & +2 ✅</span></div>
+<div class='terminal-row'><span>Bournemouth - Liverpool</span><span style='color:#00ff41;'>KG VAR ✅</span></div>
+<div class='terminal-row'><span>Union Berlin - BVB</span><span style='color:#00ff41;'>BVB İY 0.5 Üst ✅</span></div>
+<div class='terminal-row'><span>Newcastle - Aston Villa</span><span style='color:#ff4b4b;'>New +2 ❌</span></div>
+<div class='terminal-row'><span>FB - Göztepe</span><span style='color:#ff4b4b;'>FB W ❌</span></div>
+<hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'>
+<div class='terminal-row'><span>Oran: 7.09</span><span>Bet: 100 USD</span></div>
+"""
+
+w3_coupon_html = f"<div class='industrial-card'><div class='terminal-header'>🔥 W3 KUPONU (AKTİF)</div>{w3_matches}<span style='color:#cc7a00; font-weight:bold;'>BEKLENİYOR ⏳</span></div>"
+w2_coupon_html = f"<div class='industrial-card' style='border-top-color: #00ff41 !important;'><div class='terminal-header' style='color:#00ff41;'>✅ W2 KUPONU (BAŞARILI)</div>{w2_matches}<span style='color:#00ff41; font-weight:bold;'>SONUÇLANDI ✅</span></div>"
+w1_coupon_html = f"<div class='industrial-card' style='border-top-color: #ff4b4b !important;'><div class='terminal-header' style='color:#ff4b4b;'>❌ W1 KUPONU (BAŞARISIZ)</div>{w1_matches}<span style='color:#ff4b4b; font-weight:bold;'>SONUÇLANDI ❌</span></div>"
 
 # --- 5. GÜVENLİK ---
 if "password_correct" not in st.session_state: st.session_state["password_correct"] = False
@@ -130,7 +157,7 @@ if check_password():
 
         st.divider()
 
-        # --- DURAKLI HEDEF BARI (DÜZELTİLMİŞ) ---
+        # --- DURAKLI HEDEF BARI ---
         if kasa < 900: alt, ust, ikon = 600, 900, "🎯"
         elif kasa < 1200: alt, ust, ikon = 900, 1200, "🚀"
         else: alt, ust, ikon = 1200, 1800, "👑"
@@ -180,7 +207,6 @@ if check_password():
         
         st.divider()
         q1, q2 = st.columns(2)
-        # Oylama URL'sini yeni Apps Script linkinle güncellemeyi unutma kanka!
         base_url = "https://script.google.com/macros/s/AKfycbz0cvMHSrHchkksvFCixr9NDnMsvfLQ6T_K2jsXfohgs7eFXP5x-wxTX_YQej1EZhSX/exec"
         
         with q1:
