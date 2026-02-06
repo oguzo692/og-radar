@@ -22,7 +22,6 @@ def get_live_data():
     except Exception:
         return {"kasa": "600.0", "ana_para": "600.0"}
 
-# --- GÜNCELLENMİŞ RÜTBE FONKSİYONU ---
 def rutbe_getir(puan_str):
     try:
         p = int(float(puan_str))
@@ -39,13 +38,10 @@ kasa = float(live_vars.get("kasa", 600))
 ana_para = float(live_vars.get("ana_para", 600))
 duyuru_metni = live_vars.get("duyuru", "SİSTEM ÇEVRİMİÇİ... OG CORE V9.9")
 
-# --- KİŞİSEL KASA VERİLERİ (DÜZELTİLDİ) ---
-# Sabit %20 hatası giderildi. Sheets'ten veri yoksa kasa/3 yapar.
 og_kasa = float(live_vars.get("oguzo_kasa", kasa / 3))
 er_kasa = float(live_vars.get("ero7_kasa", kasa / 3))
 fy_kasa = float(live_vars.get("fybey_kasa", kasa / 3))
 
-# --- RÜTBE VERİLERİ (TAHMİN İÇİN) ---
 og_p = live_vars.get("oguzo_puan", "0")
 er_p = live_vars.get("ero7_puan", "0")
 fy_p = live_vars.get("fybey_puan", "0")
@@ -53,7 +49,6 @@ fy_p = live_vars.get("fybey_puan", "0")
 aktif_soru_1 = live_vars.get("aktif_soru", "Gala maçı gala w ?")
 aktif_soru_2 = live_vars.get("aktif_soru2", "BTC 7 Şubat günlük kapanış 70k")
 
-# --- 💰 FORMLINE HESAPLAMA ---
 w1_kar = float(live_vars.get("w1_sonuc", -100)) 
 w2_kar = float(live_vars.get("w2_sonuc", 453))
 toplam_bahis_kar = w1_kar + w2_kar
@@ -61,15 +56,54 @@ toplam_bahis_kar = w1_kar + w2_kar
 wr_oran = live_vars.get("win_rate", "0")
 son_islemler_raw = str(live_vars.get("son_islemler", "Veri yok"))
 
-# --- 3. CSS STİLLERİ ---
+# --- 3. CSS STİLLERİ (GÜNCELLENDİ) ---
 custom_css = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&family=Orbitron:wght@400;700;900&display=swap');
+
 #MainMenu, footer, header, .stAppDeployButton {visibility: hidden;}
 [data-testid="stSidebar"] svg, [data-testid="stHeaderActionElements"], .st-emotion-cache-10trblm {display: none !important;}
 [data-testid="stSidebar"] span, [data-testid="stSidebar"] small {font-size: 0 !important; color: transparent !important;}
 [data-testid="stSidebar"] p {font-size: 14px !important; color: #d1d1d1 !important; visibility: visible !important;}
-.stApp { background-color: #030303 !important; background-image: radial-gradient(circle at 50% 50%, rgba(204, 122, 0, 0.07) 0%, transparent 70%);}
+
+.stApp { 
+    background-color: #030303 !important; 
+    background-image: radial-gradient(circle at 50% 50%, rgba(204, 122, 0, 0.07) 0%, transparent 70%);
+}
+
+/* Animasyonlar */
+@keyframes glow {
+    0% { box-shadow: 0 0 5px rgba(204, 122, 0, 0.1); }
+    50% { box-shadow: 0 0 20px rgba(204, 122, 0, 0.4); }
+    100% { box-shadow: 0 0 5px rgba(204, 122, 0, 0.1); }
+}
+
+@keyframes scanline {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100%); }
+}
+
+/* Login Ekranı Özel */
+.login-card {
+    background: rgba(10, 10, 10, 0.9);
+    border: 1px solid rgba(204, 122, 0, 0.2);
+    border-radius: 8px;
+    padding: 40px;
+    border-top: 3px solid #cc7a00;
+    animation: glow 4s infinite ease-in-out;
+    position: relative;
+    overflow: hidden;
+}
+
+.login-card::after {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 2px;
+    background: rgba(204, 122, 0, 0.3);
+    animation: scanline 3s linear infinite;
+    opacity: 0.2;
+}
+
 section[data-testid="stSidebar"] { background-color: #050505 !important; border-right: 1px solid rgba(204, 122, 0, 0.15); padding-top: 20px; min-width: 340px !important; max-width: 340px !important;}
 .stButton button, .stLinkButton a { width: 100% !important; background: rgba(204, 122, 0, 0.1) !important; border: 1px solid rgba(204, 122, 0, 0.3) !important; color: #cc7a00 !important; font-family: 'Orbitron' !important; padding: 12px !important; border-radius: 6px !important;}
 body, [data-testid="stAppViewContainer"], p, div, span, button, input { font-family: 'JetBrains Mono', monospace !important; color: #d1d1d1 !important;}
@@ -94,20 +128,47 @@ w3_coupon_html = f"<div class='industrial-card'><div class='terminal-header'>�
 w2_coupon_html = f"<div class='industrial-card' style='border-top-color: #00ff41 !important;'><div class='terminal-header' style='color:#00ff41;'>✅ W2 KUPONU (BAŞARILI)</div>{w2_matches}<span style='color:#00ff41; font-weight:bold;'>SONUÇLANDI ✅</span></div>"
 w1_coupon_html = f"<div class='industrial-card' style='border-top-color: #ff4b4b !important;'><div class='terminal-header' style='color:#ff4b4b;'>❌ W1 KUPONU (BAŞARISIZ)</div>{w1_matches}<span style='color:#ff4b4b; font-weight:bold;'>SONUÇLANDI ❌</span></div>"
 
-# --- 5. GÜVENLİK ---
+# --- 5. GÜVENLİK (GİRİŞ EKRANI REVİZE EDİLDİ) ---
 if "password_correct" not in st.session_state: st.session_state["password_correct"] = False
+
 def check_password():
     if not st.session_state["password_correct"]:
         st.markdown(custom_css, unsafe_allow_html=True)
-        st.markdown('<div style="text-align:center; margin-top:15vh;"><div style="font-family:Orbitron; font-size:60px; font-weight:900; color:white; letter-spacing:15px;">OG CORE</div></div>', unsafe_allow_html=True)
-        col_a, col_b, col_c = st.columns([1,1,1])
+        st.markdown('<div style="height: 15vh;"></div>', unsafe_allow_html=True)
+        
+        col_a, col_b, col_c = st.columns([1, 1.2, 1])
         with col_b:
-            pwd = st.text_input("şifre", type="password", placeholder="••••", label_visibility="collapsed")
-            if st.button("go"):
-                if pwd == "1608":
-                    st.session_state["password_correct"] = True
-                    st.rerun()
-                else: st.error("şifre yanlış")
+            st.markdown("""
+                <div class="login-card">
+                    <div style="text-align: center; margin-bottom: 30px;">
+                        <div style="font-size: 10px; color: #666; letter-spacing: 3px;">ENCRYPTED ACCESS</div>
+                        <div style="font-family: 'Orbitron'; font-size: 50px; font-weight: 900; color: white; letter-spacing: 12px; margin: 10px 0;">OG CORE</div>
+                        <div style="height: 2px; background: linear-gradient(90deg, transparent, #cc7a00, transparent); width: 100%;"></div>
+                    </div>
+                </div>
+            """, unsafe_allow_html=True)
+            
+            # Form alanı
+            with st.container():
+                st.markdown('<p style="text-align:center; font-size:11px; color:#444; margin-top:20px;">PROTOKOL ANALİZİ: ANAHTAR GEREKLİ</p>', unsafe_allow_html=True)
+                pwd = st.text_input("şifre", type="password", placeholder="••••", label_visibility="collapsed")
+                
+                c1, c2, c3 = st.columns([0.5, 1, 0.5])
+                with c2:
+                    if st.button("SİSTEME GİRİŞ YAP"):
+                        if pwd == "1608":
+                            st.session_state["password_correct"] = True
+                            st.rerun()
+                        else:
+                            st.error("ERİŞİM REDDEDİLDİ")
+            
+            st.markdown("""
+                <div style="margin-top: 30px; display: flex; justify-content: space-between; font-size: 8px; color: #222;">
+                    <span>KERNEL: v9.9.0-STABLE</span>
+                    <span>SECURITY: LEVEL-A</span>
+                </div>
+            """, unsafe_allow_html=True)
+            
         return False
     return True
 
