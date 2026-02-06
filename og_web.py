@@ -39,7 +39,7 @@ ana_para = float(live_vars.get("ana_para", 600))
 duyuru_metni = live_vars.get("duyuru", "SİSTEM ÇEVRİMİÇİ... OG CORE V9.9")
 
 aktif_soru = live_vars.get("aktif_soru", "Gala maçı gala w ?")
-aktif_soru_2 = live_vars.get("aktif_soru_2", "BTC 7 Şubat günlük kapanış 70k")
+aktif_soru = live_vars.get("aktif_soru", "BTC 7 Şubat günlük kapanış 70k")
 
 og_p = live_vars.get("oguzo_puan", "0")
 er_p = live_vars.get("ero7_puan", "0")
