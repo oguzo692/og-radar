@@ -134,7 +134,7 @@ if check_password():
 
         st.divider()
 
-        # --- YENİ DİNAMİK HEDEF BARI ENTEGRASYONU ---
+        # --- GÜNCELLENMİŞ 3 DURAKLI HEDEF BARI ---
         if kasa < 900:
             alt_sinir, ust_hedef, ikon = 600, 900, "🎯"
         elif kasa < 1200:
@@ -142,28 +142,37 @@ if check_password():
         else:
             alt_sinir, ust_hedef, ikon = 1200, 1800, "👑"
 
-        # Başlangıç noktası 600$ olacak şekilde yüzde hesaplama
-        if kasa <= alt_sinir:
-            yuzde = 0
-        else:
-            yuzde = min((kasa - alt_sinir) / (ust_hedef - alt_sinir), 1.0) * 100
+        # Mevcut kademedeki yüzde
+        yuzde = min((max(kasa, alt_sinir) - alt_sinir) / (ust_hedef - alt_sinir), 1.0) * 100
 
         st.markdown(f"""
             <div class='industrial-card'>
-                <div style='display: flex; justify-content: space-between; align-items: center;'>
-                    <div class='terminal-header' style='margin-bottom:0;'>HEDEF YOLCULUĞU (${ust_hedef:,.0f}) {ikon}</div>
-                    <span style='color: #cc7a00; font-size: 12px; font-family: "JetBrains Mono";'>KASA: ${kasa:,.2f}</span>
+                <div style='display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;'>
+                    <div class='terminal-header' style='margin-bottom:0;'>HEDEF YOLCULUĞU {ikon}</div>
+                    <span style='color: #cc7a00; font-size: 14px; font-weight: bold;'>KASA: ${kasa:,.2f}</span>
                 </div>
-                <div style='background:#111; height:10px; border-radius:10px; margin-top:15px; position:relative;'>
-                    <div style='background:linear-gradient(90deg, #cc7a00, #ffae00); width:{yuzde}%; height:100%; border-radius:10px; box-shadow: 0px 0px 10px rgba(204, 122, 0, 0.3); transition: width 1s ease;'></div>
+                
+                <div style='display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 10px; color: #666; font-family: "JetBrains Mono";'>
+                    <span style='color: {"#cc7a00" if kasa >= 900 else "#444"}'>LEVEL 1 ($900)</span>
+                    <span style='color: {"#cc7a00" if kasa >= 1200 else "#444"}'>LEVEL 2 ($1200)</span>
+                    <span style='color: {"#cc7a00" if kasa >= 1800 else "#444"}'>FINAL ($1800)</span>
                 </div>
+
+                <div style='background:#111; height:12px; border-radius:10px; position:relative; border: 1px solid #222;'>
+                    <div style='background:linear-gradient(90deg, #cc7a00, #ffae00); width:{yuzde}%; height:100%; border-radius:10px; box-shadow: 0px 0px 15px rgba(204, 122, 0, 0.4); transition: width 1s ease;'></div>
+                    
+                    <div style='position: absolute; left: 0%; top: -3px; width: 2px; height: 16px; background: #cc7a00; box-shadow: 0 0 5px #cc7a00;'></div>
+                    <div style='position: absolute; left: 50%; top: -3px; width: 2px; height: 16px; background: {"#cc7a00" if yuzde >= 50 else "#333"};'></div>
+                    <div style='position: absolute; right: 0%; top: -3px; width: 2px; height: 16px; background: {"#cc7a00" if yuzde >= 100 else "#333"};'></div>
+                </div>
+
                 <div style='display: flex; justify-content: space-between; margin-top: 8px; font-size: 10px; color: #444; font-family: "JetBrains Mono";'>
-                    <span>BAŞLANGIÇ: ${alt_sinir}</span>
-                    <span>HEDEF: ${ust_hedef}</span>
+                    <span>ŞU ANKİ DURAK: ${alt_sinir}</span>
+                    <span style='color:#cc7a00; font-weight:bold;'>SONRAKİ HEDEF: ${ust_hedef}</span>
                 </div>
             </div>
         """, unsafe_allow_html=True)
-        # --- ENTEGRASYON BİTİŞ ---
+        # --- BARI DEĞİŞTİRME BİTİŞ ---
 
         net_kar = kasa - ana_para
         col1, col2, col3 = st.columns(3)
