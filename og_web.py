@@ -76,7 +76,7 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input { font-fam
 .terminal-row { display: flex; justify-content: space-between; align-items: center; font-size: 14px; margin-bottom: 12px; line-height: 1.6;}
 .industrial-card { background: linear-gradient(145deg, rgba(15, 15, 15, 0.9), rgba(5, 5, 5, 1)) !important; border: 1px solid rgba(255, 255, 255, 0.03) !important; border-top: 2px solid rgba(204, 122, 0, 0.4) !important; padding: 22px; margin-bottom: 20px; border-radius: 4px;}
 .terminal-header { color: #666; font-size: 11px; font-weight: 800; letter-spacing: 2.5px; text-transform: uppercase; margin-bottom: 18px; border-left: 3px solid #cc7a00; padding-left: 12px;}
-.highlight { color: #cc7a00 !important; font-weight: 800; font-size: 19px; font-family: 'Orbitron'; }
+.highlight { color: #FFFFFF !important; font-weight: 800; font-size: 19px; font-family: 'Orbitron'; }
 .val-std { font-size: 22px !important; font-weight: 800 !important; font-family: 'Orbitron'; }
 .ticker-wrap { width: 100%; overflow: hidden; background: rgba(204, 122, 0, 0.03); border-bottom: 1px solid rgba(204, 122, 0, 0.2); padding: 10px 0; margin-bottom: 25px;}
 .ticker { display: flex; white-space: nowrap; animation: ticker 30s linear infinite; }
