@@ -152,9 +152,19 @@ if check_password():
         with col_v1:
             u_name = st.selectbox("İsim", ["oguzo", "ero7", "fybey"])
             u_vote = st.radio("Tahmin", ["Üstünde", "Altında"])
+            
             if st.button("TAHMİNİ GÖNDER"):
-                st.success("Tahmin alındı kanka! Akşam Sheets'ten kontrol edilecek.")
-                st.balloons()
+                import requests
+                # Kopyaladığın URL'yi buraya ekledim kanka:
+                script_url = "https://script.google.com/macros/s/AKfycbxG7a354qQUSLkkKTiCDZaptFub8yT2h-qkKcyBgUk0tHJUUk1eXmEA5dCc5ei76hj/exec"
+                
+                try:
+                    payload = {'isim': u_name, 'tahmin': u_vote}
+                    requests.get(script_url, params=payload)
+                    st.success(f"Tamamdır {u_name}, tahminin sisteme işlendi! ✅")
+                    st.balloons()
+                except:
+                    st.error("Bir sorun çıktı kanka, internetini kontrol et.")
 
     elif page == "⚽ FORMLINE":
         st.markdown(f"<div class='industrial-card'><div class='terminal-header'>📈 PERFORMANS</div><div class='terminal-row'><span>NET:</span><span style='color:#00ff41; font-size:32px; font-family:Orbitron;'>${toplam_bahis_kar:,.2f}</span></div></div>", unsafe_allow_html=True)
