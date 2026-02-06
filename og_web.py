@@ -154,12 +154,12 @@ if check_password():
         st.markdown(f"""
             <div class='industrial-card'>
                 <div style='display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;'>
-                    <div class='terminal-header' style='margin-bottom:0;'>HEDEF YOLCULUĞU {ikon}</div>
+                    <div class='terminal-header' style='margin-bottom:0;'>HEDEF BARI {ikon}</div>
                     <span style='color: #cc7a00; font-size: 14px; font-weight: bold;'>KASA: ${kasa:,.2f}</span>
                 </div>
                 <div style='display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 10px; color: #666; font-family: "JetBrains Mono";'>
-                    <span style='color: {c1}'>LEVEL 1 ($900)</span>
-                    <span style='color: {c2}'>LEVEL 2 ($1200)</span>
+                    <span style='color: {c1}'>L1 ($900)</span>
+                    <span style='color: {c2}'>L2 ana hedef ($1200)</span>
                     <span style='color: {c3}'>FINAL ($1800)</span>
                 </div>
                 <div style='background:#111; height:12px; border-radius:10px; position:relative; border: 1px solid #222;'>
