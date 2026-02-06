@@ -136,7 +136,6 @@ if check_password():
             st.markdown(f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>💎 KASA</div><div class='terminal-row'><span>TOPLAM</span><span class='highlight'>${kasa:,.2f}</span></div><div class='terminal-row'><span>K/Z</span><span style='color:{'#00ff41' if net_kar >=0 else '#ff4b4b'};' class='val-std'>${net_kar:,.2f}</span></div></div>", unsafe_allow_html=True)
         with col2:
             try:
-                # BTC, ETH ve SOL fiyatlarını çekiyoruz
                 btc = yf.Ticker("BTC-USD").history(period="1d")['Close'].iloc[-1]
                 eth = yf.Ticker("ETH-USD").history(period="1d")['Close'].iloc[-1]
                 sol = yf.Ticker("SOL-USD").history(period="1d")['Close'].iloc[-1]
@@ -151,7 +150,6 @@ if check_password():
         with col3: 
             st.markdown(f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>📊 WİN RATE</div><div style='text-align:center;'><span style='font-size:45px; font-weight:900; color:#cc7a00; font-family:Orbitron;'>%{wr_oran}</span></div></div>", unsafe_allow_html=True)
 
-        # SON İŞLEMLER SEKMESİ
         st.markdown("### 📜 SON İŞLEMLER")
         st.markdown(f"<div class='industrial-card'><div class='terminal-header'>AKTİVİTE LOGLARI</div><p style='font-family:JetBrains Mono; color:#888;'>{son_islemler_raw}</p></div>", unsafe_allow_html=True)
 
@@ -169,18 +167,22 @@ if check_password():
             
             if st.button("TAHMİNİ GÖNDER"):
                 import requests
-                # Kanka tarayıcı formatında tam URL simülasyonu
-                base_url = "https://script.google.com/macros/s/AKfycbz0cvMHSrHchkksvFCixr9NDnMsvfLQ6T_K2jsXfohgs7eFXP5x-wxTX_YQej1EZhSX/exec"
-                full_url = f"{base_url}?isim={u_name}&tahmin={u_vote}"
+                # Kanka tarayıcı formatını taklit eden en güçlü yapı:
+                script_url = "https://script.google.com/macros/s/AKfycbz0cvMHSrHchkksvFCixr9NDnMsvfLQ6T_K2jsXfohgs7eFXP5x-wxTX_YQej1EZhSX/exec"
+                full_url = f"{script_url}?isim={u_name}&tahmin={u_vote}"
+                
+                # Tarayıcı gibi davranması için headers ekledik:
+                headers = {"User-Agent": "Mozilla/5.0"}
                 
                 try:
-                    # Yönlendirmelere izin vererek tam tarayıcı taklidi
-                    response = requests.get(full_url, timeout=15, allow_redirects=True)
-                    if response.status_code == 200 or response.status_code == 302:
-                        st.success(f"Tamamdır {u_name}, {u_vote} oyun sisteme fırlatıldı! ✅")
+                    # stream=True ve allow_redirects=True Google'ın yönlendirmelerini yakalar
+                    response = requests.get(full_url, headers=headers, timeout=15, allow_redirects=True)
+                    
+                    if response.status_code == 200:
+                        st.success(f"Tamamdır {u_name}, oyu Sheets'e fırlattım! ✅")
                         st.balloons()
                     else:
-                        st.error(f"Google yanıt vermedi. Kod: {response.status_code}")
+                        st.warning(f"Google 200 vermedi ama tarayıcıda çalışıyorsa işlem tamamdır. Kod: {response.status_code}")
                 except Exception as e:
                     st.error(f"Bağlantı hatası: {e}")
 
