@@ -12,7 +12,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- 2. VERİ BAĞLANTISI (GOOGLE SHEETS) ---
+# --- 2. VERİ BAĞLANTISI ---
 def get_live_data():
     try:
         sheet_url = "https://docs.google.com/spreadsheets/d/15izevdpRjs8Om5BAHKVWmdL3FxEHml35DGECfhQUG_s/export?format=csv&gid=0"
@@ -22,7 +22,6 @@ def get_live_data():
     except Exception:
         return {"kasa": "600.0", "ana_para": "600.0"}
 
-# --- GÜNCELLENMİŞ RÜTBE FONKSİYONU ---
 def rutbe_getir(puan_str):
     try:
         p = int(float(puan_str))
@@ -39,12 +38,10 @@ kasa = float(live_vars.get("kasa", 600))
 ana_para = float(live_vars.get("ana_para", 600))
 duyuru_metni = live_vars.get("duyuru", "SİSTEM ÇEVRİMİÇİ... OG CORE V9.9")
 
-# --- KİŞİSEL KASA VERİLERİ ---
 og_kasa = float(live_vars.get("oguzo_kasa", kasa / 3))
 er_kasa = float(live_vars.get("ero7_kasa", kasa / 3))
 fy_kasa = float(live_vars.get("fybey_kasa", kasa / 3))
 
-# --- RÜTBE VERİLERİ ---
 og_p = live_vars.get("oguzo_puan", "0")
 er_p = live_vars.get("ero7_puan", "0")
 fy_p = live_vars.get("fybey_puan", "0")
@@ -52,11 +49,9 @@ fy_p = live_vars.get("fybey_puan", "0")
 aktif_soru_1 = live_vars.get("aktif_soru", "Gala maçı gala w ?")
 aktif_soru_2 = live_vars.get("aktif_soru2", "BTC 7 Şubat günlük kapanış 70k")
 
-# --- 💰 FORMLINE HESAPLAMA ---
 w1_kar = float(live_vars.get("w1_sonuc", -100)) 
 w2_kar = float(live_vars.get("w2_sonuc", 453))
 toplam_bahis_kar = w1_kar + w2_kar
-
 wr_oran = live_vars.get("win_rate", "0")
 son_islemler_raw = str(live_vars.get("son_islemler", "Veri yok"))
 
@@ -65,15 +60,13 @@ custom_css = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&family=Orbitron:wght@400;700;900&display=swap');
 #MainMenu, footer, header, .stAppDeployButton {visibility: hidden;}
-[data-testid="stSidebar"] svg, [data-testid="stHeaderActionElements"], .st-emotion-cache-10trblm {display: none !important;}
-[data-testid="stSidebar"] span, [data-testid="stSidebar"] small {font-size: 0 !important; color: transparent !important;}
-[data-testid="stSidebar"] p {font-size: 14px !important; color: #d1d1d1 !important; visibility: visible !important;}
+[data-testid="stSidebar"] svg, [data-testid="stHeaderActionElements"] {display: none !important;}
 .stApp { background-color: #030303 !important; background-image: radial-gradient(circle at 50% 50%, rgba(204, 122, 0, 0.07) 0%, transparent 70%);}
 section[data-testid="stSidebar"] { background-color: #050505 !important; border-right: 1px solid rgba(204, 122, 0, 0.15); padding-top: 20px; min-width: 340px !important; max-width: 340px !important;}
 .stButton button, .stLinkButton a { width: 100% !important; background: rgba(204, 122, 0, 0.1) !important; border: 1px solid rgba(204, 122, 0, 0.3) !important; color: #cc7a00 !important; font-family: 'Orbitron' !important; padding: 12px !important; border-radius: 6px !important;}
 body, [data-testid="stAppViewContainer"], p, div, span, button, input { font-family: 'JetBrains Mono', monospace !important; color: #d1d1d1 !important;}
 .terminal-row { display: flex; justify-content: space-between; align-items: center; font-size: 14px; margin-bottom: 12px; line-height: 1.6;}
-.industrial-card { background: linear-gradient(145deg, rgba(15, 15, 15, 0.9), rgba(5, 5, 5, 1)) !important; border: 1px solid rgba(255, 255, 255, 0.03) !important; border-top: 2px solid rgba(204, 122, 0, 0.4) !important; padding: 22px; margin-bottom: 20px; border-radius: 4px;}
+.industrial-card { background: linear-gradient(145deg, rgba(15, 15, 15, 0.9), rgba(5, 5, 5, 1)) !important; border: 1px solid rgba(255, 255, 255, 0.03) !important; border-top: 2px solid rgba(204, 122, 0, 0.4) !important; padding: 22px; margin-bottom: 20px; border-radius: 4px; position: relative;}
 .terminal-header { color: #666; font-size: 11px; font-weight: 800; letter-spacing: 2.5px; text-transform: uppercase; margin-bottom: 18px; border-left: 3px solid #cc7a00; padding-left: 12px;}
 .highlight { color: #FFFFFF !important; font-weight: 400; font-size: 14px; font-family: 'JetBrains Mono', monospace; }
 .val-std { font-size: 22px !important; font-weight: 800 !important; font-family: 'Orbitron'; }
@@ -82,12 +75,13 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input { font-fam
 .ticker-item { font-size: 12px; color: #cc7a00; letter-spacing: 4px; padding-right: 50%; }
 @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
-/* --- Gelişmiş Progress Bar --- */
-.progress-container { position: relative; width: 100%; height: 12px; background: #111; border-radius: 20px; overflow: visible; border: 1px solid rgba(255,255,255,0.05); }
-.progress-fill { height: 100%; border-radius: 20px; background: linear-gradient(90deg, #cc7a00 0%, #ffae00 100%); box-shadow: 0 0 15px rgba(204, 122, 0, 0.4); transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
-.milestone { position: absolute; top: -25px; transform: translateX(-50%); font-size: 9px; font-family: 'Orbitron'; color: #555; text-align: center; }
-.milestone-marker { position: absolute; top: 0; bottom: 0; width: 2px; background: rgba(255,255,255,0.1); }
-.active-milestone { color: #cc7a00; font-weight: bold; text-shadow: 0 0 5px rgba(204, 122, 0, 0.5); }
+/* --- PROGRESS BAR CSS --- */
+.bar-box { padding: 30px 10px 10px 10px; position: relative; width: 100%; }
+.bar-bg { height: 10px; background: #111; border-radius: 20px; position: relative; border: 1px solid rgba(255,255,255,0.05); }
+.bar-fill { height: 100%; border-radius: 20px; background: linear-gradient(90deg, #cc7a00, #ffae00); box-shadow: 0 0 15px rgba(204, 122, 0, 0.5); transition: width 1s ease-in-out; }
+.ms-label { position: absolute; top: -25px; transform: translateX(-50%); font-size: 10px; font-family: 'Orbitron'; color: #444; white-space: nowrap;}
+.ms-marker { position: absolute; top: 0; bottom: 0; width: 2px; background: rgba(255,255,255,0.1); }
+.ms-active { color: #cc7a00 !important; font-weight: bold; text-shadow: 0 0 8px rgba(204,122,0,0.6); }
 </style>
 """
 
@@ -140,37 +134,39 @@ if check_password():
 
         st.divider()
 
-        # --- HEDEF YOLCULUĞU BARI (DÜZENLENDİ) ---
+        # --- HEDEF YOLCULUĞU BARI (TAMİR EDİLDİ) ---
         target_final = 6500
         start_val = 600
-        # Progress hesaplama: 600 başlangıç olduğu için ilerleme (kasa-600)/(6500-600)
         current_pct = max(0, min(100, ((kasa - start_val) / (target_final - start_val)) * 100))
         
-        # Milestone hesaplama (%)
         m1_pct = ((900 - start_val) / (target_final - start_val)) * 100
         m2_pct = ((1200 - start_val) / (target_final - start_val)) * 100
         m3_pct = ((1800 - start_val) / (target_final - start_val)) * 100
 
-        st.markdown(f"""
-        <div class='industrial-card'>
-            <div class='terminal-header'>HEDEF YOLCULUĞU ($6,500)</div>
-            <div style='margin-top:40px; margin-bottom:20px;'>
-                <div class='progress-container'>
-                    <div class='milestone-marker' style='left:{m1_pct}%'></div>
-                    <div class='milestone-marker' style='left:{m2_pct}%'></div>
-                    <div class='milestone-marker' style='left:{m3_pct}%'></div>
-                    
-                    <div class='milestone {"active-milestone" if kasa >= 900 else ""}' style='left:{m1_pct}%'>900</div>
-                    <div class='milestone {"active-milestone" if kasa >= 1200 else ""}' style='left:{m2_pct}%'>1200</div>
-                    <div class='milestone {"active-milestone" if kasa >= 1800 else ""}' style='left:{m3_pct}%'>1800</div>
-                    <div class='milestone' style='left:100%'>6500</div>
-                    
-                    <div class='progress-fill' style='width:{current_pct}%;'></div>
+        bar_html = """
+        <div class="industrial-card">
+            <div class="terminal-header">HEDEF YOLCULUĞU ($6,500)</div>
+            <div class="bar-box">
+                <div class="bar-bg">
+                    <div class="ms-marker" style="left:{m1_p}%"></div>
+                    <div class="ms-label {c1}" style="left:{m1_p}%">900</div>
+                    <div class="ms-marker" style="left:{m2_p}%"></div>
+                    <div class="ms-label {c2}" style="left:{m2_p}%">1200</div>
+                    <div class="ms-marker" style="left:{m3_p}%"></div>
+                    <div class="ms-label {c3}" style="left:{m3_p}%">1800</div>
+                    <div class="ms-label" style="left:100%">6500</div>
+                    <div class="bar-fill" style="width:{cp}%"></div>
                 </div>
             </div>
-            <div style='text-align:right; font-size:10px; color:#444; font-family:JetBrains Mono;'>PROGRESS: {current_pct:.1f}%</div>
+            <div style="text-align:right; font-size:10px; color:#444; margin-top:10px;">SYSTEM_PROGRESS: {cp:.1f}%</div>
         </div>
-        """, unsafe_allow_html=True)
+        """.format(
+            m1_p=m1_pct, m2_p=m2_pct, m3_p=m3_pct, cp=current_pct,
+            c1="ms-active" if kasa >= 900 else "",
+            c2="ms-active" if kasa >= 1200 else "",
+            c3="ms-active" if kasa >= 1800 else ""
+        )
+        st.markdown(bar_html, unsafe_allow_html=True)
         
         col1, col2, col3 = st.columns(3)
         net_kar = kasa - ana_para
@@ -180,7 +176,7 @@ if check_password():
                 btc = yf.Ticker("BTC-USD").history(period="1d")['Close'].iloc[-1]
                 eth = yf.Ticker("ETH-USD").history(period="1d")['Close'].iloc[-1]
                 sol = yf.Ticker("SOL-USD").history(period="1d")['Close'].iloc[-1]
-                st.markdown(f"""<div class='industrial-card' style='height:230px;'><div class='terminal-header'>⚡ PİYASA</div><div class='terminal-row'><span>BITCOIN</span><span class='highlight'>${btc:,.0f}</span></div><div class='terminal-row'><span>ETHEREUM</span><span style='color:#cc7a00;'>${eth:,.0f}</span></div><div class='terminal-row'><span>SOLANA</span><span style='color:#cc7a00;'>${sol:,.2f}</span></div></div>""", unsafe_allow_html=True)
+                st.markdown(f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>⚡ PİYASA</div><div class='terminal-row'><span>BITCOIN</span><span class='highlight'>${btc:,.0f}</span></div><div class='terminal-row'><span>ETHEREUM</span><span style='color:#cc7a00;'>${eth:,.0f}</span></div><div class='terminal-row'><span>SOLANA</span><span style='color:#cc7a00;'>${sol:,.2f}</span></div></div>", unsafe_allow_html=True)
             except: st.write("Piyasa verisi bekleniyor...")
         with col3: st.markdown(f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>📊 WİN RATE</div><div style='text-align:center;'><span style='font-size:45px; font-weight:900; color:#cc7a00; font-family:Orbitron;'>%{wr_oran}</span></div></div>", unsafe_allow_html=True)
         
@@ -190,28 +186,9 @@ if check_password():
     elif page == "🎲 CHALLANGE":
         st.markdown("<div class='terminal-header'>🏆 GÜNCEL RÜTBE SIRALAMASI</div>", unsafe_allow_html=True)
         s1, s2, s3 = st.columns(3)
-        with s1: st.markdown(f"<div class='industrial-card' style='padding:15px; text-align:center; border-top: 2px solid #cc7a00;'><div style='font-size:11px; color:#666;'>oguzo</div><div class='highlight'>{og_p} P</div><div style='font-size:12px;'>{rutbe_getir(og_p)}</div></div>", unsafe_allow_html=True)
-        with s2: st.markdown(f"<div class='industrial-card' style='padding:15px; text-align:center; border-top: 2px solid #cc7a00;'><div style='font-size:11px; color:#666;'>ero7</div><div class='highlight'>{er_p} P</div><div style='font-size:12px;'>{rutbe_getir(er_p)}</div></div>", unsafe_allow_html=True)
-        with s3: st.markdown(f"<div class='industrial-card' style='padding:15px; text-align:center; border-top: 2px solid #cc7a00;'><div style='font-size:11px; color:#666;'>fybey</div><div class='highlight'>{fy_p} P</div><div style='font-size:12px;'>{rutbe_getir(fy_p)}</div></div>", unsafe_allow_html=True)
-        
-        st.divider()
-
-        q_col1, q_col2 = st.columns(2)
-        base_url = "https://script.google.com/macros/s/AKfycbz0cvMHSrHchkksvFCixr9NDnMsvfLQ6T_K2jsXfohgs7eFXP5x-wxTX_YQej1EZhSX/exec"
-        
-        with q_col1:
-            st.markdown(f"<div class='industrial-card equal-card'><div class='terminal-header'>📢 AKTİF SORU 1</div><h3 style='color:white; margin:0;'>{aktif_soru_1}</h3><span></span></div>", unsafe_allow_html=True)
-            u_name_1 = st.selectbox("İsim (Soru 1)", ["oguzo", "ero7", "fybey"], key="n1")
-            u_vote_1 = st.radio("Tahmin (Soru 1)", ["👍", "👎"], key="v1")
-            final_link_1 = f"{base_url}?isim={u_name_1}&tahmin={u_vote_1}&soru=1"
-            st.markdown(f"""<a href='{final_link_1}' target='_blank' style='text-decoration:none;'><div style='background:rgba(204, 122, 0, 0.2); border: 1px solid #cc7a00; color:#cc7a00; text-align:center; padding:15px; border-radius:5px; font-family:Orbitron; font-weight:bold; cursor:pointer;'>1. OYU ONAYLA</div></a>""", unsafe_allow_html=True)
-
-        with q_col2:
-            st.markdown(f"<div class='industrial-card equal-card'><div class='terminal-header'>📢 AKTİF SORU 2</div><h3 style='color:white; margin:0;'>{aktif_soru_2}</h3><span></span></div>", unsafe_allow_html=True)
-            u_name_2 = st.selectbox("İsim (Soru 2)", ["oguzo", "ero7", "fybey"], key="n2")
-            u_vote_2 = st.radio("Tahmin (Soru 2)", ["👍", "👎"], key="v2")
-            final_link_2 = f"{base_url}?isim={u_name_2}&tahmin={u_vote_2}&soru=2"
-            st.markdown(f"""<a href='{final_link_2}' target='_blank' style='text-decoration:none;'><div style='background:rgba(204, 122, 0, 0.2); border: 1px solid #cc7a00; color:#cc7a00; text-align:center; padding:15px; border-radius:5px; font-family:Orbitron; font-weight:bold; cursor:pointer;'>2. OYU ONAYLA</div></a>""", unsafe_allow_html=True)
+        with s1: st.markdown(f"<div class='industrial-card' style='padding:15px; text-align:center;'><div style='font-size:11px; color:#666;'>oguzo</div><div class='highlight'>{og_p} P</div><div style='font-size:12px;'>{rutbe_getir(og_p)}</div></div>", unsafe_allow_html=True)
+        with s2: st.markdown(f"<div class='industrial-card' style='padding:15px; text-align:center;'><div style='font-size:11px; color:#666;'>ero7</div><div class='highlight'>{er_p} P</div><div style='font-size:12px;'>{rutbe_getir(er_p)}</div></div>", unsafe_allow_html=True)
+        with s3: st.markdown(f"<div class='industrial-card' style='padding:15px; text-align:center;'><div style='font-size:11px; color:#666;'>fybey</div><div class='highlight'>{fy_p} P</div><div style='font-size:12px;'>{rutbe_getir(fy_p)}</div></div>", unsafe_allow_html=True)
 
     elif page == "⚽ FORMLINE":
         st.markdown(f"<div class='industrial-card'><div class='terminal-header'>📈 PERFORMANS</div><div class='terminal-row'><span>NET:</span><span style='color:#00ff41; font-size:32px; font-family:Orbitron;'>${toplam_bahis_kar:,.2f}</span></div></div>", unsafe_allow_html=True)
