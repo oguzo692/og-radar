@@ -128,6 +128,7 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input { font-fam
     font-size: 10px;
     font-family: 'Orbitron';
     font-weight: bold;
+    white-space: nowrap;
 }
 </style>
 """
@@ -191,20 +192,21 @@ if check_password():
         ms1200_pct = (1200 / target) * 100
         ms1800_pct = (1800 / target) * 100
 
+        # DÜZELTİLMİŞ PROGRESS BAR BÖLÜMÜ
         st.markdown(f"""
         <div class='industrial-card'>
             <div class='terminal-header'>HEDEF YOLCULUĞU (${target:,.0f})</div>
             <div class='prog-container'>
-                <div class='ms-marker' style='left:{ms900_pct}%'></div>
-                <div class='ms-text' style='left:{ms900_pct}%; color:{"#ffae00" if kasa>=900 else "#444"}'>$900</div>
+                <div class='ms-marker' style='left:{ms900_pct}%;'></div>
+                <div class='ms-text' style='left:{ms900_pct}%; color:{"#ffae00" if kasa>=900 else "#444"};'>$900</div>
                 
-                <div class='ms-marker' style='left:{ms1200_pct}%'></div>
-                <div class='ms-text' style='left:{ms1200_pct}%; color:{"#ffae00" if kasa>=1200 else "#444"}'>$1200</div>
+                <div class='ms-marker' style='left:{ms1200_pct}%;'></div>
+                <div class='ms-text' style='left:{ms1200_pct}%; color:{"#ffae00" if kasa>=1200 else "#444"};'>$1200</div>
                 
-                <div class='ms-marker' style='left:{ms1800_pct}%'></div>
-                <div class='ms-text' style='left:{ms1800_pct}%; color:{"#ffae00" if kasa>=1800 else "#444"}'>$1800</div>
+                <div class='ms-marker' style='left:{ms1800_pct}%;'></div>
+                <div class='ms-text' style='left:{ms1800_pct}%; color:{"#ffae00" if kasa>=1800 else "#444"};'>$1800</div>
                 
-                <div class='prog-fill' style='width:{current_pct}%'>
+                <div class='prog-fill' style='width:{current_pct}%;'>
                     <span style='font-size:10px; font-family:Orbitron; color:white; font-weight:bold;'>%{current_pct:.1f}</span>
                 </div>
             </div>
