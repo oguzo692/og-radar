@@ -39,13 +39,12 @@ kasa = float(live_vars.get("kasa", 600))
 ana_para = float(live_vars.get("ana_para", 600))
 duyuru_metni = live_vars.get("duyuru", "SİSTEM ÇEVRİMİÇİ... OG CORE V9.9")
 
-# --- KİŞİSEL KASA VERİLERİ (DÜZELTİLDİ) ---
-# Sabit %20 hatası giderildi. Sheets'ten veri yoksa kasa/3 yapar.
+# --- KİŞİSEL KASA VERİLERİ ---
 og_kasa = float(live_vars.get("oguzo_kasa", kasa / 3))
 er_kasa = float(live_vars.get("ero7_kasa", kasa / 3))
 fy_kasa = float(live_vars.get("fybey_kasa", kasa / 3))
 
-# --- RÜTBE VERİLERİ (TAHMİN İÇİN) ---
+# --- RÜTBE VERİLERİ ---
 og_p = live_vars.get("oguzo_puan", "0")
 er_p = live_vars.get("ero7_puan", "0")
 fy_p = live_vars.get("fybey_puan", "0")
@@ -82,7 +81,13 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input { font-fam
 .ticker { display: flex; white-space: nowrap; animation: ticker 30s linear infinite; }
 .ticker-item { font-size: 12px; color: #cc7a00; letter-spacing: 4px; padding-right: 50%; }
 @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
-.equal-card { min-height: 180px; display: flex; flex-direction: column; justify-content: space-between; }
+
+/* --- Gelişmiş Progress Bar --- */
+.progress-container { position: relative; width: 100%; height: 12px; background: #111; border-radius: 20px; overflow: visible; border: 1px solid rgba(255,255,255,0.05); }
+.progress-fill { height: 100%; border-radius: 20px; background: linear-gradient(90deg, #cc7a00 0%, #ffae00 100%); box-shadow: 0 0 15px rgba(204, 122, 0, 0.4); transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+.milestone { position: absolute; top: -25px; transform: translateX(-50%); font-size: 9px; font-family: 'Orbitron'; color: #555; text-align: center; }
+.milestone-marker { position: absolute; top: 0; bottom: 0; width: 2px; background: rgba(255,255,255,0.1); }
+.active-milestone { color: #cc7a00; font-weight: bold; text-shadow: 0 0 5px rgba(204, 122, 0, 0.5); }
 </style>
 """
 
@@ -135,11 +140,40 @@ if check_password():
 
         st.divider()
 
-        net_kar = kasa - ana_para
-        current_pct = min(100, (kasa / 6500) * 100)
-        st.markdown(f"<div class='industrial-card'><div class='terminal-header'>HEDEF YOLCULUĞU ($6,500)</div><div style='background:#111; height:8px; border-radius:10px;'><div style='background:linear-gradient(90deg, #cc7a00, #ffae00); width:{current_pct}%; height:100%; border-radius:10px;'></div></div></div>", unsafe_allow_html=True)
+        # --- HEDEF YOLCULUĞU BARI (DÜZENLENDİ) ---
+        target_final = 6500
+        start_val = 600
+        # Progress hesaplama: 600 başlangıç olduğu için ilerleme (kasa-600)/(6500-600)
+        current_pct = max(0, min(100, ((kasa - start_val) / (target_final - start_val)) * 100))
+        
+        # Milestone hesaplama (%)
+        m1_pct = ((900 - start_val) / (target_final - start_val)) * 100
+        m2_pct = ((1200 - start_val) / (target_final - start_val)) * 100
+        m3_pct = ((1800 - start_val) / (target_final - start_val)) * 100
+
+        st.markdown(f"""
+        <div class='industrial-card'>
+            <div class='terminal-header'>HEDEF YOLCULUĞU ($6,500)</div>
+            <div style='margin-top:40px; margin-bottom:20px;'>
+                <div class='progress-container'>
+                    <div class='milestone-marker' style='left:{m1_pct}%'></div>
+                    <div class='milestone-marker' style='left:{m2_pct}%'></div>
+                    <div class='milestone-marker' style='left:{m3_pct}%'></div>
+                    
+                    <div class='milestone {"active-milestone" if kasa >= 900 else ""}' style='left:{m1_pct}%'>900</div>
+                    <div class='milestone {"active-milestone" if kasa >= 1200 else ""}' style='left:{m2_pct}%'>1200</div>
+                    <div class='milestone {"active-milestone" if kasa >= 1800 else ""}' style='left:{m3_pct}%'>1800</div>
+                    <div class='milestone' style='left:100%'>6500</div>
+                    
+                    <div class='progress-fill' style='width:{current_pct}%;'></div>
+                </div>
+            </div>
+            <div style='text-align:right; font-size:10px; color:#444; font-family:JetBrains Mono;'>PROGRESS: {current_pct:.1f}%</div>
+        </div>
+        """, unsafe_allow_html=True)
         
         col1, col2, col3 = st.columns(3)
+        net_kar = kasa - ana_para
         with col1: st.markdown(f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>💎 KASA</div><div class='terminal-row'><span>TOPLAM</span><span class='highlight'>${kasa:,.2f}</span></div><div class='terminal-row'><span>K/Z</span><span style='color:{'#00ff41' if net_kar >=0 else '#ff4b4b'};' class='val-std'>${net_kar:,.2f}</span></div></div>", unsafe_allow_html=True)
         with col2:
             try:
