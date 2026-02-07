@@ -56,7 +56,7 @@ toplam_bahis_kar = w1_kar + w2_kar
 wr_oran = live_vars.get("win_rate", "0")
 son_islemler_raw = str(live_vars.get("son_islemler", "Veri yok"))
 
-# --- 3. CSS STİLLERİ (GÜNCELLENDİ) ---
+# --- 3. CSS STİLLERİ ---
 custom_css = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&family=Orbitron:wght@400;700;900&display=swap');
@@ -71,37 +71,14 @@ custom_css = """
     background-image: radial-gradient(circle at 50% 50%, rgba(204, 122, 0, 0.07) 0%, transparent 70%);
 }
 
-/* Animasyonlar */
-@keyframes glow {
-    0% { box-shadow: 0 0 5px rgba(204, 122, 0, 0.1); }
-    50% { box-shadow: 0 0 20px rgba(204, 122, 0, 0.4); }
-    100% { box-shadow: 0 0 5px rgba(204, 122, 0, 0.1); }
-}
-
-@keyframes scanline {
-    0% { transform: translateY(-100%); }
-    100% { transform: translateY(100%); }
-}
-
-/* Login Ekranı Özel */
 .login-card {
     background: rgba(10, 10, 10, 0.9);
     border: 1px solid rgba(204, 122, 0, 0.2);
     border-radius: 8px;
     padding: 40px;
     border-top: 3px solid #cc7a00;
-    animation: glow 4s infinite ease-in-out;
     position: relative;
     overflow: hidden;
-}
-
-.login-card::after {
-    content: "";
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 2px;
-    background: rgba(204, 122, 0, 0.3);
-    animation: scanline 3s linear infinite;
-    opacity: 0.2;
 }
 
 section[data-testid="stSidebar"] { background-color: #050505 !important; border-right: 1px solid rgba(204, 122, 0, 0.15); padding-top: 20px; min-width: 340px !important; max-width: 340px !important;}
@@ -118,14 +95,15 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input { font-fam
 @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 .equal-card { min-height: 180px; display: flex; flex-direction: column; justify-content: space-between; }
 
-/* YENİ HEDEF BARI TASARIMI */
+/* HEDEF BARI TASARIMI */
 .progress-container {
     background: rgba(0, 0, 0, 0.6);
     border: 1px solid rgba(204, 122, 0, 0.2);
-    height: 24px;
+    height: 40px;
     border-radius: 4px;
     position: relative;
-    overflow: hidden;
+    overflow: visible;
+    margin-top: 25px;
     box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
 }
 .progress-bar {
@@ -133,22 +111,26 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input { font-fam
     background: linear-gradient(90deg, #995c00 0%, #cc7a00 50%, #ffae00 100%);
     box-shadow: 0 0 15px rgba(204, 122, 0, 0.4);
     border-right: 2px solid #fff;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
     transition: width 1s ease-in-out;
 }
-.progress-text {
+.milestone {
     position: absolute;
-    width: 100%;
-    text-align: center;
-    font-size: 10px;
-    font-weight: 800;
-    font-family: 'Orbitron';
-    color: white;
-    line-height: 24px;
-    text-shadow: 1px 1px 2px black;
+    top: -20px;
+    width: 1px;
+    height: 60px;
+    background: rgba(204, 122, 0, 0.5);
+    z-index: 2;
 }
+.milestone-label {
+    position: absolute;
+    top: -22px;
+    transform: translateX(-50%);
+    font-size: 9px;
+    font-weight: 800;
+    color: #666;
+    letter-spacing: 1px;
+}
+.milestone-label.active { color: #ffae00; text-shadow: 0 0 5px rgba(255, 174, 0, 0.5); }
 </style>
 """
 
@@ -160,47 +142,23 @@ w3_coupon_html = f"<div class='industrial-card'><div class='terminal-header'>�
 w2_coupon_html = f"<div class='industrial-card' style='border-top-color: #00ff41 !important;'><div class='terminal-header' style='color:#00ff41;'>✅ W2 KUPONU (BAŞARILI)</div>{w2_matches}<span style='color:#00ff41; font-weight:bold;'>SONUÇLANDI ✅</span></div>"
 w1_coupon_html = f"<div class='industrial-card' style='border-top-color: #ff4b4b !important;'><div class='terminal-header' style='color:#ff4b4b;'>❌ W1 KUPONU (BAŞARISIZ)</div>{w1_matches}<span style='color:#ff4b4b; font-weight:bold;'>SONUÇLANDI ❌</span></div>"
 
-# --- 5. GÜVENLİK (GİRİŞ EKRANI REVİZE EDİLDİ) ---
+# --- 5. GÜVENLİK ---
 if "password_correct" not in st.session_state: st.session_state["password_correct"] = False
 
 def check_password():
     if not st.session_state["password_correct"]:
         st.markdown(custom_css, unsafe_allow_html=True)
         st.markdown('<div style="height: 15vh;"></div>', unsafe_allow_html=True)
-        
         col_a, col_b, col_c = st.columns([1, 1.2, 1])
         with col_b:
-            st.markdown("""
-                <div class="login-card">
-                    <div style="text-align: center; margin-bottom: 30px;">
-                        <div style="font-size: 10px; color: #666; letter-spacing: 3px;">ENCRYPTED ACCESS</div>
-                        <div style="font-family: 'Orbitron'; font-size: 50px; font-weight: 900; color: white; letter-spacing: 12px; margin: 10px 0;">OG CORE</div>
-                        <div style="height: 2px; background: linear-gradient(90deg, transparent, #cc7a00, transparent); width: 100%;"></div>
-                    </div>
-                </div>
-            """, unsafe_allow_html=True)
-            
-            # Form alanı
+            st.markdown('<div class="login-card"><div style="text-align: center; margin-bottom: 30px;"><div style="font-size: 10px; color: #666; letter-spacing: 3px;">ENCRYPTED ACCESS</div><div style="font-family: \'Orbitron\'; font-size: 50px; font-weight: 900; color: white; letter-spacing: 12px; margin: 10px 0;">OG CORE</div><div style="height: 2px; background: linear-gradient(90deg, transparent, #cc7a00, transparent); width: 100%;"></div></div></div>', unsafe_allow_html=True)
             with st.container():
-                st.markdown('<p style="text-align:center; font-size:11px; color:#444; margin-top:20px;">PROTOKOL ANALİZİ: ANAHTAR GEREKLİ</p>', unsafe_allow_html=True)
                 pwd = st.text_input("şifre", type="password", placeholder="••••", label_visibility="collapsed")
-                
-                c1, c2, c3 = st.columns([0.5, 1, 0.5])
-                with c2:
-                    if st.button("SİSTEME GİRİŞ YAP"):
-                        if pwd == "1608":
-                            st.session_state["password_correct"] = True
-                            st.rerun()
-                        else:
-                            st.error("ERİŞİM REDDEDİLDİ")
-            
-            st.markdown("""
-                <div style="margin-top: 30px; display: flex; justify-content: space-between; font-size: 8px; color: #222;">
-                    <span>KERNEL: v9.9.0-STABLE</span>
-                    <span>SECURITY: LEVEL-A</span>
-                </div>
-            """, unsafe_allow_html=True)
-            
+                if st.button("SİSTEME GİRİŞ YAP"):
+                    if pwd == "1608":
+                        st.session_state["password_correct"] = True
+                        st.rerun()
+                    else: st.error("ERİŞİM REDDEDİLDİ")
         return False
     return True
 
@@ -229,15 +187,30 @@ if check_password():
         st.divider()
 
         net_kar = kasa - ana_para
-        current_pct = min(100, (kasa / 6500) * 100)
+        target = 6500
+        current_pct = min(100, (kasa / target) * 100)
         
-        # --- GÜNCELLENMİŞ HEDEF BARI ---
+        # Milestone Hesaplamaları (Target: 6500)
+        ms_900 = (900 / target) * 100
+        ms_1200 = (1200 / target) * 100
+        ms_1800 = (1800 / target) * 100
+
         st.markdown(f"""
         <div class='industrial-card'>
-            <div class='terminal-header'>HEDEF YOLCULUĞU ($6,500)</div>
+            <div class='terminal-header'>HEDEF YOLCULUĞU (${target:,.0f})</div>
             <div class='progress-container'>
-                <div class='progress-text'>{current_pct:.1f}% COMPLETE</div>
-                <div class='progress-bar' style='width:{current_pct}%;'></div>
+                <div class='milestone' style='left: {ms_900}%;'></div>
+                <div class='milestone-label {"active" if kasa >= 900 else ""}' style='left: {ms_900}%;'>$900</div>
+                
+                <div class='milestone' style='left: {ms_1200}%;'></div>
+                <div class='milestone-label {"active" if kasa >= 1200 else ""}' style='left: {ms_1200}%;'>$1200</div>
+                
+                <div class='milestone' style='left: {ms_1800}%;'></div>
+                <div class='milestone-label {"active" if kasa >= 1800 else ""}' style='left: {ms_1800}%;'>$1800</div>
+                
+                <div class='progress-bar' style='width:{current_pct}%;'>
+                    <span style='width:100%; text-align:center; font-size:10px; font-weight:900; color:white; font-family:Orbitron;'>%{current_pct:.1f}</span>
+                </div>
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -262,19 +235,15 @@ if check_password():
         with s1: st.markdown(f"<div class='industrial-card' style='padding:15px; text-align:center; border-top: 2px solid #cc7a00;'><div style='font-size:11px; color:#666;'>oguzo</div><div class='highlight'>{og_p} P</div><div style='font-size:12px;'>{rutbe_getir(og_p)}</div></div>", unsafe_allow_html=True)
         with s2: st.markdown(f"<div class='industrial-card' style='padding:15px; text-align:center; border-top: 2px solid #cc7a00;'><div style='font-size:11px; color:#666;'>ero7</div><div class='highlight'>{er_p} P</div><div style='font-size:12px;'>{rutbe_getir(er_p)}</div></div>", unsafe_allow_html=True)
         with s3: st.markdown(f"<div class='industrial-card' style='padding:15px; text-align:center; border-top: 2px solid #cc7a00;'><div style='font-size:11px; color:#666;'>fybey</div><div class='highlight'>{fy_p} P</div><div style='font-size:12px;'>{rutbe_getir(fy_p)}</div></div>", unsafe_allow_html=True)
-        
         st.divider()
-
         q_col1, q_col2 = st.columns(2)
         base_url = "https://script.google.com/macros/s/AKfycbz0cvMHSrHchkksvFCixr9NDnMsvfLQ6T_K2jsXfohgs7eFXP5x-wxTX_YQej1EZhSX/exec"
-        
         with q_col1:
             st.markdown(f"<div class='industrial-card equal-card'><div class='terminal-header'>📢 AKTİF SORU 1</div><h3 style='color:white; margin:0;'>{aktif_soru_1}</h3><span></span></div>", unsafe_allow_html=True)
             u_name_1 = st.selectbox("İsim (Soru 1)", ["oguzo", "ero7", "fybey"], key="n1")
             u_vote_1 = st.radio("Tahmin (Soru 1)", ["12.2k-12.4k", "12.4k-12.6k","12.6k-12.8k", "+12.8k-13k", "+13k"], key="v1")
             final_link_1 = f"{base_url}?isim={u_name_1}&tahmin={u_vote_1}&soru=1"
             st.markdown(f"""<a href='{final_link_1}' target='_blank' style='text-decoration:none;'><div style='background:rgba(204, 122, 0, 0.2); border: 1px solid #cc7a00; color:#cc7a00; text-align:center; padding:15px; border-radius:5px; font-family:Orbitron; font-weight:bold; cursor:pointer;'>1. OYU ONAYLA</div></a>""", unsafe_allow_html=True)
-
         with q_col2:
             st.markdown(f"<div class='industrial-card equal-card'><div class='terminal-header'>📢 AKTİF SORU 2</div><h3 style='color:white; margin:0;'>{aktif_soru_2}</h3><span></span></div>", unsafe_allow_html=True)
             u_name_2 = st.selectbox("İsim (Soru 2)", ["oguzo", "ero7", "fybey"], key="n2")
