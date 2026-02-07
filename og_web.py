@@ -46,7 +46,7 @@ og_p = live_vars.get("oguzo_puan", "0")
 er_p = live_vars.get("ero7_puan", "0")
 fy_p = live_vars.get("fybey_puan", "0")
 
-aktif_soru_1 = live_vars.get("aktif_soru", "9 şubat pazartesi çeyrek altın kuyumcu fiyatı")
+aktif_soru_1 = live_vars.get("aktif_soru", "9 şubat pazartesi çeyrek altın kuyumcu fiyatı(2p değerinde)")
 aktif_soru_2 = live_vars.get("aktif_soru2", "yeni soru hazırlanıyor..")
 
 w1_kar = float(live_vars.get("w1_sonuc", -100)) 
