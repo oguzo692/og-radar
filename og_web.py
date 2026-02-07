@@ -95,42 +95,40 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input { font-fam
 @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 .equal-card { min-height: 180px; display: flex; flex-direction: column; justify-content: space-between; }
 
-/* HEDEF BARI TASARIMI */
-.progress-container {
+/* PROGRESS BAR FIXED */
+.prog-container {
     background: rgba(0, 0, 0, 0.6);
     border: 1px solid rgba(204, 122, 0, 0.2);
     height: 40px;
     border-radius: 4px;
     position: relative;
-    overflow: visible;
-    margin-top: 25px;
+    margin-top: 30px;
     box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
 }
-.progress-bar {
+.prog-fill {
     height: 100%;
-    background: linear-gradient(90deg, #995c00 0%, #cc7a00 50%, #ffae00 100%);
+    background: linear-gradient(90deg, #995c00, #ffae00);
     box-shadow: 0 0 15px rgba(204, 122, 0, 0.4);
     border-right: 2px solid #fff;
-    transition: width 1s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
-.milestone {
+.ms-marker {
     position: absolute;
-    top: -20px;
-    width: 1px;
-    height: 60px;
-    background: rgba(204, 122, 0, 0.5);
-    z-index: 2;
+    top: -5px;
+    width: 2px;
+    height: 50px;
+    background: rgba(204, 122, 0, 0.4);
 }
-.milestone-label {
+.ms-text {
     position: absolute;
-    top: -22px;
+    top: -25px;
     transform: translateX(-50%);
-    font-size: 9px;
-    font-weight: 800;
-    color: #666;
-    letter-spacing: 1px;
+    font-size: 10px;
+    font-family: 'Orbitron';
+    font-weight: bold;
 }
-.milestone-label.active { color: #ffae00; text-shadow: 0 0 5px rgba(255, 174, 0, 0.5); }
 </style>
 """
 
@@ -186,35 +184,34 @@ if check_password():
 
         st.divider()
 
-        net_kar = kasa - ana_para
+        # BAR HESAPLARI
         target = 6500
         current_pct = min(100, (kasa / target) * 100)
-        
-        # Milestone Hesaplamaları (Target: 6500)
-        ms_900 = (900 / target) * 100
-        ms_1200 = (1200 / target) * 100
-        ms_1800 = (1800 / target) * 100
+        ms900_pct = (900 / target) * 100
+        ms1200_pct = (1200 / target) * 100
+        ms1800_pct = (1800 / target) * 100
 
         st.markdown(f"""
         <div class='industrial-card'>
             <div class='terminal-header'>HEDEF YOLCULUĞU (${target:,.0f})</div>
-            <div class='progress-container'>
-                <div class='milestone' style='left: {ms_900}%;'></div>
-                <div class='milestone-label {"active" if kasa >= 900 else ""}' style='left: {ms_900}%;'>$900</div>
+            <div class='prog-container'>
+                <div class='ms-marker' style='left:{ms900_pct}%'></div>
+                <div class='ms-text' style='left:{ms900_pct}%; color:{"#ffae00" if kasa>=900 else "#444"}'>$900</div>
                 
-                <div class='milestone' style='left: {ms_1200}%;'></div>
-                <div class='milestone-label {"active" if kasa >= 1200 else ""}' style='left: {ms_1200}%;'>$1200</div>
+                <div class='ms-marker' style='left:{ms1200_pct}%'></div>
+                <div class='ms-text' style='left:{ms1200_pct}%; color:{"#ffae00" if kasa>=1200 else "#444"}'>$1200</div>
                 
-                <div class='milestone' style='left: {ms_1800}%;'></div>
-                <div class='milestone-label {"active" if kasa >= 1800 else ""}' style='left: {ms_1800}%;'>$1800</div>
+                <div class='ms-marker' style='left:{ms1800_pct}%'></div>
+                <div class='ms-text' style='left:{ms1800_pct}%; color:{"#ffae00" if kasa>=1800 else "#444"}'>$1800</div>
                 
-                <div class='progress-bar' style='width:{current_pct}%;'>
-                    <span style='width:100%; text-align:center; font-size:10px; font-weight:900; color:white; font-family:Orbitron;'>%{current_pct:.1f}</span>
+                <div class='prog-fill' style='width:{current_pct}%'>
+                    <span style='font-size:10px; font-family:Orbitron; color:white; font-weight:bold;'>%{current_pct:.1f}</span>
                 </div>
             </div>
         </div>
         """, unsafe_allow_html=True)
         
+        net_kar = kasa - ana_para
         col1, col2, col3 = st.columns(3)
         with col1: st.markdown(f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>💎 KASA</div><div class='terminal-row'><span>TOPLAM</span><span class='highlight'>${kasa:,.2f}</span></div><div class='terminal-row'><span>K/Z</span><span style='color:{'#00ff41' if net_kar >=0 else '#ff4b4b'};' class='val-std'>${net_kar:,.2f}</span></div></div>", unsafe_allow_html=True)
         with col2:
