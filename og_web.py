@@ -46,7 +46,7 @@ og_p = live_vars.get("oguzo_puan", "0")
 er_p = live_vars.get("ero7_puan", "0")
 fy_p = live_vars.get("fybey_puan", "0")
 
-aktif_soru_1 = live_vars.get("aktif_soru", "yeni soru hazırlanıyor..")
+aktif_soru_1 = live_vars.get("aktif_soru", "9 şubat pazartesi çeyrek altın kuyumcu fiyatı")
 aktif_soru_2 = live_vars.get("aktif_soru2", "yeni soru hazırlanıyor..")
 
 w1_kar = float(live_vars.get("w1_sonuc", -100)) 
@@ -229,7 +229,7 @@ if check_password():
         with q_col1:
             st.markdown(f"<div class='industrial-card equal-card'><div class='terminal-header'>📢 AKTİF SORU 1</div><h3 style='color:white; margin:0;'>{aktif_soru_1}</h3><span></span></div>", unsafe_allow_html=True)
             u_name_1 = st.selectbox("İsim (Soru 1)", ["oguzo", "ero7", "fybey"], key="n1")
-            u_vote_1 = st.radio("Tahmin (Soru 1)", ["👍", "👎"], key="v1")
+            u_vote_1 = st.radio("Tahmin (Soru 1)", ["12.2k-12.4k", "12.4k-12.6k","12.6k-12.8k", "+12.8k-13k"], key="v1")
             final_link_1 = f"{base_url}?isim={u_name_1}&tahmin={u_vote_1}&soru=1"
             st.markdown(f"""<a href='{final_link_1}' target='_blank' style='text-decoration:none;'><div style='background:rgba(204, 122, 0, 0.2); border: 1px solid #cc7a00; color:#cc7a00; text-align:center; padding:15px; border-radius:5px; font-family:Orbitron; font-weight:bold; cursor:pointer;'>1. OYU ONAYLA</div></a>""", unsafe_allow_html=True)
 
