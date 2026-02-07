@@ -117,6 +117,38 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input { font-fam
 .ticker-item { font-size: 12px; color: #cc7a00; letter-spacing: 4px; padding-right: 50%; }
 @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 .equal-card { min-height: 180px; display: flex; flex-direction: column; justify-content: space-between; }
+
+/* YENİ HEDEF BARI TASARIMI */
+.progress-container {
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(204, 122, 0, 0.2);
+    height: 24px;
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+}
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #995c00 0%, #cc7a00 50%, #ffae00 100%);
+    box-shadow: 0 0 15px rgba(204, 122, 0, 0.4);
+    border-right: 2px solid #fff;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    transition: width 1s ease-in-out;
+}
+.progress-text {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    font-size: 10px;
+    font-weight: 800;
+    font-family: 'Orbitron';
+    color: white;
+    line-height: 24px;
+    text-shadow: 1px 1px 2px black;
+}
 </style>
 """
 
@@ -198,7 +230,17 @@ if check_password():
 
         net_kar = kasa - ana_para
         current_pct = min(100, (kasa / 6500) * 100)
-        st.markdown(f"<div class='industrial-card'><div class='terminal-header'>HEDEF YOLCULUĞU ($6,500)</div><div style='background:#111; height:8px; border-radius:10px;'><div style='background:linear-gradient(90deg, #cc7a00, #ffae00); width:{current_pct}%; height:100%; border-radius:10px;'></div></div></div>", unsafe_allow_html=True)
+        
+        # --- GÜNCELLENMİŞ HEDEF BARI ---
+        st.markdown(f"""
+        <div class='industrial-card'>
+            <div class='terminal-header'>HEDEF YOLCULUĞU ($6,500)</div>
+            <div class='progress-container'>
+                <div class='progress-text'>{current_pct:.1f}% COMPLETE</div>
+                <div class='progress-bar' style='width:{current_pct}%;'></div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
         
         col1, col2, col3 = st.columns(3)
         with col1: st.markdown(f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>💎 KASA</div><div class='terminal-row'><span>TOPLAM</span><span class='highlight'>${kasa:,.2f}</span></div><div class='terminal-row'><span>K/Z</span><span style='color:{'#00ff41' if net_kar >=0 else '#ff4b4b'};' class='val-std'>${net_kar:,.2f}</span></div></div>", unsafe_allow_html=True)
