@@ -83,7 +83,7 @@ custom_css = """
 div[data-testid="stVerticalBlock"] > div:has(input[type="password"]) {
     background: rgba(0, 0, 0, 0.5) !important;
     backdrop-filter: blur(15px) !important;
-    -webkit-backdrop-filter: blur(15px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
     padding: 40px !important;
     border-radius: 20px !important;
     border: 1px solid rgba(204, 122, 0, 0.3) !important;
