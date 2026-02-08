@@ -60,7 +60,7 @@ toplam_bahis_kar = w1_kar + w2_kar
 wr_oran = live_vars.get("win_rate", "0")
 son_islemler_raw = str(live_vars.get("son_islemler", "Veri yok"))
 
-# --- 3. GENEL CSS (HER YERDE GEÇERLİ) ---
+# --- 3. GENEL CSS ---
 common_css = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&family=Orbitron:wght@400;700;900&display=swap');
@@ -86,39 +86,48 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input { font-fam
 </style>
 """
 
-# --- 4. GİRİŞ EKRANI ÖZEL CSS (RESİMLİ) ---
+# --- 4. GİRİŞ EKRANI ÖZEL CSS (RESİMLİ VE YAZI DÜZENLİ) ---
 login_bg_css = """
 <style>
 .stApp { 
-    background-color: #030303 !important; 
     background-image: url("https://raw.githubusercontent.com/oguzo692/og-radar/main/arkaplan.jpg") !important;
     background-size: cover !important;
     background-position: center !important;
     background-attachment: fixed !important;
 }
+/* Giriş Paneli Konumu */
 div[data-testid="stVerticalBlock"] > div:has(input[type="password"]) {
-    background: rgba(0, 0, 0, 0.3) !important;
-    backdrop-filter: blur(20px) !important;
-    -webkit-backdrop-filter: blur(20px) !important;
+    background: rgba(0, 0, 0, 0.4) !important;
+    backdrop-filter: blur(15px) !important;
+    -webkit-backdrop-filter: blur(15px) !important;
     padding: 30px !important;
-    border-radius: 15px !important;
-    border: 1px solid rgba(204, 122, 0, 0.15) !important;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+    border-radius: 12px !important;
+    border: 1px solid rgba(204, 122, 0, 0.2) !important;
     position: fixed !important;
     top: 50% !important;
     left: 50% !important;
     transform: translate(-50%, -50%) !important;
     z-index: 9999 !important;
     width: 320px !important;
+    text-align: center !important;
+}
+/* Butonun şifre kutusuna yakın ve küçük olması */
+div[data-testid="stVerticalBlock"] > div:has(input[type="password"]) .stButton {
+    margin-top: -10px !important;
 }
 div[data-testid="stVerticalBlock"] > div:has(input[type="password"]) button {
-    background: rgba(204, 122, 0, 0.05) !important;
-    border: 1px solid rgba(204, 122, 0, 0.2) !important;
-    color: rgba(204, 122, 0, 0.7) !important;
+    background: transparent !important;
+    border: none !important;
+    color: rgba(204, 122, 0, 0.8) !important;
     font-size: 10px !important;
+    font-family: 'Orbitron' !important;
     letter-spacing: 2px !important;
-    height: 35px !important;
-    transition: 0.3s !important;
+    padding: 0 !important;
+    text-transform: uppercase;
+}
+div[data-testid="stVerticalBlock"] > div:has(input[type="password"]) button:hover {
+    color: #ffffff !important;
+    text-shadow: 0 0 10px #cc7a00;
 }
 </style>
 """
@@ -138,17 +147,17 @@ if "password_correct" not in st.session_state: st.session_state["password_correc
 
 def check_password():
     if not st.session_state["password_correct"]:
-        # Giriş ekranındayken hem ortak CSS'i hem de Resimli Arka Plan CSS'ini yükle
         st.markdown(common_css, unsafe_allow_html=True)
         st.markdown(login_bg_css, unsafe_allow_html=True)
         
         st.markdown("""<div style="text-align:center;">
             <p style="font-family:Orbitron; color:#cc7a00; font-size:14px; font-weight:900; letter-spacing:4px; margin-bottom:5px;">ERİŞİM KONTROLÜ</p>
-            <p style="font-family:JetBrains Mono; color:#666; font-size:10px; margin-bottom:20px;">OG_CORE_SECURE_BOOT</p>
+            <p style="font-family:JetBrains Mono; color:#666; font-size:10px; margin-bottom:25px;">OG_CORE_SECURE_BOOT</p>
         </div>""", unsafe_allow_html=True)
         
         pwd = st.text_input("şifre", type="password", placeholder="PIN", label_visibility="collapsed")
         
+        # Buton artık şifrenin hemen altında küçük bir link/metin gibi görünüyor
         if st.button("SİSTEME GİRİŞ YAP"):
             if pwd == "1608":
                 st.session_state["password_correct"] = True
@@ -159,9 +168,7 @@ def check_password():
 
 # --- 7. ANA UYGULAMA ---
 if check_password():
-    # Giriş yapıldıktan sonra SADECE ortak CSS'i yükle (Arka plan siyah kalır)
     st.markdown(common_css, unsafe_allow_html=True)
-    # İçerik kısmının siyah olması için minik bir ek CSS
     st.markdown("<style>.stApp { background: #030303 !important; background-image: none !important; }</style>", unsafe_allow_html=True)
     
     st.markdown(f'<div class="ticker-wrap"><div class="ticker"><span class="ticker-item">{duyuru_metni}</span><span class="ticker-item">{duyuru_metni}</span></div></div>', unsafe_allow_html=True)
