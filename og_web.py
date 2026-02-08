@@ -98,113 +98,119 @@ if "password_correct" not in st.session_state:
 
 def check_password():
     if not st.session_state["password_correct"]:
-        # CSS ve HTML tek bir f-string içinde, kaçış karakterlerine dikkat edilerek hazırlandı
         st.markdown("""
         <style>
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100;400;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;500;700&display=swap');
 
-        /* Root Arka Plan ve Scanline Efekti */
+        /* Matrix Yağmuru Arka Planı */
         .stApp {
-            background: #000000 !important;
-            background-image: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06)) !important;
-            background-size: 100% 2px, 3px 100% !important;
+            background: black !important;
+            overflow: hidden;
         }
 
-        .login-frame {
+        .matrix-bg {
             position: fixed;
-            top: 50%;
-            left: 50%;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.9)),
+                        url('https://64.media.tumblr.com/15949a21e4288ff3f8373b7e77d0e457/tumblr_n69p96YFm81st5lhmo1_1280.gifv');
+            background-size: cover;
+            opacity: 0.15;
+            z-index: -1;
+        }
+
+        /* Ana Panel Tasarımı */
+        .login-card {
+            position: fixed;
+            top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            width: 460px;
+            width: 500px;
+            background: rgba(5, 5, 5, 0.95);
+            border-left: 3px solid #cc7a00;
+            border-right: 3px solid #cc7a00;
             padding: 40px;
-            background: #050505;
-            border: 1px solid #1a1a1a;
-            z-index: 9999;
-            box-shadow: 0 0 40px rgba(204, 122, 0, 0.1);
+            z-index: 100;
+            text-align: left;
+            box-shadow: 0 0 50px rgba(204, 122, 0, 0.1);
         }
 
-        /* Köşe Süslemeleri */
-        .c-edge {
+        /* Köşe Detayları */
+        .corner-tag {
             position: absolute;
-            width: 30px;
-            height: 30px;
-            border: 2px solid #cc7a00;
-        }
-        .top-l { top: -2px; left: -2px; border-right: 0; border-bottom: 0; }
-        .bot-r { bottom: -2px; right: -2px; border-left: 0; border-top: 0; }
-
-        .terminal-header {
-            font-family: 'JetBrains Mono', monospace;
-            color: #444;
-            font-size: 10px;
-            letter-spacing: 3px;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #1a1a1a;
-            padding-bottom: 10px;
-        }
-
-        .main-logo {
-            font-family: 'JetBrains Mono', monospace;
-            font-weight: 800;
-            font-size: 48px;
-            color: #fff;
-            letter-spacing: -3px;
-            margin-bottom: 5px;
-            line-height: 1;
-        }
-
-        .main-logo span {
             color: #cc7a00;
-            animation: blink 1s infinite steps(1);
+            font-family: 'Fira Code';
+            font-size: 10px;
+            font-weight: bold;
         }
 
-        @keyframes blink { 50% { opacity: 0; } }
+        .header-text {
+            font-family: 'Fira Code', monospace;
+            color: #444;
+            font-size: 11px;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+        }
 
-        /* Input Alanı Override */
-        .stTextInput input {
-            background-color: #0a0a0a !important;
+        .title-main {
+            font-family: 'Fira Code', monospace;
+            font-weight: 700;
+            font-size: 45px;
+            color: white;
+            margin-bottom: 5px;
+        }
+        
+        .title-main span { color: #cc7a00; }
+
+        /* Input ve Form Elemanları */
+        div[data-baseweb="input"] {
+            background: #000 !important;
             border: 1px solid #222 !important;
             border-radius: 0px !important;
-            color: #cc7a00 !important;
-            font-family: 'JetBrains Mono', monospace !important;
-            font-size: 18px !important;
-            padding: 25px !important;
-            text-align: center !important;
+            margin-top: 20px;
         }
 
-        /* Heavy Duty Buton */
+        input {
+            color: #cc7a00 !important;
+            font-family: 'Fira Code' !important;
+            text-align: center !important;
+            font-size: 20px !important;
+            letter-spacing: 5px;
+        }
+
         .stButton button {
             background: #cc7a00 !important;
-            color: #000 !important;
+            color: black !important;
             border-radius: 0px !important;
-            font-family: 'JetBrains Mono', monospace !important;
-            font-weight: 800 !important;
-            height: 60px !important;
-            letter-spacing: 5px !important;
+            font-family: 'Fira Code' !important;
+            font-weight: bold !important;
+            width: 100% !important;
+            height: 50px !important;
             border: none !important;
-            transition: all 0.3s !important;
+            margin-top: 20px;
+            transition: 0.3s;
+            text-transform: uppercase;
         }
 
         .stButton button:hover {
-            background: #fff !important;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.4) !important;
-            transform: scale(1.02);
+            background: white !important;
+            box-shadow: 0 0 20px rgba(255,255,255,0.3) !important;
         }
 
-        /* Streamlit Element Gizleme */
-        [data-testid="stHeader"], [data-testid="stForm"] { border: none !important; background: transparent !important; }
+        /* Gizleme İşlemleri */
+        header, [data-testid="stHeader"] { visibility: hidden; }
+        [data-testid="stForm"] { border: none !important; padding: 0 !important; }
         </style>
-
-        <div class="login-frame">
-            <div class="c-edge top-l"></div>
-            <div class="c-edge bot-r"></div>
-            <div class="terminal-header">ENCRYPTED_SESSION // ID: 0x99-CORE</div>
-            <div class="main-logo">OG_CORE<span>_</span></div>
-            <p style="color:#222; font-family:'JetBrains Mono'; font-size:10px; margin-bottom:30px;">KERNEL STATUS: SECURE</p>
+        
+        <div class="matrix-bg"></div>
+        <div class="login-card">
+            <div class="header-text">ENCRYPTED_SESSION // ID: 8x99-CORE</div>
+            <div class="title-main">OG_CORE<span>\_</span></div>
+            <div style="color: #00ff41; font-family: 'Fira Code'; font-size: 12px;">
+                > KERNEL: SECURE // AWAITING_AUTH
+            </div>
         """, unsafe_allow_html=True)
 
-        with st.form("gate_form"):
-            pwd = st.text_input("ACCESS_KEY", type="password", placeholder="••••", label_visibility="collapsed")
+        with st.form("matrix_gate"):
+            pwd = st.text_input("ŞİFRE", type="password", placeholder="••••", label_visibility="collapsed")
             submit = st.form_submit_button("UNBOLT SYSTEM")
             
             if submit:
@@ -212,7 +218,7 @@ def check_password():
                     st.session_state["password_correct"] = True
                     st.rerun()
                 else:
-                    st.error("ACCESS_DENIED: UNAUTHORIZED_KEY_FORMAT")
+                    st.markdown("<p style='color:red; font-family:Fira Code; font-size:12px; margin-top:10px;'>[!] FATAL_ERROR: KEY_MISMATCH</p>", unsafe_allow_html=True)
 
         st.markdown('</div>', unsafe_allow_html=True)
         return False
