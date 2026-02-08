@@ -87,7 +87,7 @@ div[data-testid="stVerticalBlock"] > div:has(input[type="password"]) {
     padding: 40px !important;
     border-radius: 20px !important;
     border: 1px solid rgba(204, 122, 0, 0.3) !important;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8) !important;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.8) !important;
     
     /* BURASI SABİTLER */
     position: fixed !important;
