@@ -100,127 +100,141 @@ def check_password():
     if not st.session_state["password_correct"]:
         st.markdown("""
         <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100;400;700&display=swap');
 
-        /* Matrix Yağmuru Arka Planı */
+        /* Full Screen Blackout */
         .stApp {
-            background: black !important;
-            overflow: hidden;
+            background-color: #000000 !important;
+            background-image: repeating-linear-gradient(0deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15) 1px, transparent 1px, transparent 2px) !important;
+            background-size: 100% 3px !important;
         }
 
-        .matrix-bg {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.9)),
-                        url('https://64.media.tumblr.com/15949a21e4288ff3f8373b7e77d0e457/tumblr_n69p96YFm81st5lhmo1_1280.gifv');
-            background-size: cover;
-            opacity: 0.15;
-            z-index: -1;
-        }
-
-        /* Ana Panel Tasarımı */
-        .login-card {
+        /* Ana Panel - Endüstriyel Brutalism */
+        .mainframe {
             position: fixed;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            width: 500px;
-            background: rgba(5, 5, 5, 0.95);
-            border-left: 3px solid #cc7a00;
-            border-right: 3px solid #cc7a00;
+            width: 550px;
+            background: #050505;
+            border: 1px solid #1a1a1a;
+            padding: 0;
+            z-index: 9999;
+            box-shadow: 0 0 100px rgba(0,0,0,1);
+        }
+
+        .bar-top {
+            height: 4px;
+            background: repeating-linear-gradient(90deg, #cc7a00, #cc7a00 10px, #000 10px, #000 20px);
+            width: 100%;
+        }
+
+        .content-area {
             padding: 40px;
-            z-index: 100;
-            text-align: left;
-            box-shadow: 0 0 50px rgba(204, 122, 0, 0.1);
+            border: 1px solid rgba(204, 122, 0, 0.1);
+            margin: 5px;
         }
 
-        /* Köşe Detayları */
-        .corner-tag {
-            position: absolute;
+        .id-label {
+            font-family: 'JetBrains Mono', monospace;
             color: #cc7a00;
-            font-family: 'Fira Code';
             font-size: 10px;
-            font-weight: bold;
-        }
-
-        .header-text {
-            font-family: 'Fira Code', monospace;
-            color: #444;
-            font-size: 11px;
-            letter-spacing: 2px;
-            margin-bottom: 15px;
-        }
-
-        .title-main {
-            font-family: 'Fira Code', monospace;
             font-weight: 700;
-            font-size: 45px;
-            color: white;
-            margin-bottom: 5px;
+            letter-spacing: 5px;
+            margin-bottom: 20px;
+            opacity: 0.7;
         }
-        
-        .title-main span { color: #cc7a00; }
 
-        /* Input ve Form Elemanları */
-        div[data-baseweb="input"] {
-            background: #000 !important;
+        .title-h1 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 55px;
+            font-weight: 800;
+            color: #fff;
+            margin: 0;
+            line-height: 0.8;
+            letter-spacing: -4px;
+        }
+
+        .sub-status {
+            font-family: 'JetBrains Mono', monospace;
+            color: #00ff41;
+            font-size: 11px;
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .blink-dot {
+            width: 8px; height: 8px;
+            background: #00ff41;
+            border-radius: 50%;
+            margin-right: 10px;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+
+        /* Input Styling - Raw Code Style */
+        .stTextInput input {
+            background-color: #000 !important;
             border: 1px solid #222 !important;
             border-radius: 0px !important;
-            margin-top: 20px;
-        }
-
-        input {
             color: #cc7a00 !important;
-            font-family: 'Fira Code' !important;
+            font-family: 'JetBrains Mono' !important;
+            font-size: 24px !important;
+            height: 70px !important;
             text-align: center !important;
-            font-size: 20px !important;
-            letter-spacing: 5px;
+            margin-top: 30px !important;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.5) !important;
         }
 
+        /* Action Button */
         .stButton button {
             background: #cc7a00 !important;
-            color: black !important;
-            border-radius: 0px !important;
-            font-family: 'Fira Code' !important;
-            font-weight: bold !important;
+            color: #000 !important;
             width: 100% !important;
-            height: 50px !important;
+            height: 60px !important;
+            border-radius: 0px !important;
+            font-family: 'JetBrains Mono' !important;
+            font-weight: 800 !important;
+            font-size: 14px !important;
+            letter-spacing: 6px !important;
             border: none !important;
-            margin-top: 20px;
-            transition: 0.3s;
-            text-transform: uppercase;
+            margin-top: 15px !important;
+            cursor: crosshair !important;
         }
 
         .stButton button:hover {
-            background: white !important;
-            box-shadow: 0 0 20px rgba(255,255,255,0.3) !important;
+            background: #fff !important;
+            transform: translateY(-2px);
         }
 
-        /* Gizleme İşlemleri */
-        header, [data-testid="stHeader"] { visibility: hidden; }
+        header, [data-testid="stHeader"] { visibility: hidden !important; }
         [data-testid="stForm"] { border: none !important; padding: 0 !important; }
         </style>
-        
-        <div class="matrix-bg"></div>
-        <div class="login-card">
-            <div class="header-text">ENCRYPTED_SESSION // ID: 8x99-CORE</div>
-            <div class="title-main">OG_CORE<span>\_</span></div>
-            <div style="color: #00ff41; font-family: 'Fira Code'; font-size: 12px;">
-                > KERNEL: SECURE // AWAITING_AUTH
-            </div>
+
+        <div class="mainframe">
+            <div class="bar-top"></div>
+            <div class="content-area">
+                <div class="id-label">CORE_VOL_9.9 // SYSTEM_ROOT</div>
+                <div class="title-h1">OG_CORE</div>
+                <div class="sub-status">
+                    <div class="blink-dot"></div>
+                    <span>SYSTEM_ACTIVE // STABLE_RECON_MODE</span>
+                </div>
         """, unsafe_allow_html=True)
 
-        with st.form("matrix_gate"):
-            pwd = st.text_input("ŞİFRE", type="password", placeholder="••••", label_visibility="collapsed")
-            submit = st.form_submit_button("UNBOLT SYSTEM")
+        with st.form("root_access"):
+            pwd = st.text_input("ŞİFRE", type="password", placeholder="PASSWORD_REQUIRED", label_visibility="collapsed")
+            submit = st.form_submit_button("COMMAND: INITIALIZE")
             
             if submit:
                 if pwd == "1608":
                     st.session_state["password_correct"] = True
                     st.rerun()
                 else:
-                    st.markdown("<p style='color:red; font-family:Fira Code; font-size:12px; margin-top:10px;'>[!] FATAL_ERROR: KEY_MISMATCH</p>", unsafe_allow_html=True)
+                    st.markdown("<p style='color:#ff4b4b; font-family:JetBrains Mono; font-size:11px; text-align:center; margin-top:10px;'>[FATAL] ACCESS_DENIED: INCORRECT_CREDENTIALS</p>", unsafe_allow_html=True)
 
-        st.markdown('</div>', unsafe_allow_html=True)
+        st.markdown('</div></div>', unsafe_allow_html=True)
         return False
     return True
 
