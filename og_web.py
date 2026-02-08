@@ -22,7 +22,7 @@ def get_live_data():
     except Exception:
         return {"kasa": "600.0", "ana_para": "600.0"}
 
-# --- GÜNCELLENMİŞ RÜTBE FONKSİYONU ---
+# --- RÜTBE FONKSİYONU ---
 def rutbe_getir(puan_str):
     try:
         p = int(float(puan_str))
@@ -39,12 +39,12 @@ kasa = float(live_vars.get("kasa", 600))
 ana_para = float(live_vars.get("ana_para", 600))
 duyuru_metni = live_vars.get("duyuru", "SİSTEM ÇEVRİMİÇİ... OG CORE V9.9")
 
-# --- KİŞİSEL KASA VERİLERİ (DÜZELTİLDİ) ---
+# --- KİŞİSEL KASA VERİLERİ ---
 og_kasa = float(live_vars.get("oguzo_kasa", kasa / 3))
 er_kasa = float(live_vars.get("ero7_kasa", kasa / 3))
 fy_kasa = float(live_vars.get("fybey_kasa", kasa / 3))
 
-# --- RÜTBE VERİLERİ (TAHMİN İÇİN) ---
+# --- RÜTBE VERİLERİ ---
 og_p = live_vars.get("oguzo_puan", "0")
 er_p = live_vars.get("ero7_puan", "0")
 fy_p = live_vars.get("fybey_puan", "0")
@@ -60,17 +60,17 @@ toplam_bahis_kar = w1_kar + w2_kar
 wr_oran = live_vars.get("win_rate", "0")
 son_islemler_raw = str(live_vars.get("son_islemler", "Veri yok"))
 
-# --- 3. CSS STİLLERİ (YENİ TASARIM ENTEGRELİ) ---
-# Sadece background-image linkini ve login panel saydamlığını güncelledim.
+# --- 3. CSS STİLLERİ (SAYDAM GİRİŞ PANELİ VE FULL ARKA PLAN) ---
 custom_css = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&family=Orbitron:wght@400;700;900&display=swap');
+
 #MainMenu, footer, header, .stAppDeployButton {visibility: hidden;}
 [data-testid="stSidebar"] svg, [data-testid="stHeaderActionElements"], .st-emotion-cache-10trblm {display: none !important;}
 [data-testid="stSidebar"] span, [data-testid="stSidebar"] small {font-size: 0 !important; color: transparent !important;}
 [data-testid="stSidebar"] p {font-size: 14px !important; color: #d1d1d1 !important; visibility: visible !important;}
 
-/* ARKA PLAN GÜNCELLEMESİ */
+/* ARKA PLAN */
 .stApp { 
     background-color: #030303 !important; 
     background-image: url("https://raw.githubusercontent.com/oguzo692/og-radar/main/arkaplan.jpg") !important;
@@ -79,13 +79,15 @@ custom_css = """
     background-attachment: fixed !important;
 }
 
-/* GİRİŞ EKRANI SAYDAMLAŞTIRMA */
+/* SAYDAM GİRİŞ PANELİ (GLASSMORPHISM) */
 div[data-testid="stVerticalBlock"] > div:has(input[type="password"]) {
-    background: rgba(0, 0, 0, 0.7) !important;
-    backdrop-filter: blur(15px);
-    padding: 40px !important;
-    border-radius: 10px !important;
+    background: rgba(0, 0, 0, 0.4) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    padding: 50px !important;
+    border-radius: 20px !important;
     border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5) !important;
 }
 
 section[data-testid="stSidebar"] { background-color: rgba(5, 5, 5, 0.95) !important; border-right: 1px solid rgba(204, 122, 0, 0.15); padding-top: 20px; min-width: 340px !important; max-width: 340px !important;}
@@ -114,20 +116,25 @@ w1_coupon_html = f"<div class='industrial-card' style='border-top-color: #ff4b4b
 
 # --- 5. GÜVENLİK ---
 if "password_correct" not in st.session_state: st.session_state["password_correct"] = False
+
 def check_password():
     if not st.session_state["password_correct"]:
         st.markdown(custom_css, unsafe_allow_html=True)
-        # Giriş panelini Canva tasarımındaki boşluğa göre hizaladık.
+        # Giriş panelini orta boşluğa hizaladık.
         st.markdown('<div style="height:35vh;"></div>', unsafe_allow_html=True)
-        col_a, col_b, col_c = st.columns([1,1,1])
+        col_a, col_b, col_c = st.columns([1,1.2,1])
         with col_b:
-            st.markdown("""<div style="text-align:center;"><p style="font-family:JetBrains Mono; color:#cc7a00; font-size:14px; font-weight:900; letter-spacing:3px;">ÖZÜNDE DİSİPLİN, GELECEĞİNDE ÖZGÜRLÜK</p></div>""", unsafe_allow_html=True)
-            pwd = st.text_input("şifre", type="password", placeholder="••••", label_visibility="collapsed")
-            if st.button("go"):
+            st.markdown("""<div style="text-align:center; margin-bottom:15px;">
+                <p style="font-family:Orbitron; color:#cc7a00; font-size:16px; font-weight:900; letter-spacing:4px;">GİRİŞ YETKİSİ GEREKLİ</p>
+                <p style="font-family:JetBrains Mono; color:#888; font-size:11px;">"Özünde Disiplin, Geleceğinde Özgürlük"</p>
+            </div>""", unsafe_allow_html=True)
+            
+            pwd = st.text_input("şifre", type="password", placeholder="PIN", label_visibility="collapsed")
+            if st.button("SİSTEME GİR"):
                 if pwd == "1608":
                     st.session_state["password_correct"] = True
                     st.rerun()
-                else: st.error("şifre yanlış")
+                else: st.error("HATALI PIN")
         return False
     return True
 
