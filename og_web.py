@@ -60,8 +60,8 @@ toplam_bahis_kar = w1_kar + w2_kar
 wr_oran = live_vars.get("win_rate", "0")
 son_islemler_raw = str(live_vars.get("son_islemler", "Veri yok"))
 
-# --- 3. CSS STİLLERİ ---
-custom_css = """
+# --- 3. GENEL CSS (HER YERDE GEÇERLİ) ---
+common_css = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&family=Orbitron:wght@400;700;900&display=swap');
 
@@ -69,48 +69,6 @@ custom_css = """
 [data-testid="stSidebar"] svg, [data-testid="stHeaderActionElements"], .st-emotion-cache-10trblm {display: none !important;}
 [data-testid="stSidebar"] span, [data-testid="stSidebar"] small {font-size: 0 !important; color: transparent !important;}
 [data-testid="stSidebar"] p {font-size: 14px !important; color: #d1d1d1 !important; visibility: visible !important;}
-
-/* ARKA PLAN */
-.stApp { 
-    background-color: #030303 !important; 
-    background-image: url("https://raw.githubusercontent.com/oguzo692/og-radar/main/arkaplan.jpg") !important;
-    background-size: cover !important;
-    background-position: center !important;
-    background-attachment: fixed !important;
-}
-
-/* GİRİŞ PANELİ - SAYDAM VE KÜÇÜK */
-div[data-testid="stVerticalBlock"] > div:has(input[type="password"]) {
-    background: rgba(0, 0, 0, 0.3) !important;
-    backdrop-filter: blur(20px) !important;
-    -webkit-backdrop-filter: blur(20px) !important;
-    padding: 30px !important;
-    border-radius: 15px !important;
-    border: 1px solid rgba(204, 122, 0, 0.15) !important;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
-    position: fixed !important;
-    top: 50% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%) !important;
-    z-index: 9999 !important;
-    width: 320px !important;
-}
-
-/* GİRİŞ BUTONU ÖZEL STİL */
-div[data-testid="stVerticalBlock"] > div:has(input[type="password"]) button {
-    background: rgba(204, 122, 0, 0.05) !important;
-    border: 1px solid rgba(204, 122, 0, 0.2) !important;
-    color: rgba(204, 122, 0, 0.7) !important;
-    font-size: 10px !important;
-    letter-spacing: 2px !important;
-    height: 35px !important;
-    transition: 0.3s !important;
-}
-div[data-testid="stVerticalBlock"] > div:has(input[type="password"]) button:hover {
-    background: rgba(204, 122, 0, 0.15) !important;
-    border-color: rgba(204, 122, 0, 0.5) !important;
-    color: #cc7a00 !important;
-}
 
 section[data-testid="stSidebar"] { background-color: rgba(5, 5, 5, 0.95) !important; border-right: 1px solid rgba(204, 122, 0, 0.15); padding-top: 20px; min-width: 340px !important; max-width: 340px !important;}
 .stButton button, .stLinkButton a { width: 100% !important; background: rgba(204, 122, 0, 0.1) !important; border: 1px solid rgba(204, 122, 0, 0.3) !important; color: #cc7a00 !important; font-family: 'Orbitron' !important; padding: 12px !important; border-radius: 6px !important;}
@@ -128,8 +86,45 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input { font-fam
 </style>
 """
 
-# --- 4. HTML ŞABLONLARI ---
-w4_matches = "" # Boşluk dolduruldu
+# --- 4. GİRİŞ EKRANI ÖZEL CSS (RESİMLİ) ---
+login_bg_css = """
+<style>
+.stApp { 
+    background-color: #030303 !important; 
+    background-image: url("https://raw.githubusercontent.com/oguzo692/og-radar/main/arkaplan.jpg") !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-attachment: fixed !important;
+}
+div[data-testid="stVerticalBlock"] > div:has(input[type="password"]) {
+    background: rgba(0, 0, 0, 0.3) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    padding: 30px !important;
+    border-radius: 15px !important;
+    border: 1px solid rgba(204, 122, 0, 0.15) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    z-index: 9999 !important;
+    width: 320px !important;
+}
+div[data-testid="stVerticalBlock"] > div:has(input[type="password"]) button {
+    background: rgba(204, 122, 0, 0.05) !important;
+    border: 1px solid rgba(204, 122, 0, 0.2) !important;
+    color: rgba(204, 122, 0, 0.7) !important;
+    font-size: 10px !important;
+    letter-spacing: 2px !important;
+    height: 35px !important;
+    transition: 0.3s !important;
+}
+</style>
+"""
+
+# --- 5. HTML ŞABLONLARI ---
+w4_matches = ""
 w3_matches = """<div class='terminal-row'><span>Wolfsburg - Bvb</span><span class='highlight'>bvb x2 & 1.5 üst</span></div><div class='terminal-row'><span>Newcastle - Brentford</span><span class='highlight'>newcastle 1.5 üst</span></div><div class='terminal-row'><span>Rizespor - GS</span><span class='highlight'>gala w & 1.5 üst</span></div><div class='terminal-row'><span>Liverpool - Man City</span><span class='highlight'>lıve gol atar</span></div><div class='terminal-row'><span>Fenerbahçe - Gençlerbirliği</span><span class='highlight'>fenerbahçe w & 2.5 üst</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 8.79</span><span>Bet: 100 USD</span></div>"""
 w2_matches = """<div class='terminal-row'><span>GS - Kayserispor</span><span style='color:#00ff41;'>İY +0.5 & W & 2+ ✅</span></div><div class='terminal-row'><span>Liverpool - Newcastle</span><span style='color:#00ff41;'>+2 & Liverpool 1X ✅</span></div><div class='terminal-row'><span>BVB - Heidenheim</span><span style='color:#00ff41;'>İY +0.5 & W & 2+ ✅</span></div><div class='terminal-row'><span>Kocaelispor - FB</span><span style='color:#00ff41;'>FB W & 2+ ✅</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 5.53</span><span>Bet: 100 USD</span></div>"""
 w1_matches = """<div class='terminal-row'><span>Karagümrük - GS</span><span style='color:#ff4b4b;'>GS W & +2 ✅</span></div><div class='terminal-row'><span>Bournemouth - Liverpool</span><span style='color:#00ff41;'>KG VAR ✅</span></div><div class='terminal-row'><span>Union Berlin - BVB</span><span style='color:#00ff41;'>BVB İY 0.5 Üst ✅</span></div><div class='terminal-row'><span>Newcastle - Aston Villa</span><span style='color:#ff4b4b;'>New +2 ❌</span></div><div class='terminal-row'><span>FB - Göztepe</span><span style='color:#ff4b4b;'>FB W ❌</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 7.09</span><span>Bet: 100 USD</span></div>"""
@@ -138,12 +133,15 @@ w3_coupon_html = f"<div class='industrial-card'><div class='terminal-header'>�
 w2_coupon_html = f"<div class='industrial-card' style='border-top-color: #00ff41 !important;'><div class='terminal-header' style='color:#00ff41;'>✅ W2 KUPONU (BAŞARILI)</div>{w2_matches}<span style='color:#00ff41; font-weight:bold;'>SONUÇLANDI ✅</span></div>"
 w1_coupon_html = f"<div class='industrial-card' style='border-top-color: #ff4b4b !important;'><div class='terminal-header' style='color:#ff4b4b;'>❌ W1 KUPONU (BAŞARISIZ)</div>{w1_matches}<span style='color:#ff4b4b; font-weight:bold;'>SONUÇLANDI ❌</span></div>"
 
-# --- 5. GÜVENLİK ---
+# --- 6. GÜVENLİK ---
 if "password_correct" not in st.session_state: st.session_state["password_correct"] = False
 
 def check_password():
     if not st.session_state["password_correct"]:
-        st.markdown(custom_css, unsafe_allow_html=True)
+        # Giriş ekranındayken hem ortak CSS'i hem de Resimli Arka Plan CSS'ini yükle
+        st.markdown(common_css, unsafe_allow_html=True)
+        st.markdown(login_bg_css, unsafe_allow_html=True)
+        
         st.markdown("""<div style="text-align:center;">
             <p style="font-family:Orbitron; color:#cc7a00; font-size:14px; font-weight:900; letter-spacing:4px; margin-bottom:5px;">ERİŞİM KONTROLÜ</p>
             <p style="font-family:JetBrains Mono; color:#666; font-size:10px; margin-bottom:20px;">OG_CORE_SECURE_BOOT</p>
@@ -159,9 +157,13 @@ def check_password():
         return False
     return True
 
-# --- 6. ANA UYGULAMA ---
+# --- 7. ANA UYGULAMA ---
 if check_password():
-    st.markdown(custom_css, unsafe_allow_html=True)
+    # Giriş yapıldıktan sonra SADECE ortak CSS'i yükle (Arka plan siyah kalır)
+    st.markdown(common_css, unsafe_allow_html=True)
+    # İçerik kısmının siyah olması için minik bir ek CSS
+    st.markdown("<style>.stApp { background: #030303 !important; background-image: none !important; }</style>", unsafe_allow_html=True)
+    
     st.markdown(f'<div class="ticker-wrap"><div class="ticker"><span class="ticker-item">{duyuru_metni}</span><span class="ticker-item">{duyuru_metni}</span></div></div>', unsafe_allow_html=True)
 
     with st.sidebar:
