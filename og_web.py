@@ -100,135 +100,148 @@ def check_password():
     if not st.session_state["password_correct"]:
         st.markdown("""
         <style>
-        @import url('https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Space+Grotesk:wght@300;500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;500&family=Syncopate:wght@700&display=swap');
 
+        /* Arka Plan: Hareketli Grid ve Gradient */
         .stApp {
-            background: #050505 !important;
+            background: #020202 !important;
             background-image: 
-                radial-gradient(at 0% 0%, rgba(204, 122, 0, 0.15) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(110, 72, 170, 0.15) 0px, transparent 50%) !important;
+                linear-gradient(rgba(204, 122, 0, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(204, 122, 0, 0.05) 1px, transparent 1px) !important;
+            background-size: 30px 30px !important;
         }
         
         header, [data-testid="stHeader"] {visibility: hidden !important;}
 
-        .login-container {
+        .login-wrapper {
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 400px;
+            width: 450px;
             z-index: 9999;
         }
 
-        .auth-card {
-            background: rgba(10, 10, 10, 0.6);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 24px;
-            padding: 50px 40px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            text-align: center;
+        .cyber-card {
+            background: rgba(0, 0, 0, 0.85);
+            border: 2px solid #cc7a00;
+            border-radius: 0px; /* Keskin köşeler daha endüstriyel durur */
+            padding: 40px;
+            box-shadow: 0 0 20px rgba(204, 122, 0, 0.2), inset 0 0 10px rgba(204, 122, 0, 0.1);
+            position: relative;
+            overflow: hidden;
         }
 
-        .logo-section {
-            margin-bottom: 40px;
+        /* Köşe Süslemeleri */
+        .cyber-card::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0;
+            width: 15px; height: 15px;
+            border-top: 3px solid #ffae00;
+            border-left: 3px solid #ffae00;
         }
 
-        .logo-text {
+        .cyber-card::after {
+            content: "";
+            position: absolute;
+            bottom: 0; right: 0;
+            width: 15px; height: 15px;
+            border-bottom: 3px solid #ffae00;
+            border-right: 3px solid #ffae00;
+        }
+
+        .glitch-title {
             font-family: 'Syncopate', sans-serif !important;
-            font-weight: 700;
-            font-size: 28px;
-            letter-spacing: 8px;
-            background: linear-gradient(to right, #cc7a00, #ffae00);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 10px;
+            font-size: 32px;
+            color: #fff;
+            letter-spacing: 12px;
+            text-align: center;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px #cc7a00;
         }
 
-        .status-badge {
-            font-family: 'Space Grotesk', sans-serif;
+        .scanner-line {
+            width: 100%;
+            height: 2px;
+            background: rgba(204, 122, 0, 0.5);
+            margin-bottom: 30px;
+            box-shadow: 0 0 10px #cc7a00;
+            animation: scan 3s infinite linear;
+        }
+
+        @keyframes scan {
+            0% { transform: translateY(0); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(10px); opacity: 0; }
+        }
+
+        .system-logs {
+            font-family: 'Fira Code', monospace;
             font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: #cc7a00;
-            border: 1px solid rgba(204, 122, 0, 0.3);
-            padding: 4px 12px;
-            border-radius: 100px;
-            display: inline-block;
+            color: #444;
             margin-bottom: 20px;
-            background: rgba(204, 122, 0, 0.05);
+            text-transform: uppercase;
         }
 
-        /* Input Styling */
+        /* Input Alanı Customization */
         div[data-baseweb="input"] {
-            background-color: rgba(255, 255, 255, 0.03) !important;
-            border: 1px solid rgba(255, 255, 255, 0.1) !important;
-            border-radius: 12px !important;
-            transition: all 0.3s ease;
-        }
-        
-        div[data-baseweb="input"]:focus-within {
-            border-color: #cc7a00 !important;
-            background-color: rgba(204, 122, 0, 0.02) !important;
+            background: transparent !important;
+            border: none !important;
+            border-bottom: 2px solid #333 !important;
+            border-radius: 0px !important;
         }
 
         input {
-            color: white !important;
+            color: #ffae00 !important;
+            font-family: 'Fira Code', monospace !important;
+            font-size: 18px !important;
             text-align: center !important;
-            letter-spacing: 4px !important;
         }
 
-        /* Button Styling */
+        /* Buton: Brutalist Style */
         .stButton > button {
-            background: #cc7a00 !important;
-            color: #000 !important;
-            border: none !important;
+            background: transparent !important;
+            color: #cc7a00 !important;
+            border: 1px solid #cc7a00 !important;
             width: 100% !important;
             font-family: 'Syncopate', sans-serif !important;
-            font-size: 12px !important;
-            font-weight: 700 !important;
-            border-radius: 12px !important;
             height: 50px !important;
-            margin-top: 20px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-            letter-spacing: 2px;
+            margin-top: 25px;
+            letter-spacing: 3px;
+            transition: 0.4s;
+            clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0% 30%);
         }
 
         .stButton > button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(204, 122, 0, 0.3) !important;
-            background: #ffae00 !important;
+            background: #cc7a00 !important;
+            color: #000 !important;
+            box-shadow: 0 0 15px #cc7a00 !important;
         }
 
-        [data-testid="stForm"] { border: none !important; padding: 0 !important; }
-        
-        .footer-note {
-            margin-top: 30px;
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 11px;
-            color: rgba(255,255,255,0.3);
-            letter-spacing: 1px;
-        }
+        [data-testid="stForm"] { border: none !important; }
         </style>
         """, unsafe_allow_html=True)
 
-        st.markdown('<div class="login-container"><div class="auth-card">', unsafe_allow_html=True)
-        st.markdown('<div class="status-badge">System Encrypted</div>', unsafe_allow_html=True)
-        st.markdown('<div class="logo-section"><div class="logo-text">OG CORE</div></div>', unsafe_allow_html=True)
+        st.markdown(f"""
+        <div class="login-wrapper">
+            <div class="cyber-card">
+                <div class="system-logs">MNFRM // CORE ACCESS // AUTH_REQUIRED</div>
+                <div class="glitch-title">OG CORE</div>
+                <div class="scanner-line"></div>
+        """, unsafe_allow_html=True)
         
-        with st.form("login_new"):
-            pwd = st.text_input("ŞİFRE", type="password", placeholder="PASSWORD", label_visibility="collapsed")
-            submit = st.form_submit_button("SİSTEME BAĞLAN")
+        with st.form("login_cyber"):
+            pwd = st.text_input("ŞİFRE", type="password", placeholder="ENTER KEYCODE", label_visibility="collapsed")
+            submit = st.form_submit_button("INITIALIZE")
             
             if submit:
                 if pwd == "1608":
                     st.session_state["password_correct"] = True
                     st.rerun()
                 else:
-                    st.markdown("<p style='color:#ff4b4b; font-size:12px; margin-top:10px;'>GEÇERSİZ ERİŞİM KODU</p>", unsafe_allow_html=True)
+                    st.markdown("<p style='color:#ff0000; font-family:Fira Code; font-size:10px; text-align:center;'>ERR: INVALID_ACCESS_KEY</p>", unsafe_allow_html=True)
 
-        st.markdown('<div class="footer-note">TERMINAL ACCESS ONLY • V9.9</div>', unsafe_allow_html=True)
         st.markdown('</div></div>', unsafe_allow_html=True)
         return False
     return True
