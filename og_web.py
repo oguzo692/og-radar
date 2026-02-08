@@ -29,7 +29,7 @@ custom_css = f"""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&family=Orbitron:wght@400;700;900&display=swap');
 
-/* Arka Plan: Senin Canva Tasarımın */
+/* Arka Plan: https://hizliresim.com/hf5wked */
 .stApp {{
     background-image: url("data:image/png;base64,{img_base64}") !important;
     background-size: cover !important;
