@@ -11,49 +11,53 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- 2. CSS TASARIMI (OG CORE VIBE) ---
-custom_css = """
+# --- 2. CSS TASARIMI (FULL REVIZE) ---
+# GitHub'daki arkaplan.jpg dosyanı doğrudan bağlıyoruz
+bg_image_url = "https://raw.githubusercontent.com/oguzo692/og-radar/main/arkaplan.jpg"
+
+custom_css = f"""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&family=Orbitron:wght@400;700;900&display=swap');
 
-/* Arka Plan: Hızlı Resim Üzerinden Senin Tasarımın */
-.stApp {
-    background-image: url("https://i.hizliresim.com/hf5wked.png") !important;
+/* Arka Plan Ayarı */
+.stApp {{
+    background-image: url("{bg_image_url}") !important;
     background-size: cover !important;
     background-position: center !important;
     background-attachment: fixed !important;
-}
+    background-color: #000 !important;
+}}
 
 /* Giriş Ekranı: Glassmorphism */
-div[data-testid="stVerticalBlock"] > div:has(input[type="password"]) {
-    background: rgba(0, 0, 0, 0.6) !important;
+div[data-testid="stVerticalBlock"] > div:has(input[type="password"]) {{
+    background: rgba(0, 0, 0, 0.65) !important;
     backdrop-filter: blur(15px);
     padding: 50px !important;
     border-radius: 4px !important;
-    border: 1px solid rgba(255, 75, 180, 0.2) !important;
-    box-shadow: 0 15px 50px 0 rgba(0, 0, 0, 0.8);
+    border: 1px solid rgba(255, 75, 180, 0.25) !important;
+    box-shadow: 0 15px 50px 0 rgba(0, 0, 0, 0.9);
     text-align: center;
-}
+}}
 
 /* UI Temizliği */
-#MainMenu, footer, header, .stAppDeployButton {visibility: hidden;}
-[data-testid="stSidebar"] svg, [data-testid="stHeaderActionElements"] {display: none !important;}
+#MainMenu, footer, header, .stAppDeployButton {{visibility: hidden;}}
+[data-testid="stSidebar"] svg, [data-testid="stHeaderActionElements"] {{display: none !important;}}
 
-/* Genel Font ve Renkler */
-body, [data-testid="stAppViewContainer"], p, div, span, button, input { 
+/* Genel Fontlar ve Renkler */
+body, [data-testid="stAppViewContainer"], p, div, span, button, input {{ 
     font-family: 'JetBrains Mono', monospace !important; 
     color: #e0e0e0 !important;
-}
+}}
 
-/* Sidebar */
-section[data-testid="stSidebar"] { 
-    background-color: rgba(5, 5, 5, 0.9) !important; 
+/* Sidebar Tasarımı */
+section[data-testid="stSidebar"] {{ 
+    background-color: rgba(5, 5, 5, 0.95) !important; 
     border-right: 1px solid rgba(255, 75, 180, 0.2); 
     backdrop-filter: blur(10px);
-}
+}}
 
 /* Endüstriyel Kartlar */
-.industrial-card { 
+.industrial-card {{ 
     background: rgba(15, 15, 15, 0.85) !important; 
     border: 1px solid rgba(255, 255, 255, 0.03) !important; 
     border-top: 2px solid #ff4bb4 !important; 
@@ -61,15 +65,15 @@ section[data-testid="stSidebar"] {
     margin-bottom: 20px; 
     border-radius: 4px;
     backdrop-filter: blur(5px);
-}
+}}
 
-.terminal-header { 
+.terminal-header {{ 
     color: #888; font-size: 11px; font-weight: 800; letter-spacing: 2.5px; 
     text-transform: uppercase; margin-bottom: 18px; border-left: 3px solid #ff4bb4; padding-left: 12px;
-}
+}}
 
 /* Butonlar */
-.stButton button {
+.stButton button {{
     width: 100% !important;
     background: #ff4bb4 !important;
     color: white !important;
@@ -79,17 +83,11 @@ section[data-testid="stSidebar"] {
     padding: 12px !important;
     letter-spacing: 2px !important;
     transition: 0.3s;
-}
-.stButton button:hover {
+}}
+.stButton button:hover {{
     box-shadow: 0 0 20px rgba(255, 75, 180, 0.5);
     background: #e042a0 !important;
-}
-
-/* Ticker (Duyuru Panosu) */
-.ticker-wrap { width: 100%; overflow: hidden; background: rgba(255, 75, 180, 0.05); border-bottom: 1px solid rgba(255, 75, 180, 0.2); padding: 10px 0; margin-bottom: 25px;}
-.ticker { display: flex; white-space: nowrap; animation: ticker 40s linear infinite; }
-.ticker-item { font-size: 12px; color: #ff4bb4; letter-spacing: 4px; padding-right: 50%; font-weight: bold; }
-@keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+}}
 </style>
 """
 
@@ -111,19 +109,14 @@ def rutbe_getir(puan_str):
     elif p <= 11: return "Miço"
     else: return "Grand Miço"
 
-# Verileri Çek
-live_vars = get_live_data()
-kasa = float(live_vars.get("kasa", 600))
-ana_para = float(live_vars.get("ana_para", 600))
-duyuru_metni = live_vars.get("duyuru", "SİSTEM ÇEVRİMİÇİ... OG CORE V9.9")
-
-# --- 4. GÜVENLİK SİSTEMİ (TASARIM ODAKLI) ---
+# --- 4. GÜVENLİK SİSTEMİ ---
 if "password_correct" not in st.session_state: 
     st.session_state["password_correct"] = False
 
 def check_password():
     if not st.session_state["password_correct"]:
         st.markdown(custom_css, unsafe_allow_html=True)
+        # Tasarımındaki orta boşluğa tam denk getirmek için (35vh)
         st.markdown('<div style="height:35vh;"></div>', unsafe_allow_html=True)
         
         col_a, col_b, col_c = st.columns([1,1.5,1])
@@ -143,24 +136,20 @@ def check_password():
                     st.session_state["password_correct"] = True
                     st.rerun()
                 else: 
-                    st.error("YETKİSİZ ERİŞİM DENEMESİ")
+                    st.error("YETKİSİZ ERİŞİM")
         return False
     return True
 
-# --- 5. ANA UYGULAMA ---
+# --- 5. ANA UYGULAMA DÖNGÜSÜ ---
 if check_password():
     st.markdown(custom_css, unsafe_allow_html=True)
-    st.markdown(f'<div class="ticker-wrap"><div class="ticker"><span class="ticker-item">{duyuru_metni}</span><span class="ticker-item">{duyuru_metni}</span></div></div>', unsafe_allow_html=True)
-
+    live_vars = get_live_data()
+    
     with st.sidebar:
-        st.markdown("<h1 style='color:white; font-family:Orbitron; font-size:22px; letter-spacing:5px; text-align:center;'>OG CORE</h1>", unsafe_allow_html=True)
+        st.markdown("<h1 style='color:white; font-family:Orbitron; font-size:22px; text-align:center;'>OG CORE</h1>", unsafe_allow_html=True)
         st.markdown("<p style='text-align:center; font-size:10px; color:#ff4bb4; margin-top:-15px;'>V9.9 TERMINAL</p>", unsafe_allow_html=True)
         st.divider()
         page = st.radio("SİSTEM MODÜLLERİ", ["⚡ ULTRA ATAK", "⚽ FORMLINE", "🎲 CHALLANGE"])
-        
-        with st.expander("📂 ADMİN"):
-            admin_pwd = st.text_input("PANEL ŞİFRESİ", type="password")
-            if admin_pwd == "fybey": st.link_button("VERİ TABANI", "https://docs.google.com/spreadsheets/d/15izevdpRjs8Om5BAHKVWmdL3FxEHml35DGECfhQUG_s/edit")
         
         if st.button("GÜVENLİ ÇIKIŞ"): 
             st.session_state["password_correct"] = False
@@ -169,6 +158,7 @@ if check_password():
     if page == "⚡ ULTRA ATAK":
         st.markdown("<div class='terminal-header'>💰 KİŞİSEL KASA DAĞILIMI</div>", unsafe_allow_html=True)
         k1, k2, k3 = st.columns(3)
+        kasa = float(live_vars.get("kasa", 600))
         og_kasa = float(live_vars.get("oguzo_kasa", kasa / 3))
         er_kasa = float(live_vars.get("ero7_kasa", kasa / 3))
         fy_kasa = float(live_vars.get("fybey_kasa", kasa / 3))
@@ -179,26 +169,16 @@ if check_password():
 
         st.divider()
         
-        col1, col2, col3 = st.columns([1.5, 1, 1])
-        net_kar = kasa - ana_para
+        col1, col2 = st.columns([2, 1])
         with col1:
-            current_pct = min(100, (kasa / 6500) * 100)
-            st.markdown(f"<div class='industrial-card'><div class='terminal-header'>HEDEF: $6,500</div><h2 style='color:white;'>${kasa:,.2f}</h2><div style='background:#111; height:8px; border-radius:10px; margin-top:10px;'><div style='background:linear-gradient(90deg, #ff4bb4, #ffae00); width:{current_pct}%; height:100%; border-radius:10px;'></div></div></div>", unsafe_allow_html=True)
+            st.markdown(f"<div class='industrial-card'><div class='terminal-header'>💎 ANA KASA</div><h2 style='color:white;'>${kasa:,.2f}</h2></div>", unsafe_allow_html=True)
         with col2:
-            try:
-                btc = yf.Ticker("BTC-USD").history(period="1d")['Close'].iloc[-1]
-                st.markdown(f"<div class='industrial-card'><div class='terminal-header'>⚡ BTC-USD</div><h2 style='color:#ff4bb4;'>${btc:,.0f}</h2></div>", unsafe_allow_html=True)
-            except: st.write("Veri bekleniyor...")
-        with col3:
             st.markdown(f"<div class='industrial-card'><div class='terminal-header'>📊 WIN RATE</div><h2 style='color:#ff4bb4;'>%{live_vars.get('win_rate', '0')}</h2></div>", unsafe_allow_html=True)
 
     elif page == "⚽ FORMLINE":
-        st.markdown("<div class='terminal-header'>⚽ KUPON ANALİZ MERKEZİ</div>", unsafe_allow_html=True)
-        st.info("Formline modülü aktif. Veriler Google Sheets üzerinden senkronize ediliyor.")
-        # Buraya senin mevcut FORMLINE tablo kodlarını ekleyebilirsin.
+        st.markdown("<div class='terminal-header'>⚽ ANALİZ MERKEZİ</div>", unsafe_allow_html=True)
+        st.write("Veriler yükleniyor...")
 
     elif page == "🎲 CHALLANGE":
         st.markdown("<div class='terminal-header'>🏆 RÜTBE SIRALAMASI</div>", unsafe_allow_html=True)
-        # Mevcut rütbe ve soru kodlarını buraya yapıştırabilirsin.
-
-    st.markdown(f"<div style='text-align:center; color:#444; font-size:10px; margin-top:50px;'>OG_CORE_V9.9 // {datetime.now().year}</div>", unsafe_allow_html=True)
+        # Rütbe verilerini buradan çekebilirsin
