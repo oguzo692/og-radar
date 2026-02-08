@@ -22,7 +22,7 @@ def get_live_data():
     except Exception:
         return {"kasa": "600.0", "ana_para": "600.0"}
 
-# --- RÜTBE FONKSİYONU ---
+# --- GÜNCELLENMİŞ RÜTBE FONKSİYONU ---
 def rutbe_getir(puan_str):
     try:
         p = int(float(puan_str))
@@ -39,12 +39,13 @@ kasa = float(live_vars.get("kasa", 600))
 ana_para = float(live_vars.get("ana_para", 600))
 duyuru_metni = live_vars.get("duyuru", "SİSTEM ÇEVRİMİÇİ... OG CORE V9.9")
 
-# --- KİŞİSEL KASA VERİLERİ ---
+# --- KİŞİSEL KASA VERİLERİ (DÜZELTİLDİ) ---
+# Sabit %20 hatası giderildi. Sheets'ten veri yoksa kasa/3 yapar.
 og_kasa = float(live_vars.get("oguzo_kasa", kasa / 3))
 er_kasa = float(live_vars.get("ero7_kasa", kasa / 3))
 fy_kasa = float(live_vars.get("fybey_kasa", kasa / 3))
 
-# --- RÜTBE VERİLERİ ---
+# --- RÜTBE VERİLERİ (TAHMİN İÇİN) ---
 og_p = live_vars.get("oguzo_puan", "0")
 er_p = live_vars.get("ero7_puan", "0")
 fy_p = live_vars.get("fybey_puan", "0")
@@ -60,7 +61,7 @@ toplam_bahis_kar = w1_kar + w2_kar
 wr_oran = live_vars.get("win_rate", "0")
 son_islemler_raw = str(live_vars.get("son_islemler", "Veri yok"))
 
-# --- 3. CSS STİLLERİ (İÇ PANEL) ---
+# --- 3. CSS STİLLERİ ---
 custom_css = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&family=Orbitron:wght@400;700;900&display=swap');
@@ -81,185 +82,35 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input { font-fam
 .ticker { display: flex; white-space: nowrap; animation: ticker 30s linear infinite; }
 .ticker-item { font-size: 12px; color: #cc7a00; letter-spacing: 4px; padding-right: 50%; }
 @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+.equal-card { min-height: 180px; display: flex; flex-direction: column; justify-content: space-between; }
 </style>
 """
 
 # --- 4. HTML ŞABLONLARI ---
-w3_matches = """<div class='terminal-row'><span>Wolfsburg - Bvb</span><span class='highlight'>bvb x2 & 1.5 üst ✅</span></div><div class='terminal-row'><span>Newcastle - Brentford</span><span class='highlight'>newcastle 1.5 üst ✅</span></div><div class='terminal-row'><span>Rizespor - GS</span><span class='highlight'>gala w & 1.5 üst ✅</span></div><div class='terminal-row'><span>Liverpool - Man City</span><span class='highlight'>lıve gol atar</span></div><div class='terminal-row'><span>Fenerbahçe - Gençlerbirliği</span><span class='highlight'>fenerbahçe w & 2.5 üst</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 8.79</span><span>Bet: 100 USD</span></div>"""
+w3_matches = """<div class='terminal-row'><span>Wolfsburg - Bvb</span><span class='highlight'>bvb x2 & 1.5 üst</span></div><div class='terminal-row'><span>Newcastle - Brentford</span><span class='highlight'>newcastle 1.5 üst</span></div><div class='terminal-row'><span>Rizespor - GS</span><span class='highlight'>gala w & 1.5 üst</span></div><div class='terminal-row'><span>Liverpool - Man City</span><span class='highlight'>lıve gol atar</span></div><div class='terminal-row'><span>Fenerbahçe - Gençlerbirliği</span><span class='highlight'>fenerbahçe w & 2.5 üst</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 8.79</span><span>Bet: 100 USD</span></div>"""
 w2_matches = """<div class='terminal-row'><span>GS - Kayserispor</span><span style='color:#00ff41;'>İY +0.5 & W & 2+ ✅</span></div><div class='terminal-row'><span>Liverpool - Newcastle</span><span style='color:#00ff41;'>+2 & Liverpool 1X ✅</span></div><div class='terminal-row'><span>BVB - Heidenheim</span><span style='color:#00ff41;'>İY +0.5 & W & 2+ ✅</span></div><div class='terminal-row'><span>Kocaelispor - FB</span><span style='color:#00ff41;'>FB W & 2+ ✅</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 5.53</span><span>Bet: 100 USD</span></div>"""
 w1_matches = """<div class='terminal-row'><span>Karagümrük - GS</span><span style='color:#ff4b4b;'>GS W & +2 ✅</span></div><div class='terminal-row'><span>Bournemouth - Liverpool</span><span style='color:#00ff41;'>KG VAR ✅</span></div><div class='terminal-row'><span>Union Berlin - BVB</span><span style='color:#00ff41;'>BVB İY 0.5 Üst ✅</span></div><div class='terminal-row'><span>Newcastle - Aston Villa</span><span style='color:#ff4b4b;'>New +2 ❌</span></div><div class='terminal-row'><span>FB - Göztepe</span><span style='color:#ff4b4b;'>FB W ❌</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 7.09</span><span>Bet: 100 USD</span></div>"""
 w3_coupon_html = f"<div class='industrial-card'><div class='terminal-header'>🔥 W3 KUPONU (AKTİF)</div>{w3_matches}<span style='color:#cc7a00; font-weight:bold;'>BEKLENİYOR ⏳</span></div>"
 w2_coupon_html = f"<div class='industrial-card' style='border-top-color: #00ff41 !important;'><div class='terminal-header' style='color:#00ff41;'>✅ W2 KUPONU (BAŞARILI)</div>{w2_matches}<span style='color:#00ff41; font-weight:bold;'>SONUÇLANDI ✅</span></div>"
 w1_coupon_html = f"<div class='industrial-card' style='border-top-color: #ff4b4b !important;'><div class='terminal-header' style='color:#ff4b4b;'>❌ W1 KUPONU (BAŞARISIZ)</div>{w1_matches}<span style='color:#ff4b4b; font-weight:bold;'>SONUÇLANDI ❌</span></div>"
 
-# --- 5. GÜVENLİK (ULTRA-FIXED GİRİŞ EKRANI) ---
-if "password_correct" not in st.session_state: 
-    st.session_state["password_correct"] = False
-
-import streamlit as st
-
+# --- 5. GÜVENLİK ---
+if "password_correct" not in st.session_state: st.session_state["password_correct"] = False
 def check_password():
-    if "password_correct" not in st.session_state:
-        st.session_state["password_correct"] = False
-
     if not st.session_state["password_correct"]:
-        st.markdown("""
-        <style>
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100;400;700;800&display=swap');
-
-        /* Ana Arka Plan ve Scanline Efekti */
-        .stApp {
-            background-color: #050505 !important;
-            background-image: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
-                              linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06)) !important;
-            background-size: 100% 2px, 3px 100% !important;
-        }
-
-        /* Ana Panel */
-        .mainframe {
-            position: fixed;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 500px;
-            background: rgba(10, 10, 10, 0.95);
-            border: 1px solid #cc7a00;
-            padding: 0;
-            z-index: 9999;
-            box-shadow: 0 0 50px rgba(204, 122, 0, 0.15), inset 0 0 20px rgba(0,0,0,1);
-            backdrop-filter: blur(10px);
-        }
-
-        .bar-top {
-            height: 6px;
-            background: repeating-linear-gradient(45deg, #cc7a00, #cc7a00 10px, #222 10px, #222 20px);
-            width: 100%;
-        }
-
-        .content-area {
-            padding: 50px 40px;
-        }
-
-        .id-label {
-            font-family: 'JetBrains Mono', monospace;
-            color: #cc7a00;
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: 3px;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-        }
-
-        /* Glitch Başlık Efekti */
-        .title-h1 {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 65px;
-            font-weight: 800;
-            color: #fff;
-            margin: 0;
-            line-height: 1;
-            letter-spacing: -2px;
-            position: relative;
-        }
-
-        .sub-status {
-            font-family: 'JetBrains Mono', monospace;
-            color: #00ff41;
-            font-size: 10px;
-            margin-top: 20px;
-            display: flex;
-            align-items: center;
-            letter-spacing: 1px;
-            text-shadow: 0 0 5px rgba(0, 255, 65, 0.5);
-        }
-
-        .blink-dot {
-            width: 6px; height: 6px;
-            background: #00ff41;
-            border-radius: 50%;
-            margin-right: 12px;
-            animation: pulse 1.5s infinite;
-            box-shadow: 0 0 8px #00ff41;
-        }
-
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.2; } 100% { opacity: 1; } }
-
-        /* Modernized Input */
-        .stTextInput input {
-            background-color: rgba(0, 0, 0, 0.8) !important;
-            border: 1px solid #333 !important;
-            border-bottom: 2px solid #cc7a00 !important;
-            border-radius: 0px !important;
-            color: #fff !important;
-            font-family: 'JetBrains Mono' !important;
-            font-size: 20px !important;
-            height: 60px !important;
-            text-align: center !important;
-            margin-top: 40px !important;
-            transition: all 0.3s ease;
-        }
-
-        .stTextInput input:focus {
-            border-bottom: 2px solid #fff !important;
-            box-shadow: 0 5px 15px rgba(204, 122, 0, 0.1) !important;
-        }
-
-        /* Action Button Modern */
-        .stButton button {
-            background: transparent !important;
-            color: #cc7a00 !important;
-            width: 100% !important;
-            height: 55px !important;
-            border-radius: 0px !important;
-            font-family: 'JetBrains Mono' !important;
-            font-weight: 700 !important;
-            font-size: 13px !important;
-            letter-spacing: 4px !important;
-            border: 1px solid #cc7a00 !important;
-            margin-top: 20px !important;
-            transition: all 0.4s !important;
-        }
-
-        .stButton button:hover {
-            background: #cc7a00 !important;
-            color: #000 !important;
-            box-shadow: 0 0 20px rgba(204, 122, 0, 0.4) !important;
-        }
-
-        /* UI Temizliği */
-        header, [data-testid="stHeader"] { visibility: hidden !important; }
-        footer { visibility: hidden !important; }
-        [data-testid="stForm"] { border: none !important; padding: 0 !important; }
-        </style>
-
-        <div class="mainframe">
-            <div class="bar-top"></div>
-            <div class="content-area">
-                <div class="id-label">X-OS TERMINAL // UNKNOWN_USER</div>
-                <div class="title-h1">CORE_9</div>
-                <div class="sub-status">
-                    <div class="blink-dot"></div>
-                    <span>ESTABLISHING SECURE CONNECTION...</span>
-                </div>
-        """, unsafe_allow_html=True)
-
-        with st.form("root_access"):
-            pwd = st.text_input("ŞİFRE", type="password", placeholder="ENTER_ACCESS_CODE", label_visibility="collapsed")
-            submit = st.form_submit_button("VALIDATE_IDENTITY")
-            
-            if submit:
+        st.markdown(custom_css, unsafe_allow_html=True)
+        st.markdown('<div style="text-align:center; margin-top:15vh;"><div style="font-family:Orbitron; font-size:60px; font-weight:900; color:white; letter-spacing:15px;">OG CORE</div></div>', unsafe_allow_html=True)
+        col_a, col_b, col_c = st.columns([1,1,1])
+        with col_b:
+            pwd = st.text_input("şifre", type="password", placeholder="••••", label_visibility="collapsed")
+            if st.button("go"):
                 if pwd == "1608":
                     st.session_state["password_correct"] = True
                     st.rerun()
-                else:
-                    st.markdown("<p style='color:#ff3333; font-family:JetBrains Mono; font-size:10px; text-align:center; margin-top:15px; letter-spacing:1px;'>[ERROR] ACCESS_DENIED: UNAUTHORIZED_ATTEMPT</p>", unsafe_allow_html=True)
-
-        st.markdown('</div></div>', unsafe_allow_html=True)
+                else: st.error("şifre yanlış")
         return False
     return True
 
-# Kullanım örneği:
-if check_password():
-    st.write("Sisteme hoş geldin kanka. Erişim sağlandı.")
 # --- 6. ANA UYGULAMA ---
 if check_password():
     st.markdown(custom_css, unsafe_allow_html=True)
@@ -303,7 +154,7 @@ if check_password():
         st.markdown(f"<div class='industrial-card'><div class='terminal-header'>AKTİVİTE LOGLARI</div><p style='font-family:JetBrains Mono; color:#888;'>{son_islemler_raw}</p></div>", unsafe_allow_html=True)
 
     elif page == "🎲 CHALLANGE":
-        st.markdown("<div class='terminal-header'>🏆 RÜTBE SIRALAMASI</div>", unsafe_allow_html=True)
+        st.markdown("<div class='terminal-header'>🏆 GÜNCEL RÜTBE SIRALAMASI</div>", unsafe_allow_html=True)
         s1, s2, s3 = st.columns(3)
         with s1: st.markdown(f"<div class='industrial-card' style='padding:15px; text-align:center; border-top: 2px solid #cc7a00;'><div style='font-size:11px; color:#666;'>oguzo</div><div class='highlight'>{og_p} P</div><div style='font-size:12px;'>{rutbe_getir(og_p)}</div></div>", unsafe_allow_html=True)
         with s2: st.markdown(f"<div class='industrial-card' style='padding:15px; text-align:center; border-top: 2px solid #cc7a00;'><div style='font-size:11px; color:#666;'>ero7</div><div class='highlight'>{er_p} P</div><div style='font-size:12px;'>{rutbe_getir(er_p)}</div></div>", unsafe_allow_html=True)
@@ -317,14 +168,14 @@ if check_password():
         with q_col1:
             st.markdown(f"<div class='industrial-card equal-card'><div class='terminal-header'>📢 AKTİF SORU 1</div><h3 style='color:white; margin:0;'>{aktif_soru_1}</h3><span></span></div>", unsafe_allow_html=True)
             u_name_1 = st.selectbox("İsim (Soru 1)", ["oguzo", "ero7", "fybey"], key="n1")
-            u_vote_1 = st.radio("Tahmin (Soru 1)", ["12.2k-12.4k", "12.4k-12.4k","12.6k-12.8k", "12.8k-13k","+13k"], key="v1")
+            u_vote_1 = st.radio("Tahmin (Soru 1)", ["12.2k-12.4k", "12.4k-12.46","12.6k-12.8k", "12.8k-13k","+13k"], key="v1")
             final_link_1 = f"{base_url}?isim={u_name_1}&tahmin={u_vote_1}&soru=1"
             st.markdown(f"""<a href='{final_link_1}' target='_blank' style='text-decoration:none;'><div style='background:rgba(204, 122, 0, 0.2); border: 1px solid #cc7a00; color:#cc7a00; text-align:center; padding:15px; border-radius:5px; font-family:Orbitron; font-weight:bold; cursor:pointer;'>1. OYU ONAYLA</div></a>""", unsafe_allow_html=True)
 
         with q_col2:
             st.markdown(f"<div class='industrial-card equal-card'><div class='terminal-header'>📢 AKTİF SORU 2</div><h3 style='color:white; margin:0;'>{aktif_soru_2}</h3><span></span></div>", unsafe_allow_html=True)
             u_name_2 = st.selectbox("İsim (Soru 2)", ["oguzo", "ero7", "fybey"], key="n2")
-            u_vote_2 = st.radio("Tahmin (Soru 2)", ["fybey", "fybey", "fybey", "fybey", "fybey"], key="v2")
+            u_vote_2 = st.radio("Tahmin (Soru 2)", ["👍", "👎"], key="v2")
             final_link_2 = f"{base_url}?isim={u_name_2}&tahmin={u_vote_2}&soru=2"
             st.markdown(f"""<a href='{final_link_2}' target='_blank' style='text-decoration:none;'><div style='background:rgba(204, 122, 0, 0.2); border: 1px solid #cc7a00; color:#cc7a00; text-align:center; padding:15px; border-radius:5px; font-family:Orbitron; font-weight:bold; cursor:pointer;'>2. OYU ONAYLA</div></a>""", unsafe_allow_html=True)
 
