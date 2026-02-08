@@ -39,13 +39,12 @@ kasa = float(live_vars.get("kasa", 600))
 ana_para = float(live_vars.get("ana_para", 600))
 duyuru_metni = live_vars.get("duyuru", "SİSTEM ÇEVRİMİÇİ... OG CORE V9.9")
 
-# --- KİŞİSEL KASA VERİLERİ (DÜZELTİLDİ) ---
-# Sabit %20 hatası giderildi. Sheets'ten veri yoksa kasa/3 yapar.
+# --- KİŞİSEL KASA VERİLERİ ---
 og_kasa = float(live_vars.get("oguzo_kasa", kasa / 3))
 er_kasa = float(live_vars.get("ero7_kasa", kasa / 3))
 fy_kasa = float(live_vars.get("fybey_kasa", kasa / 3))
 
-# --- RÜTBE VERİLERİ (TAHMİN İÇİN) ---
+# --- RÜTBE VERİLERİ ---
 og_p = live_vars.get("oguzo_puan", "0")
 er_p = live_vars.get("ero7_puan", "0")
 fy_p = live_vars.get("fybey_puan", "0")
@@ -61,7 +60,7 @@ toplam_bahis_kar = w1_kar + w2_kar
 wr_oran = live_vars.get("win_rate", "0")
 son_islemler_raw = str(live_vars.get("son_islemler", "Veri yok"))
 
-# --- 3. CSS STİLLERİ ---
+# --- 3. CSS STİLLERİ (İÇ PANEL) ---
 custom_css = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&family=Orbitron:wght@400;700;900&display=swap');
@@ -87,27 +86,97 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input { font-fam
 """
 
 # --- 4. HTML ŞABLONLARI ---
-w3_matches = """<div class='terminal-row'><span>Wolfsburg - Bvb</span><span class='highlight'>bvb x2 & 1.5 üst ✅</span></div><div class='terminal-row'><span>Newcastle - Brentford</span><span class='highlight'>newcastle 1.5 üst ✅</span></div><div class='terminal-row'><span>Rizespor - GS</span><span class='highlight'>gala w & 1.5 üst</span></div><div class='terminal-row'><span>Liverpool - Man City</span><span class='highlight'>lıve gol atar</span></div><div class='terminal-row'><span>Fenerbahçe - Gençlerbirliği</span><span class='highlight'>fenerbahçe w & 2.5 üst</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 8.79</span><span>Bet: 100 USD</span></div>"""
+w3_matches = """<div class='terminal-row'><span>Wolfsburg - Bvb</span><span class='highlight'>bvb x2 & 1.5 üst ✅</span></div><div class='terminal-row'><span>Newcastle - Brentford</span><span class='highlight'>newcastle 1.5 üst ✅</span></div><div class='terminal-row'><span>Rizespor - GS</span><span class='highlight'>gala w & 1.5 üst ✅</span></div><div class='terminal-row'><span>Liverpool - Man City</span><span class='highlight'>lıve gol atar</span></div><div class='terminal-row'><span>Fenerbahçe - Gençlerbirliği</span><span class='highlight'>fenerbahçe w & 2.5 üst</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 8.79</span><span>Bet: 100 USD</span></div>"""
 w2_matches = """<div class='terminal-row'><span>GS - Kayserispor</span><span style='color:#00ff41;'>İY +0.5 & W & 2+ ✅</span></div><div class='terminal-row'><span>Liverpool - Newcastle</span><span style='color:#00ff41;'>+2 & Liverpool 1X ✅</span></div><div class='terminal-row'><span>BVB - Heidenheim</span><span style='color:#00ff41;'>İY +0.5 & W & 2+ ✅</span></div><div class='terminal-row'><span>Kocaelispor - FB</span><span style='color:#00ff41;'>FB W & 2+ ✅</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 5.53</span><span>Bet: 100 USD</span></div>"""
 w1_matches = """<div class='terminal-row'><span>Karagümrük - GS</span><span style='color:#ff4b4b;'>GS W & +2 ✅</span></div><div class='terminal-row'><span>Bournemouth - Liverpool</span><span style='color:#00ff41;'>KG VAR ✅</span></div><div class='terminal-row'><span>Union Berlin - BVB</span><span style='color:#00ff41;'>BVB İY 0.5 Üst ✅</span></div><div class='terminal-row'><span>Newcastle - Aston Villa</span><span style='color:#ff4b4b;'>New +2 ❌</span></div><div class='terminal-row'><span>FB - Göztepe</span><span style='color:#ff4b4b;'>FB W ❌</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 7.09</span><span>Bet: 100 USD</span></div>"""
 w3_coupon_html = f"<div class='industrial-card'><div class='terminal-header'>🔥 W3 KUPONU (AKTİF)</div>{w3_matches}<span style='color:#cc7a00; font-weight:bold;'>BEKLENİYOR ⏳</span></div>"
 w2_coupon_html = f"<div class='industrial-card' style='border-top-color: #00ff41 !important;'><div class='terminal-header' style='color:#00ff41;'>✅ W2 KUPONU (BAŞARILI)</div>{w2_matches}<span style='color:#00ff41; font-weight:bold;'>SONUÇLANDI ✅</span></div>"
 w1_coupon_html = f"<div class='industrial-card' style='border-top-color: #ff4b4b !important;'><div class='terminal-header' style='color:#ff4b4b;'>❌ W1 KUPONU (BAŞARISIZ)</div>{w1_matches}<span style='color:#ff4b4b; font-weight:bold;'>SONUÇLANDI ❌</span></div>"
 
-# --- 5. GÜVENLİK ---
-if "password_correct" not in st.session_state: st.session_state["password_correct"] = False
+# --- 5. GÜVENLİK (ENTEGRE WOW GİRİŞ EKRANI) ---
+if "password_correct" not in st.session_state: 
+    st.session_state["password_correct"] = False
+
 def check_password():
     if not st.session_state["password_correct"]:
-        st.markdown(custom_css, unsafe_allow_html=True)
-        st.markdown('<div style="text-align:center; margin-top:15vh;"><div style="font-family:Orbitron; font-size:60px; font-weight:900; color:white; letter-spacing:15px;">OG CORE</div></div>', unsafe_allow_html=True)
-        col_a, col_b, col_c = st.columns([1,1,1])
+        # Giriş Ekranına Özel CSS
+        st.markdown("""
+        <style>
+        .stApp {
+            background: radial-gradient(circle at center, #1e0b36 0%, #020617 100%) !important;
+        }
+        header {visibility: hidden;}
+        
+        /* Glassmorphism Kartı */
+        .login-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 60px 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            margin: 10vh auto;
+            max-width: 500px;
+        }
+        
+        .login-title {
+            font-family: 'Orbitron', sans-serif !important;
+            font-weight: 900;
+            letter-spacing: 12px;
+            color: white;
+            font-size: 50px;
+            margin-bottom: 40px;
+            text-shadow: 0 0 30px rgba(124, 58, 237, 0.6);
+            text-transform: uppercase;
+        }
+
+        /* Input alanları */
+        div[data-baseweb="input"] {
+            background-color: rgba(255, 255, 255, 0.05) !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            border-radius: 12px !important;
+        }
+        
+        /* Giriş Butonu */
+        .stButton > button {
+            background: linear-gradient(90deg, #7c3aed 0%, #4c1d95 100%) !important;
+            color: white !important;
+            border: none !important;
+            font-family: 'Orbitron' !important;
+            font-weight: bold !important;
+            letter-spacing: 2px !important;
+            padding: 15px !important;
+            border-radius: 12px !important;
+            transition: 0.4s all !important;
+        }
+        .stButton > button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(124, 58, 237, 0.4);
+            color: white !important;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+
+        # UI Katmanı
+        st.markdown('<div class="login-card">', unsafe_allow_html=True)
+        st.markdown('<p class="login-title">OG CORE</p>', unsafe_allow_html=True)
+        
+        col_a, col_b, col_c = st.columns([1,4,1])
         with col_b:
-            pwd = st.text_input("şifre", type="password", placeholder="••••", label_visibility="collapsed")
-            if st.button("go"):
+            pwd = st.text_input("Password", type="password", placeholder="••••", label_visibility="collapsed")
+            st.write("##")
+            if st.button("SİSTEME GİRİŞ YAP"):
                 if pwd == "1608":
                     st.session_state["password_correct"] = True
                     st.rerun()
-                else: st.error("şifre yanlış")
+                else:
+                    st.error("ERİŞİM REDDEDİLDİ")
+        
+        st.markdown("<p style='color:rgba(255,255,255,0.3); font-size:12px; margin-top:30px;'>Are You New Member? <b>Sign UP</b></p>", unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)
+        
         return False
     return True
 
