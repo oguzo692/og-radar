@@ -96,148 +96,170 @@ w1_coupon_html = f"<div class='industrial-card' style='border-top-color: #ff4b4b
 if "password_correct" not in st.session_state: 
     st.session_state["password_correct"] = False
 
+import streamlit as st
+
 def check_password():
+    if "password_correct" not in st.session_state:
+        st.session_state["password_correct"] = False
+
     if not st.session_state["password_correct"]:
         st.markdown("""
         <style>
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100;400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100;400;700;800&display=swap');
 
-        /* Full Screen Blackout */
+        /* Ana Arka Plan ve Scanline Efekti */
         .stApp {
-            background-color: #000000 !important;
-            background-image: repeating-linear-gradient(0deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15) 1px, transparent 1px, transparent 2px) !important;
-            background-size: 100% 3px !important;
+            background-color: #050505 !important;
+            background-image: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                              linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06)) !important;
+            background-size: 100% 2px, 3px 100% !important;
         }
 
-        /* Ana Panel - Endüstriyel Brutalism */
+        /* Ana Panel */
         .mainframe {
             position: fixed;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            width: 550px;
-            background: #050505;
-            border: 1px solid #1a1a1a;
+            width: 500px;
+            background: rgba(10, 10, 10, 0.95);
+            border: 1px solid #cc7a00;
             padding: 0;
             z-index: 9999;
-            box-shadow: 0 0 100px rgba(0,0,0,1);
+            box-shadow: 0 0 50px rgba(204, 122, 0, 0.15), inset 0 0 20px rgba(0,0,0,1);
+            backdrop-filter: blur(10px);
         }
 
         .bar-top {
-            height: 4px;
-            background: repeating-linear-gradient(90deg, #cc7a00, #cc7a00 10px, #000 10px, #000 20px);
+            height: 6px;
+            background: repeating-linear-gradient(45deg, #cc7a00, #cc7a00 10px, #222 10px, #222 20px);
             width: 100%;
         }
 
         .content-area {
-            padding: 40px;
-            border: 1px solid rgba(204, 122, 0, 0.1);
-            margin: 5px;
+            padding: 50px 40px;
         }
 
         .id-label {
             font-family: 'JetBrains Mono', monospace;
             color: #cc7a00;
-            font-size: 10px;
+            font-size: 11px;
             font-weight: 700;
-            letter-spacing: 5px;
-            margin-bottom: 20px;
-            opacity: 0.7;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
         }
 
+        /* Glitch Başlık Efekti */
         .title-h1 {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 55px;
+            font-size: 65px;
             font-weight: 800;
             color: #fff;
             margin: 0;
-            line-height: 0.8;
-            letter-spacing: -4px;
+            line-height: 1;
+            letter-spacing: -2px;
+            position: relative;
         }
 
         .sub-status {
             font-family: 'JetBrains Mono', monospace;
             color: #00ff41;
-            font-size: 11px;
-            margin-top: 15px;
+            font-size: 10px;
+            margin-top: 20px;
             display: flex;
             align-items: center;
+            letter-spacing: 1px;
+            text-shadow: 0 0 5px rgba(0, 255, 65, 0.5);
         }
 
         .blink-dot {
-            width: 8px; height: 8px;
+            width: 6px; height: 6px;
             background: #00ff41;
             border-radius: 50%;
-            margin-right: 10px;
-            animation: pulse 1s infinite;
+            margin-right: 12px;
+            animation: pulse 1.5s infinite;
+            box-shadow: 0 0 8px #00ff41;
         }
 
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.2; } 100% { opacity: 1; } }
 
-        /* Input Styling - Raw Code Style */
+        /* Modernized Input */
         .stTextInput input {
-            background-color: #000 !important;
-            border: 1px solid #222 !important;
+            background-color: rgba(0, 0, 0, 0.8) !important;
+            border: 1px solid #333 !important;
+            border-bottom: 2px solid #cc7a00 !important;
             border-radius: 0px !important;
-            color: #cc7a00 !important;
+            color: #fff !important;
             font-family: 'JetBrains Mono' !important;
-            font-size: 24px !important;
-            height: 70px !important;
+            font-size: 20px !important;
+            height: 60px !important;
             text-align: center !important;
-            margin-top: 30px !important;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.5) !important;
+            margin-top: 40px !important;
+            transition: all 0.3s ease;
         }
 
-        /* Action Button */
+        .stTextInput input:focus {
+            border-bottom: 2px solid #fff !important;
+            box-shadow: 0 5px 15px rgba(204, 122, 0, 0.1) !important;
+        }
+
+        /* Action Button Modern */
         .stButton button {
-            background: #cc7a00 !important;
-            color: #000 !important;
+            background: transparent !important;
+            color: #cc7a00 !important;
             width: 100% !important;
-            height: 60px !important;
+            height: 55px !important;
             border-radius: 0px !important;
             font-family: 'JetBrains Mono' !important;
-            font-weight: 800 !important;
-            font-size: 14px !important;
-            letter-spacing: 6px !important;
-            border: none !important;
-            margin-top: 15px !important;
-            cursor: crosshair !important;
+            font-weight: 700 !important;
+            font-size: 13px !important;
+            letter-spacing: 4px !important;
+            border: 1px solid #cc7a00 !important;
+            margin-top: 20px !important;
+            transition: all 0.4s !important;
         }
 
         .stButton button:hover {
-            background: #fff !important;
-            transform: translateY(-2px);
+            background: #cc7a00 !important;
+            color: #000 !important;
+            box-shadow: 0 0 20px rgba(204, 122, 0, 0.4) !important;
         }
 
+        /* UI Temizliği */
         header, [data-testid="stHeader"] { visibility: hidden !important; }
+        footer { visibility: hidden !important; }
         [data-testid="stForm"] { border: none !important; padding: 0 !important; }
         </style>
 
         <div class="mainframe">
             <div class="bar-top"></div>
             <div class="content-area">
-                <div class="id-label">CORE_VOL_9.9 // SYSTEM_ROOT</div>
-                <div class="title-h1">OG_CORE</div>
+                <div class="id-label">X-OS TERMINAL // UNKNOWN_USER</div>
+                <div class="title-h1">CORE_9</div>
                 <div class="sub-status">
                     <div class="blink-dot"></div>
-                    <span>SYSTEM_ACTIVE // STABLE_RECON_MODE</span>
+                    <span>ESTABLISHING SECURE CONNECTION...</span>
                 </div>
         """, unsafe_allow_html=True)
 
         with st.form("root_access"):
-            pwd = st.text_input("ŞİFRE", type="password", placeholder="PASSWORD_REQUIRED", label_visibility="collapsed")
-            submit = st.form_submit_button("COMMAND: INITIALIZE")
+            pwd = st.text_input("ŞİFRE", type="password", placeholder="ENTER_ACCESS_CODE", label_visibility="collapsed")
+            submit = st.form_submit_button("VALIDATE_IDENTITY")
             
             if submit:
                 if pwd == "1608":
                     st.session_state["password_correct"] = True
                     st.rerun()
                 else:
-                    st.markdown("<p style='color:#ff4b4b; font-family:JetBrains Mono; font-size:11px; text-align:center; margin-top:10px;'>[FATAL] ACCESS_DENIED: INCORRECT_CREDENTIALS</p>", unsafe_allow_html=True)
+                    st.markdown("<p style='color:#ff3333; font-family:JetBrains Mono; font-size:10px; text-align:center; margin-top:15px; letter-spacing:1px;'>[ERROR] ACCESS_DENIED: UNAUTHORIZED_ATTEMPT</p>", unsafe_allow_html=True)
 
         st.markdown('</div></div>', unsafe_allow_html=True)
         return False
     return True
 
+# Kullanım örneği:
+if check_password():
+    st.write("Sisteme hoş geldin kanka. Erişim sağlandı.")
 # --- 6. ANA UYGULAMA ---
 if check_password():
     st.markdown(custom_css, unsafe_allow_html=True)
