@@ -100,97 +100,136 @@ def check_password():
     if not st.session_state["password_correct"]:
         st.markdown("""
         <style>
+        @import url('https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Space+Grotesk:wght@300;500;700&display=swap');
+
         .stApp {
-            background: radial-gradient(circle at center, #1e0b36 0%, #020617 100%) !important;
+            background: #050505 !important;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(204, 122, 0, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(110, 72, 170, 0.15) 0px, transparent 50%) !important;
         }
-        header, [data-testid="stHeader"] {visibility: hidden !important;}
         
-        /* Merkeze Kilitleme */
-        .main-fixed-container {
+        header, [data-testid="stHeader"] {visibility: hidden !important;}
+
+        .login-container {
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 420px;
+            width: 400px;
             z-index: 9999;
+        }
+
+        .auth-card {
+            background: rgba(10, 10, 10, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 24px;
+            padding: 50px 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             text-align: center;
         }
 
-        .glass-card {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(30px);
-            -webkit-backdrop-filter: blur(30px);
-            border-radius: 40px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 60px 45px;
-            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8);
-        }
-        
-        .title-text {
-            font-family: 'Orbitron', sans-serif !important;
-            font-weight: 900;
-            letter-spacing: 10px;
-            color: white;
-            font-size: 36px;
+        .logo-section {
             margin-bottom: 40px;
-            text-shadow: 0 0 25px rgba(124, 58, 237, 0.6);
-            text-transform: uppercase;
         }
 
-        /* Input Alanı */
+        .logo-text {
+            font-family: 'Syncopate', sans-serif !important;
+            font-weight: 700;
+            font-size: 28px;
+            letter-spacing: 8px;
+            background: linear-gradient(to right, #cc7a00, #ffae00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .status-badge {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #cc7a00;
+            border: 1px solid rgba(204, 122, 0, 0.3);
+            padding: 4px 12px;
+            border-radius: 100px;
+            display: inline-block;
+            margin-bottom: 20px;
+            background: rgba(204, 122, 0, 0.05);
+        }
+
+        /* Input Styling */
         div[data-baseweb="input"] {
-            background-color: rgba(255, 255, 255, 0.05) !important;
-            border: 1px solid rgba(255, 255, 255, 0.2) !important;
-            border-radius: 18px !important;
-            height: 55px !important;
+            background-color: rgba(255, 255, 255, 0.03) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 12px !important;
+            transition: all 0.3s ease;
         }
         
-        /* Buton - Mor Gradient */
-        .stButton > button {
-            background: linear-gradient(90deg, #9d50bb 0%, #6e48aa 100%) !important;
+        div[data-baseweb="input"]:focus-within {
+            border-color: #cc7a00 !important;
+            background-color: rgba(204, 122, 0, 0.02) !important;
+        }
+
+        input {
             color: white !important;
+            text-align: center !important;
+            letter-spacing: 4px !important;
+        }
+
+        /* Button Styling */
+        .stButton > button {
+            background: #cc7a00 !important;
+            color: #000 !important;
             border: none !important;
             width: 100% !important;
-            font-family: 'Orbitron' !important;
-            border-radius: 18px !important;
-            height: 55px !important;
-            font-weight: 800 !important;
+            font-family: 'Syncopate', sans-serif !important;
+            font-size: 12px !important;
+            font-weight: 700 !important;
+            border-radius: 12px !important;
+            height: 50px !important;
+            margin-top: 20px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
             letter-spacing: 2px;
-            box-shadow: 0 15px 30px rgba(110, 72, 170, 0.4) !important;
-            margin-top: 10px;
         }
+
         .stButton > button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 20px 40px rgba(110, 72, 170, 0.6) !important;
+            box-shadow: 0 10px 20px rgba(204, 122, 0, 0.3) !important;
+            background: #ffae00 !important;
         }
+
+        [data-testid="stForm"] { border: none !important; padding: 0 !important; }
         
-        /* Streamlit form sınırlarını temizle */
-        [data-testid="stForm"] {
-            border: none !important;
-            padding: 0 !important;
+        .footer-note {
+            margin-top: 30px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 11px;
+            color: rgba(255,255,255,0.3);
+            letter-spacing: 1px;
         }
         </style>
         """, unsafe_allow_html=True)
 
-        # Kartı Render Et
-        st.markdown('<div class="main-fixed-container">', unsafe_allow_html=True)
-        st.markdown('<div class="glass-card">', unsafe_allow_html=True)
-        st.markdown('<p class="title-text">OG CORE</p>', unsafe_allow_html=True)
+        st.markdown('<div class="login-container"><div class="auth-card">', unsafe_allow_html=True)
+        st.markdown('<div class="status-badge">System Encrypted</div>', unsafe_allow_html=True)
+        st.markdown('<div class="logo-section"><div class="logo-text">OG CORE</div></div>', unsafe_allow_html=True)
         
-        with st.form("login_fixed", clear_on_submit=False):
-            pwd = st.text_input("ŞİFRE", type="password", placeholder="••••", label_visibility="collapsed")
-            submit = st.form_submit_button("SİSTEME GİRİŞ YAP")
+        with st.form("login_new"):
+            pwd = st.text_input("ŞİFRE", type="password", placeholder="PASSWORD", label_visibility="collapsed")
+            submit = st.form_submit_button("SİSTEME BAĞLAN")
             
             if submit:
                 if pwd == "1608":
                     st.session_state["password_correct"] = True
                     st.rerun()
                 else:
-                    st.error("ERİŞİM REDDEDİLDİ")
-                    
-        st.markdown("<p style='color:rgba(255,255,255,0.3); font-size:12px; margin-top:30px; letter-spacing:2px;'>ARE YOU NEW MEMBER? <b>SIGN UP</b></p>", unsafe_allow_html=True)
+                    st.markdown("<p style='color:#ff4b4b; font-size:12px; margin-top:10px;'>GEÇERSİZ ERİŞİM KODU</p>", unsafe_allow_html=True)
+
+        st.markdown('<div class="footer-note">TERMINAL ACCESS ONLY • V9.9</div>', unsafe_allow_html=True)
         st.markdown('</div></div>', unsafe_allow_html=True)
-        
         return False
     return True
 
