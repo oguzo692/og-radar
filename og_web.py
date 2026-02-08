@@ -100,149 +100,179 @@ def check_password():
     if not st.session_state["password_correct"]:
         st.markdown("""
         <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;500&family=Syncopate:wght@700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;700&family=JetBrains+Mono:wght@100;800&display=swap');
 
-        /* Arka Plan: Hareketli Grid ve Gradient */
+        /* 50 Yıllık Yazılımcı Teması: Monochrome Industrial */
         .stApp {
-            background: #020202 !important;
+            background: #000000 !important;
             background-image: 
-                linear-gradient(rgba(204, 122, 0, 0.05) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(204, 122, 0, 0.05) 1px, transparent 1px) !important;
-            background-size: 30px 30px !important;
+                radial-gradient(rgba(0, 255, 65, 0.1) 2px, transparent 0) !important;
+            background-size: 40px 40px !important;
         }
         
         header, [data-testid="stHeader"] {visibility: hidden !important;}
 
-        .login-wrapper {
+        .main-frame {
             position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 450px;
+            width: 500px;
             z-index: 9999;
+            background: #000;
+            border: 1px solid #1a1a1a;
+            padding: 2px;
+            box-shadow: 0 0 50px rgba(0,0,0,1);
         }
 
-        .cyber-card {
-            background: rgba(0, 0, 0, 0.85);
+        .terminal-border {
+            border: 1px solid #333;
+            padding: 30px;
+            position: relative;
+        }
+
+        /* Köşe Detayları (CNC Kesim Havası) */
+        .corner {
+            position: absolute;
+            width: 20px;
+            height: 20px;
             border: 2px solid #cc7a00;
-            border-radius: 0px; /* Keskin köşeler daha endüstriyel durur */
-            padding: 40px;
-            box-shadow: 0 0 20px rgba(204, 122, 0, 0.2), inset 0 0 10px rgba(204, 122, 0, 0.1);
+        }
+        .top-l { top: -2px; left: -2px; border-right: 0; border-bottom: 0; }
+        .top-r { top: -2px; right: -2px; border-left: 0; border-bottom: 0; }
+        .bot-l { bottom: -2px; left: -2px; border-right: 0; border-top: 0; }
+        .bot-r { bottom: -2px; right: -2px; border-left: 0; border-top: 0; }
+
+        .system-id {
+            font-family: 'Fira Code', monospace;
+            font-size: 9px;
+            color: #444;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .main-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 800;
+            font-size: 42px;
+            color: #fff;
+            text-align: left;
+            line-height: 0.9;
+            margin-bottom: 30px;
+            letter-spacing: -2px;
+        }
+
+        .main-title span {
+            color: #cc7a00;
+        }
+
+        /* Veri Akışı Animasyonu */
+        .data-stream {
+            height: 2px;
+            background: #111;
+            width: 100%;
+            margin-bottom: 30px;
             position: relative;
             overflow: hidden;
         }
-
-        /* Köşe Süslemeleri */
-        .cyber-card::before {
+        .data-stream::after {
             content: "";
             position: absolute;
-            top: 0; left: 0;
-            width: 15px; height: 15px;
-            border-top: 3px solid #ffae00;
-            border-left: 3px solid #ffae00;
-        }
-
-        .cyber-card::after {
-            content: "";
-            position: absolute;
-            bottom: 0; right: 0;
-            width: 15px; height: 15px;
-            border-bottom: 3px solid #ffae00;
-            border-right: 3px solid #ffae00;
-        }
-
-        .glitch-title {
-            font-family: 'Syncopate', sans-serif !important;
-            font-size: 32px;
-            color: #fff;
-            letter-spacing: 12px;
-            text-align: center;
-            margin-bottom: 5px;
-            text-shadow: 2px 2px #cc7a00;
-        }
-
-        .scanner-line {
+            left: -100%;
             width: 100%;
-            height: 2px;
-            background: rgba(204, 122, 0, 0.5);
-            margin-bottom: 30px;
-            box-shadow: 0 0 10px #cc7a00;
-            animation: scan 3s infinite linear;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, #cc7a00, transparent);
+            animation: flow 2s infinite linear;
         }
+        @keyframes flow { 100% { left: 100%; } }
 
-        @keyframes scan {
-            0% { transform: translateY(0); opacity: 0; }
-            50% { opacity: 1; }
-            100% { transform: translateY(10px); opacity: 0; }
-        }
-
-        .system-logs {
-            font-family: 'Fira Code', monospace;
-            font-size: 10px;
-            color: #444;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-        }
-
-        /* Input Alanı Customization */
+        /* Input Alanı (Ultra Minimalist) */
         div[data-baseweb="input"] {
-            background: transparent !important;
-            border: none !important;
-            border-bottom: 2px solid #333 !important;
+            background: #080808 !important;
+            border: 1px solid #1a1a1a !important;
             border-radius: 0px !important;
+            padding: 10px !important;
         }
 
         input {
-            color: #ffae00 !important;
+            color: #cc7a00 !important;
             font-family: 'Fira Code', monospace !important;
-            font-size: 18px !important;
-            text-align: center !important;
+            font-size: 20px !important;
+            text-shadow: 0 0 10px rgba(204, 122, 0, 0.5);
         }
 
-        /* Buton: Brutalist Style */
+        /* Login Butonu (Industrial-Grade) */
         .stButton > button {
-            background: transparent !important;
-            color: #cc7a00 !important;
-            border: 1px solid #cc7a00 !important;
+            background: #cc7a00 !important;
+            color: #000 !important;
+            border: none !important;
             width: 100% !important;
-            font-family: 'Syncopate', sans-serif !important;
-            height: 50px !important;
-            margin-top: 25px;
-            letter-spacing: 3px;
-            transition: 0.4s;
-            clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0% 30%);
+            font-family: 'JetBrains Mono', monospace !important;
+            font-weight: 800 !important;
+            font-size: 14px !important;
+            border-radius: 0px !important;
+            height: 55px !important;
+            margin-top: 20px;
+            transition: 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 4px;
         }
 
         .stButton > button:hover {
-            background: #cc7a00 !important;
-            color: #000 !important;
-            box-shadow: 0 0 15px #cc7a00 !important;
+            background: #fff !important;
+            box-shadow: 0 0 30px rgba(255,255,255,0.2) !important;
         }
 
         [data-testid="stForm"] { border: none !important; }
+        
+        .security-footer {
+            margin-top: 30px;
+            font-family: 'Fira Code', monospace;
+            font-size: 8px;
+            color: #333;
+            text-align: justify;
+            line-height: 1.5;
+        }
         </style>
         """, unsafe_allow_html=True)
 
         st.markdown(f"""
-        <div class="login-wrapper">
-            <div class="cyber-card">
-                <div class="system-logs">MNFRM // CORE ACCESS // AUTH_REQUIRED</div>
-                <div class="glitch-title">OG CORE</div>
-                <div class="scanner-line"></div>
+        <div class="main-frame">
+            <div class="terminal-border">
+                <div class="corner top-l"></div><div class="corner top-r"></div>
+                <div class="corner bot-l"></div><div class="corner bot-r"></div>
+                
+                <div class="system-id">
+                    <span>CORE.OS_V9.9</span>
+                    <span>LOC: 40.7128° N</span>
+                </div>
+                
+                <div class="main-title">CORE<span>_</span><br>SYSTEM</div>
+                
+                <div class="data-stream"></div>
         """, unsafe_allow_html=True)
         
-        with st.form("login_cyber"):
-            pwd = st.text_input("ŞİFRE", type="password", placeholder="ENTER KEYCODE", label_visibility="collapsed")
-            submit = st.form_submit_button("INITIALIZE")
+        with st.form("login_industrial"):
+            pwd = st.text_input("ACCESS_KEY", type="password", placeholder="CODE: ****")
+            submit = st.form_submit_button("AUTHENTICATE SYSTEM")
             
             if submit:
                 if pwd == "1608":
                     st.session_state["password_correct"] = True
                     st.rerun()
                 else:
-                    st.markdown("<p style='color:#ff0000; font-family:Fira Code; font-size:10px; text-align:center;'>ERR: INVALID_ACCESS_KEY</p>", unsafe_allow_html=True)
+                    st.markdown("<p style='color:#ff0000; font-family:Fira Code; font-size:10px; margin-top:10px; text-align:center;'>[!] FATAL ERROR: ACCESS DENIED</p>", unsafe_allow_html=True)
 
-        st.markdown('</div></div>', unsafe_allow_html=True)
+        st.markdown("""
+            <div class="security-footer">
+                BYPASS ATTEMPTS WILL BE LOGGED. RSA-4096 ENCRYPTION ACTIVE. 
+                AUTHORIZED PERSONNEL ONLY. SYSTEM MONITORING IN PROGRESS.
+            </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
         return False
     return True
 
