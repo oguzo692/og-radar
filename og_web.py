@@ -80,88 +80,61 @@ def check_password():
         st.markdown("""
         <style>
         .stApp{
-            background:#050505 !important;
+            background:#050505;
             background-image:
-            radial-gradient(circle at 50% 30%, rgba(204,122,0,0.12), transparent 70%);
+            radial-gradient(circle at center, rgba(204,122,0,0.12), transparent 70%);
         }
 
-        header {visibility:hidden;}
-
-        .login-wrapper{
-            height:100vh;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-        }
-
-        .login-card{
-            width:380px;
-            padding:45px 40px;
-            background:rgba(12,12,12,0.97);
+        .login-box{
+            background:#0b0b0b;
             border:1px solid rgba(204,122,0,0.4);
-            border-radius:10px;
-            box-shadow:0 0 35px rgba(204,122,0,0.25);
+            padding:40px;
+            border-radius:8px;
             text-align:center;
         }
 
         .login-title{
-            font-family:'Orbitron';
-            letter-spacing:6px;
-            font-size:26px;
+            font-family:Orbitron;
+            letter-spacing:4px;
             color:#cc7a00;
-            margin-bottom:35px;
+            font-size:22px;
+            margin-bottom:25px;
         }
 
-        div[data-baseweb="input"]{
-            background:#0b0b0b !important;
-            border:1px solid rgba(204,122,0,0.5) !important;
-        }
-
-        input{
-            color:#cc7a00 !important;
-            font-family:'JetBrains Mono' !important;
-            text-align:center;
-        }
-
-        .stButton > button{
+        .stButton>button{
             width:100%;
             background:#cc7a00 !important;
             color:black !important;
-            font-family:'Orbitron' !important;
-            font-weight:bold !important;
-            letter-spacing:2px !important;
-            border:none !important;
-            padding:12px !important;
-            margin-top:12px !important;
-        }
-
-        .login-foot{
-            margin-top:25px;
-            font-size:11px;
-            color:#555;
-            letter-spacing:2px;
+            font-weight:bold;
         }
         </style>
         """, unsafe_allow_html=True)
 
-        st.markdown('<div class="login-wrapper"><div class="login-card">', unsafe_allow_html=True)
-        st.markdown('<div class="login-title">OG CORE</div>', unsafe_allow_html=True)
+        # YATAY + DİKEY merkezleme (Streamlit-safe)
+        top, center, bottom = st.columns([1,2,1])
 
-        pwd = st.text_input("", type="password", placeholder="ACCESS KEY")
+        with center:
 
-        if st.button("ENTER SYSTEM"):
-            if pwd == "1608":
-                st.session_state["password_correct"] = True
-                st.rerun()
-            else:
-                st.error("ACCESS DENIED")
+            st.markdown("<br><br><br>", unsafe_allow_html=True)
 
-        st.markdown('<div class="login-foot">SECURE TERMINAL v9.9</div>', unsafe_allow_html=True)
-        st.markdown('</div></div>', unsafe_allow_html=True)
+            st.markdown("<div class='login-box'>", unsafe_allow_html=True)
+            st.markdown("<div class='login-title'>OG CORE</div>", unsafe_allow_html=True)
+
+            pwd = st.text_input("", type="password", placeholder="ACCESS KEY")
+
+            if st.button("ENTER"):
+                if pwd == "1608":
+                    st.session_state["password_correct"] = True
+                    st.rerun()
+                else:
+                    st.error("ACCESS DENIED")
+
+            st.markdown("</div>", unsafe_allow_html=True)
 
         return False
 
     return True
+
 
 
 # =====================================================
