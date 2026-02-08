@@ -60,7 +60,7 @@ toplam_bahis_kar = w1_kar + w2_kar
 wr_oran = live_vars.get("win_rate", "0")
 son_islemler_raw = str(live_vars.get("son_islemler", "Veri yok"))
 
-# --- 3. CSS STİLLERİ (SAYDAM GİRİŞ PANELİ VE FULL ARKA PLAN) ---
+# --- 3. CSS STİLLERİ (SABİT PANEL VE FULL ARKA PLAN) ---
 custom_css = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&family=Orbitron:wght@400;700;900&display=swap');
@@ -79,15 +79,23 @@ custom_css = """
     background-attachment: fixed !important;
 }
 
-/* SAYDAM GİRİŞ PANELİ (GLASSMORPHISM) */
+/* GİRİŞ PANELİNİ EKRANA SABİTLEME */
 div[data-testid="stVerticalBlock"] > div:has(input[type="password"]) {
-    background: rgba(0, 0, 0, 0.4) !important;
-    backdrop-filter: blur(12px) !important;
-    -webkit-backdrop-filter: blur(12px) !important;
-    padding: 50px !important;
+    background: rgba(0, 0, 0, 0.5) !important;
+    backdrop-filter: blur(15px) !important;
+    -webkit-backdrop-filter: blur(15px) !important;
+    padding: 40px !important;
     border-radius: 20px !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5) !important;
+    border: 1px solid rgba(204, 122, 0, 0.3) !important;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8) !important;
+    
+    /* BURASI SABİTLER */
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    z-index: 9999 !important;
+    width: 380px !important;
 }
 
 section[data-testid="stSidebar"] { background-color: rgba(5, 5, 5, 0.95) !important; border-right: 1px solid rgba(204, 122, 0, 0.15); padding-top: 20px; min-width: 340px !important; max-width: 340px !important;}
@@ -120,21 +128,20 @@ if "password_correct" not in st.session_state: st.session_state["password_correc
 def check_password():
     if not st.session_state["password_correct"]:
         st.markdown(custom_css, unsafe_allow_html=True)
-        # Giriş panelini orta boşluğa hizaladık.
-        st.markdown('<div style="height:35vh;"></div>', unsafe_allow_html=True)
-        col_a, col_b, col_c = st.columns([1,1.2,1])
-        with col_b:
-            st.markdown("""<div style="text-align:center; margin-bottom:15px;">
-                <p style="font-family:Orbitron; color:#cc7a00; font-size:16px; font-weight:900; letter-spacing:4px;">GİRİŞ YETKİSİ GEREKLİ</p>
-                <p style="font-family:JetBrains Mono; color:#888; font-size:11px;">"Özünde Disiplin, Geleceğinde Özgürlük"</p>
-            </div>""", unsafe_allow_html=True)
-            
-            pwd = st.text_input("şifre", type="password", placeholder="PIN", label_visibility="collapsed")
-            if st.button("SİSTEME GİR"):
-                if pwd == "1608":
-                    st.session_state["password_correct"] = True
-                    st.rerun()
-                else: st.error("HATALI PIN")
+        # Orta panel artık fixed olduğu için col ayarına gerek kalmadı
+        st.markdown("""<div style="text-align:center;">
+            <p style="font-family:Orbitron; color:#cc7a00; font-size:16px; font-weight:900; letter-spacing:4px; margin-bottom:10px;">GİRİŞ YETKİSİ GEREKLİ</p>
+            <p style="font-family:JetBrains Mono; color:#888; font-size:11px; margin-bottom:20px;">"Özünde Disiplin, Geleceğinde Özgürlük"</p>
+        </div>""", unsafe_allow_html=True)
+        
+        # Bu input artık CSS ile yakalanıp sabitlendi
+        pwd = st.text_input("şifre", type="password", placeholder="PIN", label_visibility="collapsed")
+        
+        if st.button("SİSTEME GİR"):
+            if pwd == "1608":
+                st.session_state["password_correct"] = True
+                st.rerun()
+            else: st.error("HATALI PIN")
         return False
     return True
 
