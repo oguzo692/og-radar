@@ -22,7 +22,7 @@ def get_live_data():
     except Exception:
         return {"kasa": "600.0", "ana_para": "600.0"}
 
-# --- GÜNCELLENMİŞ RÜTBE FONKSİYONU ---
+# --- RÜTBE FONKSİYONU ---
 def rutbe_getir(puan_str):
     try:
         p = int(float(puan_str))
@@ -81,7 +81,6 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input { font-fam
 .ticker { display: flex; white-space: nowrap; animation: ticker 30s linear infinite; }
 .ticker-item { font-size: 12px; color: #cc7a00; letter-spacing: 4px; padding-right: 50%; }
 @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
-.equal-card { min-height: 180px; display: flex; flex-direction: column; justify-content: space-between; }
 </style>
 """
 
@@ -99,7 +98,6 @@ if "password_correct" not in st.session_state:
 
 def check_password():
     if not st.session_state["password_correct"]:
-        # Giriş Ekranına Özel CSS
         st.markdown("""
         <style>
         .stApp {
@@ -107,65 +105,74 @@ def check_password():
         }
         header {visibility: hidden;}
         
-        /* Glassmorphism Kartı */
+        /* Merkeze sabitleme */
+        .main-flex {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 70vh;
+        }
+
         .login-card {
             background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-radius: 24px;
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border-radius: 35px;
             border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 60px 40px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            padding: 50px 40px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
             text-align: center;
-            margin: 10vh auto;
-            max-width: 500px;
+            width: 400px;
+            margin: auto;
         }
         
         .login-title {
             font-family: 'Orbitron', sans-serif !important;
             font-weight: 900;
-            letter-spacing: 12px;
+            letter-spacing: 8px;
             color: white;
-            font-size: 50px;
-            margin-bottom: 40px;
-            text-shadow: 0 0 30px rgba(124, 58, 237, 0.6);
+            font-size: 32px;
+            margin-bottom: 30px;
+            text-shadow: 0 0 20px rgba(124, 58, 237, 0.5);
             text-transform: uppercase;
         }
 
-        /* Input alanları */
         div[data-baseweb="input"] {
             background-color: rgba(255, 255, 255, 0.05) !important;
             border: 1px solid rgba(255, 255, 255, 0.2) !important;
-            border-radius: 12px !important;
+            border-radius: 15px !important;
         }
         
-        /* Giriş Butonu */
         .stButton > button {
-            background: linear-gradient(90deg, #7c3aed 0%, #4c1d95 100%) !important;
+            background: linear-gradient(90deg, #9d50bb 0%, #6e48aa 100%) !important;
             color: white !important;
             border: none !important;
+            width: 100% !important;
             font-family: 'Orbitron' !important;
+            border-radius: 15px !important;
+            height: 50px !important;
             font-weight: bold !important;
-            letter-spacing: 2px !important;
-            padding: 15px !important;
-            border-radius: 12px !important;
-            transition: 0.4s all !important;
+            box-shadow: 0 10px 20px rgba(110, 72, 170, 0.3) !important;
+            transition: 0.3s all;
         }
         .stButton > button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(124, 58, 237, 0.4);
+            box-shadow: 0 15px 25px rgba(110, 72, 170, 0.5) !important;
             color: white !important;
         }
         </style>
         """, unsafe_allow_html=True)
 
-        # UI Katmanı
+        # Kartı ortalamak için boşluklar ve konteyner
+        st.write("##")
+        st.write("##")
+        
         st.markdown('<div class="login-card">', unsafe_allow_html=True)
         st.markdown('<p class="login-title">OG CORE</p>', unsafe_allow_html=True)
         
-        col_a, col_b, col_c = st.columns([1,4,1])
+        col_a, col_b, col_c = st.columns([0.1, 4, 0.1])
         with col_b:
-            pwd = st.text_input("Password", type="password", placeholder="••••", label_visibility="collapsed")
+            pwd = st.text_input("Sifre", type="password", placeholder="••••", label_visibility="collapsed")
             st.write("##")
             if st.button("SİSTEME GİRİŞ YAP"):
                 if pwd == "1608":
@@ -174,7 +181,7 @@ def check_password():
                 else:
                     st.error("ERİŞİM REDDEDİLDİ")
         
-        st.markdown("<p style='color:rgba(255,255,255,0.3); font-size:12px; margin-top:30px;'>Are You New Member? <b>Sign UP</b></p>", unsafe_allow_html=True)
+        st.markdown("<p style='color:rgba(255,255,255,0.4); font-size:12px; margin-top:30px;'>Are You New Member? <b>Sign UP</b></p>", unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
         
         return False
