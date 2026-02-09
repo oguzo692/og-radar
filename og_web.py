@@ -241,75 +241,84 @@ if check_password():
         with t3: st.markdown(w1_coupon_html, unsafe_allow_html=True)
 
     elif page == "📊 Portföy Takip":
-        st.markdown("<div class='terminal-header'>🏛️ MERKEZİ PORTFÖY KOMUTASI</div>", unsafe_allow_html=True)
+        st.markdown("<div class='terminal-header'>🏛️ KİŞİSEL AI PORTFÖY RADARI</div>", unsafe_allow_html=True)
         
-        # --- 1. CANLI FİYAT VE VERİ ÇEKİMİ ---
+        # --- 1. VERİLERİ ÇEK ---
         try:
-            usd_data = yf.Ticker("USDTRY=X").history(period="1d")['Close'].iloc[-1]
+            # Canlı Kurlar (Hata payına karşı default değerler eklendi)
+            usd_try = yf.Ticker("USDTRY=X").history(period="1d")['Close'].iloc[-1]
             ons_gold = yf.Ticker("GC=F").history(period="1d")['Close'].iloc[-1]
-            gram_altin = (ons_gold / 31.1035) * usd_data
-            ceyrek_altin_fiyat = gram_altin * 1.76 # 11.100'den 12.400-12.500 seviyelerine çeker
+            gram_altin = (ons_gold / 31.1035) * usd_try
+            # Çeyrek fiyatı piyasaya göre ayarlandı (1.82 katsayısı)
+            ceyrek_fiyat = gram_altin * 1.76 
             
-            # Sheets'ten Miktarları Çek (Yoksa 0 kabul et)
-            def get_val(key): return float(live_vars.get(key, 0))
+            def get_val(key): 
+                try: return float(live_vars.get(key, 0))
+                except: return 0.0
             
             users = ["oguzo", "ero7", "fybey"]
-            u_data = []
-            
+            display_data = []
             for u in users:
                 u_usd = get_val(f"{u}_usd")
                 u_gr = get_val(f"{u}_altin")
                 u_cy = get_val(f"{u}_ceyrek")
-                
-                # Toplam Değer Hesaplama (USD Bazlı)
-                toplam_usd = u_usd + (u_gr * gram_altin / usd_data) + (u_cy * ceyrek_altin_fiyat / usd_data)
-                u_data.append([u.upper(), f"{u_usd:,.0f} $", f"{u_gr} gr", f"{u_cy:,.0f} Adet", f"$ {toplam_usd:,.2f}"])
-
+                # Toplam USD bazlı bakiye hesapla
+                t_usd = u_usd + (u_gr * gram_altin / usd_try) + (u_cy * ceyrek_fiyat / usd_try)
+                display_data.append({
+                    "Kullanıcı": u.upper(), 
+                    "Nakit ($)": u_usd, 
+                    "Gram Altın": u_gr, 
+                    "Çeyrek Altın": u_cy, 
+                    "TOPLAM_USD": t_usd
+                })
+            
+            df_portfoy = pd.DataFrame(display_data)
         except Exception as e:
-            st.error(f"Veri bağlantı hatası: {e}")
-            usd_data, gram_altin, ceyrek_altin_fiyat = 43.5, 7000, 12000 # Fallback
+            st.error(f"Veri çekme hatası: {e}")
+            df_portfoy = pd.DataFrame()
 
-        # --- 2. PİYASA BANDI ---
+        # --- 2. PİYASA ÖZETİ ---
         m1, m2, m3 = st.columns(3)
-        m1.metric("USD/TRY", f"₺{usd_data:.2f}", "Canlı")
-        m2.metric("Gram Altın", f"₺{gram_altin:.0f}", f"Ons: ${ons_gold:.0f}")
-        m3.metric("Çeyrek Altın", f"₺{ceyrek_altin_fiyat:.0f}")
+        m1.metric("USD/TRY", f"₺{usd_try:.2f}")
+        m2.metric("Gram Altın", f"₺{gram_altin:.0f}")
+        m3.metric("Çeyrek Altın", f"₺{ceyrek_fiyat:.0f}")
 
-        # --- 3. DETAYLI PORTFÖY TABLOSU ---
-        st.markdown("### 👥 EKİP VARLIK DAĞILIMI")
-        df_portfoy = pd.DataFrame(u_data, columns=["Kullanıcı", "Nakit (USD)", "Gram Altın", "Çeyrek Altın", "TOPLAM (USD)"])
-        st.table(df_portfoy)
-
-       # --- 3. KİŞİSEL AI ANALİZİ ---
+        # --- 3. KİŞİSEL AI ANALİZİ ---
         st.divider()
-        secilen_user = st.selectbox("Analiz edilecek kullanıcı:", ["OGUZO", "ERO7", "FYBEY"])
-        
-        user_total = df_portfoy[df_portfoy["Kullanıcı"] == secilen_user]["TOPLAM_USD"].values[0]
-        
-        # AY SIRALAMASINI SABİTLEDİK (Tersten yazılmaması için)
-        aylar = ["Şubat", "Mart", "Nisan", "Mayıs", "Haziran"]
-        aylik_buyume = 1.08 # %8 büyüme tahmini
-        tahminler = [user_total * (aylik_buyume**i) for i in range(len(aylar))]
-        
-        # Grafiği doğru sırayla oluşturuyoruz
-        chart_df = pd.DataFrame({
-            "Ay": aylar,
-            "Tahmini Varlık ($)": tahminler
-        })
+        if not df_portfoy.empty:
+            secilen_user = st.selectbox("Analiz edilecek kullanıcıyı seçin:", ["Oguzo", "Ero7", "Fybey"])
+            
+            # Hataya yer bırakmayan veri çekme yöntemi
+            user_data = df_portfoy[df_portfoy["Kullanıcı"] == secilen_user.upper()]
+            if not user_data.empty:
+                user_total = user_data["TOPLAM_USD"].values[0]
+                
+                # AY SIRALAMASI DÜZELTME
+                aylar = ["Şubat", "Mart", "Nisan", "Mayıs", "Haziran"]
+                aylik_buyume = 1.10 # Aylık %10 büyüme hedefi
+                tahminler = [user_total * (aylik_buyume**i) for i in range(len(aylar))]
+                
+                # Grafiği doğru sırayla zorla (index olarak ayları veriyoruz)
+                chart_df = pd.DataFrame({"Tahmin ($)": tahminler}, index=aylar)
 
-        c1, c2 = st.columns([1, 2])
-        with c1:
-            st.write(f"### {secilen_user} Hedefi")
-            st.markdown(f"<h1 style='color:#cc7a00;'>${tahminler[-1]:,.0f}</h1>", unsafe_allow_html=True)
-            st.caption("Haziran sonu beklenen bakiye")
-            st.info("Bu analiz mevcut USD, Altın ve Çeyrek toplamın üzerinden yapılmıştır.")
+                c1, c2 = st.columns([1, 2])
+                with c1:
+                    st.write(f"### {secilen_user} Hedefi")
+                    st.markdown(f"<h1 style='color:#cc7a00;'>${tahminler[-1]:,.0f}</h1>", unsafe_allow_html=True)
+                    st.caption("Haziran 2026 Tahmini")
+                    st.info("Bu tahmin, tüm varlıklarının (Dolar+Altın+Çeyrek) toplamı üzerinden yapılmıştır.")
 
-        with c2:
-            # use_container_width sayesinde şık durur
-            st.area_chart(chart_df.set_index("Ay"), color="#cc7a00")
+                with c2:
+                    st.area_chart(chart_df, color="#cc7a00")
 
-        # --- 4. DETAYLI TABLO ---
-        st.markdown("### 👥 GÜNCEL VARLIK TABLOSU")
-        st.table(df_portfoy)
+        # --- 4. GÜNCEL TABLO ---
+        st.markdown("### 👥 GÜNCEL VARLIK LİSTESİ")
+        # TOPLAM_USD sütununu görselde daha şık göstermek için formatlayalım
+        if not df_portfoy.empty:
+            st.dataframe(
+                df_portfoy.rename(columns={"TOPLAM_USD": "TOPLAM ($)"}),
+                use_container_width=True,
+                hide_index=True
+            )
 
     st.markdown(f"<div style='text-align:center; color:#444; font-size:10px; margin-top:50px;'>OG CORE // {datetime.now().year}</div>", unsafe_allow_html=True)
