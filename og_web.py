@@ -248,7 +248,7 @@ if check_password():
             usd_data = yf.Ticker("USDTRY=X").history(period="1d")['Close'].iloc[-1]
             ons_gold = yf.Ticker("GC=F").history(period="1d")['Close'].iloc[-1]
             gram_altin = (ons_gold / 31.1035) * usd_data
-            ceyrek_altin_fiyat = gram_altin * 1.63 # Piyasa makası dahil yaklaşık çeyrek
+            ceyrek_altin_fiyat = gram_altin * 1.81 # 11.100'den 12.400-12.500 seviyelerine çeker
             
             # Sheets'ten Miktarları Çek (Yoksa 0 kabul et)
             def get_val(key): return float(live_vars.get(key, 0))
