@@ -353,5 +353,12 @@ if check_password():
             <div style='font-size:16px; color:#ffae00; font-weight:bold;'>🌯 {doner_sayisi:,.0f} Adet Yarım Ekmek Döner</div>
         </div>
     """, unsafe_allow_html=True)
+    
+    # --- GLOBAL YARDIMCI FONKSİYONLAR (Buraya Koy ki Her Yerde Çalışsın) ---
+def get_val(key_name): 
+    try: 
+        return float(live_vars.get(key_name, 0))
+    except: 
+        return 0.0
 
     st.markdown(f"<div style='text-align:center; color:#444; font-size:10px; margin-top:50px;'>OG CORE // {datetime.now().year}</div>", unsafe_allow_html=True)
