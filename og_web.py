@@ -233,6 +233,6 @@ if check_password():
         with t3: st.markdown(w1_coupon_html, unsafe_allow_html=True)
 
     elif page == "📊 Portföy Takip":
-         st.markdown(f"<div class='industrial-card'><div class='terminal-header'>📈 yakında...</div><div class='terminal-row'><span>NET:</span><span style='color:#00ff41; font-size:32px; font-family:Orbitron;'>${toplam_bahis_kar:,.2f}</span></div></div>", unsafe_allow_html=True)
+         st.markdown(f"<div class='industrial-card'><div class='terminal-header'>📈 yakında...</div>
        
     st.markdown(f"<div style='text-align:center; color:#444; font-size:10px; margin-top:50px;'>OG_CORE_V9.9 // {datetime.now().year}</div>", unsafe_allow_html=True)
