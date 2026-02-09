@@ -331,7 +331,6 @@ elif page == "📊 Portföy Takip":
         # --- TAVUK DÖNER HESABI ---
     # Yarım ekmek tavuk döner fiyatını Sheets'ten çekelim veya sabit verelim
     doner_fiyati_tl = get_val("doner_fiyat") if get_val("doner_fiyat") > 0 else 70.0 
-    
     total_tl = total_val * usd_try
     doner_sayisi = total_tl / doner_fiyati_tl
 
