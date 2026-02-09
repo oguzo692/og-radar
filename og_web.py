@@ -240,7 +240,7 @@ if check_password():
         with t2: st.markdown(w2_coupon_html, unsafe_allow_html=True)
         with t3: st.markdown(w1_coupon_html, unsafe_allow_html=True)
 
-   elif page == "📊 Portföy Takip":
+    elif page == "📊 Portföy Takip":
         st.markdown("<div class='terminal-header'>📊 MERKEZİ PORTFÖY KOMUTASI</div>", unsafe_allow_html=True)
         
         # --- 1. CANLI FİYAT ÇEKİMİ ---
