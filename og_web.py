@@ -56,7 +56,7 @@ aktif_soru_2 = live_vars.get("aktif_soru2", "bitcoin cuma gece 03:00 kapanışı
 w1_kar = float(live_vars.get("w1_sonuc", -100)) 
 w2_kar = float(live_vars.get("w2_sonuc", 553))
 w3_kar = float(live_vars.get("w3_sonuc", 879)) 
-w4_kar = float(live_vars.get("w4_sonuc", 0))
+w4_kar = float(live_vars.get("w4_sonuc", -100))
 toplam_bahis_kar = w1_kar + w2_kar + w3_kar + w4_kar
 
 wr_oran = live_vars.get("win_rate", "0")
