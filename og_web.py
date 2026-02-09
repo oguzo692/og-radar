@@ -228,3 +228,10 @@ if check_password():
         t4, t1, t2, t3 = st.tabs(["🆕 W4", "⏳ W3", "✅ W2", "❌ W1"])
         with t4: st.markdown(w4_coupon_html, unsafe_allow_html=True)
         with t1: st.markdown(w3_coupon_html, unsafe_allow_html=True)
+        with t2: st.markdown(w2_coupon_html, unsafe_allow_html=True)
+        with t3: st.markdown(w1_coupon_html, unsafe_allow_html=True)
+
+    elif page == "📊 Portföy Takip":
+        st.markdown("<div class='industrial-card'><div class='terminal-header'>📊 PORTFÖY DURUMU</div><h3 style='color:#cc7a00; text-align:center;'>YAKINDA AKTİF EDİLECEK...</h3></div>", unsafe_allow_html=True)
+
+    st.markdown(f"<div style='text-align:center; color:#444; font-size:10px; margin-top:50px;'>OG_CORE_V9.9 // {datetime.now().year}</div>", unsafe_allow_html=True)
