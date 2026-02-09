@@ -221,7 +221,7 @@ if check_password():
             df_portfoy = pd.DataFrame()
 
         if not df_portfoy.empty:
-            secilen_user = st.selectbox("Kullanıcı Portföy Detayı:", ["OGUZO", "ERO7", "FYBEY"])
+            secilen_user = st.selectbox("Kullanıcı Portföy Detayı:", ["Oguzo", "Ero7", "Fybey"])
             u_row = df_portfoy[df_portfoy["Kullanıcı"] == secilen_user]
             total_val = u_row["TOPLAM_USD"].values[0]
             total_tl = total_val * usd_try
@@ -265,6 +265,45 @@ if check_password():
         p1, p2, p3 = st.columns(3)
         p1.caption(f"USD: ₺{usd_try:.2f}")
         p2.caption(f"Gram: ₺{gram_altin:.0f}")
-        p3.caption(f"Çeyrek: ₺{ceyrek_fiyat:.0f}")
+        p3.caption(f"Çeyrek: ₺{ceyrek_fiyat:.0f}") 
+
+    # --- 6. ANA UYGULAMA ---
+if check_password():
+    st.markdown(common_css, unsafe_allow_html=True)
+    st.markdown("<style>.stApp { background: #030303 !important; background-image: none !important; }</style>", unsafe_allow_html=True)
+    
+    # 1. EN ÜSTTE KAYAN YAZI (TICKER)
+    st.markdown(f'<div class="ticker-wrap"><div class="ticker"><span class="ticker-item">{duyuru_metni}</span><span class="ticker-item">{duyuru_metni}</span></div></div>', unsafe_allow_html=True)
+
+    # 2. CANLI PİYASA PANELİ (YENİ YERİ: EN ÜST)
+    try:
+        # Fiyatları çekiyoruz
+        usd_try = yf.Ticker("USDTRY=X").history(period="1d")['Close'].iloc[-1]
+        ons_gold = yf.Ticker("GC=F").history(period="1d")['Close'].iloc[-1]
+        gram_altin = (ons_gold / 31.1035) * usd_try
+        ceyrek_fiyat = gram_altin * 1.82 
+
+        # Büyük ve Görünür Metrik Kartları
+        m1, m2, m3 = st.columns(3)
+        with m1:
+            st.markdown(f"""<div class='industrial-card' style='text-align:center; border-top: 3px solid #cc7a00; padding:15px;'>
+                <div style='font-size:11px; color:#666; letter-spacing:2px;'>USD / TRY</div>
+                <div style='font-size:32px; font-weight:900; color:#cc7a00; font-family:Orbitron;'>₺{usd_try:.2f}</div>
+                <div style='font-size:10px; color:#00ff41;'>● CANLI</div>
+            </div>""", unsafe_allow_html=True)
+        with m2:
+            st.markdown(f"""<div class='industrial-card' style='text-align:center; border-top: 3px solid #cc7a00; padding:15px;'>
+                <div style='font-size:11px; color:#666; letter-spacing:2px;'>GRAM ALTIN</div>
+                <div style='font-size:32px; font-weight:900; color:#cc7a00; font-family:Orbitron;'>₺{gram_altin:.0f}</div>
+                <div style='font-size:10px; color:#666;'>ONS: ${ons_gold:.0f}</div>
+            </div>""", unsafe_allow_html=True)
+        with m3:
+            st.markdown(f"""<div class='industrial-card' style='text-align:center; border-top: 3px solid #cc7a00; padding:15px;'>
+                <div style='font-size:11px; color:#666;'>ÇEYREK ALTIN</div>
+                <div style='font-size:32px; font-weight:900; color:#cc7a00; font-family:Orbitron;'>₺{ceyrek_fiyat:.0f}</div>
+                <div style='font-size:10px; color:#666;'>PİYASA MAKASI DAHİL</div>
+            </div>""", unsafe_allow_html=True)
+    except:
+        st.write("Piyasa verileri yükleniyor...")
 
     st.markdown(f"<div style='text-align:center; color:#444; font-size:10px; margin-top:50px;'>OG CORE // {datetime.now().year}</div>", unsafe_allow_html=True)
