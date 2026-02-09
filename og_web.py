@@ -241,57 +241,59 @@ if check_password():
         with t3: st.markdown(w1_coupon_html, unsafe_allow_html=True)
 
     elif page == "📊 Portföy Takip":
-        st.markdown("<div class='terminal-header'>📊 MERKEZİ PORTFÖY KOMUTASI</div>", unsafe_allow_html=True)
+        st.markdown("<div class='terminal-header'>🏛️ MERKEZİ PORTFÖY KOMUTASI</div>", unsafe_allow_html=True)
         
-        # --- 1. CANLI FİYAT ÇEKİMİ ---
+        # --- 1. CANLI FİYAT VE VERİ ÇEKİMİ ---
         try:
-            # Dolar ve Altın (Ons -> Gram Altın Hesabı)
             usd_data = yf.Ticker("USDTRY=X").history(period="1d")['Close'].iloc[-1]
             ons_gold = yf.Ticker("GC=F").history(period="1d")['Close'].iloc[-1]
-            gram_altin = (ons_gold / 31.10) * usd_data # Yaklaşık Gram Altın TRY
-            çeyrek_altin = gram_altin * 1.75 # Yaklaşık Çeyrek
-        except:
-            usd_data, gram_altin = 31.0, 2500.0 # Hata durumunda fallback
+            gram_altin = (ons_gold / 31.1035) * usd_data
+            ceyrek_altin_fiyat = gram_altin * 1.63 # Piyasa makası dahil yaklaşık çeyrek
+            
+            # Sheets'ten Miktarları Çek (Yoksa 0 kabul et)
+            def get_val(key): return float(live_vars.get(key, 0))
+            
+            users = ["oguzo", "ero7", "fybey"]
+            u_data = []
+            
+            for u in users:
+                u_usd = get_val(f"{u}_usd")
+                u_gr = get_val(f"{u}_altin")
+                u_cy = get_val(f"{u}_ceyrek")
+                
+                # Toplam Değer Hesaplama (USD Bazlı)
+                toplam_usd = u_usd + (u_gr * gram_altin / usd_data) + (u_cy * ceyrek_altin_fiyat / usd_data)
+                u_data.append([u.upper(), f"{u_usd:,.0f} $", f"{u_gr} gr", f"{u_cy:,.0f} Adet", f"$ {toplam_usd:,.2f}"])
 
-        # --- 2. PİYASA BANDI (Hızlı Bakış) ---
+        except Exception as e:
+            st.error(f"Veri bağlantı hatası: {e}")
+            usd_data, gram_altin, ceyrek_altin_fiyat = 43.5, 7000, 12000 # Fallback
+
+        # --- 2. PİYASA BANDI ---
         m1, m2, m3 = st.columns(3)
         m1.metric("USD/TRY", f"₺{usd_data:.2f}", "Canlı")
         m2.metric("Gram Altın", f"₺{gram_altin:.0f}", f"Ons: ${ons_gold:.0f}")
-        m3.metric("Çeyrek Altın", f"₺{çeyrek_altin:.0f}")
+        m3.metric("Çeyrek Altın", f"₺{ceyrek_altin_fiyat:.0f}")
 
-        # --- 3. TOPLU PORTFÖY TABLOSU ---
-        st.markdown("### 👥 EKİP PORTFÖY DURUMU")
-        # Burada Google Sheets'ten kullanıcı bazlı verileri çektiğini varsayıyoruz
-        # Şimdilik örnek bir dataframe oluşturuyorum:
-        portfoy_df = pd.DataFrame({
-            'Kullanıcı': ['oguzo', 'ero7', 'fybey'],
-            'Varlık Değeri': [og_kasa, er_kasa, fy_kasa],
-            'Haftalık Performans': ['+4.2%', '-1.5%', '+0.8%'],
-            'Ana Varlık': ['BTC', 'ALTIN', 'USD']
-        })
-        st.table(portfoy_df)
+        # --- 3. DETAYLI PORTFÖY TABLOSU ---
+        st.markdown("### 👥 EKİP VARLIK DAĞILIMI")
+        df_portfoy = pd.DataFrame(u_data, columns=["Kullanıcı", "Nakit (USD)", "Gram Altın", "Çeyrek Altın", "TOPLAM (USD)"])
+        st.table(df_portfoy)
 
-        # --- 4. 🧠 YAPAY ZEKA ÖNGÖRÜSÜ (AI FORECAST) ---
+        # --- 4. 🧠 AI TAHMİNİ (PROJEKSİYON) ---
         st.divider()
-        st.markdown("<div class='terminal-header'>🧠 OG_CORE AI PREDICTION (3-4 AY)</div>", unsafe_allow_html=True)
+        st.markdown("<div class='terminal-header'>🧠 AI PORTFÖY ÖNGÖRÜSÜ (4 AY)</div>", unsafe_allow_html=True)
         
-        # Basit AI Tahmin Mantığı: 
-        # Mevcut kasanın son 4 haftalık büyüme hızını alıp 120 gün sonrasına projeksiyon tutar.
-        buyume_orani = 0.05 # Örn: Haftalık %5 (Bu veri Sheets'ten hesaplanmalı)
-        gelecek_tahmin = kasa * (1 + buyume_orani)**16 # 4 ay = 16 hafta
+        # Basit AI: Mevcut toplamın %10 aylık büyüme simülasyonu
+        toplam_kasa_usd = df_portfoy["TOPLAM (USD)"].str.replace('$','').str.replace(',','').astype(float).sum()
+        projection = [toplam_kasa_usd * (1.10**i) for i in range(5)]
         
         c1, c2 = st.columns([1, 2])
         with c1:
-            st.write("Sistem, geçmiş verilerini analiz ederek 4 ay sonraki kasanı şu şekilde öngörüyor:")
-            st.title(f"${gelecek_tahmin:,.0f}")
-            st.caption("AI Modeli: Linear Growth Projection v1.0")
-        
+            st.write("Haziran Sonu Tahmini:")
+            st.title(f"${projection[-1]:,.0f}")
+            st.caption("AI Modeli: Compound Growth v1.2")
         with c2:
-            # Grafiksel gösterim
-            chart_data = pd.DataFrame({
-                'Zaman': ['Bugün', '1 Ay Sonra', '2 Ay Sonra', '3 Ay Sonra', '4 Ay Sonra'],
-                'Tahmini Değer': [kasa, kasa*1.1, kasa*1.25, kasa*1.4, gelecek_tahmin]
-            })
-            st.line_chart(chart_data.set_index('Zaman'))
+            st.line_chart(pd.DataFrame({"Tahmin ($)": projection}, index=["Şub", "Mar", "Nis", "May", "Haz"]))
 
     st.markdown(f"<div style='text-align:center; color:#444; font-size:10px; margin-top:50px;'>OG CORE // {datetime.now().year}</div>", unsafe_allow_html=True)
