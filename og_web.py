@@ -44,12 +44,17 @@ og_kasa = float(live_vars.get("oguzo_kasa", kasa / 3))
 er_kasa = float(live_vars.get("ero7_kasa", kasa / 3))
 fy_kasa = float(live_vars.get("fybey_kasa", kasa / 3))
 
+# --- RÜTBE VERİLERİ ---
+og_p = live_vars.get("oguzo_puan", "0")
+er_p = live_vars.get("ero7_puan", "0")
+fy_p = live_vars.get("fybey_puan", "0")
+
 aktif_soru_1 = live_vars.get("aktif_soru", "pazartesi günü çeyrek altın kuyumcu fiyatı ")
 aktif_soru_2 = live_vars.get("aktif_soru2", "yeni soru geliyor...")
 
 # --- 💰 FORMLINE HESAPLAMA ---
 w1_kar = float(live_vars.get("w1_sonuc", -100)) 
-w2_kar = float(live_vars.get("w2_sonuc", 553))
+w2_kar = float(live_vars.get("w2_sonuc", 453))
 w3_kar = float(live_vars.get("w3_sonuc", 0)) 
 w4_kar = float(live_vars.get("w4_sonuc", 0))
 toplam_bahis_kar = w1_kar + w2_kar + w3_kar + w4_kar
