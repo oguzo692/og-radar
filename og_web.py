@@ -37,7 +37,7 @@ def rutbe_getir(puan_str):
 live_vars = get_live_data()
 kasa = float(live_vars.get("kasa", 600))
 ana_para = float(live_vars.get("ana_para", 600))
-duyuru_metni = live_vars.get("duyuru", "SİSTEM ÇEVRİMİÇİ... OG CORE V9.9")
+duyuru_metni = live_vars.get("duyuru", "SİSTEM ÇEVRİMİÇİ... OG CORE")
 
 # --- KİŞİSEL KASA VERİLERİ ---
 og_kasa = float(live_vars.get("oguzo_kasa", kasa / 3))
