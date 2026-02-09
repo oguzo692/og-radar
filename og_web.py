@@ -336,4 +336,22 @@ if check_password():
         p2.caption(f"Gram: ₺{gram_altin:.0f}")
         p3.caption(f"Çeyrek: ₺{ceyrek_fiyat:.0f}")
 
+    # --- TAVUK DÖNER HESABI ---
+    # Yarım ekmek tavuk döner fiyatını Sheets'ten çekelim veya sabit verelim
+    doner_fiyati_tl = get_val("doner_fiyat") if get_val("doner_fiyat") > 0 else 120.0 # Varsayılan 120 TL
+    
+    total_tl = total_val * usd_try
+    doner_sayisi = total_tl / doner_fiyati_tl
+
+    # Toplam Değer Kartını Güncelleyelim (Döner Bilgisiyle)
+    st.markdown(f"""
+        <div class='industrial-card' style='text-align:center; border-top: 4px solid #cc7a00; padding: 15px;'>
+            <div style='font-size:12px; color:#666; letter-spacing:2px;'>TOPLAM PORTFÖY DEĞERİ</div>
+            <div style='font-size:42px; font-weight:900; color:#cc7a00; font-family:Orbitron;'>${total_val:,.2f}</div>
+            <div style='font-size:14px; color:#444;'>≈ ₺{total_tl:,.0f}</div>
+            <hr style='border: 0; border-top: 1px dashed #333; margin: 10px 0;'>
+            <div style='font-size:16px; color:#ffae00; font-weight:bold;'>🌯 {doner_sayisi:,.0f} Adet Yarım Ekmek Döner</div>
+        </div>
+    """, unsafe_allow_html=True)
+
     st.markdown(f"<div style='text-align:center; color:#444; font-size:10px; margin-top:50px;'>OG CORE // {datetime.now().year}</div>", unsafe_allow_html=True)
