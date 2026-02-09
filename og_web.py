@@ -148,7 +148,6 @@ def check_password():
     if not st.session_state["password_correct"]:
         st.markdown(common_css, unsafe_allow_html=True)
         st.markdown(login_bg_css, unsafe_allow_html=True)
-        # YAZI BLOĞU BURADAN KALDIRILDI
         pwd = st.text_input("PIN", type="password", placeholder="* * * * *", label_visibility="collapsed")
         if pwd:
             if pwd == "1608":
@@ -229,10 +228,3 @@ if check_password():
         t4, t1, t2, t3 = st.tabs(["🆕 W4", "⏳ W3", "✅ W2", "❌ W1"])
         with t4: st.markdown(w4_coupon_html, unsafe_allow_html=True)
         with t1: st.markdown(w3_coupon_html, unsafe_allow_html=True)
-        with t2: st.markdown(w2_coupon_html, unsafe_allow_html=True)
-        with t3: st.markdown(w1_coupon_html, unsafe_allow_html=True)
-
-    elif page == "📊 Portföy Takip":
-         st.markdown(f"<div class='industrial-card'><div class='terminal-header'>📈 yakında...</div>
-       
-    st.markdown(f"<div style='text-align:center; color:#444; font-size:10px; margin-top:50px;'>OG_CORE_V9.9 // {datetime.now().year}</div>", unsafe_allow_html=True)
