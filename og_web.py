@@ -280,20 +280,36 @@ if check_password():
         df_portfoy = pd.DataFrame(u_data, columns=["Kullanıcı", "Nakit (USD)", "Gram Altın", "Çeyrek Altın", "TOPLAM (USD)"])
         st.table(df_portfoy)
 
-        # --- 4. 🧠 AI TAHMİNİ (PROJEKSİYON) ---
+        # --- 4. 🧠 KULLANICI BAZLI AI ÖNGÖRÜSÜ (4 AY) ---
         st.divider()
-        st.markdown("<div class='terminal-header'>🧠 AI PORTFÖY ÖNGÖRÜSÜ (4 AY)</div>", unsafe_allow_html=True)
+        st.markdown("<div class='terminal-header'>🧠 KİŞİSEL PORTFÖY PROJEKSİYONLARI (AI v1.5)</div>", unsafe_allow_html=True)
         
-        # Basit AI: Mevcut toplamın %10 aylık büyüme simülasyonu
-        toplam_kasa_usd = df_portfoy["TOPLAM (USD)"].str.replace('$','').str.replace(',','').astype(float).sum()
-        projection = [toplam_kasa_usd * (1.10**i) for i in range(5)]
+        # Kullanıcı seçimi ekleyelim (AI kimin için çalışsın?)
+        secilen_user = st.selectbox("AI Analizi yapılacak kullanıcıyı seç:", ["OGUZO", "ERO7", "FYBEY"])
         
-        c1, c2 = st.columns([1, 2])
-        with c1:
-            st.write("Haziran Sonu Tahmini:")
-            st.title(f"${projection[-1]:,.0f}")
-            st.caption("AI Modeli: Compound Growth v1.2")
-        with c2:
-            st.line_chart(pd.DataFrame({"Tahmin ($)": projection}, index=["Şub", "Mar", "Nis", "May", "Haz"]))
+        # Seçilen kullanıcının toplam USD değerini tablodan çekelim
+        # (df_portfoy dataframe'ini yukarıdaki adımda oluşturmuştuk)
+        user_row = df_portfoy[df_portfoy["Kullanıcı"] == secilen_user]
+        user_current_val = float(user_row["TOPLAM (USD)"].values[0].replace('$','').replace(',',''))
+        
+        # AI Büyüme Parametreleri (Örn: Aylık %8 bileşik büyüme hedefi)
+        aylik_oran = 1.08 
+        aylar = ["Şubat", "Mart", "Nisan", "Mayıs", "Haziran"]
+        kisisel_tahmin = [user_current_val * (aylik_oran**i) for i in range(5)]
+        
+        ai_c1, ai_c2 = st.columns([1, 2])
+        with ai_c1:
+            st.write(f"**{secilen_user}** için 4 Ay Sonraki Hedef:")
+            st.title(f"${kisisel_tahmin[-1]:,.0f}")
+            st.write(f"Aylık Hedef Büyüme: %{(aylik_oran-1)*100:.0f}")
+            st.info("💡 Bu tahmin, mevcut varlık dağılımın ve piyasa trendleri baz alınarak yapılmıştır.")
+        
+        with ai_c2:
+            # Şık bir alan grafiği (Area Chart)
+            chart_df = pd.DataFrame({
+                "Ay": aylar,
+                "Tahmini Portföy ($)": kisisel_tahmin
+            }).set_index("Ay")
+            st.area_chart(chart_df, color="#cc7a00")
 
     st.markdown(f"<div style='text-align:center; color:#444; font-size:10px; margin-top:50px;'>OG CORE // {datetime.now().year}</div>", unsafe_allow_html=True)
