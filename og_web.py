@@ -50,7 +50,7 @@ er_p = live_vars.get("ero7_puan", "0")
 fy_p = live_vars.get("fybey_puan", "0")
 
 aktif_soru_1 = live_vars.get("aktif_soru", "pazartesi günü çeyrek altın kuyumcu fiyatı ")
-aktif_soru_2 = live_vars.get("aktif_soru2", "bitcoin cuma gece 03:00 kapanışı")
+aktif_soru_2 = live_vars.get("aktif_soru2", "bitcoin cuma gece 03:00 kapanışı(bybit btc/usd ref alınacaktır anlık fiyat 70k-71k")
 
 # --- 💰 FORMLINE HESAPLAMA ---
 w1_kar = float(live_vars.get("w1_sonuc", -100)) 
