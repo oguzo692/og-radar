@@ -314,4 +314,43 @@ if check_password():
         p2.caption(f"Gram Altın: ₺{gram_altin:.0f}")
         p3.caption(f"Çeyrek Altın: ₺{ceyrek_fiyat:.0f}")
 
+        # --- 5. VARLIK DAĞILIM ANALİZİ (GÖRSEL) ---
+        st.divider()
+        st.markdown("<div class='terminal-header'>📊 PORTFÖY KOMPOZİSYONU</div>", unsafe_allow_html=True)
+        
+        try:
+            import plotly.graph_objects as go
+            
+            # Seçilen kullanıcının varlıklarını USD bazında oranlayalım
+            u_usd_val = u_row['USD'].values[0]
+            u_gold_val = (u_row['Gram'].values[0] * gram_altin / usd_try)
+            u_ceyrek_val = (u_row['Çeyrek'].values[0] * ceyrek_fiyat / usd_try)
+            
+            labels = ['Nakit ($)', 'Gram Altın', 'Çeyrek Altın']
+            values = [u_usd_val, u_gold_val, u_ceyrek_val]
+            
+            # Cyberpunk/Industrial Renk Paleti
+            colors = ['#cc7a00', '#ffae00', '#333333'] 
+
+            fig = go.Figure(data=[go.Pie(
+                labels=labels, 
+                values=values, 
+                hole=.4, # Donut grafik olması daha modern durur
+                marker=dict(colors=colors, line=dict(color='#000000', width=2))
+            )])
+
+            fig.update_layout(
+                showlegend=True,
+                paper_bgcolor='rgba(0,0,0,0)',
+                plot_bgcolor='rgba(0,0,0,0)',
+                font=dict(color="#d1d1d1", family="JetBrains Mono"),
+                margin=dict(t=0, b=0, l=0, r=0),
+                legend=dict(orientation="h", yanchor="bottom", y=-0.1, xanchor="center", x=0.5)
+            )
+
+            st.plotly_chart(fig, use_container_width=True)
+            
+        except Exception as e:
+            st.info("Grafik yüklenirken bir veri bekleniyor...")
+
     st.markdown(f"<div style='text-align:center; color:#444; font-size:10px; margin-top:50px;'>OG CORE // {datetime.now().year}</div>", unsafe_allow_html=True)
