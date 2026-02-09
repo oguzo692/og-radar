@@ -36,8 +36,8 @@ def rutbe_getir(puan_str):
         p = int(float(puan_str))
     except:
         p = 0
-    if p <= 3: return "Hılez"
-    elif p <= 6: return "Tecrübeli Hılez"
+    if p <= 3: return "Hılezinyo"
+    elif p <= 6: return "Tecrübeli Hılezinyo"
     elif p <= 9: return "Bu Abi Biri Mi?"
     elif p <= 11: return "Miço"
     else: return "Grand Miço"
@@ -129,25 +129,73 @@ if check_password():
     st.markdown(common_css, unsafe_allow_html=True)
     st.markdown("<style>.stApp { background: #030303 !important; background-image: none !important; }</style>", unsafe_allow_html=True)
     
-    # 1. EN ÜSTTE KAYAN YAZI (TICKER)
+    # EN ÜSTTE SADECE KAYAN YAZI KALSIN
     st.markdown(f'<div class="ticker-wrap"><div class="ticker"><span class="ticker-item">{duyuru_metni}</span><span class="ticker-item">{duyuru_metni}</span></div></div>', unsafe_allow_html=True)
 
-    # 2. CANLI PİYASA PANELİ
-    try:
-        usd_try = yf.Ticker("USDTRY=X").history(period="1d")['Close'].iloc[-1]
-        ons_gold = yf.Ticker("GC=F").history(period="1d")['Close'].iloc[-1]
-        gram_altin = (ons_gold / 31.1035) * usd_try
-        ceyrek_fiyat = gram_altin * 1.82 
+    with st.sidebar:
+        # ... sidebar kodların aynı kalsın ...
+        st.markdown("<h1 style='color:white; font-family:Orbitron; font-size:24px; letter-spacing:5px; text-align:center; margin-bottom:40px;'>OG CORE</h1>", unsafe_allow_html=True)
+        st.markdown("<div style='margin-bottom:10px; color:#666; font-size:11px; letter-spacing:2px; font-weight:800;'>SİSTEM MODÜLLERİ</div>", unsafe_allow_html=True)
+        page = st.radio("Menu", ["⚡ ULTRA ATAK", "⚽ FORMLINE", "🎲 CHALLANGE", "📊 Portföy Takip"], label_visibility="collapsed")
+        # ... geri kalan sidebar kodların ...
 
-        m1, m2, m3 = st.columns(3)
-        with m1:
-            st.markdown(f"<div class='industrial-card' style='text-align:center; border-top: 3px solid #cc7a00; padding:15px;'><div style='font-size:11px; color:#666; letter-spacing:2px;'>USD / TRY</div><div style='font-size:32px; font-weight:900; color:#cc7a00; font-family:Orbitron;'>₺{usd_try:.2f}</div><div style='font-size:10px; color:#00ff41;'>● CANLI</div></div>", unsafe_allow_html=True)
-        with m2:
-            st.markdown(f"<div class='industrial-card' style='text-align:center; border-top: 3px solid #cc7a00; padding:15px;'><div style='font-size:11px; color:#666;'>GRAM ALTIN</div><div style='font-size:32px; font-weight:900; color:#cc7a00; font-family:Orbitron;'>₺{gram_altin:.0f}</div><div style='font-size:10px; color:#666;'>ONS: ${ons_gold:.0f}</div></div>", unsafe_allow_html=True)
-        with m3:
-            st.markdown(f"<div class='industrial-card' style='text-align:center; border-top: 3px solid #cc7a00; padding:15px;'><div style='font-size:11px; color:#666;'>ÇEYREK ALTIN</div><div style='font-size:32px; font-weight:900; color:#cc7a00; font-family:Orbitron;'>₺{ceyrek_fiyat:.0f}</div><div style='font-size:10px; color:#666;'>MAKAS DAHİL</div></div>", unsafe_allow_html=True)
-    except:
-        st.write("Piyasa verileri yükleniyor...")
+    # --- SAYFA İÇERİKLERİ ---
+    if page == "⚡ ULTRA ATAK":
+        # ... mevcut Ultra Atak kodun ...
+        pass
+
+    elif page == "🎲 CHALLANGE":
+        # ... mevcut Challenge kodun ...
+        pass
+
+    elif page == "⚽ FORMLINE":
+        # ... mevcut Formline kodun ...
+        pass
+
+    elif page == "📊 Portföy Takip":
+        # CANLI PİYASA PANELİ ARTIK SADECE BURADA
+        try:
+            usd_try = yf.Ticker("USDTRY=X").history(period="1d")['Close'].iloc[-1]
+            ons_gold = yf.Ticker("GC=F").history(period="1d")['Close'].iloc[-1]
+            gram_altin = (ons_gold / 31.1035) * usd_try
+            ceyrek_fiyat = gram_altin * 1.82 
+
+            m1, m2, m3 = st.columns(3)
+            with m1:
+                st.markdown(f"<div class='industrial-card' style='text-align:center; border-top: 3px solid #cc7a00; padding:15px;'><div style='font-size:11px; color:#666; letter-spacing:2px;'>USD / TRY</div><div style='font-size:32px; font-weight:900; color:#cc7a00; font-family:Orbitron;'>₺{usd_try:.2f}</div><div style='font-size:10px; color:#00ff41;'>● CANLI</div></div>", unsafe_allow_html=True)
+            with m2:
+                st.markdown(f"<div class='industrial-card' style='text-align:center; border-top: 3px solid #cc7a00; padding:15px;'><div style='font-size:11px; color:#666;'>GRAM ALTIN</div><div style='font-size:32px; font-weight:900; color:#cc7a00; font-family:Orbitron;'>₺{gram_altin:.0f}</div><div style='font-size:10px; color:#666;'>ONS: ${ons_gold:.0f}</div></div>", unsafe_allow_html=True)
+            with m3:
+                st.markdown(f"<div class='industrial-card' style='text-align:center; border-top: 3px solid #cc7a00; padding:15px;'><div style='font-size:11px; color:#666;'>ÇEYREK ALTIN</div><div style='font-size:32px; font-weight:900; color:#cc7a00; font-family:Orbitron;'>₺{ceyrek_fiyat:.0f}</div><div style='font-size:10px; color:#666;'>MAKAS DAHİL</div></div>", unsafe_allow_html=True)
+            
+            # Portföy Hesaplamaları Başlasın
+            users = ["oguzo", "ero7", "fybey"]
+            display_data = []
+            for u in users:
+                u_usd = get_val(f"{u}_usd")
+                u_gr = get_val(f"{u}_altin")
+                u_cy = get_val(f"{u}_ceyrek")
+                t_usd = u_usd + (u_gr * gram_altin / usd_try) + (u_cy * ceyrek_fiyat / usd_try)
+                display_data.append({"Kullanıcı": u.upper(), "USD": u_usd, "Gram": u_gr, "Çeyrek": u_cy, "TOPLAM_USD": t_usd})
+            df_portfoy = pd.DataFrame(display_data)
+
+            if not df_portfoy.empty:
+                secilen_user = st.selectbox("Kullanıcı Portföy Detayı:", ["OGUZO", "ERO7", "FYBEY"])
+                u_row = df_portfoy[df_portfoy["Kullanıcı"] == secilen_user]
+                total_val = u_row["TOPLAM_USD"].values[0]
+                total_tl = total_val * usd_try
+                
+                doner_fiyati = get_val("doner_fiyat") if get_val("doner_fiyat") > 0 else 150.0
+                doner_sayisi = total_tl / doner_fiyati
+
+                # Ana Kart (Miktarlar)
+                st.markdown(f"""<div class='industrial-card' style='text-align:center; border-top: 4px solid #cc7a00; padding: 20px;'><div style='font-size:12px; color:#666; letter-spacing:2px;'>TOPLAM PORTFÖY DEĞERİ</div><div style='font-size:45px; font-weight:900; color:#cc7a00; font-family:Orbitron; margin: 10px 0;'>${total_val:,.2f}</div><div style='font-size:16px; color:#666;'>≈ ₺{total_tl:,.0f}</div><div style='font-size:18px; color:#ffae00; font-weight:bold; margin-top:15px; border-top: 1px dashed #333; padding-top:10px;'>🌯 {doner_sayisi:,.0f} Adet Yarım Ekmek Döner</div></div>""", unsafe_allow_html=True)
+                
+                # Varlık ve Grafik kısımları aynen devam eder...
+                v1, v2, v3 = st.columns(3)
+                # ...
+        except:
+            st.write("Veriler yükleniyor...")
 
     # 3. SIDEBAR
     with st.sidebar:
