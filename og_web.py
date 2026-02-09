@@ -280,36 +280,36 @@ if check_password():
         df_portfoy = pd.DataFrame(u_data, columns=["Kullanıcı", "Nakit (USD)", "Gram Altın", "Çeyrek Altın", "TOPLAM (USD)"])
         st.table(df_portfoy)
 
-        # --- 4. 🧠 KULLANICI BAZLI AI ÖNGÖRÜSÜ (4 AY) ---
+       # --- 3. KİŞİSEL AI ANALİZİ ---
         st.divider()
-        st.markdown("<div class='terminal-header'>🧠 KİŞİSEL PORTFÖY PROJEKSİYONLARI (AI v1.5)</div>", unsafe_allow_html=True)
+        secilen_user = st.selectbox("Analiz edilecek kullanıcı:", ["OGUZO", "ERO7", "FYBEY"])
         
-        # Kullanıcı seçimi ekleyelim (AI kimin için çalışsın?)
-        secilen_user = st.selectbox("AI Analizi yapılacak kullanıcıyı seç:", ["OGUZO", "ERO7", "FYBEY"])
+        user_total = df_portfoy[df_portfoy["Kullanıcı"] == secilen_user]["TOPLAM_USD"].values[0]
         
-        # Seçilen kullanıcının toplam USD değerini tablodan çekelim
-        # (df_portfoy dataframe'ini yukarıdaki adımda oluşturmuştuk)
-        user_row = df_portfoy[df_portfoy["Kullanıcı"] == secilen_user]
-        user_current_val = float(user_row["TOPLAM (USD)"].values[0].replace('$','').replace(',',''))
-        
-        # AI Büyüme Parametreleri (Örn: Aylık %8 bileşik büyüme hedefi)
-        aylik_oran = 1.08 
+        # AY SIRALAMASINI SABİTLEDİK (Tersten yazılmaması için)
         aylar = ["Şubat", "Mart", "Nisan", "Mayıs", "Haziran"]
-        kisisel_tahmin = [user_current_val * (aylik_oran**i) for i in range(5)]
+        aylik_buyume = 1.08 # %8 büyüme tahmini
+        tahminler = [user_total * (aylik_buyume**i) for i in range(len(aylar))]
         
-        ai_c1, ai_c2 = st.columns([1, 2])
-        with ai_c1:
-            st.write(f"**{secilen_user}** için 4 Ay Sonraki Hedef:")
-            st.title(f"${kisisel_tahmin[-1]:,.0f}")
-            st.write(f"Aylık Hedef Büyüme: %{(aylik_oran-1)*100:.0f}")
-            st.info("💡 Bu tahmin, mevcut varlık dağılımın ve piyasa trendleri baz alınarak yapılmıştır.")
-        
-        with ai_c2:
-            # Şık bir alan grafiği (Area Chart)
-            chart_df = pd.DataFrame({
-                "Ay": aylar,
-                "Tahmini Portföy ($)": kisisel_tahmin
-            }).set_index("Ay")
-            st.area_chart(chart_df, color="#cc7a00")
+        # Grafiği doğru sırayla oluşturuyoruz
+        chart_df = pd.DataFrame({
+            "Ay": aylar,
+            "Tahmini Varlık ($)": tahminler
+        })
+
+        c1, c2 = st.columns([1, 2])
+        with c1:
+            st.write(f"### {secilen_user} Hedefi")
+            st.markdown(f"<h1 style='color:#cc7a00;'>${tahminler[-1]:,.0f}</h1>", unsafe_allow_html=True)
+            st.caption("Haziran sonu beklenen bakiye")
+            st.info("Bu analiz mevcut USD, Altın ve Çeyrek toplamın üzerinden yapılmıştır.")
+
+        with c2:
+            # use_container_width sayesinde şık durur
+            st.area_chart(chart_df.set_index("Ay"), color="#cc7a00")
+
+        # --- 4. DETAYLI TABLO ---
+        st.markdown("### 👥 GÜNCEL VARLIK TABLOSU")
+        st.table(df_portfoy)
 
     st.markdown(f"<div style='text-align:center; color:#444; font-size:10px; margin-top:50px;'>OG CORE // {datetime.now().year}</div>", unsafe_allow_html=True)
