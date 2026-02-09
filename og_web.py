@@ -37,6 +37,7 @@ def rutbe_getir(puan_str):
 live_vars = get_live_data()
 kasa = float(live_vars.get("kasa", 600))
 ana_para = float(live_vars.get("ana_para", 600))
+duyuru_metni = live_vars.get("duyuru", "SİSTEM ÇEVRİMİÇİ... OG CORE V9.9")
 
 # --- KİŞİSEL KASA VERİLERİ ---
 og_kasa = float(live_vars.get("oguzo_kasa", kasa / 3))
@@ -49,7 +50,7 @@ er_p = live_vars.get("ero7_puan", "0")
 fy_p = live_vars.get("fybey_puan", "0")
 
 aktif_soru_1 = live_vars.get("aktif_soru", "pazartesi günü çeyrek altın kuyumcu fiyatı ")
-aktif_soru_2 = live_vars.get("aktif_soru2", "yeni soru geliyor...")
+aktif_soru_2 = live_vars.get("aktif_soru2", "bitcoin cuma gece 03:00 kapanışı")
 
 # --- 💰 FORMLINE HESAPLAMA ---
 w1_kar = float(live_vars.get("w1_sonuc", -100)) 
@@ -168,8 +169,8 @@ if check_password():
         page = st.radio("SİSTEM MODÜLLERİ", ["⚡ ULTRA ATAK", "⚽ FORMLINE", "🎲 CHALLANGE"])
         with st.expander("📂 ADMİN"):
             admin_pwd = st.text_input("PANEL ŞİFRESİ", type="password")
-            if admin_pwd == "fybey": st.link_button("VERİ TABANI", "https://docs.google.com/spreadsheets/d/15izevdpRjs8Om5BAHKVWmdL3FxEHml35DGECfhQUG_s/edit")
-        if st.button("ÇIKIŞ"): 
+            if admin_pwd == "0644": st.link_button("Veriler", "https://docs.google.com/spreadsheets/d/15izevdpRjs8Om5BAHKVWmdL3FxEHml35DGECfhQUG_s/edit")
+        if st.button("Çıkış"): 
             st.session_state["password_correct"] = False
             st.rerun()
 
