@@ -241,16 +241,14 @@ if check_password():
         with t3: st.markdown(w1_coupon_html, unsafe_allow_html=True)
 
     elif page == "📊 Portföy Takip":
-        st.markdown("<div class='terminal-header'>🏛️ KİŞİSEL AI PORTFÖY RADARI</div>", unsafe_allow_html=True)
+        st.markdown("<div class='terminal-header'>🏛️ PORTFÖY KOMUTA MERKEZİ</div>", unsafe_allow_html=True)
         
         # --- 1. VERİLERİ ÇEK ---
         try:
-            # Canlı Kurlar (Hata payına karşı default değerler eklendi)
             usd_try = yf.Ticker("USDTRY=X").history(period="1d")['Close'].iloc[-1]
             ons_gold = yf.Ticker("GC=F").history(period="1d")['Close'].iloc[-1]
             gram_altin = (ons_gold / 31.1035) * usd_try
-            # Çeyrek fiyatı piyasaya göre ayarlandı (1.82 katsayısı)
-            ceyrek_fiyat = gram_altin * 1.76 
+            ceyrek_fiyat = gram_altin * 1.82 
             
             def get_val(key): 
                 try: return float(live_vars.get(key, 0))
@@ -262,63 +260,58 @@ if check_password():
                 u_usd = get_val(f"{u}_usd")
                 u_gr = get_val(f"{u}_altin")
                 u_cy = get_val(f"{u}_ceyrek")
-                # Toplam USD bazlı bakiye hesapla
                 t_usd = u_usd + (u_gr * gram_altin / usd_try) + (u_cy * ceyrek_fiyat / usd_try)
                 display_data.append({
-                    "Kullanıcı": u.upper(), 
-                    "Nakit ($)": u_usd, 
-                    "Gram Altın": u_gr, 
-                    "Çeyrek Altın": u_cy, 
-                    "TOPLAM_USD": t_usd
+                    "Kullanıcı": u.upper(), "USD": u_usd, "Gram": u_gr, "Çeyrek": u_cy, "TOPLAM_USD": t_usd
                 })
-            
             df_portfoy = pd.DataFrame(display_data)
-        except Exception as e:
-            st.error(f"Veri çekme hatası: {e}")
+        except:
+            st.error("Bağlantı hatası!")
             df_portfoy = pd.DataFrame()
 
-        # --- 2. PİYASA ÖZETİ ---
-        m1, m2, m3 = st.columns(3)
-        m1.metric("USD/TRY", f"₺{usd_try:.2f}")
-        m2.metric("Gram Altın", f"₺{gram_altin:.0f}")
-        m3.metric("Çeyrek Altın", f"₺{ceyrek_fiyat:.0f}")
-
-        # --- 3. KİŞİSEL AI ANALİZİ ---
-        st.divider()
+        # --- 2. KULLANICI SEÇİMİ VE DEV MİKTARLAR (ÖN PLAN) ---
         if not df_portfoy.empty:
-            secilen_user = st.selectbox("Analiz edilecek kullanıcıyı seçin:", ["Oguzo", "Ero7", "Fybey"])
+            secilen_user = st.selectbox("Kullanıcı Portföy Detayı:", ["OGUZO", "ERO7", "FYBEY"])
+            u_row = df_portfoy[df_portfoy["Kullanıcı"] == secilen_user]
             
-            # Hataya yer bırakmayan veri çekme yöntemi
-            user_data = df_portfoy[df_portfoy["Kullanıcı"] == secilen_user.upper()]
-            if not user_data.empty:
-                user_total = user_data["TOPLAM_USD"].values[0]
-                
-                # AY SIRALAMASI DÜZELTME
-                aylar = ["Şubat", "Mart", "Nisan", "Mayıs", "Haziran"]
-                aylik_buyume = 1.10 # Aylık %10 büyüme hedefi
-                tahminler = [user_total * (aylik_buyume**i) for i in range(len(aylar))]
-                
-                # Grafiği doğru sırayla zorla (index olarak ayları veriyoruz)
-                chart_df = pd.DataFrame({"Tahmin ($)": tahminler}, index=aylar)
+            # Dev Kartlar
+            total_val = u_row["TOPLAM_USD"].values[0]
+            st.markdown(f"""
+                <div class='industrial-card' style='text-align:center; border-top: 4px solid #cc7a00;'>
+                    <div style='font-size:14px; color:#666; letter-spacing:2px;'>TOPLAM PORTFÖY DEĞERİ</div>
+                    <div style='font-size:55px; font-weight:900; color:#cc7a00; font-family:Orbitron;'>${total_val:,.2f}</div>
+                    <div style='font-size:18px; color:#444;'>≈ ₺{(total_val * usd_try):,.0f}</div>
+                </div>
+            """, unsafe_allow_html=True)
 
-                c1, c2 = st.columns([1, 2])
-                with c1:
-                    st.write(f"### {secilen_user} Hedefi")
-                    st.markdown(f"<h1 style='color:#cc7a00;'>${tahminler[-1]:,.0f}</h1>", unsafe_allow_html=True)
-                    st.caption("Haziran 2026 Tahmini")
-                    st.info("Bu tahmin, tüm varlıklarının (Dolar+Altın+Çeyrek) toplamı üzerinden yapılmıştır.")
+            # Varlık Dağılımı Kartları
+            v1, v2, v3 = st.columns(3)
+            with v1: st.markdown(f"<div class='industrial-card' style='text-align:center;'><div style='font-size:11px; color:#666;'>NAKİT</div><div class='highlight'>${u_row['USD'].values[0]:,.0f}</div></div>", unsafe_allow_html=True)
+            with v2: st.markdown(f"<div class='industrial-card' style='text-align:center;'><div style='font-size:11px; color:#666;'>GRAM ALTIN</div><div class='highlight'>{u_row['Gram'].values[0]} gr</div></div>", unsafe_allow_html=True)
+            with v3: st.markdown(f"<div class='industrial-card' style='text-align:center;'><div style='font-size:11px; color:#666;'>ÇEYREK ADET</div><div class='highlight'>{u_row['Çeyrek'].values[0]:,.0f}</div></div>", unsafe_allow_html=True)
 
-                with c2:
-                    st.area_chart(chart_df, color="#cc7a00")
+        # --- 3. 🧠 AI ÖNGÖRÜSÜ (ŞIK ALAN GRAFİĞİ) ---
+        st.divider()
+        st.markdown("<div class='terminal-header'>🧠 AI PROJEKSİYONU (HAZİRAN 2026)</div>", unsafe_allow_html=True)
+        
+        aylar = ["Şubat", "Mart", "Nisan", "Mayıs", "Haziran"]
+        aylik_buyume = 1.10 # %10 hedef
+        tahminler = [total_val * (aylik_buyume**i) for i in range(len(aylar))]
+        chart_df = pd.DataFrame({"Varlık ($)": tahminler}, index=aylar)
 
-        # --- 4. GÜNCEL TABLO ---
-        st.markdown("### 👥 GÜNCEL VARLIK LİSTESİ")
-        # TOPLAM_USD sütununu görselde daha şık göstermek için formatlayalım
-        if not df_portfoy.empty:
-            st.dataframe(
-                df_portfoy.rename(columns={"TOPLAM_USD": "TOPLAM ($)"}),
-                use_container_width=True,
-                hide_index=True
-            )
+        c1, c2 = st.columns([1, 2])
+        with c1:
+            st.write(f"### {secilen_user} Hedef")
+            st.markdown(f"<h1 style='color:#00ff41;'>${tahminler[-1]:,.0f}</h1>", unsafe_allow_html=True)
+            st.caption("Mevcut hızla 4 ay sonra")
+        with c2:
+            st.area_chart(chart_df, color="#cc7a00")
+
+        # --- 4. PİYASA BİLGİ BANDI (EN ALTTA) ---
+        st.divider()
+        p1, p2, p3 = st.columns(3)
+        p1.caption(f"USD/TRY: ₺{usd_try:.2f}")
+        p2.caption(f"Gram Altın: ₺{gram_altin:.0f}")
+        p3.caption(f"Çeyrek Altın: ₺{ceyrek_fiyat:.0f}")
 
     st.markdown(f"<div style='text-align:center; color:#444; font-size:10px; margin-top:50px;'>OG CORE // {datetime.now().year}</div>", unsafe_allow_html=True)
