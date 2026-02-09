@@ -1,4 +1,4 @@
-import streamlit as st
+ import streamlit as st
 import yfinance as yf
 from datetime import datetime
 import pandas as pd
@@ -49,7 +49,7 @@ og_p = live_vars.get("oguzo_puan", "0")
 er_p = live_vars.get("ero7_puan", "0")
 fy_p = live_vars.get("fybey_puan", "0")
 
-aktif_soru_1 = live_vars.get("aktif_soru", "pazartesi günü çeyrek altın kuyumcu fiyatı ")
+aktif_soru_1 = live_vars.get("aktif_soru", "yeni soru geliyor...")
 aktif_soru_2 = live_vars.get("aktif_soru2", "bitcoin cuma gece 03:00 kapanışı(bybit btc/usd ref alınacaktır anlık fiyat 70k-71k")
 
 # --- 💰 FORMLINE HESAPLAMA ---
