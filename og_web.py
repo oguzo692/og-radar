@@ -184,7 +184,7 @@ if check_password():
         st.divider()
         
         net_kar = kasa - ana_para
-        current_pct = max(0, min(100, ((kasa - 600) / (6500 - 600)) * 100))
+        current_pct = max(0, min(100, ((kasa - 600) / (1200 - 600)) * 100))
         st.markdown(f"<div class='industrial-card'><div class='terminal-header'>HEDEF YOLCULUĞU ($1.200)</div><div style='background:#111; height:8px; border-radius:10px;'><div style='background:linear-gradient(90deg, #cc7a00, #ffae00); width:{current_pct}%; height:100%; border-radius:10px;'></div></div><div style='text-align:right; font-size:10px; color:#555; margin-top:5px;'>%{current_pct:.1f}</div></div>", unsafe_allow_html=True)
         
         col1, col2, col3 = st.columns(3)
@@ -202,7 +202,7 @@ if check_password():
         st.markdown(f"<div class='industrial-card'><div class='terminal-header'>AKTİVİTE LOGLARI</div><p style='font-family:JetBrains Mono; color:#888;'>{son_islemler_raw}</p></div>", unsafe_allow_html=True)
 
     elif page == "🎲 CHALLANGE":
-        st.markdown("<div class='terminal-header'>🏆 GÜNCEL RÜTBE SIRALAMASI</div>", unsafe_allow_html=True)
+        st.markdown("<div class='terminal-header'>🏆 RÜTBE SIRALAMASI</div>", unsafe_allow_html=True)
         s1, s2, s3 = st.columns(3)
         with s1: st.markdown(f"<div class='industrial-card' style='padding:15px; text-align:center; border-top: 2px solid #cc7a00;'><div style='font-size:11px; color:#666;'>oguzo</div><div class='highlight'>{og_p} P</div><div style='font-size:12px;'>{rutbe_getir(og_p)}</div></div>", unsafe_allow_html=True)
         with s2: st.markdown(f"<div class='industrial-card' style='padding:15px; text-align:center; border-top: 2px solid #cc7a00;'><div style='font-size:11px; color:#666;'>ero7</div><div class='highlight'>{er_p} P</div><div style='font-size:12px;'>{rutbe_getir(er_p)}</div></div>", unsafe_allow_html=True)
