@@ -49,13 +49,13 @@ og_p = live_vars.get("oguzo_puan", "0")
 er_p = live_vars.get("ero7_puan", "0")
 fy_p = live_vars.get("fybey_puan", "0")
 
-aktif_soru_1 = live_vars.get("aktif_soru", "fenerbahçe-gençlerbirliği fenerbahçe gol sayısı ")
+aktif_soru_1 = live_vars.get("aktif_soru", "yeni soru geliyor... ")
 aktif_soru_2 = live_vars.get("aktif_soru2", "bitcoin cuma gece 03:00 kapanışı(bybit btc/usd ref alınacaktır anlık fiyat 70k-71k")
 
 # --- 💰 FORMLINE HESAPLAMA ---
 w1_kar = float(live_vars.get("w1_sonuc", -100)) 
 w2_kar = float(live_vars.get("w2_sonuc", 553))
-w3_kar = float(live_vars.get("w3_sonuc", 0)) 
+w3_kar = float(live_vars.get("w3_sonuc", 879)) 
 w4_kar = float(live_vars.get("w4_sonuc", 0))
 toplam_bahis_kar = w1_kar + w2_kar + w3_kar + w4_kar
 
@@ -132,7 +132,7 @@ w4_matches = """
 <div class='terminal-row'><span>Toplam Oran: 11.00</span><span>Tutar: 100 USD</span></div>
 """
 
-w3_matches = """<div class='terminal-row'><span>Wolfsburg - Bvb</span><span class='highlight'>bvb x2 & 1.5 üst ✅</span></div><div class='terminal-row'><span>Newcastle - Brentford</span><span class='highlight'>newcastle 1.5 üst ✅</span></div><div class='terminal-row'><span>Rizespor - GS</span><span class='highlight'>gala w & 1.5 üst ✅</span></div><div class='terminal-row'><span>Liverpool - Man City</span><span class='highlight'>lıve gol atar ✅</span></div><div class='terminal-row'><span>Fenerbahçe - Gençlerbirliği</span><span class='highlight'>fenerbahçe w & 2.5 üst</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 8.79</span><span>Bet: 100 USD</span></div>"""
+w3_matches = """<div class='terminal-row'><span>Wolfsburg - Bvb</span><span class='highlight'>bvb x2 & 1.5 üst ✅</span></div><div class='terminal-row'><span>Newcastle - Brentford</span><span class='highlight'>newcastle 1.5 üst ✅</span></div><div class='terminal-row'><span>Rizespor - GS</span><span class='highlight'>gala w & 1.5 üst ✅</span></div><div class='terminal-row'><span>Liverpool - Man City</span><span class='highlight'>lıve gol atar ✅</span></div><div class='terminal-row'><span>Fenerbahçe - Gençlerbirliği</span><span class='highlight'>fenerbahçe w & 2.5 üst ✅</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 8.79</span><span>Bet: 100 USD</span></div>"""
 w2_matches = """<div class='terminal-row'><span>GS - Kayserispor</span><span style='color:#00ff41;'>İY +0.5 & W & 2+ ✅</span></div><div class='terminal-row'><span>Liverpool - Newcastle</span><span style='color:#00ff41;'>+2 & Liverpool 1X ✅</span></div><div class='terminal-row'><span>BVB - Heidenheim</span><span style='color:#00ff41;'>İY +0.5 & W & 2+ ✅</span></div><div class='terminal-row'><span>Kocaelispor - FB</span><span style='color:#00ff41;'>FB W & 2+ ✅</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 5.53</span><span>Bet: 100 USD</span></div>"""
 w1_matches = """<div class='terminal-row'><span>Karagümrük - GS</span><span style='color:#ff4b4b;'>GS W & +2 ✅</span></div><div class='terminal-row'><span>Bournemouth - Liverpool</span><span style='color:#00ff41;'>KG VAR ✅</span></div><div class='terminal-row'><span>Union Berlin - BVB</span><span style='color:#00ff41;'>BVB İY 0.5 Üst ✅</span></div><div class='terminal-row'><span>Newcastle - Aston Villa</span><span style='color:#ff4b4b;'>New +2 ❌</span></div><div class='terminal-row'><span>FB - Göztepe</span><span style='color:#ff4b4b;'>FB W ❌</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 7.09</span><span>Bet: 100 USD</span></div>"""
 
