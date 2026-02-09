@@ -269,88 +269,71 @@ if check_password():
             st.error("Bağlantı hatası!")
             df_portfoy = pd.DataFrame()
 
-        # --- 2. KULLANICI SEÇİMİ VE DEV MİKTARLAR (ÖN PLAN) ---
+        # --- 2. KULLANICI SEÇİMİ VE DEV MİKTARLAR ---
         if not df_portfoy.empty:
             secilen_user = st.selectbox("Kullanıcı Portföy Detayı:", ["OGUZO", "ERO7", "FYBEY"])
             u_row = df_portfoy[df_portfoy["Kullanıcı"] == secilen_user]
-            
-            # Dev Kartlar
             total_val = u_row["TOPLAM_USD"].values[0]
+
+            # Toplam Değer Kartı (Biraz daha derli toplu)
             st.markdown(f"""
-                <div class='industrial-card' style='text-align:center; border-top: 4px solid #cc7a00;'>
-                    <div style='font-size:14px; color:#666; letter-spacing:2px;'>TOPLAM PORTFÖY DEĞERİ</div>
-                    <div style='font-size:55px; font-weight:900; color:#cc7a00; font-family:Orbitron;'>${total_val:,.2f}</div>
-                    <div style='font-size:18px; color:#444;'>≈ ₺{(total_val * usd_try):,.0f}</div>
+                <div class='industrial-card' style='text-align:center; border-top: 4px solid #cc7a00; padding: 15px;'>
+                    <div style='font-size:12px; color:#666; letter-spacing:2px;'>TOPLAM PORTFÖY DEĞERİ</div>
+                    <div style='font-size:42px; font-weight:900; color:#cc7a00; font-family:Orbitron;'>${total_val:,.2f}</div>
+                    <div style='font-size:14px; color:#444;'>≈ ₺{(total_val * usd_try):,.0f}</div>
                 </div>
             """, unsafe_allow_html=True)
 
             # Varlık Dağılımı Kartları
             v1, v2, v3 = st.columns(3)
-            with v1: st.markdown(f"<div class='industrial-card' style='text-align:center;'><div style='font-size:11px; color:#666;'>NAKİT</div><div class='highlight'>${u_row['USD'].values[0]:,.0f}</div></div>", unsafe_allow_html=True)
-            with v2: st.markdown(f"<div class='industrial-card' style='text-align:center;'><div style='font-size:11px; color:#666;'>GRAM ALTIN</div><div class='highlight'>{u_row['Gram'].values[0]} gr</div></div>", unsafe_allow_html=True)
-            with v3: st.markdown(f"<div class='industrial-card' style='text-align:center;'><div style='font-size:11px; color:#666;'>ÇEYREK ADET</div><div class='highlight'>{u_row['Çeyrek'].values[0]:,.0f}</div></div>", unsafe_allow_html=True)
+            with v1: st.markdown(f"<div class='industrial-card' style='text-align:center; padding:10px;'><div style='font-size:10px; color:#666;'>NAKİT</div><div class='highlight' style='font-size:16px;'>${u_row['USD'].values[0]:,.0f}</div></div>", unsafe_allow_html=True)
+            with v2: st.markdown(f"<div class='industrial-card' style='text-align:center; padding:10px;'><div style='font-size:10px; color:#666;'>GRAM ALTIN</div><div class='highlight' style='font-size:16px;'>{u_row['Gram'].values[0]} gr</div></div>", unsafe_allow_html=True)
+            with v3: st.markdown(f"<div class='industrial-card' style='text-align:center; padding:10px;'><div style='font-size:10px; color:#666;'>ÇEYREK ADET</div><div class='highlight' style='font-size:16px;'>{u_row['Çeyrek'].values[0]:,.0f}</div></div>", unsafe_allow_html=True)
 
-        # --- 3. 🧠 AI ÖNGÖRÜSÜ (ŞIK ALAN GRAFİĞİ) ---
+        # --- 3. ANALİZ PANELİ (YAN YANA KÜÇÜK GRAFİKLER) ---
         st.divider()
-        st.markdown("<div class='terminal-header'>🧠 AI PROJEKSİYONU (HAZİRAN 2026)</div>", unsafe_allow_html=True)
-        
-        aylar = ["Şubat", "Mart", "Nisan", "Mayıs", "Haziran"]
-        aylik_buyume = 1.10 # %10 hedef
-        tahminler = [total_val * (aylik_buyume**i) for i in range(len(aylar))]
-        chart_df = pd.DataFrame({"Varlık ($)": tahminler}, index=aylar)
+        col_left, col_right = st.columns(2)
 
-        c1, c2 = st.columns([1, 2])
-        with c1:
-            st.write(f"### {secilen_user} Hedef")
-            st.markdown(f"<h1 style='color:#00ff41;'>${tahminler[-1]:,.0f}</h1>", unsafe_allow_html=True)
-            st.caption("Mevcut hızla 4 ay sonra")
-        with c2:
-            st.area_chart(chart_df, color="#cc7a00")
+        with col_left:
+            st.markdown("<div class='terminal-header' style='font-size:10px;'>🧠 AI PROJEKSİYONU</div>", unsafe_allow_html=True)
+            aylar = ["Şubat", "Mart", "Nisan", "Mayıs", "Haziran"]
+            aylik_buyume = 1.10
+            tahminler = [total_val * (aylik_buyume**i) for i in range(len(aylar))]
+            chart_df = pd.DataFrame({"Varlık ($)": tahminler}, index=aylar)
+            # Yükseklik ayarı ile küçültüldü
+            st.area_chart(chart_df, color="#cc7a00", height=200)
+            st.caption(f"Haziran Hedefi: ${tahminler[-1]:,.0f}")
 
-        # --- 4. PİYASA BİLGİ BANDI (EN ALTTA) ---
+        with col_right:
+            st.markdown("<div class='terminal-header' style='font-size:10px;'>📊 KOMPOZİSYON</div>", unsafe_allow_html=True)
+            try:
+                import plotly.graph_objects as go
+                u_usd_val = u_row['USD'].values[0]
+                u_gold_val = (u_row['Gram'].values[0] * gram_altin / usd_try)
+                u_ceyrek_val = (u_row['Çeyrek'].values[0] * ceyrek_fiyat / usd_try)
+                
+                fig = go.Figure(data=[go.Pie(
+                    labels=['Nakit', 'Gram', 'Çeyrek'], 
+                    values=[u_usd_val, u_gold_val, u_ceyrek_val], 
+                    hole=.5,
+                    marker=dict(colors=['#cc7a00', '#ffae00', '#333333'])
+                )])
+                fig.update_layout(
+                    showlegend=False, # Yer kazanmak için kapattık
+                    paper_bgcolor='rgba(0,0,0,0)',
+                    plot_bgcolor='rgba(0,0,0,0)',
+                    margin=dict(t=10, b=10, l=10, r=10),
+                    height=200 # Grafik yüksekliği sabitlendi
+                )
+                st.plotly_chart(fig, use_container_width=True)
+            except:
+                st.write("Veri bekleniyor...")
+
+        # --- 4. PİYASA BANDI ---
         st.divider()
         p1, p2, p3 = st.columns(3)
-        p1.caption(f"USD/TRY: ₺{usd_try:.2f}")
-        p2.caption(f"Gram Altın: ₺{gram_altin:.0f}")
-        p3.caption(f"Çeyrek Altın: ₺{ceyrek_fiyat:.0f}")
-
-        # --- 5. VARLIK DAĞILIM ANALİZİ (GÖRSEL) ---
-        st.divider()
-        st.markdown("<div class='terminal-header'>📊 PORTFÖY KOMPOZİSYONU</div>", unsafe_allow_html=True)
-        
-        try:
-            import plotly.graph_objects as go
-            
-            # Seçilen kullanıcının varlıklarını USD bazında oranlayalım
-            u_usd_val = u_row['USD'].values[0]
-            u_gold_val = (u_row['Gram'].values[0] * gram_altin / usd_try)
-            u_ceyrek_val = (u_row['Çeyrek'].values[0] * ceyrek_fiyat / usd_try)
-            
-            labels = ['Nakit ($)', 'Gram Altın', 'Çeyrek Altın']
-            values = [u_usd_val, u_gold_val, u_ceyrek_val]
-            
-            # Cyberpunk/Industrial Renk Paleti
-            colors = ['#cc7a00', '#ffae00', '#333333'] 
-
-            fig = go.Figure(data=[go.Pie(
-                labels=labels, 
-                values=values, 
-                hole=.4, # Donut grafik olması daha modern durur
-                marker=dict(colors=colors, line=dict(color='#000000', width=2))
-            )])
-
-            fig.update_layout(
-                showlegend=True,
-                paper_bgcolor='rgba(0,0,0,0)',
-                plot_bgcolor='rgba(0,0,0,0)',
-                font=dict(color="#d1d1d1", family="JetBrains Mono"),
-                margin=dict(t=0, b=0, l=0, r=0),
-                legend=dict(orientation="h", yanchor="bottom", y=-0.1, xanchor="center", x=0.5)
-            )
-
-            st.plotly_chart(fig, use_container_width=True)
-            
-        except Exception as e:
-            st.info("Grafik yüklenirken bir veri bekleniyor...")
+        p1.caption(f"USD: ₺{usd_try:.2f}")
+        p2.caption(f"Gram: ₺{gram_altin:.0f}")
+        p3.caption(f"Çeyrek: ₺{ceyrek_fiyat:.0f}")
 
     st.markdown(f"<div style='text-align:center; color:#444; font-size:10px; margin-top:50px;'>OG CORE // {datetime.now().year}</div>", unsafe_allow_html=True)
