@@ -149,7 +149,7 @@ def check_password():
         st.markdown(common_css, unsafe_allow_html=True)
         st.markdown(login_bg_css, unsafe_allow_html=True)
         # YAZI BLOĞU BURADAN KALDIRILDI
-        pwd = st.text_input("PIN", type="password", placeholder="****", label_visibility="collapsed")
+        pwd = st.text_input("PIN", type="password", placeholder="* * * * *", label_visibility="collapsed")
         if pwd:
             if pwd == "1608":
                 st.session_state["password_correct"] = True
@@ -185,7 +185,7 @@ if check_password():
         
         net_kar = kasa - ana_para
         current_pct = max(0, min(100, ((kasa - 600) / (6500 - 600)) * 100))
-        st.markdown(f"<div class='industrial-card'><div class='terminal-header'>HEDEF YOLCULUĞU ($6,500)</div><div style='background:#111; height:8px; border-radius:10px;'><div style='background:linear-gradient(90deg, #cc7a00, #ffae00); width:{current_pct}%; height:100%; border-radius:10px;'></div></div><div style='text-align:right; font-size:10px; color:#555; margin-top:5px;'>%{current_pct:.1f}</div></div>", unsafe_allow_html=True)
+        st.markdown(f"<div class='industrial-card'><div class='terminal-header'>HEDEF YOLCULUĞU ($1.200)</div><div style='background:#111; height:8px; border-radius:10px;'><div style='background:linear-gradient(90deg, #cc7a00, #ffae00); width:{current_pct}%; height:100%; border-radius:10px;'></div></div><div style='text-align:right; font-size:10px; color:#555; margin-top:5px;'>%{current_pct:.1f}</div></div>", unsafe_allow_html=True)
         
         col1, col2, col3 = st.columns(3)
         with col1: st.markdown(f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>💎 KASA</div><div class='terminal-row'><span>TOPLAM</span><span class='highlight'>${kasa:,.2f}</span></div><div class='terminal-row'><span>K/Z</span><span style='color:{'#00ff41' if net_kar >=0 else '#ff4b4b'};' class='val-std'>${net_kar:,.2f}</span></div></div>", unsafe_allow_html=True)
