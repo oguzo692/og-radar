@@ -55,7 +55,9 @@ aktif_soru_2 = live_vars.get("aktif_soru2", "yeni soru geliyor...")
 # --- 💰 FORMLINE HESAPLAMA ---
 w1_kar = float(live_vars.get("w1_sonuc", -100)) 
 w2_kar = float(live_vars.get("w2_sonuc", 453))
-toplam_bahis_kar = w1_kar + w2_kar
+w3_kar = float(live_vars.get("w3_sonuc", 0)) 
+w4_kar = float(live_vars.get("w4_sonuc", 0))
+toplam_bahis_kar = w1_kar + w2_kar + w3_kar + w4_kar
 
 wr_oran = live_vars.get("win_rate", "0")
 son_islemler_raw = str(live_vars.get("son_islemler", "Veri yok"))
