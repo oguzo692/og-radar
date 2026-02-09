@@ -328,7 +328,7 @@ elif page == "📊 Portföy Takip":
         p2.caption(f"Gram: ₺{gram_altin:.0f}")
         p3.caption(f"Çeyrek: ₺{ceyrek_fiyat:.0f}")
 
-    # --- TAVUK DÖNER HESABI ---
+        # --- TAVUK DÖNER HESABI ---
     # Yarım ekmek tavuk döner fiyatını Sheets'ten çekelim veya sabit verelim
     doner_fiyati_tl = get_val("doner_fiyat") if get_val("doner_fiyat") > 0 else 70.0 
     
