@@ -294,5 +294,4 @@ if check_password():
             })
             st.line_chart(chart_data.set_index('Zaman'))
 
-        st.info("💡 Not: Yatırım fonları verileri (TEFAS) entegrasyonu için fon kodlarını Sheets'e girmelisin.")
     st.markdown(f"<div style='text-align:center; color:#444; font-size:10px; margin-top:50px;'>OG CORE // {datetime.now().year}</div>", unsafe_allow_html=True)
