@@ -141,11 +141,11 @@ input[type="password"] {
 
 # --- 4. HTML ŞABLONLARI ---
 w5_matches = """
-<div class='terminal-row'><span>Gala </span><span class='highlight'>gala w & 2+</span></div>
-<div class='terminal-row'><span>Liverpool</span><span class='highlight'>kg ❌</span></div>
-<div class='terminal-row'><span>Bvb </span><span class='highlight'>bvb 1x & bvb 2+ & iy +1</span></div>
-<div class='terminal-row'><span>Fenerbahçe</span><span class='highlight'>fb 2+</span></div>
-<div class='terminal-row'><span>Newcastle</span><span class='highlight'>kg ✅</span></div>
+<div class='terminal-row'><span>Gala </span><span class='highlight'>-</span></div>
+<div class='terminal-row'><span>Liverpool</span><span class='highlight'>-</span></div>
+<div class='terminal-row'><span>Bvb </span><span class='highlight'>-</span></div>
+<div class='terminal-row'><span>Fenerbahçe</span><span class='highlight'>-</span></div>
+<div class='terminal-row'><span>Newcastle</span><span class='highlight'>-</span></div>
 <hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'>
 <div class='terminal-row'><span>Toplam Oran: 11.00</span><span>Tutar: 100 USD</span></div>
 """
@@ -164,7 +164,7 @@ w3_matches = """<div class='terminal-row'><span>Wolfsburg - Bvb</span><span clas
 w2_matches = """<div class='terminal-row'><span>GS - Kayserispor</span><span style='color:#00ff41;'>İY +0.5 & W & 2+ ✅</span></div><div class='terminal-row'><span>Liverpool - Newcastle</span><span style='color:#00ff41;'>+2 & Liverpool 1X ✅</span></div><div class='terminal-row'><span>BVB - Heidenheim</span><span style='color:#00ff41;'>İY +0.5 & W & 2+ ✅</span></div><div class='terminal-row'><span>Kocaelispor - FB</span><span style='color:#00ff41;'>FB W & 2+ ✅</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 5.53</span><span>Bet: 100 USD</span></div>"""
 w1_matches = """<div class='terminal-row'><span>Karagümrük - GS</span><span style='color:#ff4b4b;'>GS W & +2 ✅</span></div><div class='terminal-row'><span>Bournemouth - Liverpool</span><span style='color:#00ff41;'>KG VAR ✅</span></div><div class='terminal-row'><span>Union Berlin - BVB</span><span style='color:#00ff41;'>BVB İY 0.5 Üst ✅</span></div><div class='terminal-row'><span>Newcastle - Aston Villa</span><span style='color:#ff4b4b;'>New +2 ❌</span></div><div class='terminal-row'><span>FB - Göztepe</span><span style='color:#ff4b4b;'>FB W ❌</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 7.09</span><span>Bet: 100 USD</span></div>"""
 
-w5_coupon_html = f"<div class='industrial-card'><div class='terminal-header'>🔥 W4 KUPONU (AKTİF)</div>{w4_matches}<span style='color:#cc7a00; font-weight:bold;'>❌ W4 KUPONU (BAŞARISIZ)</span></div>"
+w5_coupon_html = f"<div class='industrial-card'><div class='terminal-header'>🔥 W5 KUPONU (AKTİF)</div>{w4_matches}<span style='color:#cc7a00; font-weight:bold;'>❌ W4 KUPONU (BAŞARISIZ)</span></div>"
 w4_coupon_html = f"<div class='industrial-card'><div class='terminal-header'>🔥 W4 KUPONU (AKTİF)</div>{w4_matches}<span style='color:#cc7a00; font-weight:bold;'>❌ W4 KUPONU (BAŞARISIZ)</span></div>"
 w3_coupon_html = f"<div class='industrial-card'><div class='terminal-header'>🔥 W3 KUPONU (AKTİF)</div>{w3_matches}<span style='color:#cc7a00; font-weight:bold;'>✅ W3 KUPONU (BAŞARILI)</span></div>"
 w2_coupon_html = f"<div class='industrial-card' style='border-top-color: #00ff41 !important;'><div class='terminal-header' style='color:#00ff41;'>✅ W2 KUPONU (BAŞARILI)</div>{w2_matches}<span style='color:#00ff41; font-weight:bold;'>SONUÇLANDI ✅</span></div>"
@@ -268,7 +268,7 @@ if check_password():
     # BU SATIRIN HİZASI BİR ÜSTTEKİ "elif page == '🎲 CHALLANGE':" İLE TAM AYNI OLMALI
     elif page == "⚽ FORMLINE":
         st.markdown(f"<div class='industrial-card'><div class='terminal-header'>📈 PERFORMANS</div><div class='terminal-row'><span>NET:</span><span style='color:#00ff41; font-size:32px; font-family:Orbitron;'>${toplam_bahis_kar:,.2f}</span></div></div>", unsafe_allow_html=True)
-        t5, t4, t1, t2, t3 = st.tabs(["🔥 W5", "❌ W4", "✅ W3", "✅ W2", "❌ W1"])
+        t5, t4, t1, t2, t3 = st.tabs(["🔜 W5", "❌ W4", "✅ W3", "✅ W2", "❌ W1"])
         with t5: st.markdown(w5_coupon_html, unsafe_allow_html=True)
         with t4: st.markdown(w4_coupon_html, unsafe_allow_html=True)
         with t1: st.markdown(w3_coupon_html, unsafe_allow_html=True)
