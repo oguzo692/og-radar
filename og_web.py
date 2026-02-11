@@ -306,7 +306,7 @@ if check_password():
 
         # --- 2. KULLANICI SEÇİMİ VE DEV MİKTARLAR (ÖN PLAN) ---
         if not df_portfoy.empty:
-            secilen_user = st.selectbox("Kullanıcı Portföy Detayı:", ["Oguzo", "Ero7", "Fybey"])
+            secilen_user = st.selectbox("Kullanıcı Portföy Detayı:", ["OGUZO", "ERO7", "FYBEY"])
             u_row = df_portfoy[df_portfoy["Kullanıcı"] == secilen_user]
             
             # Dev Kartlar
