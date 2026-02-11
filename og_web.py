@@ -261,13 +261,22 @@ if check_password():
             final_link_2 = f"{base_url}?isim={u_name_2}&tahmin={u_vote_2}&soru=2"
             st.markdown(f"""<a href='{final_link_2}' target='_blank' style='text-decoration:none;'><div style='background:rgba(204, 122, 0, 0.2); border: 1px solid #cc7a00; color:#cc7a00; text-align:center; padding:15px; border-radius:5px; font-family:Orbitron; font-weight:bold; cursor:pointer;'>2. OYU ONAYLA</div></a>""", unsafe_allow_html=True)
 
-    elif page == "⚽ FORMLINE":
+   elif page == "⚽ FORMLINE":
         st.markdown(f"<div class='industrial-card'><div class='terminal-header'>📈 PERFORMANS</div><div class='terminal-row'><span>NET:</span><span style='color:#00ff41; font-size:32px; font-family:Orbitron;'>${toplam_bahis_kar:,.2f}</span></div></div>", unsafe_allow_html=True)
-        t4, t1, t2, t3 = st.tabs(["❌ W4", "✅ W3", "✅ W2", "❌ W1"])
-        with t4: st.markdown(w4_coupon_html, unsafe_allow_html=True)
-        with t1: st.markdown(w3_coupon_html, unsafe_allow_html=True)
-        with t2: st.markdown(w2_coupon_html, unsafe_allow_html=True)
-        with t3: st.markdown(w1_coupon_html, unsafe_allow_html=True)
+        
+        # Burayı güncelledik: t5 eklendi ve liste başına "W5" konuldu
+        t5, t4, t1, t2, t3 = st.tabs(["🔥 W5", "❌ W4", "✅ W3", "✅ W2", "❌ W1"])
+        
+        with t5: 
+            st.markdown(w5_coupon_html, unsafe_allow_html=True) # W5 içeriği buraya gelecek
+        with t4: 
+            st.markdown(w4_coupon_html, unsafe_allow_html=True)
+        with t1: 
+            st.markdown(w3_coupon_html, unsafe_allow_html=True)
+        with t2: 
+            st.markdown(w2_coupon_html, unsafe_allow_html=True)
+        with t3: 
+            st.markdown(w1_coupon_html, unsafe_allow_html=True)
 
     elif page == "📊 Portföy Takip":
         st.markdown("<div class='terminal-header'>🏛️ PORTFÖY KOMUTA MERKEZİ</div>", unsafe_allow_html=True)
