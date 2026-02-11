@@ -68,7 +68,6 @@ wr_oran = live_vars.get("win_rate", "0")
 son_islemler_raw = str(live_vars.get("son_islemler", "Veri yok"))
 
 # --- 3. CSS STİLLERİ ---
-# BURADA RESİM LİNKİNİ "i.hizliresim..." OLARAK DÜZELTTİM
 common_css = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&family=Orbitron:wght@400;700;900&display=swap');
@@ -90,7 +89,6 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input { font-fam
 @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 .equal-card { min-height: 180px; display: flex; flex-direction: column; justify-content: space-between; }
 
-/* ARKA PLAN RESMİ BURADA */
 .stApp {
     background-image: url("https://i.hizliresim.com/oho842y.jpg") !important;
     background-size: cover !important;
@@ -138,7 +136,6 @@ def check_password():
 # --- 6. ANA UYGULAMA ---
 if check_password():
     st.markdown(common_css, unsafe_allow_html=True)
-    # BURADAKİ SİYAH ARKA PLAN DAYATMASINI SİLDİM, RESİM ARTIK GÖRÜNECEK
     st.markdown(f'<div class="ticker-wrap"><div class="ticker"><span class="ticker-item">{duyuru_metni}</span><span class="ticker-item">{duyuru_metni}</span></div></div>', unsafe_allow_html=True)
 
     with st.sidebar:
@@ -182,4 +179,97 @@ if check_password():
         st.markdown("<div class='terminal-header'>🏆 RÜTBE SIRALAMASI</div>", unsafe_allow_html=True)
         s1, s2, s3 = st.columns(3)
         with s1: st.markdown(f"<div class='industrial-card' style='padding:15px; text-align:center; border-top: 2px solid #cc7a00;'><div style='font-size:11px; color:#666;'>oguzo</div><div class='highlight'>{og_p} P</div><div style='font-size:12px;'>{rutbe_getir(og_p)}</div></div>", unsafe_allow_html=True)
-        with s2: st.markdown(f"<div class='industrial-card' style='padding:15px; text-align:center; border-top: 2px solid #cc7a00;'><div style='font-size:11px; color:#666;'>ero7</div><div class='highlight'>{er_p} P</div><div style='font-size:12px;'>{rutbe_getir
+        with s2: st.markdown(f"<div class='industrial-card' style='padding:15px; text-align:center; border-top: 2px solid #cc7a00;'><div style='font-size:11px; color:#666;'>ero7</div><div class='highlight'>{er_p} P</div><div style='font-size:12px;'>{rutbe_getir(er_p)}</div></div>", unsafe_allow_html=True)
+        with s3: st.markdown(f"<div class='industrial-card' style='padding:15px; text-align:center; border-top: 2px solid #cc7a00;'><div style='font-size:11px; color:#666;'>fybey</div><div class='highlight'>{fy_p} P</div><div style='font-size:12px;'>{rutbe_getir(fy_p)}</div></div>", unsafe_allow_html=True)
+        st.divider()
+        q_col1, q_col2 = st.columns(2)
+        base_url = "https://script.google.com/macros/s/AKfycbz0cvMHSrHchkksvFCixr9NDnMsvfLQ6T_K2jsXfohgs7eFXP5x-wxTX_YQej1EZhSX/exec"
+        with q_col1:
+            st.markdown(f"<div class='industrial-card equal-card'><div class='terminal-header'>📢 AKTİF SORU 1</div><h3 style='color:white; margin:0;'>{aktif_soru_1}</h3></div>", unsafe_allow_html=True)
+            u_name_1 = st.selectbox("İsim (Soru 1)", ["oguzo", "ero7", "fybey"], key="n1")
+            u_vote_1 = st.radio("Tahmin (Soru 1)", ["1", "2","3", "4","5 ve üstü"], key="v1")
+            final_link_1 = f"{base_url}?isim={u_name_1}&tahmin={u_vote_1}&soru=1"
+            st.markdown(f"""<a href='{final_link_1}' target='_blank' style='text-decoration:none;'><div style='background:rgba(204, 122, 0, 0.2); border: 1px solid #cc7a00; color:#cc7a00; text-align:center; padding:15px; border-radius:5px; font-family:Orbitron; font-weight:bold; cursor:pointer;'>1. OYU ONAYLA</div></a>""", unsafe_allow_html=True)
+        with q_col2:
+            st.markdown(f"<div class='industrial-card equal-card'><div class='terminal-header'>📢 AKTİF SORU 2</div><h3 style='color:white; margin:0;'>{aktif_soru_2}</h3></div>", unsafe_allow_html=True)
+            u_name_2 = st.selectbox("İsim (Soru 2)", ["oguzo", "ero7", "fybey"], key="n2")
+            u_vote_2 = st.radio("Tahmin (Soru 2)", ["67.000 altında", "67.000-69.000", "69.001-73.000", "73.001-75.000", "75.000 üstünde"], key="v2")
+            final_link_2 = f"{base_url}?isim={u_name_2}&tahmin={u_vote_2}&soru=2"
+            st.markdown(f"""<a href='{final_link_2}' target='_blank' style='text-decoration:none;'><div style='background:rgba(204, 122, 0, 0.2); border: 1px solid #cc7a00; color:#cc7a00; text-align:center; padding:15px; border-radius:5px; font-family:Orbitron; font-weight:bold; cursor:pointer;'>2. OYU ONAYLA</div></a>""", unsafe_allow_html=True)
+
+    elif page == "⚽ FORMLINE":
+        st.markdown(f"<div class='industrial-card'><div class='terminal-header'>📈 PERFORMANS</div><div class='terminal-row'><span>NET:</span><span style='color:#00ff41; font-size:32px; font-family:Orbitron;'>${toplam_bahis_kar:,.2f}</span></div></div>", unsafe_allow_html=True)
+        t4, t1, t2, t3 = st.tabs(["⏳ W4", "✅ W3", "✅ W2", "❌ W1"])
+        with t4: st.markdown(w4_coupon_html, unsafe_allow_html=True)
+        with t1: st.markdown(w3_coupon_html, unsafe_allow_html=True)
+        with t2: st.markdown(w2_coupon_html, unsafe_allow_html=True)
+        with t3: st.markdown(w1_coupon_html, unsafe_allow_html=True)
+
+    elif page == "📊 Portföy Takip":
+        st.markdown("<div class='terminal-header'>🏛️ PORTFÖY KOMUTA MERKEZİ</div>", unsafe_allow_html=True)
+        try:
+            usd_try = yf.Ticker("USDTRY=X").history(period="1d")['Close'].iloc[-1]
+            ons_gold = yf.Ticker("GC=F").history(period="1d")['Close'].iloc[-1]
+            gram_altin = (ons_gold / 31.1035) * usd_try
+            ceyrek_fiyat = gram_altin * 1.82 
+            users = ["oguzo", "ero7", "fybey"]
+            display_data = []
+            for u in users:
+                u_usd = get_val(f"{u}_usd")
+                u_gr = get_val(f"{u}_altin")
+                u_cy = get_val(f"{u}_ceyrek")
+                t_usd = u_usd + (u_gr * gram_altin / usd_try) + (u_cy * ceyrek_fiyat / usd_try)
+                display_data.append({"Kullanıcı": u.upper(), "USD": u_usd, "Gram": u_gr, "Çeyrek": u_cy, "TOPLAM_USD": t_usd})
+            df_portfoy = pd.DataFrame(display_data)
+        except Exception as e:
+            st.error(f"Bağlantı hatası: {e}")
+            df_portfoy = pd.DataFrame()
+
+        if not df_portfoy.empty:
+            secilen_user = st.selectbox("Kullanıcı Portföy Detayı:", ["OGUZO", "ERO7", "FYBEY"])
+            u_row = df_portfoy[df_portfoy["Kullanıcı"] == secilen_user]
+            total_val = u_row["TOPLAM_USD"].values[0]
+            total_tl = total_val * usd_try
+            doner_fiyati = get_val("doner_fiyat") if get_val("doner_fiyat") > 0 else 150.0
+            doner_sayisi = total_tl / doner_fiyati
+
+            st.markdown(f"""
+                <div class='industrial-card' style='text-align:center; border-top: 4px solid #cc7a00; padding: 20px;'>
+                    <div style='font-size:12px; color:#666; letter-spacing:2px;'>TOPLAM PORTFÖY DEĞERİ</div>
+                    <div style='font-size:45px; font-weight:900; color:#cc7a00; font-family:Orbitron; margin: 10px 0;'>${total_val:,.2f}</div>
+                    <div style='font-size:16px; color:#666;'>≈ ₺{total_tl:,.0f}</div>
+                    <div style='font-size:18px; color:#ffae00; font-weight:bold; margin-top:15px; border-top: 1px dashed #333; padding-top:10px;'>
+                        🌯 {doner_sayisi:,.0f} Adet Yarım Ekmek Döner
+                    </div>
+                </div>
+            """, unsafe_allow_html=True)
+
+            v1, v2, v3 = st.columns(3)
+            with v1: st.markdown(f"<div class='industrial-card' style='text-align:center; padding:10px;'><div style='font-size:10px; color:#666;'>NAKİT</div><div class='highlight' style='font-size:16px;'>${u_row['USD'].values[0]:,.0f}</div></div>", unsafe_allow_html=True)
+            with v2: st.markdown(f"<div class='industrial-card' style='text-align:center; padding:10px;'><div style='font-size:10px; color:#666;'>GRAM ALTIN</div><div class='highlight' style='font-size:16px;'>{u_row['Gram'].values[0]} gr</div></div>", unsafe_allow_html=True)
+            with v3: st.markdown(f"<div class='industrial-card' style='text-align:center; padding:10px;'><div style='font-size:10px; color:#666;'>ÇEYREK ADET</div><div class='highlight' style='font-size:16px;'>{u_row['Çeyrek'].values[0]:,.0f}</div></div>", unsafe_allow_html=True)
+
+        st.divider()
+        col_left, col_right = st.columns(2)
+        with col_left:
+            st.markdown("<div class='terminal-header' style='font-size:10px;'>🧠 AI PROJEKSİYONU</div>", unsafe_allow_html=True)
+            aylar = ["Şubat", "Mart", "Nisan", "Mayıs", "Haziran"]
+            tahminler = [total_val * (1.10**i) for i in range(len(aylar))]
+            chart_df = pd.DataFrame({"Varlık ($)": tahminler}, index=aylar)
+            st.area_chart(chart_df, color="#cc7a00", height=200)
+            st.caption(f"Haziran Hedefi: ${tahminler[-1]:,.0f}")
+        with col_right:
+            st.markdown("<div class='terminal-header' style='font-size:10px;'>📊 KOMPOZİSYON</div>", unsafe_allow_html=True)
+            try:
+                import plotly.graph_objects as go
+                fig = go.Figure(data=[go.Pie(labels=['Nakit', 'Gram', 'Çeyrek'], values=[u_row['USD'].values[0], (u_row['Gram'].values[0]*gram_altin/usd_try), (u_row['Çeyrek'].values[0]*ceyrek_fiyat/usd_try)], hole=.5, marker=dict(colors=['#cc7a00', '#ffae00', '#333333']))])
+                fig.update_layout(showlegend=False, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', margin=dict(t=10, b=10, l=10, r=10), height=200)
+                st.plotly_chart(fig, use_container_width=True)
+            except: st.write("Veri bekleniyor...")
+        st.divider()
+        p1, p2, p3 = st.columns(3)
+        p1.caption(f"USD: ₺{usd_try:.2f}")
+        p2.caption(f"Gram: ₺{gram_altin:.0f}")
+        p3.caption(f"Çeyrek: ₺{ceyrek_fiyat:.0f}")
+
+    st.markdown(f"<div style='text-align:center; color:#444; font-size:10px; margin-top:50px;'>OG CORE // {datetime.now().year}</div>", unsafe_allow_html=True)
