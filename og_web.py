@@ -141,11 +141,11 @@ input[type="password"] {
 
 # --- 4. HTML ŞABLONLARI ---
 w5_matches = """
-<div class='terminal-row'><span>Gala - Eyüpspor</span><span class='highlight'>gala w & 2+</span></div>
-<div class='terminal-row'><span>Sunderland - Liverpool</span><span class='highlight'>kg ❌</span></div>
-<div class='terminal-row'><span>Bvb - Mainz 05</span><span class='highlight'>bvb 1x & bvb 2+ & iy +1</span></div>
-<div class='terminal-row'><span>Trabzonspor - FB</span><span class='highlight'>fb 2+</span></div>
-<div class='terminal-row'><span>Spurs - Newcastle</span><span class='highlight'>kg ✅</span></div>
+<div class='terminal-row'><span>Gala </span><span class='highlight'>gala w & 2+</span></div>
+<div class='terminal-row'><span>Liverpool</span><span class='highlight'>kg ❌</span></div>
+<div class='terminal-row'><span>Bvb </span><span class='highlight'>bvb 1x & bvb 2+ & iy +1</span></div>
+<div class='terminal-row'><span>Fenerbahçe</span><span class='highlight'>fb 2+</span></div>
+<div class='terminal-row'><span>Newcastle</span><span class='highlight'>kg ✅</span></div>
 <hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'>
 <div class='terminal-row'><span>Toplam Oran: 11.00</span><span>Tutar: 100 USD</span></div>
 """
