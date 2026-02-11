@@ -283,7 +283,7 @@ if check_password():
             usd_try = yf.Ticker("USDTRY=X").history(period="1d")['Close'].iloc[-1]
             ons_gold = yf.Ticker("GC=F").history(period="1d")['Close'].iloc[-1]
             gram_altin = (ons_gold / 31.1035) * usd_try
-            ceyrek_fiyat = gram_altin * 1.82 
+            ceyrek_fiyat = gram_altin * 1.76 
             
             def get_val(key): 
                 try: return float(live_vars.get(key, 0))
