@@ -93,7 +93,7 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input { font-fam
 
 login_bg_css = """
 <style>
-.stApp { background-image: url("https://hizliresim.com/oho842y") !important; background-size: cover !important; background-position: center !important; background-attachment: fixed !important;}
+.stApp { background-image: url("https://i.hizliresim.com/oho842y.jpg") !important; background-size: cover !important; background-position: center !important; background-attachment: fixed !important;}
 div[data-testid="stVerticalBlock"] > div:has(input[type="password"]) { background: rgba(0, 0, 0, 0.6) !important; backdrop-filter: blur(25px) !important; padding: 50px 30px !important; border-radius: 20px !important; border: 1px solid rgba(204, 122, 0, 0.3) !important; position: fixed !important; top: 50% !important; left: 50% !important; transform: translate(-50%, -50%) !important; z-index: 9999 !important; width: 340px !important;}
 input[type="password"] { background: rgba(0, 0, 0, 0.4) !important; border: 1px solid rgba(204, 122, 0, 0.5) !important; text-align: center !important; color: #cc7a00 !important; font-size: 24px !important; letter-spacing: 10px !important;}
 .stButton { visibility: hidden; height: 0; margin: 0; padding: 0; }
