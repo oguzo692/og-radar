@@ -252,7 +252,7 @@ if check_password():
 
     elif page == "⚽ FORMLINE":
         st.markdown(f"<div class='industrial-card'><div class='terminal-header'>📈 PERFORMANS</div><div class='terminal-row'><span>NET:</span><span style='color:#00ff41; font-size:32px; font-family:Orbitron;'>${toplam_bahis_kar:,.2f}</span></div></div>", unsafe_allow_html=True)
-        t4, t1, t2, t3 = st.tabs(["🆕 W4", "⏳ W3", "✅ W2", "❌ W1"])
+        t4, t1, t2, t3 = st.tabs(["❌ W4", "✅ W3", "✅ W2", "❌ W1"])
         with t4: st.markdown(w4_coupon_html, unsafe_allow_html=True)
         with t1: st.markdown(w3_coupon_html, unsafe_allow_html=True)
         with t2: st.markdown(w2_coupon_html, unsafe_allow_html=True)
