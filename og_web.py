@@ -154,7 +154,7 @@ w5_matches = """
 w4_matches = """
 <div class='terminal-row'><span>gala - eyüpspor</span><span class='highlight'>gala w & 2+</span></div>
 <div class='terminal-row'><span>sunderland - liverpool</span><span class='highlight'>kg ❌</span></div>
-<div class='terminal-row'><span>bvb - mainz 05</span><span class='highlight'>bvb 1x & bvb 2+ & iy +1</span></div>
+<div class='terminal-row'><span>bvb - mainz 05</span><span class='highlight'>bvb 1x & bvb 2+ & bvb iy +1</span></div>
 <div class='terminal-row'><span>trabzonspor - fenerbahçe</span><span class='highlight'>fb 2+</span></div>
 <div class='terminal-row'><span>spurs - newcastle</span><span class='highlight'>kg ✅</span></div>
 <hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'>
