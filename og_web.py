@@ -140,14 +140,15 @@ input[type="password"] {
 
 
 # --- 4. HTML ŞABLONLARI ---
+# W5 için yeni maç listesi (Burayı istediğin maçlarla güncelle)
 w5_matches = """
-<div class='terminal-row'><span>Gala </span><span class='highlight'>-</span></div>
-<div class='terminal-row'><span>Liverpool</span><span class='highlight'>-</span></div>
-<div class='terminal-row'><span>Bvb </span><span class='highlight'>-</span></div>
-<div class='terminal-row'><span>Fenerbahçe</span><span class='highlight'>-</span></div>
-<div class='terminal-row'><span>Newcastle</span><span class='highlight'>-</span></div>
+<div class='terminal-row'><span>Maç 1 </span><span class='highlight'>Bekleniyor...</span></div>
+<div class='terminal-row'><span>Maç 2</span><span class='highlight'>Bekleniyor...</span></div>
+<div class='terminal-row'><span>Maç 3 </span><span class='highlight'>Bekleniyor...</span></div>
+<div class='terminal-row'><span>Maç 4</span><span class='highlight'>Bekleniyor...</span></div>
+<div class='terminal-row'><span>Maç 5</span><span class='highlight'>Bekleniyor...</span></div>
 <hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'>
-<div class='terminal-row'><span>Toplam Oran: 11.00</span><span>Tutar: 100 USD</span></div>
+<div class='terminal-row'><span>Toplam Oran: 0.00</span><span>Tutar: 0 USD</span></div>
 """
 
 w4_matches = """
