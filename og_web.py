@@ -252,7 +252,7 @@ if check_password():
         with q_col1:
             st.markdown(f"<div class='industrial-card equal-card'><div class='terminal-header'>📢 AKTİF SORU 1</div><h3 style='color:white; margin:0;'>{aktif_soru_1}</h3></div>", unsafe_allow_html=True)
             u_name_1 = st.selectbox("İsim (Soru 1)", ["oguzo", "ero7", "fybey"], key="n1")
-            u_vote_1 = st.radio("Tahmin (Soru 1)", ["2.27t-2.29t","2.29t-2.31t", "2.31t-2.33t","2.33t-2.35t","+2.35"], key="v1")
+            u_vote_1 = st.radio("Tahmin (Soru 1)", ["2.27t-2.29t","2.29t-2.31t", "2.31t-2.33t","2.33t-2.35t","+2.35t"], key="v1")
             final_link_1 = f"{base_url}?isim={u_name_1}&tahmin={u_vote_1}&soru=1"
             st.markdown(f"""<a href='{final_link_1}' target='_blank' style='text-decoration:none;'><div style='background:rgba(204, 122, 0, 0.2); border: 1px solid #cc7a00; color:#cc7a00; text-align:center; padding:15px; border-radius:5px; font-family:Orbitron; font-weight:bold; cursor:pointer;'>1. OYU ONAYLA</div></a>""", unsafe_allow_html=True)
         with q_col2:
