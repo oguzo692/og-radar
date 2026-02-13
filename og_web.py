@@ -110,16 +110,12 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input { font-fam
 
 login_bg_css = """
 <style>
-
-/* Sadece login ekranında arka plan */
 .stApp {
     background: radial-gradient(circle at 20% 30%, rgba(204,122,0,0.15), transparent 40%),
                 radial-gradient(circle at 80% 70%, rgba(0,255,65,0.10), transparent 40%),
                 linear-gradient(135deg, #050505 0%, #0b0b0b 40%, #111111 100%) !important;
     background-attachment: fixed !important;
 }
-
-/* Ortadaki login kutusu */
 div[data-testid="stVerticalBlock"] > div:has(input[type="password"]) {
     background: rgba(10, 10, 10, 0.75) !important;
     backdrop-filter: blur(30px) !important;
@@ -134,8 +130,6 @@ div[data-testid="stVerticalBlock"] > div:has(input[type="password"]) {
     z-index: 9999 !important;
     width: 360px !important;
 }
-
-/* PIN input */
 input[type="password"] {
     background: rgba(0, 0, 0, 0.5) !important;
     border: 1px solid rgba(204, 122, 0, 0.6) !important;
@@ -146,40 +140,13 @@ input[type="password"] {
     padding: 12px !important;
     border-radius: 10px !important;
 }
-
-/* Butonu gizli tut */
-.stButton {
-    visibility: hidden;
-    height: 0;
-    margin: 0;
-    padding: 0;
-}
-
+.stButton { visibility: hidden; height: 0; margin: 0; padding: 0; }
 </style>
 """
 
 # --- 4. HTML ŞABLONLARI ---
-# W5 için yeni maç listesi (Burayı istediğin maçlarla güncelle)
-w5_matches = """
-<div class='terminal-row'><span>Maç 1 </span><span class='highlight'>Bekleniyor...</span></div>
-<div class='terminal-row'><span>Maç 2</span><span class='highlight'>Bekleniyor...</span></div>
-<div class='terminal-row'><span>Maç 3 </span><span class='highlight'>Bekleniyor...</span></div>
-<div class='terminal-row'><span>Maç 4</span><span class='highlight'>Bekleniyor...</span></div>
-<div class='terminal-row'><span>Maç 5</span><span class='highlight'>Bekleniyor...</span></div>
-<hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'>
-<div class='terminal-row'><span>Toplam Oran: 0.00</span><span>Tutar: 0 USD</span></div>
-"""
-
-w4_matches = """
-<div class='terminal-row'><span>gala - eyüpspor</span><span class='highlight'>gala w & 2+</span></div>
-<div class='terminal-row'><span>sunderland - liverpool</span><span class='highlight'>kg ❌</span></div>
-<div class='terminal-row'><span>bvb - mainz 05</span><span class='highlight'>bvb 1x & bvb 2+ & bvb iy +1</span></div>
-<div class='terminal-row'><span>trabzonspor - fenerbahçe</span><span class='highlight'>fb 2+</span></div>
-<div class='terminal-row'><span>spurs - newcastle</span><span class='highlight'>kg ✅</span></div>
-<hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'>
-<div class='terminal-row'><span>Toplam Oran: 11.00</span><span>Tutar: 100 USD</span></div>
-"""
-
+w5_matches = """<div class='terminal-row'><span>Maç 1 </span><span class='highlight'>Bekleniyor...</span></div><div class='terminal-row'><span>Maç 2</span><span class='highlight'>Bekleniyor...</span></div><div class='terminal-row'><span>Maç 3 </span><span class='highlight'>Bekleniyor...</span></div><div class='terminal-row'><span>Maç 4</span><span class='highlight'>Bekleniyor...</span></div><div class='terminal-row'><span>Maç 5</span><span class='highlight'>Bekleniyor...</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Toplam Oran: 0.00</span><span>Tutar: 0 USD</span></div>"""
+w4_matches = """<div class='terminal-row'><span>gala - eyüpspor</span><span class='highlight'>gala w & 2+</span></div><div class='terminal-row'><span>sunderland - liverpool</span><span class='highlight'>kg ❌</span></div><div class='terminal-row'><span>bvb - mainz 05</span><span class='highlight'>bvb 1x & bvb 2+ & bvb iy +1</span></div><div class='terminal-row'><span>trabzonspor - fenerbahçe</span><span class='highlight'>fb 2+</span></div><div class='terminal-row'><span>spurs - newcastle</span><span class='highlight'>kg ✅</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Toplam Oran: 11.00</span><span>Tutar: 100 USD</span></div>"""
 w3_matches = """<div class='terminal-row'><span>wolfsburg - bvb</span><span class='highlight'>bvb x2 & +2 ✅</span></div><div class='terminal-row'><span>newcastle - brentford</span><span class='highlight'>newcastle +2 ✅</span></div><div class='terminal-row'><span>rizespor - gala</span><span class='highlight'>gala w & +2 ✅</span></div><div class='terminal-row'><span>liverpool - man city</span><span class='highlight'>lıve +1 ✅</span></div><div class='terminal-row'><span>fenerbahçe - gençlerbirliği</span><span class='highlight'>fenerbahçe w & +3 ✅</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 8.79</span><span>Bet: 100 USD</span></div>"""
 w2_matches = """<div class='terminal-row'><span>gala - kayserispor</span><span style='color:#00ff41;'>iy +1 & w & 2+ ✅</span></div><div class='terminal-row'><span>liverpool - newcastle</span><span style='color:#00ff41;'>+2 & liverpool 1x ✅</span></div><div class='terminal-row'><span>bvb - heidenheim</span><span style='color:#00ff41;'>iy +1 & w & 2+ ✅</span></div><div class='terminal-row'><span>kocaelispor - fenerbahçe</span><span style='color:#00ff41;'>fenerbahçe w & 2+ ✅</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 5.53</span><span>Bet: 100 USD</span></div>"""
 w1_matches = """<div class='terminal-row'><span>karagümrük - gala</span><span style='color:#ff4b4b;'>gala w & +2 ✅</span></div><div class='terminal-row'><span>bournemouth - liverpool</span><span style='color:#00ff41;'>kg ✅</span></div><div class='terminal-row'><span>union berlin - bvb</span><span style='color:#00ff41;'>bvb iy +1 ✅</span></div><div class='terminal-row'><span>newcastle - aston villa</span><span style='color:#ff4b4b;'>newcastle +2 ❌</span></div><div class='terminal-row'><span>fenerbahçe - göztepe</span><span style='color:#ff4b4b;'>fenerbahçe w ❌</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 7.09</span><span>Bet: 100 USD</span></div>"""
@@ -214,18 +181,13 @@ if check_password():
 
     with st.sidebar:
         st.markdown("<h1 style='color:white; font-family:Orbitron; font-size:24px; letter-spacing:5px; text-align:center; margin-bottom:40px;'>OG CORE</h1>", unsafe_allow_html=True)
-        
         st.markdown("<div style='margin-bottom:10px; color:#666; font-size:11px; letter-spacing:2px; font-weight:800;'>SİSTEM MODÜLLERİ</div>", unsafe_allow_html=True)
         page = st.radio("Menu", ["⚡ ULTRA ATAK", "⚽ FORMLINE", "🎲 CHALLANGE", "📊 Portföy Takip"], label_visibility="collapsed")
-        
         st.divider()
-        
-        # --- ŞIK ADMİN PANELİ ---
         st.markdown("<div style='color:#666; font-size:11px; letter-spacing:2px; font-weight:800; margin-bottom:15px;'>📂 TERMİNAL ERİŞİMİ</div>", unsafe_allow_html=True)
         admin_pwd = st.text_input("PIN", type="password", placeholder="Admin PIN", label_visibility="collapsed")
         if admin_pwd == "0644":
             st.markdown("<a href='https://docs.google.com/spreadsheets/d/15izevdpRjs8Om5BAHKVWmdL3FxEHml35DGECfhQUG_s/edit' target='_blank' style='text-decoration:none;'><div style='background:rgba(204, 122, 0, 0.2); border: 1px solid #cc7a00; color:#cc7a00; text-align:center; padding:10px; border-radius:4px; font-family:Orbitron; font-size:12px; font-weight:bold;'>VERİ TABANINA BAĞLAN</div></a>", unsafe_allow_html=True)
-        
         st.markdown("<br>", unsafe_allow_html=True)
         if st.button("SİSTEMDEN ÇIK"): 
             st.session_state["password_correct"] = False
@@ -237,13 +199,10 @@ if check_password():
         with k1: st.markdown(f"<div class='industrial-card' style='text-align:center; border-top-color: #cc7a00;'><div style='font-size:11px; color:#666;'>Oguzo Bakiye</div><div class='highlight'>${og_kasa:,.2f}</div></div>", unsafe_allow_html=True)
         with k2: st.markdown(f"<div class='industrial-card' style='text-align:center; border-top-color: #cc7a00;'><div style='font-size:11px; color:#666;'>Ero7 Bakiye</div><div class='highlight'>${er_kasa:,.2f}</div></div>", unsafe_allow_html=True)
         with k3: st.markdown(f"<div class='industrial-card' style='text-align:center; border-top-color: #cc7a00;'><div style='font-size:11px; color:#666;'>Fybey Bakiye</div><div class='highlight'>${fy_kasa:,.2f}</div></div>", unsafe_allow_html=True)
-        
         st.divider()
-        
         net_kar = kasa - ana_para
         current_pct = max(0, min(100, ((kasa - 600) / (1200 - 600)) * 100))
         st.markdown(f"<div class='industrial-card'><div class='terminal-header'>HEDEF YOLCULUĞU ($1.200)</div><div style='background:#111; height:8px; border-radius:10px;'><div style='background:linear-gradient(90deg, #cc7a00, #ffae00); width:{current_pct}%; height:100%; border-radius:10px;'></div></div><div style='text-align:right; font-size:10px; color:#555; margin-top:5px;'>%{current_pct:.1f}</div></div>", unsafe_allow_html=True)
-        
         col1, col2, col3 = st.columns(3)
         with col1: st.markdown(f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>💎 KASA</div><div class='terminal-row'><span>TOPLAM</span><span class='highlight'>${kasa:,.2f}</span></div><div class='terminal-row'><span>K/Z</span><span style='color:{'#00ff41' if net_kar >=0 else '#ff4b4b'};' class='val-std'>${net_kar:,.2f}</span></div></div>", unsafe_allow_html=True)
         with col2:
@@ -254,7 +213,6 @@ if check_password():
                 st.markdown(f"""<div class='industrial-card' style='height:230px;'><div class='terminal-header'>⚡ PİYASA</div><div class='terminal-row'><span>BITCOIN</span><span class='highlight'>${btc:,.0f}</span></div><div class='terminal-row'><span>ETHEREUM</span><span style='color:#cc7a00;'>${eth:,.0f}</span></div><div class='terminal-row'><span>SOLANA</span><span style='color:#cc7a00;'>${sol:,.2f}</span></div></div>""", unsafe_allow_html=True)
             except: st.write("Piyasa verisi bekleniyor...")
         with col3: st.markdown(f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>📊 Win Rate</div><div style='text-align:center;'><span style='font-size:45px; font-weight:900; color:#cc7a00; font-family:Orbitron;'>%{wr_oran}</span></div></div>", unsafe_allow_html=True)
-        
         st.markdown("### 📜 SON İŞLEMLER")
         st.markdown(f"<div class='industrial-card'><div class='terminal-header'>AKTİVİTE LOGLARI</div><p style='font-family:JetBrains Mono; color:#888;'>{son_islemler_raw}</p></div>", unsafe_allow_html=True)
 
@@ -264,7 +222,6 @@ if check_password():
         with s1: st.markdown(f"<div class='industrial-card' style='padding:15px; text-align:center; border-top: 2px solid #cc7a00;'><div style='font-size:11px; color:#666;'>oguzo</div><div class='highlight'>{og_p} P</div><div style='font-size:12px;'>{rutbe_getir(og_p)}</div></div>", unsafe_allow_html=True)
         with s2: st.markdown(f"<div class='industrial-card' style='padding:15px; text-align:center; border-top: 2px solid #cc7a00;'><div style='font-size:11px; color:#666;'>ero7</div><div class='highlight'>{er_p} P</div><div style='font-size:12px;'>{rutbe_getir(er_p)}</div></div>", unsafe_allow_html=True)
         with s3: st.markdown(f"<div class='industrial-card' style='padding:15px; text-align:center; border-top: 2px solid #cc7a00;'><div style='font-size:11px; color:#666;'>fybey</div><div class='highlight'>{fy_p} P</div><div style='font-size:12px;'>{rutbe_getir(fy_p)}</div></div>", unsafe_allow_html=True)
-        
         st.divider()
         q_col1, q_col2 = st.columns(2)
         base_url = "https://script.google.com/macros/s/AKfycbz0cvMHSrHchkksvFCixr9NDnMsvfLQ6T_K2jsXfohgs7eFXP5x-wxTX_YQej1EZhSX/exec"
@@ -281,11 +238,6 @@ if check_password():
             final_link_2 = f"{base_url}?isim={u_name_2}&tahmin={u_vote_2}&soru=2"
             st.markdown(f"""<a href='{final_link_2}' target='_blank' style='text-decoration:none;'><div style='background:rgba(204, 122, 0, 0.2); border: 1px solid #cc7a00; color:#cc7a00; text-align:center; padding:15px; border-radius:5px; font-family:Orbitron; font-weight:bold; cursor:pointer;'>2. OYU ONAYLA</div></a>""", unsafe_allow_html=True)
 
-    elif page == "🎲 CHALLANGE":
-        # ... (mevcut kodların)
-        st.markdown(f"""<a href='{final_link_2}' target='_blank' style='text-decoration:none;'><div style='background:rgba(204, 122, 0, 0.2); border: 1px solid #cc7a00; color:#cc7a00; text-align:center; padding:15px; border-radius:5px; font-family:Orbitron; font-weight:bold; cursor:pointer;'>2. OYU ONAYLA</div></a>""", unsafe_allow_html=True)
-
-    # BU SATIRIN HİZASI BİR ÜSTTEKİ "elif page == '🎲 CHALLANGE':" İLE TAM AYNI OLMALI
     elif page == "⚽ FORMLINE":
         st.markdown(f"<div class='industrial-card'><div class='terminal-header'>📈 PERFORMANS</div><div class='terminal-row'><span>NET:</span><span style='color:#00ff41; font-size:32px; font-family:Orbitron;'>${toplam_bahis_kar:,.2f}</span></div></div>", unsafe_allow_html=True)
         t5, t4, t1, t2, t3 = st.tabs(["🔜 W5", "❌ W4", "✅ W3", "✅ W2", "❌ W1"])
@@ -297,13 +249,11 @@ if check_password():
 
     elif page == "📊 Portföy Takip":
         st.markdown("<div class='terminal-header'>🏛️ PORTFÖY KOMUTA MERKEZİ</div>", unsafe_allow_html=True)
-        
-        # --- 1. VERİLERİ ÇEK ---
         try:
             usd_try = yf.Ticker("USDTRY=X").history(period="1d")['Close'].iloc[-1]
             ons_gold = yf.Ticker("GC=F").history(period="1d")['Close'].iloc[-1]
             gram_altin = (ons_gold / 31.1035) * usd_try
-            ceyrek_fiyat = gram_altin * 1.70 
+            ceyrek_fiyat = gram_altin * 1.75 # Daha hassas hesaplama (1.75 gr)
             
             def get_val(key): 
                 try: return float(live_vars.get(key, 0))
@@ -316,77 +266,50 @@ if check_password():
                 u_gr = get_val(f"{u}_altin")
                 u_cy = get_val(f"{u}_ceyrek")
                 t_usd = u_usd + (u_gr * gram_altin / usd_try) + (u_cy * ceyrek_fiyat / usd_try)
-                display_data.append({
-                    "Kullanıcı": u.upper(), "USD": u_usd, "Gram": u_gr, "Çeyrek": u_cy, "TOPLAM_USD": t_usd
-                })
+                display_data.append({"Kullanıcı": u.upper(), "USD": u_usd, "Gram": u_gr, "Çeyrek": u_cy, "TOPLAM_USD": t_usd})
             df_portfoy = pd.DataFrame(display_data)
+
+            if not df_portfoy.empty:
+                secilen_user = st.selectbox("Kullanıcı Portföy Detayı:", ["OGUZO", "ERO7", "FYBEY"])
+                u_row = df_portfoy[df_portfoy["Kullanıcı"] == secilen_user]
+                total_val = float(u_row["TOPLAM_USD"].values[0])
+                
+                # Dev Kart
+                st.markdown(f"""<div class='industrial-card' style='text-align:center; border-top: 4px solid #cc7a00;'><div style='font-size:14px; color:#666; letter-spacing:2px;'>TOPLAM PORTFÖY DEĞERİ</div><div style='font-size:55px; font-weight:900; color:#cc7a00; font-family:Orbitron;'>${total_val:,.2f}</div><div style='font-size:18px; color:#444;'>≈ ₺{(total_val * usd_try):,.0f}</div></div>""", unsafe_allow_html=True)
+
+                # Varlık Dağılımı
+                v1, v2, v3 = st.columns(3)
+                with v1: st.markdown(f"<div class='industrial-card' style='text-align:center;'><div style='font-size:11px; color:#666;'>NAKİT</div><div class='highlight'>${u_row['USD'].values[0]:,.0f}</div></div>", unsafe_allow_html=True)
+                with v2: st.markdown(f"<div class='industrial-card' style='text-align:center;'><div style='font-size:11px; color:#666;'>GRAM ALTIN</div><div class='highlight'>{u_row['Gram'].values[0]} gr</div></div>", unsafe_allow_html=True)
+                with v3: st.markdown(f"<div class='industrial-card' style='text-align:center;'><div style='font-size:11px; color:#666;'>ÇEYREK ADET</div><div class='highlight'>{u_row['Çeyrek'].values[0]:,.0f}</div></div>", unsafe_allow_html=True)
+
+                # AI ÖNGÖRÜSÜ
+                st.divider()
+                st.markdown("<div class='terminal-header'>🧠 AI PROJEKSİYONU (HAZİRAN 2026)</div>", unsafe_allow_html=True)
+                
+                aylar = ["Şubat", "Mart", "Nisan", "Mayıs", "Haziran"]
+                tahminler = [total_val]
+                for i in range(1, len(aylar)):
+                    rastgele_sapma = np.random.uniform(-0.02, 0.02) 
+                    yeni_deger = tahminler[-1] * (1.10 + rastgele_sapma)
+                    tahminler.append(yeni_deger)
+                
+                chart_df = pd.DataFrame({"Varlık ($)": tahminler}, index=aylar)
+                c1, c2 = st.columns([1, 2])
+                with c1:
+                    st.write(f"### {secilen_user} Hedef")
+                    st.markdown(f"<h1 style='color:#00ff41;'>${tahminler[-1]:,.0f}</h1>", unsafe_allow_html=True)
+                    st.caption("Mevcut gidişatla Haziran 2026 tahmini (Volatilite Dahil)")
+                with c2:
+                    st.area_chart(chart_df, color="#cc7a00")
+
+            # Piyasa Bilgi Bandı
+            st.divider()
+            p1, p2, p3 = st.columns(3)
+            p1.caption(f"USD/TRY: ₺{usd_try:.2f}")
+            p2.caption(f"Gram Altın: ₺{gram_altin:.0f}")
+            p3.caption(f"Çeyrek Altın: ₺{ceyrek_fiyat:.0f}")
         except:
-            st.error("Bağlantı hatası!")
-            df_portfoy = pd.DataFrame()
-
-        # --- 2. KULLANICI SEÇİMİ VE DEV MİKTARLAR (ÖN PLAN) ---
-        if not df_portfoy.empty:
-            secilen_user = st.selectbox("Kullanıcı Portföy Detayı:", ["OGUZO", "ERO7", "FYBEY"])
-            u_row = df_portfoy[df_portfoy["Kullanıcı"] == secilen_user]
-            
-            # Dev Kartlar
-            total_val = u_row["TOPLAM_USD"].values[0]
-            st.markdown(f"""
-                <div class='industrial-card' style='text-align:center; border-top: 4px solid #cc7a00;'>
-                    <div style='font-size:14px; color:#666; letter-spacing:2px;'>TOPLAM PORTFÖY DEĞERİ</div>
-                    <div style='font-size:55px; font-weight:900; color:#cc7a00; font-family:Orbitron;'>${total_val:,.2f}</div>
-                    <div style='font-size:18px; color:#444;'>≈ ₺{(total_val * usd_try):,.0f}</div>
-                </div>
-            """, unsafe_allow_html=True)
-
-            # Varlık Dağılımı Kartları
-            v1, v2, v3 = st.columns(3)
-            with v1: st.markdown(f"<div class='industrial-card' style='text-align:center;'><div style='font-size:11px; color:#666;'>NAKİT</div><div class='highlight'>${u_row['USD'].values[0]:,.0f}</div></div>", unsafe_allow_html=True)
-            with v2: st.markdown(f"<div class='industrial-card' style='text-align:center;'><div style='font-size:11px; color:#666;'>GRAM ALTIN</div><div class='highlight'>{u_row['Gram'].values[0]} gr</div></div>", unsafe_allow_html=True)
-            with v3: st.markdown(f"<div class='industrial-card' style='text-align:center;'><div style='font-size:11px; color:#666;'>ÇEYREK ADET</div><div class='highlight'>{u_row['Çeyrek'].values[0]:,.0f}</div></div>", unsafe_allow_html=True)
-
-       # --- 3. 🧠 AI ÖNGÖRÜSÜ (GÜNCEL MODEL) ---
-        st.divider()
-        st.markdown("<div class='terminal-header'>🧠 AI PROJEKSİYONU (HAZİRAN 2026)</div>", unsafe_allow_html=True)
-        
-        aylar = ["Şubat", "Mart", "Nisan", "Mayıs", "Haziran"]
-        base_val = float(total_val)
-        tahminler = [base_val]
-
-        for i in range(1, len(aylar)):
-            # %10 büyüme + %2 rastgele piyasa oynaklığı
-            rastgele_sapma = np.random.uniform(-0.02, 0.02) 
-            yeni_deger = tahminler[-1] * (1.10 + rastgele_sapma)
-            tahminler.append(yeni_deger)
-
-        chart_df = pd.DataFrame({"Varlık ($)": tahminler}, index=aylar)
-
-        c1, c2 = st.columns([1, 2])
-        with c1:
-            st.write(f"### {secilen_user} Hedef")
-            st.markdown(f"<h1 style='color:#00ff41;'>${tahminler[-1]:,.0f}</h1>", unsafe_allow_html=True)
-            st.caption("Mevcut gidişatla Haziran 2026 tahmini")
-        with c2:
-            st.area_chart(chart_df, color="#cc7a00")
-        # ... (Mevcut kodunun içindeki Portföy Takibi kısmı)
-aylar = ["Şubat", "Mart", "Nisan", "Mayıs", "Haziran"]
-base_val = total_val
-tahminler = [base_val]
-
-for i in range(1, len(aylar)):
-    # %10 büyüme + %2 rastgele piyasa oynaklığı
-    rastgele_sapma = np.random.uniform(-0.02, 0.02) 
-    yeni_deger = tahminler[-1] * (1.10 + rastgele_sapma)
-    tahminler.append(yeni_deger)
-
-chart_df = pd.DataFrame({"Varlık ($)": tahminler}, index=aylar)
-st.area_chart(chart_df, color="#cc7a00")
-
-        # --- 4. PİYASA BİLGİ BANDI (EN ALTTA) ---
-        st.divider()
-        p1, p2, p3 = st.columns(3)
-        p1.caption(f"USD/TRY: ₺{usd_try:.2f}")
-        p2.caption(f"Gram Altın: ₺{gram_altin:.0f}")
-        p3.caption(f"Çeyrek Altın: ₺{ceyrek_fiyat:.0f}")
+            st.error("Piyasa verileri çekilirken bir hata oluştu.")
 
     st.markdown(f"<div style='text-align:center; color:#444; font-size:10px; margin-top:50px;'>OG CORE // {datetime.now().year}</div>", unsafe_allow_html=True)
