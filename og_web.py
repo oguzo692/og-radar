@@ -345,23 +345,29 @@ if check_password():
             with v2: st.markdown(f"<div class='industrial-card' style='text-align:center;'><div style='font-size:11px; color:#666;'>GRAM ALTIN</div><div class='highlight'>{u_row['Gram'].values[0]} gr</div></div>", unsafe_allow_html=True)
             with v3: st.markdown(f"<div class='industrial-card' style='text-align:center;'><div style='font-size:11px; color:#666;'>ÇEYREK ADET</div><div class='highlight'>{u_row['Çeyrek'].values[0]:,.0f}</div></div>", unsafe_allow_html=True)
 
-        # --- 3. 🧠 AI ÖNGÖRÜSÜ (ŞIK ALAN GRAFİĞİ) ---
+       # --- 3. 🧠 AI ÖNGÖRÜSÜ (GÜNCEL MODEL) ---
         st.divider()
         st.markdown("<div class='terminal-header'>🧠 AI PROJEKSİYONU (HAZİRAN 2026)</div>", unsafe_allow_html=True)
         
         aylar = ["Şubat", "Mart", "Nisan", "Mayıs", "Haziran"]
-        aylik_buyume = 1.10 # %10 hedef
-        tahminler = [total_val * (aylik_buyume**i) for i in range(len(aylar))]
+        base_val = float(total_val)
+        tahminler = [base_val]
+
+        for i in range(1, len(aylar)):
+            # %10 büyüme + %2 rastgele piyasa oynaklığı
+            rastgele_sapma = np.random.uniform(-0.02, 0.02) 
+            yeni_deger = tahminler[-1] * (1.10 + rastgele_sapma)
+            tahminler.append(yeni_deger)
+
         chart_df = pd.DataFrame({"Varlık ($)": tahminler}, index=aylar)
 
         c1, c2 = st.columns([1, 2])
         with c1:
             st.write(f"### {secilen_user} Hedef")
             st.markdown(f"<h1 style='color:#00ff41;'>${tahminler[-1]:,.0f}</h1>", unsafe_allow_html=True)
-            st.caption("Mevcut hızla 4 ay sonra")
+            st.caption("Mevcut gidişatla Haziran 2026 tahmini")
         with c2:
             st.area_chart(chart_df, color="#cc7a00")
-
         # ... (Mevcut kodunun içindeki Portföy Takibi kısmı)
 aylar = ["Şubat", "Mart", "Nisan", "Mayıs", "Haziran"]
 base_val = total_val
