@@ -3,6 +3,7 @@ import yfinance as yf
 from datetime import datetime
 import pandas as pd
 import pytz
+import numpy as np
 
 # --- 1. AYARLAR ---
 st.set_page_config(
@@ -360,6 +361,20 @@ if check_password():
             st.caption("Mevcut hızla 4 ay sonra")
         with c2:
             st.area_chart(chart_df, color="#cc7a00")
+
+        # ... (Mevcut kodunun içindeki Portföy Takibi kısmı)
+aylar = ["Şubat", "Mart", "Nisan", "Mayıs", "Haziran"]
+base_val = total_val
+tahminler = [base_val]
+
+for i in range(1, len(aylar)):
+    # %10 büyüme + %2 rastgele piyasa oynaklığı
+    rastgele_sapma = np.random.uniform(-0.02, 0.02) 
+    yeni_deger = tahminler[-1] * (1.10 + rastgele_sapma)
+    tahminler.append(yeni_deger)
+
+chart_df = pd.DataFrame({"Varlık ($)": tahminler}, index=aylar)
+st.area_chart(chart_df, color="#cc7a00")
 
         # --- 4. PİYASA BİLGİ BANDI (EN ALTTA) ---
         st.divider()
