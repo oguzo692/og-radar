@@ -76,7 +76,26 @@ section[data-testid="stSidebar"] { background-color: rgba(5, 5, 5, 0.95) !import
 .stButton button, .stLinkButton a { width: 100% !important; background: rgba(204, 122, 0, 0.1) !important; border: 1px solid rgba(204, 122, 0, 0.3) !important; color: #cc7a00 !important; font-family: 'Orbitron' !important; padding: 12px !important; border-radius: 6px !important;}
 body, [data-testid="stAppViewContainer"], p, div, span, button, input { font-family: 'JetBrains Mono', monospace !important; color: #d1d1d1 !important;}
 .terminal-row { display: flex; justify-content: space-between; align-items: center; font-size: 14px; margin-bottom: 12px; line-height: 1.6;}
-.industrial-card { background: rgba(15, 15, 15, 0.8) !important; backdrop-filter: blur(5px); border: 1px solid rgba(255, 255, 255, 0.03) !important; border-top: 2px solid rgba(204, 122, 0, 0.4) !important; padding: 22px; margin-bottom: 20px; border-radius: 4px;}
+
+.industrial-card { 
+    background: rgba(15, 15, 15, 0.8) !important; 
+    backdrop-filter: blur(5px); 
+    border: 1px solid rgba(255, 255, 255, 0.03) !important; 
+    border-top: 2px solid rgba(204, 122, 0, 0.4) !important; 
+    padding: 22px; 
+    margin-bottom: 20px; 
+    border-radius: 4px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5); 
+    transition: all 0.3s ease;
+}
+
+.industrial-card:hover { 
+    transform: translateY(-5px); 
+    border-top-color: #ffae00 !important;
+    background: rgba(25, 25, 25, 0.9) !important;
+    box-shadow: 0 8px 25px rgba(204, 122, 0, 0.15);
+}
+
 .terminal-header { color: #666; font-size: 11px; font-weight: 800; letter-spacing: 2.5px; text-transform: uppercase; margin-bottom: 18px; border-left: 3px solid #cc7a00; padding-left: 12px;}
 .highlight { color: #FFFFFF !important; font-weight: 400; font-size: 14px; font-family: 'JetBrains Mono', monospace; }
 .val-std { font-size: 22px !important; font-weight: 800 !important; font-family: 'Orbitron'; }
@@ -137,7 +156,6 @@ input[type="password"] {
 
 </style>
 """
-
 
 # --- 4. HTML ŞABLONLARI ---
 # W5 için yeni maç listesi (Burayı istediğin maçlarla güncelle)
