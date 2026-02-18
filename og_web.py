@@ -50,8 +50,8 @@ og_p = live_vars.get("oguzo_puan", "0")
 er_p = live_vars.get("ero7_puan", "0")
 fy_p = live_vars.get("fybey_puan", "0")
 
-aktif_soru_1 = live_vars.get("aktif_soru", "aşağıda olaylardan hangisi gerçekleşir tra-fb")
-aktif_soru_2 = live_vars.get("aktif_soru2", "en çok kurtatış yapan kaleci tra-fb")
+aktif_soru_1 = live_vars.get("aktif_soru", "yeni soru yakında...")
+aktif_soru_2 = live_vars.get("aktif_soru2", "yeni soru yakında...")
 
 # --- 💰 FORMLINE HESAPLAMA ---
 w1_kar = float(live_vars.get("w1_sonuc", -100)) 
@@ -228,13 +228,13 @@ if check_password():
         with q_col1:
             st.markdown(f"<div class='industrial-card equal-card'><div class='terminal-header'>📢 AKTİF SORU 1</div><h3 style='color:white; margin:0;'>{aktif_soru_1}</h3></div>", unsafe_allow_html=True)
             u_name_1 = st.selectbox("İsim (Soru 1)", ["oguzo", "ero7", "fybey"], key="n1")
-            u_vote_1 = st.radio("Tahmin (Soru 1)", ["penaltı olur","kırmızı kart olur", "2+ var monitorü","4+ gol","kafa golü olur"], key="v1")
+            u_vote_1 = st.radio("Tahmin (Soru 1)", ["-","-", "-","-","-"], key="v1")
             final_link_1 = f"{base_url}?isim={u_name_1}&tahmin={u_vote_1}&soru=1"
             st.markdown(f"""<a href='{final_link_1}' target='_blank' style='text-decoration:none;'><div style='background:rgba(204, 122, 0, 0.2); border: 1px solid #cc7a00; color:#cc7a00; text-align:center; padding:15px; border-radius:5px; font-family:Orbitron; font-weight:bold; cursor:pointer;'>1. OYU ONAYLA</div></a>""", unsafe_allow_html=True)
         with q_col2:
             st.markdown(f"<div class='industrial-card equal-card'><div class='terminal-header'>📢 AKTİF SORU 2</div><h3 style='color:white; margin:0;'>{aktif_soru_2}</h3></div>", unsafe_allow_html=True)
             u_name_2 = st.selectbox("İsim (Soru 2)", ["oguzo", "ero7", "fybey"], key="n2")
-            u_vote_2 = st.radio("Tahmin (Soru 2)", ["ederson", "onana", "fybey", "2021 efe", "-"], key="v2")
+            u_vote_2 = st.radio("Tahmin (Soru 2)", ["-", "-", "-", "-", "-"], key="v2")
             final_link_2 = f"{base_url}?isim={u_name_2}&tahmin={u_vote_2}&soru=2"
             st.markdown(f"""<a href='{final_link_2}' target='_blank' style='text-decoration:none;'><div style='background:rgba(204, 122, 0, 0.2); border: 1px solid #cc7a00; color:#cc7a00; text-align:center; padding:15px; border-radius:5px; font-family:Orbitron; font-weight:bold; cursor:pointer;'>2. OYU ONAYLA</div></a>""", unsafe_allow_html=True)
 
