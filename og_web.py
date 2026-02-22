@@ -7,11 +7,11 @@ import numpy as np
 
 # --- 1. AYARLAR ---
 st.set_page_config(
-page_title="OG Core", 
-page_icon="🛡️", 
-layout="wide", 
-initial_sidebar_state="expanded")
-
+    page_title="OG Core",
+    page_icon="🛡️",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
 # --- 2. VERİ BAĞLANTISI (GOOGLE SHEETS) ---
 def get_live_data():
     try:
