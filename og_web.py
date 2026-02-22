@@ -309,7 +309,8 @@ if check_password():
             p1.caption(f"USD/TRY: ₺{usd_try:.2f}")
             p2.caption(f"Gram Altın: ₺{gram_altin:.0f}")
             p3.caption(f"Çeyrek Altın: ₺{ceyrek_fiyat:.0f}")
-        except Exception as e:
-    st.error(e)
-    
+            
+        except:
+            st.error("Piyasa verileri çekilirken bir hata oluştu.")
+
     st.markdown(f"<div style='text-align:center; color:#444; font-size:10px; margin-top:50px;'>OG CORE // {datetime.now().year}</div>", unsafe_allow_html=True)
