@@ -251,30 +251,41 @@ if check_password():
     elif page == "📊 Portföy Takip":
         st.markdown("<div class='terminal-header'>🏛️ PORTFÖY KOMUTA MERKEZİ</div>", unsafe_allow_html=True)
         try:
-            # Finansal verileri çek (Hata payı için kontrol eklendi)
-            usd_try_tick = yf.Ticker("USDTRY=X").history(period="1d")
-            ons_gold_tick = yf.Ticker("GC=F").history(period="1d")
+            # 1. Finansal verileri çek (Hassas Ons ve USD/TRY)
+            # Ons altın fiyatı (USD bazında direkt)
+            ons_data = yf.Ticker("GC=F").history(period="1d")
+            ons_gold_usd = ons_data['Close'].iloc[-1] if not ons_data.empty else 2025.0
             
-            usd_try = usd_try_tick['Close'].iloc[-1] if not usd_try_tick.empty else 31.0
-            ons_gold = ons_gold_tick['Close'].iloc[-1] if not ons_gold_tick.empty else 2000.0
+            # USD/TRY kuru (Sadece TL karşılığı görmek için)
+            usd_try_data = yf.Ticker("USDTRY=X").history(period="1d")
+            usd_try = usd_try_data['Close'].iloc[-1] if not usd_try_data.empty else 31.0
             
-            gram_altin = (ons_gold / 31.1035) * usd_try
-            ceyrek_fiyat = gram_altin * 1.74 
+            # Altın USD Birim Değerleri (Direkt Dolar üzerinden hesaplama)
+            # 1 gr altın = Ons / 31.1035 (USD cinsinden)
+            gram_altin_usd = ons_gold_usd / 31.1035
+            ceyrek_altin_usd = gram_altin_usd * 1.75 # Standart 1.75 gr hassasiyeti
             
             def get_val(key): 
-                try: 
-                    val = live_vars.get(key, "0")
-                    return float(val)
+                try: return float(live_vars.get(key, 0))
                 except: return 0.0
             
             users = ["oguzo", "ero7", "fybey"]
             display_data = []
             for u in users:
-                u_usd = get_val(f"{u}_usd")
-                u_gr = get_val(f"{u}_altin")
-                u_cy = get_val(f"{u}_ceyrek")
-                t_usd = u_usd + (u_gr * gram_altin / usd_try) + (u_cy * ceyrek_fiyat / usd_try)
-                display_data.append({"Kullanıcı": u.upper(), "USD": u_usd, "Gram": u_gr, "Çeyrek": u_cy, "TOPLAM_USD": t_usd})
+                u_usd_cash = get_val(f"{u}_usd")
+                u_gr_count = get_val(f"{u}_altin")
+                u_cy_count = get_val(f"{u}_ceyrek")
+                
+                # Toplam Değer Hesaplama (Hata payı minimize edilmiş dolar bazlı)
+                t_usd_total = u_usd_cash + (u_gr_count * gram_altin_usd) + (u_cy_count * ceyrek_altin_usd)
+                
+                display_data.append({
+                    "Kullanıcı": u.upper(), 
+                    "USD": u_usd_cash, 
+                    "Gram": u_gr_count, 
+                    "Çeyrek": u_cy_count, 
+                    "TOPLAM_USD": t_usd_total
+                })
             
             df_portfoy = pd.DataFrame(display_data)
 
@@ -283,13 +294,13 @@ if check_password():
                 u_row = df_portfoy[df_portfoy["Kullanıcı"] == secilen_user]
                 total_val = float(u_row["TOPLAM_USD"].values[0])
                 
-                # Dev Kart
-                st.markdown(f"""<div class='industrial-card' style='text-align:center; border-top: 4px solid #cc7a00;'><div style='font-size:14px; color:#666; letter-spacing:2px;'>TOPLAM PORTFÖY DEĞERİ</div><div style='font-size:55px; font-weight:900; color:#cc7a00; font-family:Orbitron;'>${total_val:,.2f}</div><div style='font-size:18px; color:#444;'>≈ ₺{(total_val * usd_try):,.0f}</div></div>""", unsafe_allow_html=True)
+                # Dev Kart (Gerçek Dolar Değeri)
+                st.markdown(f"""<div class='industrial-card' style='text-align:center; border-top: 4px solid #cc7a00;'><div style='font-size:14px; color:#666; letter-spacing:2px;'>TOPLAM PORTFÖY DEĞERİ (USD)</div><div style='font-size:55px; font-weight:900; color:#cc7a00; font-family:Orbitron;'>${total_val:,.2f}</div><div style='font-size:18px; color:#444;'>≈ ₺{(total_val * usd_try):,.0f}</div></div>""", unsafe_allow_html=True)
 
                 # Varlık Dağılımı
                 v1, v2, v3 = st.columns(3)
-                with v1: st.markdown(f"<div class='industrial-card' style='text-align:center;'><div style='font-size:11px; color:#666;'>NAKİT</div><div class='highlight'>${u_row['USD'].values[0]:,.0f}</div></div>", unsafe_allow_html=True)
-                with v2: st.markdown(f"<div class='industrial-card' style='text-align:center;'><div style='font-size:11px; color:#666;'>GRAM ALTIN</div><div class='highlight'>{u_row['Gram'].values[0]} gr</div></div>", unsafe_allow_html=True)
+                with v1: st.markdown(f"<div class='industrial-card' style='text-align:center;'><div style='font-size:11px; color:#666;'>NAKİT USD</div><div class='highlight'>${u_row['USD'].values[0]:,.0f}</div></div>", unsafe_allow_html=True)
+                with v2: st.markdown(f"<div class='industrial-card' style='text-align:center;'><div style='font-size:11px; color:#666;'>ALTIN (GR)</div><div class='highlight'>{u_row['Gram'].values[0]} gr</div></div>", unsafe_allow_html=True)
                 with v3: st.markdown(f"<div class='industrial-card' style='text-align:center;'><div style='font-size:11px; color:#666;'>ÇEYREK ADET</div><div class='highlight'>{u_row['Çeyrek'].values[0]:,.0f}</div></div>", unsafe_allow_html=True)
 
                 # AI ÖNGÖRÜSÜ
@@ -299,8 +310,8 @@ if check_password():
                 aylar = ["Şubat", "Mart", "Nisan", "Mayıs", "Haziran"]
                 tahminler = [total_val]
                 for i in range(1, len(aylar)):
-                    rastgele_sapma = np.random.uniform(-0.02, 0.02) 
-                    yeni_deger = tahminler[-1] * (1.10 + rastgele_sapma)
+                    rastgele_sapma = np.random.uniform(-0.015, 0.03) 
+                    yeni_deger = tahminler[-1] * (1.08 + rastgele_sapma)
                     tahminler.append(yeni_deger)
                 
                 chart_df = pd.DataFrame({"Varlık ($)": tahminler}, index=aylar)
@@ -308,7 +319,7 @@ if check_password():
                 with c1:
                     st.write(f"### {secilen_user} Hedef")
                     st.markdown(f"<h1 style='color:#00ff41;'>${tahminler[-1]:,.0f}</h1>", unsafe_allow_html=True)
-                    st.caption("Mevcut gidişatla Haziran 2026 tahmini (Volatilite Dahil)")
+                    st.caption("Mevcut varlık ve beklenen emtia artışıyla Haziran 2026 tahmini")
                 with c2:
                     st.area_chart(chart_df, color="#cc7a00")
 
@@ -316,10 +327,10 @@ if check_password():
             st.divider()
             p1, p2, p3 = st.columns(3)
             p1.caption(f"USD/TRY: ₺{usd_try:.2f}")
-            p2.caption(f"Gram Altın: ₺{gram_altin:.0f}")
-            p3.caption(f"Çeyrek Altın: ₺{ceyrek_fiyat:.0f}")
+            p2.caption(f"Ons Altın: ${ons_gold_usd:.2f}")
+            p3.caption(f"Gram Altın (TR): ₺{(gram_altin_usd * usd_try):,.0f}")
             
         except Exception as e:
-            st.error(f"Piyasa verileri veya portföy hesaplanırken bir hata oluştu: {e}")
+            st.error(f"Portföy verileri işlenirken bir teknik hata oluştu: {e}")
 
     st.markdown(f"<div style='text-align:center; color:#444; font-size:10px; margin-top:50px;'>OG CORE // {datetime.now().year}</div>", unsafe_allow_html=True)
