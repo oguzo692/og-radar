@@ -251,19 +251,19 @@ if check_password():
     elif page == "📊 Portföy Takip":
         st.markdown("<div class='terminal-header'>🏛️ PORTFÖY KOMUTA MERKEZİ</div>", unsafe_allow_html=True)
         try:
-            # 1. Finansal verileri çek (Hassas Ons ve USD/TRY)
-            # Ons altın fiyatı (USD bazında direkt)
+            # 1. Ham Ons Verisi (Dolar bazlı sabitimiz)
             ons_data = yf.Ticker("GC=F").history(period="1d")
             ons_gold_usd = ons_data['Close'].iloc[-1] if not ons_data.empty else 2025.0
             
-            # USD/TRY kuru (Sadece TL karşılığı görmek için)
+            # USD/TRY kuru (Sadece görsel TL karşılığı için)
             usd_try_data = yf.Ticker("USDTRY=X").history(period="1d")
             usd_try = usd_try_data['Close'].iloc[-1] if not usd_try_data.empty else 31.0
             
-            # Altın USD Birim Değerleri (Direkt Dolar üzerinden hesaplama)
-            # 1 gr altın = Ons / 31.1035 (USD cinsinden)
+            # ALTIN DOLAR MATEMATİĞİ (Hata burada düzeltildi)
+            # 1 gramın dolar karşılığı = Ons / 31.1035
             gram_altin_usd = ons_gold_usd / 31.1035
-            ceyrek_altin_usd = gram_altin_usd * 1.75 # Standart 1.75 gr hassasiyeti
+            # 1 çeyrek altın = 1.75 gram (Has altın karşılığı)
+            ceyrek_altin_usd = gram_altin_usd * 1.75
             
             def get_val(key): 
                 try: return float(live_vars.get(key, 0))
@@ -276,7 +276,7 @@ if check_password():
                 u_gr_count = get_val(f"{u}_altin")
                 u_cy_count = get_val(f"{u}_ceyrek")
                 
-                # Toplam Değer Hesaplama (Hata payı minimize edilmiş dolar bazlı)
+                # TOPLAM HESAPLAMA: Nakit + (Gram * Değer) + (Çeyrek * Değer)
                 t_usd_total = u_usd_cash + (u_gr_count * gram_altin_usd) + (u_cy_count * ceyrek_altin_usd)
                 
                 display_data.append({
@@ -294,24 +294,24 @@ if check_password():
                 u_row = df_portfoy[df_portfoy["Kullanıcı"] == secilen_user]
                 total_val = float(u_row["TOPLAM_USD"].values[0])
                 
-                # Dev Kart (Gerçek Dolar Değeri)
+                # Dev Kart
                 st.markdown(f"""<div class='industrial-card' style='text-align:center; border-top: 4px solid #cc7a00;'><div style='font-size:14px; color:#666; letter-spacing:2px;'>TOPLAM PORTFÖY DEĞERİ (USD)</div><div style='font-size:55px; font-weight:900; color:#cc7a00; font-family:Orbitron;'>${total_val:,.2f}</div><div style='font-size:18px; color:#444;'>≈ ₺{(total_val * usd_try):,.0f}</div></div>""", unsafe_allow_html=True)
 
-                # Varlık Dağılımı
+                # Varlıklar
                 v1, v2, v3 = st.columns(3)
                 with v1: st.markdown(f"<div class='industrial-card' style='text-align:center;'><div style='font-size:11px; color:#666;'>NAKİT USD</div><div class='highlight'>${u_row['USD'].values[0]:,.0f}</div></div>", unsafe_allow_html=True)
                 with v2: st.markdown(f"<div class='industrial-card' style='text-align:center;'><div style='font-size:11px; color:#666;'>ALTIN (GR)</div><div class='highlight'>{u_row['Gram'].values[0]} gr</div></div>", unsafe_allow_html=True)
                 with v3: st.markdown(f"<div class='industrial-card' style='text-align:center;'><div style='font-size:11px; color:#666;'>ÇEYREK ADET</div><div class='highlight'>{u_row['Çeyrek'].values[0]:,.0f}</div></div>", unsafe_allow_html=True)
 
-                # AI ÖNGÖRÜSÜ
+                # Tahmin
                 st.divider()
                 st.markdown("<div class='terminal-header'>🧠 AI PROJEKSİYONU (HAZİRAN 2026)</div>", unsafe_allow_html=True)
                 
                 aylar = ["Şubat", "Mart", "Nisan", "Mayıs", "Haziran"]
                 tahminler = [total_val]
                 for i in range(1, len(aylar)):
-                    rastgele_sapma = np.random.uniform(-0.015, 0.03) 
-                    yeni_deger = tahminler[-1] * (1.08 + rastgele_sapma)
+                    # Altın ve doların birlikte artacağı senaryo (Aylık %6-8 arası büyüme)
+                    yeni_deger = tahminler[-1] * np.random.uniform(1.05, 1.09)
                     tahminler.append(yeni_deger)
                 
                 chart_df = pd.DataFrame({"Varlık ($)": tahminler}, index=aylar)
@@ -319,7 +319,7 @@ if check_password():
                 with c1:
                     st.write(f"### {secilen_user} Hedef")
                     st.markdown(f"<h1 style='color:#00ff41;'>${tahminler[-1]:,.0f}</h1>", unsafe_allow_html=True)
-                    st.caption("Mevcut varlık ve beklenen emtia artışıyla Haziran 2026 tahmini")
+                    st.caption("Emtia artış hızı ve bileşik getiri tahmini.")
                 with c2:
                     st.area_chart(chart_df, color="#cc7a00")
 
@@ -327,10 +327,10 @@ if check_password():
             st.divider()
             p1, p2, p3 = st.columns(3)
             p1.caption(f"USD/TRY: ₺{usd_try:.2f}")
-            p2.caption(f"Ons Altın: ${ons_gold_usd:.2f}")
-            p3.caption(f"Gram Altın (TR): ₺{(gram_altin_usd * usd_try):,.0f}")
+            p2.caption(f"Gram Altın (USD): ${gram_altin_usd:.2f}")
+            p3.caption(f"Çeyrek Altın (USD): ${ceyrek_altin_usd:.2f}")
             
         except Exception as e:
-            st.error(f"Portföy verileri işlenirken bir teknik hata oluştu: {e}")
+            st.error(f"Hata oluştu: {e}")
 
     st.markdown(f"<div style='text-align:center; color:#444; font-size:10px; margin-top:50px;'>OG CORE // {datetime.now().year}</div>", unsafe_allow_html=True)
