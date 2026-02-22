@@ -12,15 +12,16 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 )
+
 # --- 2. VERİ BAĞLANTISI (GOOGLE SHEETS) ---
 def get_live_data():
-    try:
-        sheet_url = "https://docs.google.com/spreadsheets/d/15izevdpRjs8Om5BAHKVWmdL3FxEHml35DGECfhQUG_s/export?format=csv&gid=0"
-        df = pd.read_csv(sheet_url)
-        data = dict(zip(df['key'].astype(str), df['value'].astype(str)))
-        return data
-    except Exception:
-        return {"kasa": "600.0", "ana_para": "600.0"}
+    try:
+        sheet_url = "https://docs.google.com/spreadsheets/d/15izevdpRjs8Om5BAHKVWmdL3FxEHml35DGECfhQUG_s/export?format=csv&gid=0"
+        df = pd.read_csv(sheet_url)
+        data = dict(zip(df['key'].astype(str), df['value'].astype(str)))
+        return data
+    except Exception:
+        return {"kasa": "600.0", "ana_para": "600.0"}
 
 # --- RÜTBE FONKSİYONU ---
 def rutbe_getir(puan_str):
