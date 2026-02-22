@@ -314,4 +314,3 @@ if check_password():
             st.error("Piyasa verileri çekilirken bir hata oluştu.")
 
     st.markdown(f"<div style='text-align:center; color:#444; font-size:10px; margin-top:50px;'>OG CORE // {datetime.now().year}</div>", unsafe_allow_html=True)
- kanka portföy takip çalışmıyor 
