@@ -251,13 +251,20 @@ if check_password():
     elif page == "📊 Portföy Takip":
         st.markdown("<div class='terminal-header'>🏛️ PORTFÖY KOMUTA MERKEZİ</div>", unsafe_allow_html=True)
         try:
-            usd_try = yf.Ticker("USDTRY=X").history(period="1d")['Close'].iloc[-1]
-            ons_gold = yf.Ticker("GC=F").history(period="1d")['Close'].iloc[-1]
+            # Finansal verileri çek (Hata payı için kontrol eklendi)
+            usd_try_tick = yf.Ticker("USDTRY=X").history(period="1d")
+            ons_gold_tick = yf.Ticker("GC=F").history(period="1d")
+            
+            usd_try = usd_try_tick['Close'].iloc[-1] if not usd_try_tick.empty else 31.0
+            ons_gold = ons_gold_tick['Close'].iloc[-1] if not ons_gold_tick.empty else 2000.0
+            
             gram_altin = (ons_gold / 31.1035) * usd_try
             ceyrek_fiyat = gram_altin * 1.74 
             
             def get_val(key): 
-                try: return float(live_vars.get(key, 0))
+                try: 
+                    val = live_vars.get(key, "0")
+                    return float(val)
                 except: return 0.0
             
             users = ["oguzo", "ero7", "fybey"]
@@ -268,6 +275,7 @@ if check_password():
                 u_cy = get_val(f"{u}_ceyrek")
                 t_usd = u_usd + (u_gr * gram_altin / usd_try) + (u_cy * ceyrek_fiyat / usd_try)
                 display_data.append({"Kullanıcı": u.upper(), "USD": u_usd, "Gram": u_gr, "Çeyrek": u_cy, "TOPLAM_USD": t_usd})
+            
             df_portfoy = pd.DataFrame(display_data)
 
             if not df_portfoy.empty:
@@ -310,7 +318,8 @@ if check_password():
             p1.caption(f"USD/TRY: ₺{usd_try:.2f}")
             p2.caption(f"Gram Altın: ₺{gram_altin:.0f}")
             p3.caption(f"Çeyrek Altın: ₺{ceyrek_fiyat:.0f}")
-        except:
-            st.error("Piyasa verileri çekilirken bir hata oluştu.")
+            
+        except Exception as e:
+            st.error(f"Piyasa verileri veya portföy hesaplanırken bir hata oluştu: {e}")
 
     st.markdown(f"<div style='text-align:center; color:#444; font-size:10px; margin-top:50px;'>OG CORE // {datetime.now().year}</div>", unsafe_allow_html=True)
