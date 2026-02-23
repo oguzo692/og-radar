@@ -265,35 +265,30 @@ if check_password():
             </div>
         """, unsafe_allow_html=True)
 
-        # Sekme Yapılandırması (Yeni sekme W6 eklendi)
+        # Sekme Yapılandırması (Tüm haftalar burada toplanmıştır)
         t6, t5, t4, t3, t2, t1 = st.tabs(["🚀 W6", "❌ W5", "❌ W4", "✅ W3", "✅ W2", "❌ W1"])
         
         with t6:
-            # W6 için durum belirleme
+            # W6 için dinamik durum belirleme
             w6_status = "✅ BAŞARILI" if w6_kar > 0 else "❌ BAŞARISIZ" if w6_kar < 0 else "⏳ BEKLENİYOR"
             w6_color = "#00ff41" if w6_kar > 0 else "#ff4b4b" if w6_kar < 0 else "#cc7a00"
             
-            # W6 Maç Detayları (Burayı her hafta güncelleyebilirsin)
-            w6_matches = """
-            <div class='terminal-row'><span>BVB - Leipzig</span><span class='highlight'>KG VAR ✅</span></div>
-            <div class='terminal-row'><span>Arsenal - Liverpool</span><span class='highlight'>MS 1 ❌</span></div>
-            <div class='terminal-row'><span>Real Madrid - Atleti</span><span class='highlight'>2.5 ÜST ✅</span></div>
+            # W6 Maç Detayları
+            w6_matches_content = """
+            <div class='terminal-row'><span>BVB - Leipzig</span><span class='highlight'>KG VAR & +2.5</span></div>
+            <div class='terminal-row'><span>Real Madrid - Atletico</span><span class='highlight'>MS 1</span></div>
+            <div class='terminal-row'><span>Arsenal - Liverpool</span><span class='highlight'>+1.5 ÜST</span></div>
             <hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'>
-            <div class='terminal-row'><span>Haftalık Sonuç:</span><span style='color:white; font-weight:bold;'>${w6_kar}</span></div>
+            <div class='terminal-row'><span>Haftalık K/Z:</span><span style='color:white; font-weight:bold;'>${w6_kar}</span></div>
             """
-            st.markdown(f"<div class='industrial-card' style='border-top-color: {w6_color} !important;'><div class='terminal-header' style='color:{w6_color};'>{w6_status} - WEEK 6</div>{w6_matches}</div>", unsafe_allow_html=True)
+            st.markdown(f"<div class='industrial-card' style='border-top-color: {w6_color} !important;'><div class='terminal-header' style='color:{w6_color};'>{w6_status} - WEEK 6</div>{w6_matches_content}</div>", unsafe_allow_html=True)
 
-        # Diğer sekmeler (Eski kuponlar)
+        # Diğer sekmeler (Mevcut HTML şablonların kullanılır)
         with t5: st.markdown(w5_coupon_html, unsafe_allow_html=True)
         with t4: st.markdown(w4_coupon_html, unsafe_allow_html=True)
         with t3: st.markdown(w3_coupon_html, unsafe_allow_html=True)
         with t2: st.markdown(w2_coupon_html, unsafe_allow_html=True)
         with t1: st.markdown(w1_coupon_html, unsafe_allow_html=True)
-        # --- W6 SEKME İÇERİĞİ ---
-        with tabs[0]:
-            # İpucu: Buradaki maçları Google Sheets'ten "w6_maclar" anahtarıyla da çekebilirsin.
-            w6_status = "✅ BAŞARILI" if w6_kar > 0 else "❌ BAŞARISIZ" if w6_kar < 0 else "⏳ BEKLENİYOR"
-            w6_color = "#00ff41" if w6_kar > 0 else "#ff4b4b" if w6_kar < 0 else "#cc7a00"
             
             st.markdown(f"""
                 <div class='industrial-card' style='border-top-color: {w6_color} !important;'>
