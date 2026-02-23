@@ -59,8 +59,7 @@ w2_kar = float(live_vars.get("w2_sonuc", 553))
 w3_kar = float(live_vars.get("w3_sonuc", 879)) 
 w4_kar = float(live_vars.get("w4_sonuc", -100))
 w5_kar = float(live_vars.get("w5_sonuc", -100))
-w6_kar = float(live_vars.get("w6_sonuc", 0)) # Yeni eklendi
-toplam_bahis_kar = w1_kar + w2_kar + w3_kar + w4_kar + w5_kar + w6_kar
+toplam_bahis_kar = w1_kar + w2_kar + w3_kar + w4_kar
 
 wr_oran = live_vars.get("win_rate", "0")
 son_islemler_raw = str(live_vars.get("son_islemler", "Veri yok"))
@@ -147,17 +146,17 @@ input[type="password"] {
 """
 
 # --- 4. HTML ŞABLONLARI ---
-w5_matches = """<div class='terminal-row'><span>konyaspor - gala</span><span class='highlight'>gala w & +2 ❌</span></div><div class='terminal-row'><span>leipzig - bvb</span><span class='highlight'>kg ✅</span></div><div class='terminal-row'><span>man city - newcastle</span><span class='highlight'>x1 & +2 ✅</span></div><div class='terminal-row'><span>forest - liverpool</span><span class='highlight'>live 2+ ❌</span></div><div class='terminal-row'><span>fenerbahçe - kasımpaşa</span><span class='highlight'>fenerbahçe w & iy +1 & +2 ✅</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Toplam Oran: 8.26</span><span>Tutar: 100 USD</span></div>"""
+w5_matches = """<div class='terminal-row'><span>konyaspor - gala</span><span class='highlight'>gala w & +2 </span></div><div class='terminal-row'><span>leipzig - bvb</span><span class='highlight'>kg </span></div><div class='terminal-row'><span>man city - newcastle</span><span class='highlight'>x1 & +2</span></div><div class='terminal-row'><span>forest - liverpool</span><span class='highlight'>live 2+ </span></div><div class='terminal-row'><span>fenerbahçe - kasımpaşa</span><span class='highlight'>fenerbahçe w & iy +1 & +2 </span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Toplam Oran: 8.26</span><span>Tutar: 100 USD</span></div>"""
 w4_matches = """<div class='terminal-row'><span>gala - eyüpspor</span><span class='highlight'>gala w & 2+ ✅</span></div><div class='terminal-row'><span>sunderland - liverpool</span><span class='highlight'>kg ❌</span></div><div class='terminal-row'><span>bvb - mainz 05</span><span class='highlight'>bvb 1x & bvb 2+ & bvb iy +1 ✅</span></div><div class='terminal-row'><span>trabzonspor - fenerbahçe</span><span class='highlight'>fb 2+ ✅</span></div><div class='terminal-row'><span>spurs - newcastle</span><span class='highlight'>kg ✅</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Toplam Oran: 11.00</span><span>Tutar: 100 USD</span></div>"""
 w3_matches = """<div class='terminal-row'><span>wolfsburg - bvb</span><span class='highlight'>bvb x2 & +2 ✅</span></div><div class='terminal-row'><span>newcastle - brentford</span><span class='highlight'>newcastle +2 ✅</span></div><div class='terminal-row'><span>rizespor - gala</span><span class='highlight'>gala w & +2 ✅</span></div><div class='terminal-row'><span>liverpool - man city</span><span class='highlight'>lıve +1 ✅</span></div><div class='terminal-row'><span>fenerbahçe - gençlerbirliği</span><span class='highlight'>fenerbahçe w & +3 ✅</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 8.79</span><span>Bet: 100 USD</span></div>"""
 w2_matches = """<div class='terminal-row'><span>gala - kayserispor</span><span style='color:#00ff41;'>iy +1 & w & 2+ ✅</span></div><div class='terminal-row'><span>liverpool - newcastle</span><span style='color:#00ff41;'>+2 & liverpool 1x ✅</span></div><div class='terminal-row'><span>bvb - heidenheim</span><span style='color:#00ff41;'>iy +1 & w & 2+ ✅</span></div><div class='terminal-row'><span>kocaelispor - fenerbahçe</span><span style='color:#00ff41;'>fenerbahçe w & 2+ ✅</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 5.53</span><span>Bet: 100 USD</span></div>"""
 w1_matches = """<div class='terminal-row'><span>karagümrük - gala</span><span style='color:#ff4b4b;'>gala w & +2 ✅</span></div><div class='terminal-row'><span>bournemouth - liverpool</span><span style='color:#00ff41;'>kg ✅</span></div><div class='terminal-row'><span>union berlin - bvb</span><span style='color:#00ff41;'>bvb iy +1 ✅</span></div><div class='terminal-row'><span>newcastle - aston villa</span><span style='color:#ff4b4b;'>newcastle +2 ❌</span></div><div class='terminal-row'><span>fenerbahçe - göztepe</span><span style='color:#ff4b4b;'>fenerbahçe w ❌</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 7.09</span><span>Bet: 100 USD</span></div>"""
 
-w5_coupon_html = f"<div class='industrial-card' style='border-top-color: #ff4b4b !important;'><div class='terminal-header' style='color:#ff4b4b;'>❌ W5 KUPONU (BAŞARISIZ)</div>{w5_matches}</div>"
-w4_coupon_html = f"<div class='industrial-card' style='border-top-color: #ff4b4b !important;'><div class='terminal-header' style='color:#ff4b4b;'>❌ W4 KUPONU (BAŞARISIZ)</div>{w4_matches}</div>"
-w3_coupon_html = f"<div class='industrial-card' style='border-top-color: #00ff41 !important;'><div class='terminal-header' style='color:#00ff41;'>✅ W3 KUPONU (BAŞARILI)</div>{w3_matches}</div>"
-w2_coupon_html = f"<div class='industrial-card' style='border-top-color: #00ff41 !important;'><div class='terminal-header' style='color:#00ff41;'>✅ W2 KUPONU (BAŞARILI)</div>{w2_matches}</div>"
-w1_coupon_html = f"<div class='industrial-card' style='border-top-color: #ff4b4b !important;'><div class='terminal-header' style='color:#ff4b4b;'>❌ W1 KUPONU (BAŞARISIZ)</div>{w1_matches}</div>"
+w5_coupon_html = f"<div class='industrial-card'><div class='terminal-header'>🔥 W5 KUPONU (AKTİF)</div>{w5_matches}<span style='color:#cc7a00; font-weight:bold;'>SONUÇ BEKLENİYOR...</span></div>"
+w4_coupon_html = f"<div class='industrial-card'><div class='terminal-header'>🔥 W4 KUPONU (AKTİF)</div>{w4_matches}<span style='color:#cc7a00; font-weight:bold;'>❌ W4 KUPONU (BAŞARISIZ)</span></div>"
+w3_coupon_html = f"<div class='industrial-card'><div class='terminal-header'>🔥 W3 KUPONU (AKTİF)</div>{w3_matches}<span style='color:#cc7a00; font-weight:bold;'>✅ W3 KUPONU (BAŞARILI)</span></div>"
+w2_coupon_html = f"<div class='industrial-card' style='border-top-color: #00ff41 !important;'><div class='terminal-header' style='color:#00ff41;'>✅ W2 KUPONU (BAŞARILI)</div>{w2_matches}<span style='color:#00ff41; font-weight:bold;'>SONUÇLANDI ✅</span></div>"
+w1_coupon_html = f"<div class='industrial-card' style='border-top-color: #ff4b4b !important;'><div class='terminal-header' style='color:#ff4b4b;'>❌ W1 KUPONU (BAŞARISIZ)</div>{w1_matches}<span style='color:#ff4b4b; font-weight:bold;'>SONUÇLANDI ❌</span></div>"
 
 # --- 5. GÜVENLİK ---
 if "password_correct" not in st.session_state: st.session_state["password_correct"] = False
@@ -218,24 +217,6 @@ if check_password():
         st.markdown("### 📜 SON İŞLEMLER")
         st.markdown(f"<div class='industrial-card'><div class='terminal-header'>AKTİVİTE LOGLARI</div><p style='font-family:JetBrains Mono; color:#888;'>{son_islemler_raw}</p></div>", unsafe_allow_html=True)
 
-    elif page == "⚽ FORMLINE":
-        st.markdown(f"<div class='industrial-card'><div class='terminal-header'>📈 PERFORMANS</div><div class='terminal-row'><span>NET:</span><span style='color:#00ff41; font-size:32px; font-family:Orbitron;'>${toplam_bahis_kar:,.2f}</span></div></div>", unsafe_allow_html=True)
-        
-        # W6 dahil tüm sekmeler
-        t6, t5, t4, t3, t2, t1 = st.tabs(["🚀 W6", "❌ W5", "❌ W4", "✅ W3", "✅ W2", "❌ W1"])
-        
-        with t6:
-            w6_status = "✅ BAŞARILI" if w6_kar > 0 else "❌ BAŞARISIZ" if w6_kar < 0 else "⏳ BEKLENİYOR"
-            w6_color = "#00ff41" if w6_kar > 0 else "#ff4b4b" if w6_kar < 0 else "#cc7a00"
-            w6_m = """<div class='terminal-row'><span>BVB - Leipzig</span><span class='highlight'>KG VAR & +2.5</span></div><div class='terminal-row'><span>Real Madrid - Atletico</span><span class='highlight'>MS 1</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Haftalık K/Z:</span><span style='color:white;'>${w6_kar}</span></div>"""
-            st.markdown(f"<div class='industrial-card' style='border-top-color: {w6_color} !important;'><div class='terminal-header' style='color:{w6_color};'>{w6_status} - WEEK 6</div>{w6_m}</div>", unsafe_allow_html=True)
-            
-        with t5: st.markdown(w5_coupon_html, unsafe_allow_html=True)
-        with t4: st.markdown(w4_coupon_html, unsafe_allow_html=True)
-        with t3: st.markdown(w3_coupon_html, unsafe_allow_html=True)
-        with t2: st.markdown(w2_coupon_html, unsafe_allow_html=True)
-        with t1: st.markdown(w1_coupon_html, unsafe_allow_html=True)
-
     elif page == "🎲 CHALLANGE":
         st.markdown("<div class='terminal-header'>🏆 SIRALAMA</div>", unsafe_allow_html=True)
         s1, s2, s3 = st.columns(3)
@@ -257,6 +238,15 @@ if check_password():
             u_vote_2 = st.radio("Tahmin (Soru 2)", ["-", "-", "-", "-", "-"], key="v2")
             final_link_2 = f"{base_url}?isim={u_name_2}&tahmin={u_vote_2}&soru=2"
             st.markdown(f"""<a href='{final_link_2}' target='_blank' style='text-decoration:none;'><div style='background:rgba(204, 122, 0, 0.2); border: 1px solid #cc7a00; color:#cc7a00; text-align:center; padding:15px; border-radius:5px; font-family:Orbitron; font-weight:bold; cursor:pointer;'>2. OYU ONAYLA</div></a>""", unsafe_allow_html=True)
+
+    elif page == "⚽ FORMLINE":
+        st.markdown(f"<div class='industrial-card'><div class='terminal-header'>📈 PERFORMANS</div><div class='terminal-row'><span>NET:</span><span style='color:#00ff41; font-size:32px; font-family:Orbitron;'>${toplam_bahis_kar:,.2f}</span></div></div>", unsafe_allow_html=True)
+        t5, t4, t1, t2, t3 = st.tabs(["⏳ W5", "❌ W4", "✅ W3", "✅ W2", "❌ W1"])
+        with t5: st.markdown(w5_coupon_html, unsafe_allow_html=True)
+        with t4: st.markdown(w4_coupon_html, unsafe_allow_html=True)
+        with t1: st.markdown(w3_coupon_html, unsafe_allow_html=True)
+        with t2: st.markdown(w2_coupon_html, unsafe_allow_html=True)
+        with t3: st.markdown(w1_coupon_html, unsafe_allow_html=True)
 
     elif page == "📊 Portföy Takip":
         st.markdown("<div class='terminal-header'>🏛️ PORTFÖY KOMUTA MERKEZİ</div>", unsafe_allow_html=True)
@@ -284,31 +274,43 @@ if check_password():
                 secilen_user = st.selectbox("Kullanıcı Portföy Detayı:", ["OGUZO", "ERO7", "FYBEY"])
                 u_row = df_portfoy[df_portfoy["Kullanıcı"] == secilen_user]
                 total_val = float(u_row["TOPLAM_USD"].values[0])
+                
+                # Dev Kart
                 st.markdown(f"""<div class='industrial-card' style='text-align:center; border-top: 4px solid #cc7a00;'><div style='font-size:14px; color:#666; letter-spacing:2px;'>TOPLAM PORTFÖY DEĞERİ</div><div style='font-size:55px; font-weight:900; color:#cc7a00; font-family:Orbitron;'>${total_val:,.2f}</div><div style='font-size:18px; color:#444;'>≈ ₺{(total_val * usd_try):,.0f}</div></div>""", unsafe_allow_html=True)
+
+                # Varlık Dağılımı
                 v1, v2, v3 = st.columns(3)
                 with v1: st.markdown(f"<div class='industrial-card' style='text-align:center;'><div style='font-size:11px; color:#666;'>NAKİT</div><div class='highlight'>${u_row['USD'].values[0]:,.0f}</div></div>", unsafe_allow_html=True)
                 with v2: st.markdown(f"<div class='industrial-card' style='text-align:center;'><div style='font-size:11px; color:#666;'>GRAM ALTIN</div><div class='highlight'>{u_row['Gram'].values[0]} gr</div></div>", unsafe_allow_html=True)
                 with v3: st.markdown(f"<div class='industrial-card' style='text-align:center;'><div style='font-size:11px; color:#666;'>ÇEYREK ADET</div><div class='highlight'>{u_row['Çeyrek'].values[0]:,.0f}</div></div>", unsafe_allow_html=True)
+
+                # AI ÖNGÖRÜSÜ
                 st.divider()
                 st.markdown("<div class='terminal-header'>🧠 AI PROJEKSİYONU (HAZİRAN 2026)</div>", unsafe_allow_html=True)
+                
                 aylar = ["Şubat", "Mart", "Nisan", "Mayıs", "Haziran"]
                 tahminler = [total_val]
                 for i in range(1, len(aylar)):
                     rastgele_sapma = np.random.uniform(-0.02, 0.02) 
                     yeni_deger = tahminler[-1] * (1.10 + rastgele_sapma)
                     tahminler.append(yeni_deger)
+                
                 chart_df = pd.DataFrame({"Varlık ($)": tahminler}, index=aylar)
                 c1, c2 = st.columns([1, 2])
                 with c1:
                     st.write(f"### {secilen_user} Hedef")
                     st.markdown(f"<h1 style='color:#00ff41;'>${tahminler[-1]:,.0f}</h1>", unsafe_allow_html=True)
+                    st.caption("Mevcut gidişatla Haziran 2026 tahmini (Volatilite Dahil)")
                 with c2:
                     st.area_chart(chart_df, color="#cc7a00")
+
+            # Piyasa Bilgi Bandı
             st.divider()
             p1, p2, p3 = st.columns(3)
             p1.caption(f"USD/TRY: ₺{usd_try:.2f}")
             p2.caption(f"Gram Altın: ₺{gram_altin:.0f}")
             p3.caption(f"Çeyrek Altın: ₺{ceyrek_fiyat:.0f}")
-        except: st.error("Piyasa verileri çekilirken bir hata oluştu.")
+        except:
+            st.error("Piyasa verileri çekilirken bir hata oluştu.")
 
     st.markdown(f"<div style='text-align:center; color:#444; font-size:10px; margin-top:50px;'>OG CORE // {datetime.now().year}</div>", unsafe_allow_html=True)
