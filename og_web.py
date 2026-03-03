@@ -296,12 +296,11 @@ if check_password():
     elif page == "💠 BrightFunded":
         st.markdown("<div class='terminal-header'>💠 BRIGHTFUNDED COMMAND CENTER</div>", unsafe_allow_html=True)
         
-        # Google Sheets'ten verileri çek (Eğer Sheets'te yoksa varsayılan değerler)
-        # Sheets'e 'bf_balance', 'bf_equity', 'bf_daily_loss' gibi key'ler ekleyebilirsin
-        bf_balance = float(live_vars.get("bf_balance", 100000))  # Başlangıç Fonu
-        bf_equity = float(live_vars.get("bf_equity", 102500))    # Mevcut Bakiye
+        # Verileri çek
+        bf_balance = float(live_vars.get("bf_balance", 100000))
+        bf_equity = float(live_vars.get("bf_equity", 102500))
         bf_daily_loss = float(live_vars.get("bf_daily_loss", 0.0))
-        bf_target = bf_balance * 1.10 # Örnek: %10 Kar hedefi
+        bf_target = bf_balance * 1.10
         
         # Üst Metrik Kartları
         m1, m2, m3 = st.columns(3)
@@ -313,16 +312,16 @@ if check_password():
         with m2:
             st.markdown(f"<div class='industrial-card' style='text-align:center; border-top-color: {pnl_color};'><div style='font-size:11px; color:#666;'>NET K/Z</div><div style='color:{pnl_color}; font-size:24px;' class='val-std'>${net_pnl:,.2f}</div></div>", unsafe_allow_html=True)
         with m3:
-            daily_limit_pct = (bf_daily_loss / (bf_balance * 0.05)) * 100 # Örnek %5 günlük limit
+            daily_limit_pct = (abs(bf_daily_loss) / (bf_balance * 0.05)) * 100
             st.markdown(f"<div class='industrial-card' style='text-align:center; border-top-color: #ff4b4b;'><div style='font-size:11px; color:#666;'>GÜNLÜK KAYIP DOLULUK</div><div class='highlight' style='font-size:24px;'>%{daily_limit_pct:.2f}</div></div>", unsafe_allow_html=True)
 
-        # Hedef İlerleme Çubuğu
+        # Hedef Çubuğu
         current_progress = max(0.0, min(1.0, (bf_equity - bf_balance) / (bf_target - bf_balance)))
         st.markdown(f"""
             <div class='industrial-card'>
                 <div class='terminal-header'>🎯 HEDEF YOLCULUĞU (HEDEF: ${bf_target:,.0f})</div>
-                <div style='background:#111; height:15px; border-radius:10px; border: 1px solid rgba(255,255,255,0.05);'>
-                    <div style='background:linear-gradient(90deg, #00ff41, #008f11); width:{current_progress*100}%; height:100%; border-radius:10px; box-shadow: 0 0 10px rgba(0,255,65,0.3);'></div>
+                <div style='background:#111; height:15px; border-radius:10px;'>
+                    <div style='background:linear-gradient(90deg, #00ff41, #008f11); width:{current_progress*100}%; height:100%; border-radius:10px;'></div>
                 </div>
                 <div style='display:flex; justify-content:space-between; margin-top:10px;'>
                     <span style='font-size:12px; color:#555;'>BAŞLANGIÇ: ${bf_balance:,.0f}</span>
