@@ -364,13 +364,13 @@ if check_password():
         st.subheader("🎯 Hedefler & Limitler (100K Hesap)")
 col1, col2 = st.columns(2)
 with col1:
-    st.info("**Phase 1 HEDEF:** $10,000 Kazanç")
+    st.info("**Phase 1 Hedef :** $10,000 Kazanç")
     st.info("**Phase 1 R :** $250")
     st.error("**Günlük Limit :** $5,000 Kayıp")
     st.warning("**Toplam Limit :** $10,000 Kazanç")
 with col2:
-    st.success("**PHASE 2 HEDEF :** $5,000 Kazanç")
-    st.info("**PHASE 2 R Miktarı :** $250")
+    st.success("**Phase2 Hedef :** $5,000 Kazanç")
+    st.info("**Phase2 R Miktarı :** $250")
     st.error("**Günlük Limit :** $5,000 Kayıp")
     st.warning("**Toplam Limit :** $10,000 Kazanç")
 
