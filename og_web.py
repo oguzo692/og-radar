@@ -365,10 +365,12 @@ if check_password():
 col1, col2 = st.columns(2)
 with col1:
     st.info("**PHASE 1 HEDEF:** $10,000 Kazanç")
+    st.info("**PHASE 1 R:** $250")
     st.error("**GÜNLÜK LİMİT:** $5,000 Kayıp")
     st.warning("**TOPLAM LİMİT:** $10,000 Kazanç")
 with col2:
     st.success("**PHASE 2 HEDEF:** $5,000 Kazanç")
+    st.info("**PHASE 2R:** $250")
     st.error("**GÜNLÜK LİMİT:** $5,000 Kayıp")
     st.warning("**TOPLAM LİMİT:** $10,000 Kazanç")
 
