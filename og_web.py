@@ -189,7 +189,7 @@ if check_password():
     with st.sidebar:
         st.markdown("<h1 style='color:white; font-family:Orbitron; font-size:24px; letter-spacing:5px; text-align:center; margin-bottom:40px;'>OG CORE</h1>", unsafe_allow_html=True)
         st.markdown("<div style='margin-bottom:10px; color:#666; font-size:11px; letter-spacing:2px; font-weight:800;'>SİSTEM MODÜLLERİ</div>", unsafe_allow_html=True)
-        page = st.radio("Menu", ["⚡ ULTRA ATAK", "⚽ FORMLINE", "🎲 CHALLANGE", "📊 Portföy Takip", "💠 BrightFunded"], label_visibility="collapsed")
+        page = st.radio("Menu", ["⚡ ULTRA ATAK", "⚽ FORMLINE", "🎲 CHALLANGE", "📊 Portföy Takip", "💠 FTMO"], label_visibility="collapsed")
         st.divider()
         st.markdown("<div style='color:#666; font-size:11px; letter-spacing:2px; font-weight:800; margin-bottom:15px;'>📂 TERMİNAL ERİŞİMİ</div>", unsafe_allow_html=True)
         admin_pwd = st.text_input("PIN", type="password", placeholder="Admin PIN", label_visibility="collapsed")
@@ -322,8 +322,8 @@ if check_password():
         except:
             st.error("Piyasa verileri çekilirken bir hata oluştu.")
 
-    elif page == "💠 BrightFunded":
-        st.markdown("<div class='terminal-header'>💠 BRIGHTFUNDED FON TAKİP SEKMESİ</div>", unsafe_allow_html=True)
+    elif page == "💠 FTMO":
+        st.markdown("<div class='terminal-header'>💠 FTMO FON TAKİP SEKMESİ</div>", unsafe_allow_html=True)
         
         # Verileri Google Sheets'ten çek
         bf_balance = float(live_vars.get("bf_balance", 100000))
