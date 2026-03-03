@@ -342,7 +342,6 @@ if check_password():
         with m2:
             st.markdown(f"<div class='industrial-card' style='text-align:center; border-top-color: {bf_pnl_color};'><div style='font-size:11px; color:#666;'>NET K/Z</div><div style='color:{bf_pnl_color}; font-size:24px;' class='val-std'>${bf_net_pnl:,.2f}</div></div>", unsafe_allow_html=True)
         with m3:
-            # Günlük limit doluluğu (Örnek: %5 Max Daily Loss üzerinden)
             bf_limit_pct = (abs(bf_daily_loss) / (bf_balance * 0.05)) * 100 if bf_balance > 0 else 0
             st.markdown(f"<div class='industrial-card' style='text-align:center; border-top-color: #ff4b4b;'><div style='font-size:11px; color:#666;'>GÜNLÜK LİMİT DOLULUK</div><div class='highlight' style='font-size:24px;'>%{bf_limit_pct:.2f}</div></div>", unsafe_allow_html=True)
 
@@ -361,17 +360,18 @@ if check_password():
                 </div>
             </div>
         """, unsafe_allow_html=True)
-        st.subheader("🎯 Hedefler & Limitler (100K Hesap)")
-col1, col2 = st.columns(2)
-with col1:
-    st.info("**Phase 1 Hedef :** $10,000 Kazanç")
-    st.info("**Phase 1 R :** $250")
-    st.error("**Günlük Limit :** $5,000 Kayıp")
-    st.warning("**Toplam Limit :** $10,000 Kazanç")
-with col2:
-    st.success("**Phase2 Hedef :** $5,000 Kazanç")
-    st.info("**Phase2 R Miktarı :** $250")
-    st.error("**Günlük Limit :** $5,000 Kayıp")
-    st.warning("**Toplam Limit :** $10,000 Kazanç")
 
-    st.markdown(f"<div style='text-align:center; color:#98444; font-size:10px; margin-top:50px;'>OG CORE // {datetime.now().year}</div>", unsafe_allow_html=True)
+        # --- HEDEFLER & LİMİTLER (ŞEFFAF VE SADECE BU SEKMEDE) ---
+        st.markdown("<div class='terminal-header'>🎯 Hedefler & Limitler (100K Hesap)</div>", unsafe_allow_html=True)
+        
+        c1, c2 = st.columns(2)
+        with c1:
+            st.markdown("<div class='industrial-card' style='border-top:1px solid #333;'><div style='font-size:11px; color:#666;'>PHASE 1 HEDEF</div><div class='highlight'>$10,000 Kazanç</div></div>", unsafe_allow_html=True)
+            st.markdown("<div class='industrial-card' style='border-top:1px solid #333;'><div style='font-size:11px; color:#666;'>PHASE 1 R</div><div class='highlight'>$250</div></div>", unsafe_allow_html=True)
+            st.markdown("<div class='industrial-card' style='border-top:1px solid #333;'><div style='font-size:11px; color:#666;'>GÜNLÜK LİMİT</div><div class='highlight'>$5,000 Kayıp</div></div>", unsafe_allow_html=True)
+        with c2:
+            st.markdown("<div class='industrial-card' style='border-top:1px solid #333;'><div style='font-size:11px; color:#666;'>PHASE 2 HEDEF</div><div class='highlight'>$5,000 Kazanç</div></div>", unsafe_allow_html=True)
+            st.markdown("<div class='industrial-card' style='border-top:1px solid #333;'><div style='font-size:11px; color:#666;'>PHASE 2 R</div><div class='highlight'>$250</div></div>", unsafe_allow_html=True)
+            st.markdown("<div class='industrial-card' style='border-top:1px solid #333;'><div style='font-size:11px; color:#666;'>TOPLAM LİMİT</div><div class='highlight'>$10,000 Kayıp</div></div>", unsafe_allow_html=True)
+
+        st.markdown(f"<div style='text-align:center; color:#444; font-size:10px; margin-top:50px;'>OG CORE // {datetime.now().year}</div>", unsafe_allow_html=True)
