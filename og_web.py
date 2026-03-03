@@ -293,7 +293,7 @@ if check_password():
                 with v2: st.markdown(f"<div class='industrial-card' style='text-align:center;'><div style='font-size:11px; color:#666;'>GRAM ALTIN</div><div class='highlight'>{u_row['Gram'].values[0]} gr</div></div>", unsafe_allow_html=True)
                 with v3: st.markdown(f"<div class='industrial-card' style='text-align:center;'><div style='font-size:11px; color:#666;'>ÇEYREK ADET</div><div class='highlight'>{u_row['Çeyrek'].values[0]:,.0f}</div></div>", unsafe_allow_html=True)
                     
-    elif page == "💠 BrightFunded":
+     elif page == "💠 BrightFunded":
         st.markdown("<div class='terminal-header'>💠 BRIGHTFUNDED COMMAND CENTER</div>", unsafe_allow_html=True)
         
         # Google Sheets'ten verileri çek (Eğer Sheets'te yoksa varsayılan değerler)
