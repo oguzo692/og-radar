@@ -361,13 +361,13 @@ if check_password():
                 </div>
             </div>
         """, unsafe_allow_html=True)
-        st.subheader("🎯 Hedefler & Limitler (100K Account)")
+        st.subheader("🎯 Hedefler & Limitler (100K Hesap)")
 col1, col2 = st.columns(2)
 with col1:
-    st.info("**PHASE 1 HEDEF:** $8,000 Profit")
-    st.error("**GÜNLÜK LİMİT:** $5,000 Loss")
+    st.info("**PHASE 1 HEDEF:** $8,000 Kazanç")
+    st.error("**GÜNLÜK LİMİT:** $5,000 Kayıp")
 with col2:
-    st.success("**PHASE 2 HEDEF:** $5,000 Profit")
-    st.warning("**TOPLAM LİMİT:** $10,000 Loss")
+    st.success("**PHASE 2 HEDEF:** $5,000 Kazanç")
+    st.warning("**TOPLAM LİMİT:** $10,000 Kazanç")
 
-    st.markdown(f"<div style='text-align:center; color:#444; font-size:10px; margin-top:50px;'>OG CORE // {datetime.now().year}</div>", unsafe_allow_html=True)
+    st.markdown(f"<div style='text-align:center; color:#98444; font-size:10px; margin-top:50px;'>OG CORE // {datetime.now().year}</div>", unsafe_allow_html=True)
