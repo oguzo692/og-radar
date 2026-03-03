@@ -366,8 +366,10 @@ col1, col2 = st.columns(2)
 with col1:
     st.info("**PHASE 1 HEDEF:** $10,000 Kazanç")
     st.error("**GÜNLÜK LİMİT:** $5,000 Kayıp")
+    st.warning("**TOPLAM LİMİT:** $10,000 Kazanç")
 with col2:
     st.success("**PHASE 2 HEDEF:** $5,000 Kazanç")
+    st.error("**GÜNLÜK LİMİT:** $5,000 Kayıp")
     st.warning("**TOPLAM LİMİT:** $10,000 Kazanç")
 
     st.markdown(f"<div style='text-align:center; color:#98444; font-size:10px; margin-top:50px;'>OG CORE // {datetime.now().year}</div>", unsafe_allow_html=True)
