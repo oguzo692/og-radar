@@ -323,7 +323,7 @@ if check_password():
             st.error("Piyasa verileri çekilirken bir hata oluştu.")
 
     elif page == "💠 BrightFunded":
-        st.markdown("<div class='terminal-header'>💠 BRIGHTFUNDED COMMAND CENTER</div>", unsafe_allow_html=True)
+        st.markdown("<div class='terminal-header'>💠 BRIGHTFUNDED FON TAKİP SEKMESİ</div>", unsafe_allow_html=True)
         
         # Verileri Google Sheets'ten çek
         bf_balance = float(live_vars.get("bf_balance", 100000))
