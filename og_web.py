@@ -361,7 +361,7 @@ if check_password():
             </div>
         """, unsafe_allow_html=True)
 
-      c1, c2 = st.columns(2)
+     c1, c2 = st.columns(2)
         with c1:
             st.markdown("<div class='industrial-card' style='border-top:1px solid #333;'><div style='font-size:11px; color:#666;'>Phase 1 hedef</div><div class='highlight'>$10,000 Kazanç</div></div>", unsafe_allow_html=True)
             st.markdown("<div class='industrial-card' style='border-top:1px solid #333;'><div style='font-size:11px; color:#666;'>Phase 1 r</div><div class='highlight'>$250</div></div>", unsafe_allow_html=True)
