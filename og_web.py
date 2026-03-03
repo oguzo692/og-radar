@@ -334,7 +334,7 @@ if check_password():
         
         # Üst Metrikler
         m1, m2, m3 = st.columns(3)
-        bf_net_pnl = bf_equity - bf_balance
+        bf_net_pnl = bf_equity - bf_balance 
         bf_pnl_color = "#00ff41" if bf_net_pnl >= 0 else "#ff4b4b"
         
         with m1:
