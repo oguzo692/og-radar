@@ -364,14 +364,14 @@ if check_password():
         # --- HEDEFLER & LİMİTLER (ŞEFFAF VE SADECE BU SEKMEDE) ---
         st.markdown("<div class='terminal-header'>🎯 Hedefler & Limitler (100K Hesap)</div>", unsafe_allow_html=True)
         
-        c1, c2 = st.columns(2)
+       c1, c2 = st.columns(2)
         with c1:
-            st.markdown("<div class='industrial-card' style='border-top:1px solid #333;'><div style='font-size:11px; color:#666;'>PHASE 1 HEDEF</div><div class='highlight'>$10,000 Kazanç</div></div>", unsafe_allow_html=True)
-            st.markdown("<div class='industrial-card' style='border-top:1px solid #333;'><div style='font-size:11px; color:#666;'>PHASE 1 R</div><div class='highlight'>$250</div></div>", unsafe_allow_html=True)
-            st.markdown("<div class='industrial-card' style='border-top:1px solid #333;'><div style='font-size:11px; color:#666;'>GÜNLÜK LİMİT</div><div class='highlight'>$5,000 Kayıp</div></div>", unsafe_allow_html=True)
+            st.markdown("<div class='industrial-card' style='border-top:1px solid #333;'><div style='font-size:11px; color:#666;'>Phase 1 hedef</div><div class='highlight'>$8,000 Kazanç</div></div>", unsafe_allow_html=True)
+            st.markdown("<div class='industrial-card' style='border-top:1px solid #333;'><div style='font-size:11px; color:#666;'>Phase 1 r</div><div class='highlight'>$250</div></div>", unsafe_allow_html=True)
+            st.markdown("<div class='industrial-card' style='border-top:1px solid #333;'><div style='font-size:11px; color:#666;'>Günlük limit</div><div class='highlight'>$5,000 Kayıp</div></div>", unsafe_allow_html=True)
         with c2:
-            st.markdown("<div class='industrial-card' style='border-top:1px solid #333;'><div style='font-size:11px; color:#666;'>PHASE 2 HEDEF</div><div class='highlight'>$5,000 Kazanç</div></div>", unsafe_allow_html=True)
-            st.markdown("<div class='industrial-card' style='border-top:1px solid #333;'><div style='font-size:11px; color:#666;'>PHASE 2 R</div><div class='highlight'>$250</div></div>", unsafe_allow_html=True)
-            st.markdown("<div class='industrial-card' style='border-top:1px solid #333;'><div style='font-size:11px; color:#666;'>TOPLAM LİMİT</div><div class='highlight'>$10,000 Kayıp</div></div>", unsafe_allow_html=True)
+            st.markdown("<div class='industrial-card' style='border-top:1px solid #333;'><div style='font-size:11px; color:#666;'>Phase 2 hedef</div><div class='highlight'>$5,000 Kazanç</div></div>", unsafe_allow_html=True)
+            st.markdown("<div class='industrial-card' style='border-top:1px solid #333;'><div style='font-size:11px; color:#666;'>Phase 2 r</div><div class='highlight'>$250</div></div>", unsafe_allow_html=True)
+            st.markdown("<div class='industrial-card' style='border-top:1px solid #333;'><div style='font-size:11px; color:#666;'>Toplam limit</div><div class='highlight'>$10,000 Kayıp</div></div>", unsafe_allow_html=True)
 
         st.markdown(f"<div style='text-align:center; color:#444; font-size:10px; margin-top:50px;'>OG CORE // {datetime.now().year}</div>", unsafe_allow_html=True)
