@@ -60,7 +60,8 @@ w3_kar = float(live_vars.get("w3_sonuc", 879))
 w4_kar = float(live_vars.get("w4_sonuc", -100))
 w5_kar = float(live_vars.get("w5_sonuc", -100))
 w6_kar = float(live_vars.get("w6_sonuc", -100))
-toplam_bahis_kar = w1_kar + w2_kar + w3_kar + w4_kar + w5_kar + w6_kar
+w7_kar = float(live_vars.get("w7_sonuc", -100))
+toplam_bahis_kar = w1_kar + w2_kar + w3_kar + w4_kar + w5_kar + w6_kar + w7_kar
 
 wr_oran = live_vars.get("win_rate", "0")
 son_islemler_raw = str(live_vars.get("son_islemler", "Veri yok"))
