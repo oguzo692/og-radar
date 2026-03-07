@@ -110,6 +110,70 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input { font-fam
 .equal-card { min-height: 180px; display: flex; flex-direction: column; justify-content: space-between; }
 </style>
 """
+/* ===== MOBILE RESPONSIVE PATCH ===== */
+
+@media (max-width: 768px){
+
+/* Sidebar mobil genişlik */
+section[data-testid="stSidebar"]{
+min-width:100% !important;
+max-width:100% !important;
+position:relative !important;
+}
+
+/* Ana container padding */
+.block-container{
+padding-left:1rem !important;
+padding-right:1rem !important;
+}
+
+/* Kart padding küçült */
+.industrial-card{
+padding:16px !important;
+margin-bottom:14px !important;
+}
+
+/* Hover efektleri mobilde kapat */
+.industrial-card:hover{
+transform:none !important;
+}
+
+/* terminal satırlarını alt alta getir */
+.terminal-row{
+font-size:12px !important;
+flex-direction:column;
+align-items:flex-start;
+gap:3px;
+}
+
+/* büyük sayılar küçülsün */
+.val-std{
+font-size:18px !important;
+}
+
+/* ticker küçült */
+.ticker-item{
+font-size:10px !important;
+letter-spacing:2px !important;
+}
+
+/* eşit kart yüksekliği kaldır */
+.equal-card{
+min-height:auto !important;
+}
+
+/* sidebar yazı boyutu */
+[data-testid="stSidebar"] p{
+font-size:12px !important;
+}
+
+/* Streamlit columns mobilde alt alta */
+[data-testid="column"]{
+width:100% !important;
+flex:100% !important;
+}
+
+}
 
 login_bg_css = """
 <style>
