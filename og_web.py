@@ -1,39 +1,3 @@
-import streamlit as st
-import yfinance as yf
-from datetime import datetime
-import pandas as pd
-import pytz
-import numpy as np
-
-# --- 1. AYARLAR ---
-st.set_page_config(
-    page_title="OG Core",
-    page_icon="🛡️",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
-
-# --- 2. VERİ BAĞLANTISI (GOOGLE SHEETS) ---
-def get_live_data():
-    try:
-        sheet_url = "https://docs.google.com/spreadsheets/d/15izevdpRjs8Om5BAHKVWmdL3FxEHml35DGECfhQUG_s/export?format=csv&gid=0"
-        df = pd.read_csv(sheet_url)
-        data = dict(zip(df['key'].astype(str), df['value'].astype(str)))
-        return data
-    except Exception:
-        return {"kasa": "600.0", "ana_para": "600.0"}
-
-# --- RÜTBE FONKSİYONU ---
-def rutbe_getir(puan_str):
-    try:
-        p = int(float(puan_str))
-    except:
-        p = 0
-    if p <= 3: return "Hılez"
-    elif p <= 6: return "Tecrübeli Hılez"
-    elif p <= 9: return "Bu Abi Biri Mi?"
-    elif p <= 11: return "Miço"
-    else: return "Grand Miço"
 
 live_vars = get_live_data()
 kasa = float(live_vars.get("kasa", 600))
