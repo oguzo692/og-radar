@@ -268,9 +268,9 @@ if check_password():
 
         @st.cache_data(ttl=1800)
         def get_tefas_fund_price(fund_code="AFT"):
-    """
-    TEFAS'tan fon fiyatını çeker
-    """
+        """
+        TEFAS'tan fon fiyatını çeker
+        """
         try:
             end_date = datetime.now()
             start_date = end_date - timedelta(days=10)
