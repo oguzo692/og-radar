@@ -335,7 +335,7 @@ if check_password():
             p1.caption(f"USD/TRY: ₺{usd_try:.2f}")
             p2.caption(f"Gram Altın: ₺{gram_altin:.0f}")
             p3.caption(f"Çeyrek Altın: ₺{ceyrek_fiyat:.0f}")
-            p4.caption(f"AFT Fiyat (Kod): ₺{aft_fiyat_tl:.4f}")
+            p4.caption(f"AFT (Yeni Teknolojiler Yabancı Hisse Senedi Fonu): ₺{aft_fiyat_tl:.4f}")
 
         except Exception as e:
             st.error(f"Piyasa verileri çekilirken bir hata oluştu: {e}")
