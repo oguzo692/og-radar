@@ -4,6 +4,7 @@ from datetime import datetime
 import pandas as pd
 import pytz
 import numpy as np
+import requests
 
 # --- 1. AYARLAR ---
 st.set_page_config(
@@ -262,7 +263,6 @@ if check_password():
         with t3: st.markdown(w1_coupon_html, unsafe_allow_html=True)
 
     elif page == "📊 Portföy Takip":
-    import requests
     from datetime import datetime, timedelta
 
     st.markdown("<div class='terminal-header'>🏛️ PORTFÖY KOMUTA MERKEZİ</div>", unsafe_allow_html=True)
