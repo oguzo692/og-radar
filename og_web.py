@@ -264,11 +264,10 @@ if check_password():
         with t3: st.markdown(w1_coupon_html, unsafe_allow_html=True)
 
     elif page == "📊 Portföy Takip":
+        st.markdown("<div class='terminal-header'>🏛️ PORTFÖY KOMUTA MERKEZİ</div>", unsafe_allow_html=True)
 
-    st.markdown("<div class='terminal-header'>🏛️ PORTFÖY KOMUTA MERKEZİ</div>", unsafe_allow_html=True)
-
-    @st.cache_data(ttl=1800)
-    def get_tefas_fund_price(fund_code="AFT"):
+        @st.cache_data(ttl=1800)
+        def get_tefas_fund_price(fund_code="AFT"):
         """
         TEFAS'tan fonun son fiyatını çeker.
         Dönen değer: float fiyat (TL)
