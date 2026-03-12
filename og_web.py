@@ -264,9 +264,7 @@ if check_password():
     elif page == "📊 Portföy Takip":
         st.markdown("<div class='terminal-header'>🏛️ PORTFÖY KOMUTA MERKEZİ</div>", unsafe_allow_html=True)
         
-        # --- MANUEL FİYAT GİRİŞİ ---
-        # Sheets ile uğraşmak istemiyorsan fiyatı direkt buraya yaz kanka:
-        aft_fiyat_tl = 0.8470  
+        aft_fiyat_tl = 0.8471 
         # ---------------------------
 
         try:
