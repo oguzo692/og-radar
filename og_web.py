@@ -264,115 +264,110 @@ if check_password():
     elif page == "📊 Portföy Takip":
         st.markdown("<div class='terminal-header'>🏛️ PORTFÖY KOMUTA MERKEZİ</div>", unsafe_allow_html=True)
 
+        # --- MANUEL GİRİŞ BÖLÜMÜ ---
         aft_price_tl = st.number_input("Güncel AFT Pay Fiyatı (₺):", value=0.4532, format="%.4f")
-   
+        # ---------------------------
+
         try:
-        # Piyasa verilerini çekmeye devam ediyoruz
-        usd_try = yf.Ticker("USDTRY=X").history(period="1d")["Close"].iloc[-1]
-        ons_gold = yf.Ticker("GC=F").history(period="1d")["Close"].iloc[-1]
-        gram_altin = (ons_gold / 31.1035) * usd_try
-        ceyrek_fiyat = gram_altin * 1.74
+            usd_try = yf.Ticker("USDTRY=X").history(period="1d")["Close"].iloc[-1]
+            ons_gold = yf.Ticker("GC=F").history(period="1d")["Close"].iloc[-1]
+            gram_altin = (ons_gold / 31.1035) * usd_try
+            ceyrek_fiyat = gram_altin * 1.74
 
-        def get_val(key):
-            try:
-                return float(live_vars.get(key, 0))
-            except:
-                return 0.0
+            def get_val(key):
+                try:
+                    return float(live_vars.get(key, 0))
+                except:
+                    return 0.0
 
-        users = ["oguzo", "ero7", "fybey"]
-        display_data = []
+            users = ["oguzo", "ero7", "fybey"]
+            display_data = []
 
-        for u in users:
-            u_usd = get_val(f"{u}_usd")
-            u_gr = get_val(f"{u}_altin")
-            u_cy = get_val(f"{u}_ceyrek")
-            u_aft = get_val(f"{u}_aft_adet") 
+            for u in users:
+                u_usd = get_val(f"{u}_usd")
+                u_gr = get_val(f"{u}_altin")
+                u_cy = get_val(f"{u}_ceyrek")
+                u_aft = get_val(f"{u}_aft_adet") 
 
-            # AFT Hesaplaması (Manuel girilen fiyata göre)
-            aft_total_tl = u_aft * aft_price_tl
-            aft_total_usd = aft_total_tl / usd_try if usd_try else 0
+                aft_total_tl = u_aft * aft_price_tl
+                aft_total_usd = aft_total_tl / usd_try if usd_try else 0
 
-            t_usd = (
-                u_usd
-                + (u_gr * gram_altin / usd_try)
-                + (u_cy * ceyrek_fiyat / usd_try)
-                + aft_total_usd
-            )
+                t_usd = (
+                    u_usd
+                    + (u_gr * gram_altin / usd_try)
+                    + (u_cy * ceyrek_fiyat / usd_try)
+                    + aft_total_usd
+                )
 
-            display_data.append({
-                "Kullanıcı": u.upper(),
-                "USD": u_usd,
-                "Gram": u_gr,
-                "Çeyrek": u_cy,
-                "AFT_Adet": u_aft,
-                "AFT_Fiyat_TL": aft_price_tl,
-                "AFT_Toplam_TL": aft_total_tl,
-                "TOPLAM_USD": t_usd
-            })
+                display_data.append({
+                    "Kullanıcı": u.upper(),
+                    "USD": u_usd,
+                    "Gram": u_gr,
+                    "Çeyrek": u_cy,
+                    "AFT_Adet": u_aft,
+                    "AFT_Fiyat_TL": aft_price_tl,
+                    "AFT_Toplam_TL": aft_total_tl,
+                    "TOPLAM_USD": t_usd
+                })
 
-        df_portfoy = pd.DataFrame(display_data)
+            df_portfoy = pd.DataFrame(display_data)
 
-        if not df_portfoy.empty:
-            secilen_user = st.selectbox("Kullanıcı Portföy Detayı:", ["OGUZO", "ERO7", "FYBEY"])
-            u_row = df_portfoy[df_portfoy["Kullanıcı"] == secilen_user]
-            total_val = float(u_row["TOPLAM_USD"].values[0])
+            if not df_portfoy.empty:
+                secilen_user = st.selectbox("Kullanıcı Portföy Detayı:", ["OGUZO", "ERO7", "FYBEY"])
+                u_row = df_portfoy[df_portfoy["Kullanıcı"] == secilen_user]
+                total_val = float(u_row["TOPLAM_USD"].values[0])
 
-            # Dev Kart
-            st.markdown(
-                f"""
-                <div class='industrial-card' style='text-align:center; border-top: 4px solid #cc7a00;'>
-                    <div style='font-size:14px; color:#666; letter-spacing:2px;'>TOPLAM PORTFÖY DEĞERİ</div>
-                    <div style='font-size:55px; font-weight:900; color:#cc7a00; font-family:Orbitron;'>${total_val:,.2f}</div>
-                    <div style='font-size:18px; color:#444;'>≈ ₺{(total_val * usd_try):,.0f}</div>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
+                # Dev Kart
+                st.markdown(
+                    f"""
+                    <div class='industrial-card' style='text-align:center; border-top: 4px solid #cc7a00;'>
+                        <div style='font-size:14px; color:#666; letter-spacing:2px;'>TOPLAM PORTFÖY DEĞERİ</div>
+                        <div style='font-size:55px; font-weight:900; color:#cc7a00; font-family:Orbitron;'>${total_val:,.2f}</div>
+                        <div style='font-size:18px; color:#444;'>≈ ₺{(total_val * usd_try):,.0f}</div>
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
 
-            # Varlık Dağılımı (4 Sütun)
-            v1, v2, v3, v4 = st.columns(4)
-            with v1:
-                st.markdown(f"<div class='industrial-card' style='text-align:center;'><div style='font-size:11px; color:#666;'>NAKİT</div><div class='highlight'>${u_row['USD'].values[0]:,.0f}</div></div>", unsafe_allow_html=True)
-            with v2:
-                st.markdown(f"<div class='industrial-card' style='text-align:center;'><div style='font-size:11px; color:#666;'>GRAM ALTIN</div><div class='highlight'>{u_row['Gram'].values[0]} gr</div></div>", unsafe_allow_html=True)
-            with v3:
-                st.markdown(f"<div class='industrial-card' style='text-align:center;'><div style='font-size:11px; color:#666;'>ÇEYREK ADET</div><div class='highlight'>{u_row['Çeyrek'].values[0]:,.0f}</div></div>", unsafe_allow_html=True)
-            with v4:
-                st.markdown(f"""<div class='industrial-card' style='text-align:center;'><div style='font-size:11px; color:#666;'>AFT</div><div class='highlight'>{u_row['AFT_Adet'].values[0]:,.2f} adet</div><div style='font-size:12px; color:#888;'>₺{aft_price_tl:,.4f} / pay</div></div>""", unsafe_allow_html=True)
+                v1, v2, v3, v4 = st.columns(4)
+                with v1:
+                    st.markdown(f"<div class='industrial-card' style='text-align:center;'><div style='font-size:11px; color:#666;'>NAKİT</div><div class='highlight'>${u_row['USD'].values[0]:,.0f}</div></div>", unsafe_allow_html=True)
+                with v2:
+                    st.markdown(f"<div class='industrial-card' style='text-align:center;'><div style='font-size:11px; color:#666;'>GRAM ALTIN</div><div class='highlight'>{u_row['Gram'].values[0]} gr</div></div>", unsafe_allow_html=True)
+                with v3:
+                    st.markdown(f"<div class='industrial-card' style='text-align:center;'><div style='font-size:11px; color:#666;'>ÇEYREK ADET</div><div class='highlight'>{u_row['Çeyrek'].values[0]:,.0f}</div></div>", unsafe_allow_html=True)
+                with v4:
+                    st.markdown(f"""<div class='industrial-card' style='text-align:center;'><div style='font-size:11px; color:#666;'>AFT</div><div class='highlight'>{u_row['AFT_Adet'].values[0]:,.2f}</div><div style='font-size:10px; color:#888;'>₺{aft_price_tl:,.4f}</div></div>""", unsafe_allow_html=True)
 
-            # AFT Detay
-            st.markdown(f"""<div class='industrial-card' style='text-align:center;'><div style='font-size:12px; color:#666;'>AFT TOPLAM DEĞERİ</div><div style='font-size:28px; font-weight:800; color:#cc7a00;'>₺{u_row['AFT_Toplam_TL'].values[0]:,.2f}</div></div>""", unsafe_allow_html=True)
+                st.divider()
+                st.markdown("<div class='terminal-header'>🧠 AI PROJEKSİYONU (HAZİRAN 2026)</div>", unsafe_allow_html=True)
+                
+                # Projeksiyon Grafiği
+                aylar = ["Şubat", "Mart", "Nisan", "Mayıs", "Haziran"]
+                tahminler = [total_val]
+                for i in range(1, len(aylar)):
+                    rastgele_sapma = np.random.uniform(-0.02, 0.02)
+                    yeni_deger = tahminler[-1] * (1.10 + rastgele_sapma)
+                    tahminler.append(yeni_deger)
 
-            # AI PROJEKSİYONU
+                chart_df = pd.DataFrame({"Varlık ($)": tahminler}, index=aylar)
+                c1, c2 = st.columns([1, 2])
+                with c1:
+                    st.write(f"### {secilen_user} Hedef")
+                    st.markdown(f"<h1 style='color:#00ff41;'>${tahminler[-1]:,.0f}</h1>", unsafe_allow_html=True)
+                with c2:
+                    st.area_chart(chart_df, color="#cc7a00")
+
+            # Alt Bilgi Bandı
             st.divider()
-            st.markdown("<div class='terminal-header'>🧠 AI PROJEKSİYONU (HAZİRAN 2026)</div>", unsafe_allow_html=True)
-            
-            aylar = ["Şubat", "Mart", "Nisan", "Mayıs", "Haziran"]
-            tahminler = [total_val]
-            for i in range(1, len(aylar)):
-                rastgele_sapma = np.random.uniform(-0.02, 0.02)
-                yeni_deger = tahminler[-1] * (1.10 + rastgele_sapma)
-                tahminler.append(yeni_deger)
+            p1, p2, p3, p4 = st.columns(4)
+            p1.caption(f"USD/TRY: ₺{usd_try:.2f}")
+            p2.caption(f"Gram Altın: ₺{gram_altin:.0f}")
+            p3.caption(f"Çeyrek Altın: ₺{ceyrek_fiyat:.0f}")
+            p4.caption(f"AFT (Manuel): ₺{aft_price_tl:.4f}")
 
-            chart_df = pd.DataFrame({"Varlık ($)": tahminler}, index=aylar)
-            c1, c2 = st.columns([1, 2])
-            with c1:
-                st.write(f"### {secilen_user} Hedef")
-                st.markdown(f"<h1 style='color:#00ff41;'>${tahminler[-1]:,.0f}</h1>", unsafe_allow_html=True)
-            with c2:
-                st.area_chart(chart_df, color="#cc7a00")
-
-        # Bilgi Bandı
-        st.divider()
-        p1, p2, p3, p4 = st.columns(4)
-        p1.caption(f"USD/TRY: ₺{usd_try:.2f}")
-        p2.caption(f"Gram Altın: ₺{gram_altin:.0f}")
-        p3.caption(f"Çeyrek Altın: ₺{ceyrek_fiyat:.0f}")
-        p4.caption(f"AFT (Manuel): ₺{aft_price_tl:.4f}")
-
-    except Exception as e:
-        st.error(f"Hata oluştu kanka: {e}")
-        st.error(f"Piyasa verileri çekilirken bir hata oluştu: {e}")
+        except Exception as e:
+            st.error(f"Hata detayı: {e}")
         
     elif page == "💠 FTMO":
         st.markdown("<div class='terminal-header'>💠 FTMO FON TAKİP SEKMESİ</div>", unsafe_allow_html=True)
