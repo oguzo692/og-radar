@@ -270,7 +270,7 @@ if check_password():
             ceyrek_fiyat = gram_altin * 1.74 
             
             def get_val(key): 
-    try: 
+        try: 
         val = live_vars.get(key, 0)
         if val is None or val == "": return 0.0
         # Eğer gelen veri metin (string) ise temizlik yap
