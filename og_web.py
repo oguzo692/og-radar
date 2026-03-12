@@ -4,8 +4,6 @@ from datetime import datetime
 import pandas as pd
 import pytz
 import numpy as np
-import requests
-from datetime import datetime, timedelta
 
 # --- 1. AYARLAR ---
 st.set_page_config(
@@ -264,14 +262,11 @@ if check_password():
         with t3: st.markdown(w1_coupon_html, unsafe_allow_html=True)
 
     elif page == "📊 Portföy Takip":
-    st.markdown("<div class='terminal-header'>🏛️ PORTFÖY KOMUTA MERKEZİ</div>", unsafe_allow_html=True)
+        st.markdown("<div class='terminal-header'>🏛️ PORTFÖY KOMUTA MERKEZİ</div>", unsafe_allow_html=True)
 
-    # --- MANUEL GİRİŞ BÖLÜMÜ ---
-    # İstersen burayı st.sidebar.number_input yaparak yan menüye de alabilirsin
-    aft_price_tl = st.number_input("Güncel AFT Pay Fiyatı (₺):", value=0.4532, format="%.4f")
-    # ---------------------------
-
-    try:
+        aft_price_tl = st.number_input("Güncel AFT Pay Fiyatı (₺):", value=0.4532, format="%.4f")
+   
+        try:
         # Piyasa verilerini çekmeye devam ediyoruz
         usd_try = yf.Ticker("USDTRY=X").history(period="1d")["Close"].iloc[-1]
         ons_gold = yf.Ticker("GC=F").history(period="1d")["Close"].iloc[-1]
