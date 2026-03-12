@@ -270,20 +270,43 @@ if check_password():
             ceyrek_fiyat = gram_altin * 1.74 
             
             def get_val(key): 
-        try: 
-        val = live_vars.get(key, 0)
-        if val is None or val == "": return 0.0
-        # Eğer gelen veri metin (string) ise temizlik yap
-        if isinstance(val, str):
-            # Virgülü noktaya çevir, boşlukları sil
-            val = val.replace(",", ".").strip()
-        
-        # Sayıya çevirirken hata payını ortadan kaldır
-        result = float(val)
-        return result
-    except Exception as e: 
-        # Hata olursa 0.0 dön ki sistem çökmesin (nan demesin)
-        return 0.0
+                try: 
+                    val = live_vars.get(key, 0)
+                    if val is None or val == "": return 0.0
+                    # Virgül-Nokta temizliği (Google Sheets fix)
+                    if isinstance(val, str):
+                        val = val.replace(",", ".").strip()
+                    return float(val)
+                except: 
+                    return 0.0
+            
+            # AFT Fiyatını çek (Temizlenmiş veri)
+            aft_fiyat_tl = get_val("aft_fiyat")
+            
+            users = ["oguzo", "ero7", "fybey"]
+            display_data = []
+            for u in users:
+                u_usd = get_val(f"{u}_usd")
+                u_gr = get_val(f"{u}_altin")
+                u_cy = get_val(f"{u}_ceyrek")
+                u_aft_adet = get_val(f"{u}_aft_adet") 
+                
+                # AFT TL Değeri ve USD Karşılığı
+                aft_total_tl = u_aft_adet * aft_fiyat_tl
+                aft_total_usd = aft_total_tl / usd_try if usd_try > 0 else 0
+                
+                # Toplam portföy hesaplama (USD)
+                t_usd = u_usd + (u_gr * gram_altin / usd_try) + (u_cy * ceyrek_fiyat / usd_try) + aft_total_usd
+                
+                display_data.append({
+                    "Kullanıcı": u.upper(), 
+                    "USD": u_usd, 
+                    "Gram": u_gr, 
+                    "Çeyrek": u_cy, 
+                    "AFT_Adet": u_aft_adet,
+                    "AFT_TL": aft_total_tl,
+                    "TOPLAM_USD": t_usd
+                })
                 
                 # Toplam portföy hesaplama
                 t_usd = u_usd + (u_gr * gram_altin / usd_try) + (u_cy * ceyrek_fiyat / usd_try) + aft_total_usd
