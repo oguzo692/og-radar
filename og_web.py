@@ -265,7 +265,7 @@ if check_password():
         with t2: st.markdown(w2_coupon_html, unsafe_allow_html=True)
         with t3: st.markdown(w1_coupon_html, unsafe_allow_html=True)
 
-    elif page == "📊 Portföy Takip":
+        elif page == "📊 Portföy Takip":
         st.markdown("<div class='terminal-header'>🏛️ PORTFÖY KOMUTA MERKEZİ</div>", unsafe_allow_html=True)
 
         def get_val(key, default=0.0):
@@ -277,20 +277,19 @@ if check_password():
             except:
                 return float(default)
 
-        # --- Manuel fiyatlar (Sheets'ten) ---
+        # --- Manuel fiyatlar ---
         usd_try = get_val("usdtry", 44.18)
         gram_altin = get_val("gram_altin_fiyat", 7136)
-        ceyrek_fiyat = get_val("ceyrek_altin_fiyat", 12200)
+        ceyrek_fiyat = get_val("ceyrek_altin_fiyat", 12417)
         aft_fiyat_tl = get_val("aft_fiyat_tl", 0.8295)
-        btc_fiyat_usd = get_val("btc_fiyat_usd", 73550)
-        eth_fiyat_usd = get_val("eth_fiyat_usd", 2271.89)
+        btc_fiyat_usd = get_val("btc_fiyat_usd", 84250)
+        eth_fiyat_usd = get_val("eth_fiyat_usd", 2107.89)
         gumus_fiyat_tl = get_val("gumus_fiyat_tl", 41.20)
 
         users = ["oguzo", "ero7", "fybey"]
         display_data = []
 
         for u in users:
-            # --- Adetler / miktarlar ---
             u_usd = get_val(f"{u}_usd")
             u_gr = get_val(f"{u}_altin")
             u_cy = get_val(f"{u}_ceyrek")
@@ -299,33 +298,21 @@ if check_password():
             u_eth = get_val(f"{u}_eth")
             u_gumus = get_val(f"{u}_gumus")
 
-            # --- TL bazlı hesaplar ---
             usd_tl = u_usd * usd_try
             altin_tl = u_gr * gram_altin
             ceyrek_tl = u_cy * ceyrek_fiyat
             aft_tl = u_aft_adet * aft_fiyat_tl
             gumus_tl = u_gumus * gumus_fiyat_tl
 
-            # --- USD bazlı hesaplar ---
             btc_usd = u_btc * btc_fiyat_usd
             eth_usd = u_eth * eth_fiyat_usd
 
-            # TL -> USD dönüşüm
             altin_usd = altin_tl / usd_try if usd_try > 0 else 0
             ceyrek_usd = ceyrek_tl / usd_try if usd_try > 0 else 0
             aft_usd = aft_tl / usd_try if usd_try > 0 else 0
             gumus_usd = gumus_tl / usd_try if usd_try > 0 else 0
 
-            toplam_usd = (
-                u_usd
-                + altin_usd
-                + ceyrek_usd
-                + aft_usd
-                + btc_usd
-                + eth_usd
-                + gumus_usd
-            )
-
+            toplam_usd = u_usd + altin_usd + ceyrek_usd + aft_usd + btc_usd + eth_usd + gumus_usd
             toplam_tl = toplam_usd * usd_try
 
             display_data.append({
@@ -357,83 +344,113 @@ if check_password():
             total_val = float(u_row["TOPLAM_USD"])
             total_tl = float(u_row["TOPLAM_TL"])
 
-            # --- Dev Kart ---
-            st.markdown(
-                f"""
-                <div class='industrial-card' style='text-align:center; border-top: 4px solid #cc7a00;'>
-                    <div style='font-size:14px; color:#666; letter-spacing:2px;'>TOPLAM PORTFÖY DEĞERİ</div>
-                    <div style='font-size:55px; font-weight:900; color:#cc7a00; font-family:Orbitron;'>${total_val:,.2f}</div>
-                    <div style='font-size:18px; color:#444;'>≈ ₺{total_tl:,.0f}</div>
+            st.markdown(f"""
+                <div class='industrial-card' style='text-align:center; border-top: 2px solid rgba(204, 122, 0, 0.65) !important; padding:30px 25px;'>
+                    <div style='font-size:13px; color:#8a8a8a; letter-spacing:3px; text-transform:uppercase; margin-bottom:14px;'>
+                        Toplam Portföy Değeri
+                    </div>
+                    <div style='font-size:64px; font-weight:900; color:#d9d9d9; font-family:Orbitron; line-height:1;'>
+                        ${total_val:,.2f}
+                    </div>
+                    <div style='font-size:18px; color:#8c8c8c; margin-top:14px;'>
+                        ≈ ₺{total_tl:,.0f}
+                    </div>
                 </div>
-                """,
-                unsafe_allow_html=True
-            )
+            """, unsafe_allow_html=True)
 
-            # --- Üst Varlık Kartları ---
-            v1, v2, v3, v4 = st.columns(4)
-            with v1:
-                st.markdown(
-                    f"<div class='industrial-card' style='text-align:center;'><div style='font-size:11px; color:#666;'>NAKİT</div><div class='highlight'>${u_row['USD']:,.0f}</div></div>",
-                    unsafe_allow_html=True
-                )
-            with v2:
-                st.markdown(
-                    f"<div class='industrial-card' style='text-align:center;'><div style='font-size:11px; color:#666;'>GRAM ALTIN</div><div class='highlight'>{u_row['Gram']:,.2f} gr</div></div>",
-                    unsafe_allow_html=True
-                )
-            with v3:
-                st.markdown(
-                    f"<div class='industrial-card' style='text-align:center;'><div style='font-size:11px; color:#666;'>ÇEYREK ADET</div><div class='highlight'>{u_row['Çeyrek']:,.0f}</div></div>",
-                    unsafe_allow_html=True
-                )
-            with v4:
-                st.markdown(
-                    f"<div class='industrial-card' style='text-align:center;'><div style='font-size:11px; color:#666;'>AFT (ADET)</div><div class='highlight'>{u_row['AFT_Adet']:,.0f}</div></div>",
-                    unsafe_allow_html=True
-                )
+            # Ana varlık kartları
+            c1, c2, c3, c4 = st.columns(4)
+            with c1:
+                st.markdown(f"""
+                    <div class='industrial-card' style='text-align:center; min-height:110px;'>
+                        <div style='font-size:11px; color:#777; letter-spacing:2px;'>NAKİT</div>
+                        <div class='highlight' style='font-size:18px; margin-top:12px;'>${u_row['USD']:,.0f}</div>
+                    </div>
+                """, unsafe_allow_html=True)
+            with c2:
+                st.markdown(f"""
+                    <div class='industrial-card' style='text-align:center; min-height:110px;'>
+                        <div style='font-size:11px; color:#777; letter-spacing:2px;'>GRAM ALTIN</div>
+                        <div class='highlight' style='font-size:18px; margin-top:12px;'>{u_row['Gram']:,.2f} gr</div>
+                    </div>
+                """, unsafe_allow_html=True)
+            with c3:
+                st.markdown(f"""
+                    <div class='industrial-card' style='text-align:center; min-height:110px;'>
+                        <div style='font-size:11px; color:#777; letter-spacing:2px;'>ÇEYREK ADET</div>
+                        <div class='highlight' style='font-size:18px; margin-top:12px;'>{u_row['Çeyrek']:,.0f}</div>
+                    </div>
+                """, unsafe_allow_html=True)
+            with c4:
+                st.markdown(f"""
+                    <div class='industrial-card' style='text-align:center; min-height:110px;'>
+                        <div style='font-size:11px; color:#777; letter-spacing:2px;'>AFT (ADET)</div>
+                        <div class='highlight' style='font-size:18px; margin-top:12px;'>{u_row['AFT_Adet']:,.0f}</div>
+                    </div>
+                """, unsafe_allow_html=True)
 
-            # --- Yeni enstrüman kartları ---
-            x1, x2, x3 = st.columns(3)
-            with x1:
-                st.markdown(
-                    f"<div class='industrial-card' style='text-align:center;'><div style='font-size:11px; color:#666;'>BTC</div><div class='highlight'>{u_row['BTC']:,.4f}</div></div>",
-                    unsafe_allow_html=True
-                )
-            with x2:
-                st.markdown(
-                    f"<div class='industrial-card' style='text-align:center;'><div style='font-size:11px; color:#666;'>ETH</div><div class='highlight'>{u_row['ETH']:,.4f}</div></div>",
-                    unsafe_allow_html=True
-                )
-            with x3:
-                st.markdown(
-                    f"<div class='industrial-card' style='text-align:center;'><div style='font-size:11px; color:#666;'>GÜMÜŞ (gr)</div><div class='highlight'>{u_row['Gümüş']:,.2f}</div></div>",
-                    unsafe_allow_html=True
-                )
+            # Alt modül kartları
+            a1, a2, a3 = st.columns(3)
+            with a1:
+                st.markdown(f"""
+                    <div class='industrial-card' style='text-align:center; min-height:95px; border-top: 1px solid rgba(255,255,255,0.06) !important;'>
+                        <div style='font-size:11px; color:#777; letter-spacing:2px;'>BTC</div>
+                        <div class='highlight' style='font-size:17px; margin-top:10px;'>{u_row['BTC']:,.4f}</div>
+                    </div>
+                """, unsafe_allow_html=True)
+            with a2:
+                st.markdown(f"""
+                    <div class='industrial-card' style='text-align:center; min-height:95px; border-top: 1px solid rgba(255,255,255,0.06) !important;'>
+                        <div style='font-size:11px; color:#777; letter-spacing:2px;'>ETH</div>
+                        <div class='highlight' style='font-size:17px; margin-top:10px;'>{u_row['ETH']:,.4f}</div>
+                    </div>
+                """, unsafe_allow_html=True)
+            with a3:
+                st.markdown(f"""
+                    <div class='industrial-card' style='text-align:center; min-height:95px; border-top: 1px solid rgba(255,255,255,0.06) !important;'>
+                        <div style='font-size:11px; color:#777; letter-spacing:2px;'>GÜMÜŞ (gr)</div>
+                        <div class='highlight' style='font-size:17px; margin-top:10px;'>{u_row['Gümüş']:,.2f}</div>
+                    </div>
+                """, unsafe_allow_html=True)
 
-            st.divider()
+            st.markdown("<div style='height:18px;'></div>", unsafe_allow_html=True)
 
-            detay_df = pd.DataFrame([
-                {"Enstrüman": "USD Nakit", "Miktar": u_row["USD"], "Birim Fiyat": usd_try, "Para Birimi": "TRY karşılığı", "Toplam": u_row["USD_TL"]},
-                {"Enstrüman": "Gram Altın", "Miktar": u_row["Gram"], "Birim Fiyat": gram_altin, "Para Birimi": "TRY", "Toplam": u_row["ALTIN_TL"]},
-                {"Enstrüman": "Çeyrek Altın", "Miktar": u_row["Çeyrek"], "Birim Fiyat": ceyrek_fiyat, "Para Birimi": "TRY", "Toplam": u_row["CEYREK_TL"]},
-                {"Enstrüman": "AFT", "Miktar": u_row["AFT_Adet"], "Birim Fiyat": aft_fiyat_tl, "Para Birimi": "TRY", "Toplam": u_row["AFT_TL"]},
-                {"Enstrüman": "BTC", "Miktar": u_row["BTC"], "Birim Fiyat": btc_fiyat_usd, "Para Birimi": "USD", "Toplam": u_row["BTC_USD"]},
-                {"Enstrüman": "ETH", "Miktar": u_row["ETH"], "Birim Fiyat": eth_fiyat_usd, "Para Birimi": "USD", "Toplam": u_row["ETH_USD"]},
-                {"Enstrüman": "Gümüş", "Miktar": u_row["Gümüş"], "Birim Fiyat": gumus_fiyat_tl, "Para Birimi": "TRY", "Toplam": u_row["GUMUS_TL"]},
-            ])
+            # Terminal tarzı breakdown panel
+            detay_html = f"""
+            <div class='industrial-card' style='padding:24px 24px 18px 24px;'>
+                <div class='terminal-header'>Varlık Kırılımı</div>
 
-            st.dataframe(detay_df, use_container_width=True, hide_index=True)
+                <div class='terminal-row'><span>USD Nakit</span><span class='highlight'>${u_row['USD']:,.0f}</span></div>
+                <div class='terminal-row'><span>Gram Altın ({u_row['Gram']:,.2f} gr)</span><span class='highlight'>₺{u_row['ALTIN_TL']:,.0f}</span></div>
+                <div class='terminal-row'><span>Çeyrek Altın ({u_row['Çeyrek']:,.0f} adet)</span><span class='highlight'>₺{u_row['CEYREK_TL']:,.0f}</span></div>
+                <div class='terminal-row'><span>AFT ({u_row['AFT_Adet']:,.0f} adet)</span><span class='highlight'>₺{u_row['AFT_TL']:,.2f}</span></div>
+                <div class='terminal-row'><span>BTC ({u_row['BTC']:,.4f})</span><span class='highlight'>${u_row['BTC_USD']:,.2f}</span></div>
+                <div class='terminal-row'><span>ETH ({u_row['ETH']:,.4f})</span><span class='highlight'>${u_row['ETH_USD']:,.2f}</span></div>
+                <div class='terminal-row'><span>Gümüş ({u_row['Gümüş']:,.2f} gr)</span><span class='highlight'>₺{u_row['GUMUS_TL']:,.2f}</span></div>
 
-        # --- Alt bilgi bandı ---
+                <hr style='border:0; height:1px; background:rgba(255,255,255,0.06); margin:18px 0;'>
+
+                <div class='terminal-row' style='font-weight:700;'>
+                    <span>Toplam</span>
+                    <span style='color:#cc7a00; font-family:Orbitron; font-size:22px;'>${u_row['TOPLAM_USD']:,.2f}</span>
+                </div>
+            </div>
+            """
+            st.markdown(detay_html, unsafe_allow_html=True)
+
         st.divider()
-        p1, p2, p3, p4, p5, p6, p7 = st.columns(7)
-        p1.caption(f"USD/TRY: ₺{usd_try:.2f}")
-        p2.caption(f"Gram Altın: ₺{gram_altin:.0f}")
-        p3.caption(f"Çeyrek Altın: ₺{ceyrek_fiyat:.0f}")
-        p4.caption(f"AFT: ₺{aft_fiyat_tl:.4f}")
-        p5.caption(f"BTC: ${btc_fiyat_usd:,.0f}")
-        p6.caption(f"ETH: ${eth_fiyat_usd:,.2f}")
-        p7.caption(f"Gümüş: ₺{gumus_fiyat_tl:.2f}")
+        strip = f"""
+        <div style='display:flex; justify-content:space-between; gap:18px; flex-wrap:wrap; font-size:12px; color:#7a7a7a; letter-spacing:1px;'>
+            <span>USD/TRY: <span style='color:#bdbdbd;'>₺{usd_try:.2f}</span></span>
+            <span>Gram Altın: <span style='color:#bdbdbd;'>₺{gram_altin:.0f}</span></span>
+            <span>Çeyrek Altın: <span style='color:#bdbdbd;'>₺{ceyrek_fiyat:.0f}</span></span>
+            <span>AFT: <span style='color:#bdbdbd;'>₺{aft_fiyat_tl:.4f}</span></span>
+            <span>BTC: <span style='color:#bdbdbd;'>${btc_fiyat_usd:,.0f}</span></span>
+            <span>ETH: <span style='color:#bdbdbd;'>${eth_fiyat_usd:,.2f}</span></span>
+            <span>Gümüş: <span style='color:#bdbdbd;'>₺{gumus_fiyat_tl:.2f}</span></span>
+        </div>
+        """
+        st.markdown(strip, unsafe_allow_html=True)
         
     elif page == "💠 FTMO":
         st.markdown("<div class='terminal-header'>💠 FTMO FON TAKİP</div>", unsafe_allow_html=True)
