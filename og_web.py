@@ -595,12 +595,12 @@ def render_secondary_asset_cards(df_nonzero):
 def render_breakdown_panel(df_nonzero):
     if df_nonzero.empty:
         st.markdown(
-            textwrap.dedent("""
-                <div class='industrial-card'>
-                    <div class='terminal-header'>Varlık Kırılımı</div>
-                    <div class='highlight'>Aktif varlık bulunamadı.</div>
-                </div>
-            """),
+            """
+            <div class='industrial-card'>
+                <div class='terminal-header'>Varlık Kırılımı</div>
+                <div class='highlight'>Aktif varlık bulunamadı.</div>
+            </div>
+            """,
             unsafe_allow_html=True
         )
         return
@@ -618,47 +618,175 @@ def render_breakdown_panel(df_nonzero):
         qty_text = fmt_unit_value(row["quantity"], row["unit"])
 
         rows_html += f"""
-<div style='padding:12px 0; border-bottom:1px solid rgba(255,255,255,0.045);'>
-    <div style='display:flex; justify-content:space-between; align-items:flex-start; gap:14px;'>
-        <div style='flex:1.6; min-width:0;'>
-            <div style='color:#dedede; font-size:14px; font-weight:500;'>{row["label"]}</div>
-            <div style='color:#7f7f7f; font-size:12px; margin-top:4px;'>{row["currency"]} bazlı / {row["unit"]}</div>
+        <div class="bd-row">
+            <div class="bd-col bd-name">
+                <div class="bd-title">{row["label"]}</div>
+                <div class="bd-sub">{row["currency"]} bazlı / {row["unit"]}</div>
+            </div>
+            <div class="bd-col bd-qty">{qty_text}</div>
+            <div class="bd-col bd-price">{price_text}</div>
+            <div class="bd-col bd-total">{total_text}</div>
         </div>
-        <div style='flex:1; text-align:right; color:#d8d8d8; font-size:13px;'>{qty_text}</div>
-        <div style='flex:1; text-align:right; color:#a8a8a8; font-size:13px;'>{price_text}</div>
-        <div style='flex:1.1; text-align:right; color:#ffffff; font-size:13px; font-weight:500;'>{total_text}</div>
-    </div>
-</div>
-"""
+        """
 
     total_usd = df_nonzero["total_usd"].sum()
     total_try = df_nonzero["total_try"].sum()
 
     html = f"""
-<div class='industrial-card'>
-    <div class='terminal-header'>Varlık Kırılımı</div>
+    <html>
+    <head>
+    <style>
+        body {{
+            margin: 0;
+            padding: 0;
+            background: transparent;
+            font-family: 'JetBrains Mono', monospace;
+            color: #d1d1d1;
+        }}
 
-    <div style='display:flex; justify-content:space-between; gap:14px; padding-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.06); margin-bottom:6px; color:#777; font-size:11px; letter-spacing:1.5px; text-transform:uppercase;'>
-        <div style='flex:1.6;'>Enstrüman</div>
-        <div style='flex:1; text-align:right;'>Miktar</div>
-        <div style='flex:1; text-align:right;'>Birim</div>
-        <div style='flex:1.1; text-align:right;'>Toplam</div>
-    </div>
+        .card {{
+            background: rgba(15, 15, 15, 0.82);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-top: 2px solid rgba(204, 122, 0, 0.4);
+            border-radius: 4px;
+            padding: 22px;
+            box-sizing: border-box;
+        }}
 
-    {rows_html}
+        .header {{
+            color: #8b8b8b;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 2.8px;
+            text-transform: uppercase;
+            margin-bottom: 18px;
+            border-left: 3px solid #cc7a00;
+            padding-left: 12px;
+        }}
 
-    <div style='height:12px;'></div>
-    <hr style='border:0; height:1px; background:rgba(255,255,255,0.06); margin:8px 0 16px 0;'>
+        .head-row {{
+            display: flex;
+            justify-content: space-between;
+            gap: 14px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            margin-bottom: 6px;
+            color: #777;
+            font-size: 11px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }}
 
-    <div style='display:flex; justify-content:space-between; align-items:center; gap:12px;'>
-        <span style='font-weight:700; color:#d0d0d0;'>Toplam</span>
-        <span style='color:#cc7a00; font-family:Orbitron; font-size:20px; font-weight:800;'>
-            {fmt_money_usd(total_usd)} &nbsp;//&nbsp; {fmt_money_try(total_try)}
-        </span>
-    </div>
-</div>
-"""
-    st.markdown(textwrap.dedent(html), unsafe_allow_html=True)
+        .bd-row {{
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.045);
+        }}
+
+        .bd-col {{
+            font-size: 13px;
+        }}
+
+        .bd-name {{
+            flex: 1.6;
+            min-width: 0;
+        }}
+
+        .bd-qty {{
+            flex: 1;
+            text-align: right;
+            color: #d8d8d8;
+        }}
+
+        .bd-price {{
+            flex: 1;
+            text-align: right;
+            color: #a8a8a8;
+        }}
+
+        .bd-total {{
+            flex: 1.1;
+            text-align: right;
+            color: #ffffff;
+            font-weight: 500;
+        }}
+
+        .bd-title {{
+            color: #dedede;
+            font-size: 14px;
+            font-weight: 500;
+        }}
+
+        .bd-sub {{
+            color: #7f7f7f;
+            font-size: 12px;
+            margin-top: 4px;
+        }}
+
+        .spacer {{
+            height: 12px;
+        }}
+
+        .rule {{
+            border: 0;
+            height: 1px;
+            background: rgba(255,255,255,0.06);
+            margin: 8px 0 16px 0;
+        }}
+
+        .footer {{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }}
+
+        .footer-label {{
+            font-weight: 700;
+            color: #d0d0d0;
+            font-size: 14px;
+        }}
+
+        .footer-total {{
+            color: #cc7a00;
+            font-family: 'Orbitron', monospace;
+            font-size: 20px;
+            font-weight: 800;
+        }}
+    </style>
+    </head>
+    <body>
+        <div class="card">
+            <div class="header">Varlık Kırılımı</div>
+
+            <div class="head-row">
+                <div style="flex:1.6;">Enstrüman</div>
+                <div style="flex:1; text-align:right;">Miktar</div>
+                <div style="flex:1; text-align:right;">Birim</div>
+                <div style="flex:1.1; text-align:right;">Toplam</div>
+            </div>
+
+            {rows_html}
+
+            <div class="spacer"></div>
+            <hr class="rule">
+
+            <div class="footer">
+                <span class="footer-label">Toplam</span>
+                <span class="footer-total">{fmt_money_usd(total_usd)} &nbsp;//&nbsp; {fmt_money_try(total_try)}</span>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+
+    row_count = len(df_nonzero)
+    height = 145 + (row_count * 64)
+
+    components.html(html, height=height, scrolling=False)
 
 def render_allocation_panel(df_nonzero):
     if df_nonzero.empty:
