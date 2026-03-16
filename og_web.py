@@ -1,11 +1,9 @@
 import streamlit as st
 from datetime import datetime
 import pandas as pd
-import pytz
-import numpy as np
 
 # Sadece ULTRA ATAK sekmesindeki piyasa kutusu için kullanılıyor.
-# İstersen bunu da tamamen kapatırız.
+# İstersen bunu da sonra manuel sisteme çeviririz.
 try:
     import yfinance as yf
 except:
@@ -27,8 +25,7 @@ def get_live_data():
         df = pd.read_csv(sheet_url)
         df["key"] = df["key"].astype(str).str.strip()
         df["value"] = df["value"].astype(str).str.strip()
-        data = dict(zip(df["key"], df["value"]))
-        return data
+        return dict(zip(df["key"], df["value"]))
     except Exception:
         return {"kasa": "600.0", "ana_para": "600.0"}
 
@@ -295,34 +292,6 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input {
     color: #8d8d8d !important;
 }
 
-.alloc-row {
-    margin-bottom: 14px;
-}
-
-.alloc-head {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 7px;
-    gap: 12px;
-    font-size: 13px;
-}
-
-.alloc-bar-wrap {
-    width: 100%;
-    height: 9px;
-    border-radius: 999px;
-    background: rgba(255,255,255,0.05);
-    overflow: hidden;
-    border: 1px solid rgba(255,255,255,0.03);
-}
-
-.alloc-bar-fill {
-    height: 100%;
-    border-radius: 999px;
-    background: linear-gradient(90deg, rgba(204,122,0,0.95), rgba(255,174,0,0.95));
-    box-shadow: 0 0 12px rgba(204,122,0,0.22);
-}
-
 .info-strip {
     display:flex;
     justify-content:space-between;
@@ -337,51 +306,6 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input {
 .info-strip span strong {
     color:#c9c9c9 !important;
     font-weight: 500;
-}
-
-.breakdown-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.breakdown-table tr {
-    border-bottom: 1px solid rgba(255,255,255,0.045);
-}
-
-.breakdown-table tr:last-child {
-    border-bottom: none;
-}
-
-.breakdown-table td {
-    padding: 13px 0;
-    font-size: 14px;
-}
-
-.breakdown-table td:nth-child(2),
-.breakdown-table td:nth-child(3),
-.breakdown-table td:nth-child(4) {
-    text-align: right;
-}
-
-.breakdown-name {
-    color: #dedede !important;
-}
-
-.breakdown-sub {
-    color: #7f7f7f !important;
-    font-size: 12px;
-}
-
-.breakdown-money {
-    color: #ffffff !important;
-    font-weight: 500;
-}
-
-.breakdown-total {
-    color: #cc7a00 !important;
-    font-family: 'Orbitron', monospace !important;
-    font-size: 20px;
-    font-weight: 800;
 }
 </style>
 """
@@ -466,11 +390,6 @@ def check_password():
 
 # --- PORTFÖY V2 YARDIMCI FONKSİYONLAR ---
 def discover_dynamic_instruments(data, users):
-    """
-    Yeni yapı:
-    price_btc, label_btc, unit_btc, currency_btc, order_btc
-    oguzo_btc, ero7_btc, fybey_btc
-    """
     instrument_codes = set()
 
     for key in data.keys():
@@ -504,14 +423,9 @@ def discover_dynamic_instruments(data, users):
             "order": order,
         })
 
-    instruments = sorted(instruments, key=lambda x: (x["order"], x["label"]))
-    return instruments
+    return sorted(instruments, key=lambda x: (x["order"], x["label"]))
 
 def build_legacy_fallback_instruments(data):
-    """
-    Eski sheet yapın bozulmasın diye fallback.
-    Eğer yeni dynamic price_ key'leri yoksa bunu kullanır.
-    """
     return [
         {
             "code": "usd_cash",
@@ -579,12 +493,10 @@ def build_legacy_fallback_instruments(data):
     ]
 
 def get_user_quantity_for_instrument(data, user, instrument):
-    # Yeni dinamik yapı
     direct_key = f"{user}_{instrument['code']}"
     if direct_key in data:
         return get_num(data, direct_key, 0)
 
-    # Legacy fallback
     if "legacy_map" in instrument and user in instrument["legacy_map"]:
         return get_num(data, instrument["legacy_map"][user], 0)
 
@@ -592,6 +504,7 @@ def get_user_quantity_for_instrument(data, user, instrument):
 
 def convert_to_try_and_usd(quantity, price, currency, usdtry):
     currency = (currency or "TRY").upper()
+
     if currency == "USD":
         total_usd = quantity * price
         total_try = total_usd * usdtry
@@ -599,9 +512,9 @@ def convert_to_try_and_usd(quantity, price, currency, usdtry):
         total_try = quantity * price
         total_usd = total_try / usdtry if usdtry > 0 else 0
     else:
-        # Bilinmeyen currency gelirse TRY varsay
         total_try = quantity * price
         total_usd = total_try / usdtry if usdtry > 0 else 0
+
     return total_try, total_usd
 
 def build_user_portfolio(data, user, instruments, usdtry):
@@ -627,14 +540,9 @@ def build_user_portfolio(data, user, instruments, usdtry):
     if df.empty:
         return df
 
-    df = df.sort_values(["order", "label"]).reset_index(drop=True)
-    return df
+    return df.sort_values(["order", "label"]).reset_index(drop=True)
 
 def render_top_asset_cards(df_nonzero):
-    """
-    En yüksek 4 enstrümanı özet kart olarak göster.
-    Boş olanları zaten gizliyoruz.
-    """
     if df_nonzero.empty:
         return
 
@@ -645,6 +553,7 @@ def render_top_asset_cards(df_nonzero):
         with cols[idx]:
             sub_value = fmt_money_usd(row["total_usd"]) if row["currency"] == "USD" else fmt_money_try(row["total_try"])
             qty_text = fmt_unit_value(row["quantity"], row["unit"])
+
             st.markdown(
                 f"""
                 <div class='industrial-card' style='text-align:center; min-height:118px;'>
@@ -657,21 +566,19 @@ def render_top_asset_cards(df_nonzero):
             )
 
 def render_secondary_asset_cards(df_nonzero):
-    """
-    İlk 4 dışındaki diğer dolu enstrümanları göster.
-    """
     extra_df = df_nonzero.sort_values("total_usd", ascending=False).iloc[4:].copy()
     if extra_df.empty:
         return
 
-    rows = [extra_df.iloc[i:i+4] for i in range(0, len(extra_df), 4)]
+    chunks = [extra_df.iloc[i:i+4] for i in range(0, len(extra_df), 4)]
 
-    for chunk in rows:
+    for chunk in chunks:
         cols = st.columns(len(chunk))
         for idx, (_, row) in enumerate(chunk.iterrows()):
             with cols[idx]:
                 qty_text = fmt_unit_value(row["quantity"], row["unit"])
                 sub_value = fmt_money_usd(row["total_usd"]) if row["currency"] == "USD" else fmt_money_try(row["total_try"])
+
                 st.markdown(
                     f"""
                     <div class='industrial-card' style='text-align:center; min-height:105px; border-top:1px solid rgba(255,255,255,0.06) !important;'>
@@ -683,54 +590,20 @@ def render_secondary_asset_cards(df_nonzero):
                     unsafe_allow_html=True
                 )
 
-def render_allocation_panel(df_nonzero):
-    if df_nonzero.empty:
-        st.markdown(
-            "<div class='industrial-card'><div class='terminal-header'>Dağılım</div><div class='highlight'>Aktif enstrüman bulunamadı.</div></div>",
-            unsafe_allow_html=True
-        )
-        return
-
-    total_usd = df_nonzero["total_usd"].sum()
-    if total_usd <= 0:
-        total_usd = 1
-
-    html = "<div class='industrial-card'><div class='terminal-header'>Dağılım Yüzdesi</div>"
-
-    alloc_df = df_nonzero.sort_values("total_usd", ascending=False).copy()
-    for _, row in alloc_df.iterrows():
-        pct = (row["total_usd"] / total_usd) * 100
-        value_text = fmt_money_usd(row["total_usd"])
-        html += f"""
-        <div class='alloc-row'>
-            <div class='alloc-head'>
-                <span>{row["label"]}</span>
-                <span>{pct:.1f}% // {value_text}</span>
-            </div>
-            <div class='alloc-bar-wrap'>
-                <div class='alloc-bar-fill' style='width:{pct:.2f}%;'></div>
-            </div>
-        </div>
-        """
-
-    html += "</div>"
-    st.markdown(html, unsafe_allow_html=True)
-
 def render_breakdown_panel(df_nonzero):
     if df_nonzero.empty:
         st.markdown(
-            "<div class='industrial-card'><div class='terminal-header'>Varlık Kırılımı</div><div class='highlight'>Aktif varlık bulunamadı.</div></div>",
+            """
+            <div class='industrial-card'>
+                <div class='terminal-header'>Varlık Kırılımı</div>
+                <div class='highlight'>Aktif varlık bulunamadı.</div>
+            </div>
+            """,
             unsafe_allow_html=True
         )
         return
 
-    html = """
-    <div class='industrial-card'>
-        <div class='terminal-header'>Varlık Kırılımı</div>
-        <table class='breakdown-table'>
-            <thead></thead>
-            <tbody>
-    """
+    rows_html = ""
 
     for _, row in df_nonzero.iterrows():
         if row["currency"] == "USD":
@@ -742,44 +615,98 @@ def render_breakdown_panel(df_nonzero):
 
         qty_text = fmt_unit_value(row["quantity"], row["unit"])
 
-        html += f"""
-        <tr>
-            <td>
-                <div class='breakdown-name'>{row["label"]}</div>
-                <div class='breakdown-sub'>{row["currency"]} bazlı / {row["unit"]}</div>
-            </td>
-            <td>{qty_text}</td>
-            <td>{price_text}</td>
-            <td class='breakdown-money'>{total_text}</td>
-        </tr>
+        rows_html += f"""
+        <div style='padding:12px 0; border-bottom:1px solid rgba(255,255,255,0.045);'>
+            <div style='display:flex; justify-content:space-between; align-items:flex-start; gap:14px;'>
+                <div style='flex:1.6; min-width:0;'>
+                    <div style='color:#dedede; font-size:14px; font-weight:500;'>{row["label"]}</div>
+                    <div style='color:#7f7f7f; font-size:12px; margin-top:4px;'>{row["currency"]} bazlı / {row["unit"]}</div>
+                </div>
+                <div style='flex:1; text-align:right; color:#d8d8d8; font-size:13px;'>{qty_text}</div>
+                <div style='flex:1; text-align:right; color:#a8a8a8; font-size:13px;'>{price_text}</div>
+                <div style='flex:1.1; text-align:right; color:#ffffff; font-size:13px; font-weight:500;'>{total_text}</div>
+            </div>
+        </div>
         """
 
     total_usd = df_nonzero["total_usd"].sum()
     total_try = df_nonzero["total_try"].sum()
 
-    html += f"""
-            </tbody>
-        </table>
+    html = f"""
+    <div class='industrial-card'>
+        <div class='terminal-header'>Varlık Kırılımı</div>
 
-        <hr style='border:0; height:1px; background:rgba(255,255,255,0.06); margin:20px 0 16px 0;'>
+        <div style='display:flex; justify-content:space-between; gap:14px; padding-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.06); margin-bottom:6px; color:#777; font-size:11px; letter-spacing:1.5px; text-transform:uppercase;'>
+            <div style='flex:1.6;'>Enstrüman</div>
+            <div style='flex:1; text-align:right;'>Miktar</div>
+            <div style='flex:1; text-align:right;'>Birim</div>
+            <div style='flex:1.1; text-align:right;'>Toplam</div>
+        </div>
 
-        <div class='terminal-row' style='margin-bottom:0;'>
-            <span style='font-weight:700;'>Toplam</span>
-            <span class='breakdown-total'>{fmt_money_usd(total_usd)} &nbsp; // &nbsp; {fmt_money_try(total_try)}</span>
+        {rows_html}
+
+        <div style='height:12px;'></div>
+        <hr style='border:0; height:1px; background:rgba(255,255,255,0.06); margin:8px 0 16px 0;'>
+
+        <div style='display:flex; justify-content:space-between; align-items:center; gap:12px;'>
+            <span style='font-weight:700; color:#d0d0d0;'>Toplam</span>
+            <span style='color:#cc7a00; font-family:Orbitron; font-size:20px; font-weight:800;'>
+                {fmt_money_usd(total_usd)} &nbsp;//&nbsp; {fmt_money_try(total_try)}
+            </span>
         </div>
     </div>
     """
+    st.markdown(html, unsafe_allow_html=True)
 
+def render_allocation_panel(df_nonzero):
+    if df_nonzero.empty:
+        st.markdown(
+            """
+            <div class='industrial-card'>
+                <div class='terminal-header'>Dağılım</div>
+                <div class='highlight'>Aktif enstrüman bulunamadı.</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+        return
+
+    total_usd = df_nonzero["total_usd"].sum()
+    if total_usd <= 0:
+        total_usd = 1
+
+    alloc_df = df_nonzero.sort_values("total_usd", ascending=False).copy()
+    rows_html = ""
+
+    for _, row in alloc_df.iterrows():
+        pct = (row["total_usd"] / total_usd) * 100
+        value_text = fmt_money_usd(row["total_usd"])
+
+        rows_html += f"""
+        <div style='margin-bottom:14px;'>
+            <div style='display:flex; justify-content:space-between; gap:12px; margin-bottom:7px; font-size:13px;'>
+                <span style='color:#dedede;'>{row["label"]}</span>
+                <span style='color:#cfcfcf;'>{pct:.1f}% &nbsp;//&nbsp; {value_text}</span>
+            </div>
+            <div style='width:100%; height:9px; border-radius:999px; background:rgba(255,255,255,0.05); overflow:hidden; border:1px solid rgba(255,255,255,0.03);'>
+                <div style='height:100%; width:{pct:.2f}%; border-radius:999px; background:linear-gradient(90deg, rgba(204,122,0,0.95), rgba(255,174,0,0.95)); box-shadow:0 0 12px rgba(204,122,0,0.22);'></div>
+            </div>
+        </div>
+        """
+
+    html = f"""
+    <div class='industrial-card'>
+        <div class='terminal-header'>Dağılım Yüzdesi</div>
+        {rows_html}
+    </div>
+    """
     st.markdown(html, unsafe_allow_html=True)
 
 def render_info_strip(instruments, usdtry):
     parts = [f"<span>USD/TRY: <strong>₺{usdtry:.2f}</strong></span>"]
 
     for ins in instruments:
-        if ins["currency"] == "USD":
-            price_text = fmt_money_usd(ins["price"])
-        else:
-            price_text = fmt_money_try(ins["price"])
+        price_text = fmt_money_usd(ins["price"]) if ins["currency"] == "USD" else fmt_money_try(ins["price"])
         parts.append(f"<span>{ins['label']}: <strong>{price_text}</strong></span>")
 
     html = f"<div class='info-strip'>{''.join(parts)}</div>"
@@ -811,8 +738,6 @@ def render_portfolio_v2(data):
 
     total_usd = df_user["total_usd"].sum()
     total_try = df_user["total_try"].sum()
-
-    # Boş kartları gizleme
     df_nonzero = df_user[df_user["quantity"] > 0].copy()
 
     st.markdown(
@@ -829,7 +754,7 @@ def render_portfolio_v2(data):
     render_top_asset_cards(df_nonzero)
     render_secondary_asset_cards(df_nonzero)
 
-    left, right = st.columns([1.1, 0.9])
+    left, right = st.columns([1.18, 0.82])
 
     with left:
         render_breakdown_panel(df_nonzero)
@@ -917,7 +842,7 @@ if check_password():
 
         with col1:
             st.markdown(
-                f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>💎 KASA</div><div class='terminal-row'><span>TOPLAM</span><span class='highlight'>${kasa:,.2f}</span></div><div class='terminal-row'><span>K/Z</span><span style='color:{'#00ff41' if net_kar >=0 else '#ff4b4b'};' class='val-std'>${net_kar:,.2f}</span></div></div>",
+                f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>💎 KASA</div><div class='terminal-row'><span>TOPLAM</span><span class='highlight'>${kasa:,.2f}</span></div><div class='terminal-row'><span>K/Z</span><span style='color:{'#00ff41' if net_kar >= 0 else '#ff4b4b'};' class='val-std'>${net_kar:,.2f}</span></div></div>",
                 unsafe_allow_html=True
             )
 
