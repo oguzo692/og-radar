@@ -1,6 +1,7 @@
 import streamlit as st
 from datetime import datetime
 import pandas as pd
+import textwrap
 
 # Sadece ULTRA ATAK sekmesindeki piyasa kutusu için kullanılıyor.
 # İstersen bunu da sonra manuel sisteme çeviririz.
