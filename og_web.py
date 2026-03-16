@@ -267,7 +267,7 @@ if check_password():
     elif page == "📊 Portföy Takip":
         st.markdown("<div class='terminal-header'>🏛️ PORTFÖY KOMUTA MERKEZİ</div>", unsafe_allow_html=True)
         
-        aft_fiyat_tl = 0.8355
+        aft_fiyat_tl = 0.8295
         # ---------------------------
 
         try:
