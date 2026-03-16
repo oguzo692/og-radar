@@ -711,7 +711,7 @@ def render_info_strip(instruments, usdtry):
         parts.append(f"<span>{ins['label']}: <strong>{price_text}</strong></span>")
 
     html = f"<div class='info-strip'>{''.join(parts)}</div>"
-    st.markdown(html, unsafe_allow_html=True)
+    st.markdown(textwrap.dedent(html), unsafe_allow_html=True)
 
 def render_portfolio_v2(data):
     st.markdown("<div class='terminal-header'>🏛️ PORTFÖY KOMUTA MERKEZİ</div>", unsafe_allow_html=True)
