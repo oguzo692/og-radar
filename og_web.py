@@ -280,10 +280,10 @@ if check_password():
         # --- Manuel fiyatlar (Sheets'ten) ---
         usd_try = get_val("usdtry", 44.18)
         gram_altin = get_val("gram_altin_fiyat", 7136)
-        ceyrek_fiyat = get_val("ceyrek_altin_fiyat", 5512417)
+        ceyrek_fiyat = get_val("ceyrek_altin_fiyat", 12200)
         aft_fiyat_tl = get_val("aft_fiyat_tl", 0.8295)
-        btc_fiyat_usd = get_val("btc_fiyat_usd", 84250)
-        eth_fiyat_usd = get_val("eth_fiyat_usd", 2107.89)
+        btc_fiyat_usd = get_val("btc_fiyat_usd", 73550)
+        eth_fiyat_usd = get_val("eth_fiyat_usd", 2271.89)
         gumus_fiyat_tl = get_val("gumus_fiyat_tl", 41.20)
 
         users = ["oguzo", "ero7", "fybey"]
