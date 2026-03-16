@@ -594,12 +594,12 @@ def render_secondary_asset_cards(df_nonzero):
 def render_breakdown_panel(df_nonzero):
     if df_nonzero.empty:
         st.markdown(
-            """
-            <div class='industrial-card'>
-                <div class='terminal-header'>Varlık Kırılımı</div>
-                <div class='highlight'>Aktif varlık bulunamadı.</div>
-            </div>
-            """,
+            textwrap.dedent("""
+                <div class='industrial-card'>
+                    <div class='terminal-header'>Varlık Kırılımı</div>
+                    <div class='highlight'>Aktif varlık bulunamadı.</div>
+                </div>
+            """),
             unsafe_allow_html=True
         )
         return
@@ -617,57 +617,57 @@ def render_breakdown_panel(df_nonzero):
         qty_text = fmt_unit_value(row["quantity"], row["unit"])
 
         rows_html += f"""
-        <div style='padding:12px 0; border-bottom:1px solid rgba(255,255,255,0.045);'>
-            <div style='display:flex; justify-content:space-between; align-items:flex-start; gap:14px;'>
-                <div style='flex:1.6; min-width:0;'>
-                    <div style='color:#dedede; font-size:14px; font-weight:500;'>{row["label"]}</div>
-                    <div style='color:#7f7f7f; font-size:12px; margin-top:4px;'>{row["currency"]} bazlı / {row["unit"]}</div>
-                </div>
-                <div style='flex:1; text-align:right; color:#d8d8d8; font-size:13px;'>{qty_text}</div>
-                <div style='flex:1; text-align:right; color:#a8a8a8; font-size:13px;'>{price_text}</div>
-                <div style='flex:1.1; text-align:right; color:#ffffff; font-size:13px; font-weight:500;'>{total_text}</div>
-            </div>
+<div style='padding:12px 0; border-bottom:1px solid rgba(255,255,255,0.045);'>
+    <div style='display:flex; justify-content:space-between; align-items:flex-start; gap:14px;'>
+        <div style='flex:1.6; min-width:0;'>
+            <div style='color:#dedede; font-size:14px; font-weight:500;'>{row["label"]}</div>
+            <div style='color:#7f7f7f; font-size:12px; margin-top:4px;'>{row["currency"]} bazlı / {row["unit"]}</div>
         </div>
-        """
+        <div style='flex:1; text-align:right; color:#d8d8d8; font-size:13px;'>{qty_text}</div>
+        <div style='flex:1; text-align:right; color:#a8a8a8; font-size:13px;'>{price_text}</div>
+        <div style='flex:1.1; text-align:right; color:#ffffff; font-size:13px; font-weight:500;'>{total_text}</div>
+    </div>
+</div>
+"""
 
     total_usd = df_nonzero["total_usd"].sum()
     total_try = df_nonzero["total_try"].sum()
 
     html = f"""
-    <div class='industrial-card'>
-        <div class='terminal-header'>Varlık Kırılımı</div>
+<div class='industrial-card'>
+    <div class='terminal-header'>Varlık Kırılımı</div>
 
-        <div style='display:flex; justify-content:space-between; gap:14px; padding-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.06); margin-bottom:6px; color:#777; font-size:11px; letter-spacing:1.5px; text-transform:uppercase;'>
-            <div style='flex:1.6;'>Enstrüman</div>
-            <div style='flex:1; text-align:right;'>Miktar</div>
-            <div style='flex:1; text-align:right;'>Birim</div>
-            <div style='flex:1.1; text-align:right;'>Toplam</div>
-        </div>
-
-        {rows_html}
-
-        <div style='height:12px;'></div>
-        <hr style='border:0; height:1px; background:rgba(255,255,255,0.06); margin:8px 0 16px 0;'>
-
-        <div style='display:flex; justify-content:space-between; align-items:center; gap:12px;'>
-            <span style='font-weight:700; color:#d0d0d0;'>Toplam</span>
-            <span style='color:#cc7a00; font-family:Orbitron; font-size:20px; font-weight:800;'>
-                {fmt_money_usd(total_usd)} &nbsp;//&nbsp; {fmt_money_try(total_try)}
-            </span>
-        </div>
+    <div style='display:flex; justify-content:space-between; gap:14px; padding-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.06); margin-bottom:6px; color:#777; font-size:11px; letter-spacing:1.5px; text-transform:uppercase;'>
+        <div style='flex:1.6;'>Enstrüman</div>
+        <div style='flex:1; text-align:right;'>Miktar</div>
+        <div style='flex:1; text-align:right;'>Birim</div>
+        <div style='flex:1.1; text-align:right;'>Toplam</div>
     </div>
-    """
-    st.markdown(html, unsafe_allow_html=True)
+
+    {rows_html}
+
+    <div style='height:12px;'></div>
+    <hr style='border:0; height:1px; background:rgba(255,255,255,0.06); margin:8px 0 16px 0;'>
+
+    <div style='display:flex; justify-content:space-between; align-items:center; gap:12px;'>
+        <span style='font-weight:700; color:#d0d0d0;'>Toplam</span>
+        <span style='color:#cc7a00; font-family:Orbitron; font-size:20px; font-weight:800;'>
+            {fmt_money_usd(total_usd)} &nbsp;//&nbsp; {fmt_money_try(total_try)}
+        </span>
+    </div>
+</div>
+"""
+    st.markdown(textwrap.dedent(html), unsafe_allow_html=True)
 
 def render_allocation_panel(df_nonzero):
     if df_nonzero.empty:
         st.markdown(
-            """
-            <div class='industrial-card'>
-                <div class='terminal-header'>Dağılım</div>
-                <div class='highlight'>Aktif enstrüman bulunamadı.</div>
-            </div>
-            """,
+            textwrap.dedent("""
+                <div class='industrial-card'>
+                    <div class='terminal-header'>Dağılım</div>
+                    <div class='highlight'>Aktif enstrüman bulunamadı.</div>
+                </div>
+            """),
             unsafe_allow_html=True
         )
         return
@@ -684,24 +684,24 @@ def render_allocation_panel(df_nonzero):
         value_text = fmt_money_usd(row["total_usd"])
 
         rows_html += f"""
-        <div style='margin-bottom:14px;'>
-            <div style='display:flex; justify-content:space-between; gap:12px; margin-bottom:7px; font-size:13px;'>
-                <span style='color:#dedede;'>{row["label"]}</span>
-                <span style='color:#cfcfcf;'>{pct:.1f}% &nbsp;//&nbsp; {value_text}</span>
-            </div>
-            <div style='width:100%; height:9px; border-radius:999px; background:rgba(255,255,255,0.05); overflow:hidden; border:1px solid rgba(255,255,255,0.03);'>
-                <div style='height:100%; width:{pct:.2f}%; border-radius:999px; background:linear-gradient(90deg, rgba(204,122,0,0.95), rgba(255,174,0,0.95)); box-shadow:0 0 12px rgba(204,122,0,0.22);'></div>
-            </div>
-        </div>
-        """
+<div style='margin-bottom:14px;'>
+    <div style='display:flex; justify-content:space-between; gap:12px; margin-bottom:7px; font-size:13px;'>
+        <span style='color:#dedede;'>{row["label"]}</span>
+        <span style='color:#cfcfcf;'>{pct:.1f}% &nbsp;//&nbsp; {value_text}</span>
+    </div>
+    <div style='width:100%; height:9px; border-radius:999px; background:rgba(255,255,255,0.05); overflow:hidden; border:1px solid rgba(255,255,255,0.03);'>
+        <div style='height:100%; width:{pct:.2f}%; border-radius:999px; background:linear-gradient(90deg, rgba(204,122,0,0.95), rgba(255,174,0,0.95)); box-shadow:0 0 12px rgba(204,122,0,0.22);'></div>
+    </div>
+</div>
+"""
 
     html = f"""
-    <div class='industrial-card'>
-        <div class='terminal-header'>Dağılım Yüzdesi</div>
-        {rows_html}
-    </div>
-    """
-    st.markdown(html, unsafe_allow_html=True)
+<div class='industrial-card'>
+    <div class='terminal-header'>Dağılım Yüzdesi</div>
+    {rows_html}
+</div>
+"""
+    st.markdown(textwrap.dedent(html), unsafe_allow_html=True)
 
 def render_info_strip(instruments, usdtry):
     parts = [f"<span>USD/TRY: <strong>₺{usdtry:.2f}</strong></span>"]
