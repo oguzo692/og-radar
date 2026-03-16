@@ -1,9 +1,15 @@
 import streamlit as st
-import yfinance as yf
 from datetime import datetime
 import pandas as pd
 import pytz
 import numpy as np
+
+# Sadece ULTRA ATAK sekmesindeki piyasa kutusu için kullanılıyor.
+# İstersen bunu da tamamen kapatırız.
+try:
+    import yfinance as yf
+except:
+    yf = None
 
 # --- 1. AYARLAR ---
 st.set_page_config(
@@ -13,15 +19,56 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- 2. VERİ BAĞLANTISI (GOOGLE SHEETS) ---
+# --- 2. VERİ BAĞLANTISI (GOOGLE SHEETS / CSV EXPORT) ---
+@st.cache_data(ttl=20)
 def get_live_data():
     try:
         sheet_url = "https://docs.google.com/spreadsheets/d/15izevdpRjs8Om5BAHKVWmdL3FxEHml35DGECfhQUG_s/export?format=csv&gid=0"
         df = pd.read_csv(sheet_url)
-        data = dict(zip(df['key'].astype(str), df['value'].astype(str)))
+        df["key"] = df["key"].astype(str).str.strip()
+        df["value"] = df["value"].astype(str).str.strip()
+        data = dict(zip(df["key"], df["value"]))
         return data
     except Exception:
         return {"kasa": "600.0", "ana_para": "600.0"}
+
+# --- YARDIMCI FONKSİYONLAR ---
+def get_num(data, key, default=0.0):
+    try:
+        val = data.get(key, default)
+        if val is None or str(val).strip() == "":
+            return float(default)
+        return float(str(val).replace(",", ".").strip())
+    except:
+        return float(default)
+
+def get_str(data, key, default=""):
+    try:
+        val = data.get(key, default)
+        if val is None:
+            return default
+        return str(val).strip()
+    except:
+        return default
+
+def fmt_money_usd(x):
+    return f"${x:,.2f}"
+
+def fmt_money_try(x):
+    return f"₺{x:,.0f}"
+
+def fmt_unit_value(qty, unit):
+    unit = (unit or "").strip().lower()
+    if unit in ["adet", "lot"]:
+        return f"{qty:,.4f}".rstrip("0").rstrip(".")
+    elif unit == "gr":
+        return f"{qty:,.2f} gr"
+    elif unit == "usd":
+        return f"${qty:,.0f}"
+    elif unit == "eur":
+        return f"€{qty:,.2f}"
+    else:
+        return f"{qty:,.4f}".rstrip("0").rstrip(".")
 
 # --- RÜTBE FONKSİYONU ---
 def rutbe_getir(puan_str):
@@ -29,44 +76,50 @@ def rutbe_getir(puan_str):
         p = int(float(puan_str))
     except:
         p = 0
-    if p <= 3: return "Hılez"
-    elif p <= 6: return "Tecrübeli Hılez"
-    elif p <= 9: return "Bu Abi Biri Mi?"
-    elif p <= 11: return "Miço"
-    else: return "Grand Miço"
+    if p <= 3:
+        return "Hılez"
+    elif p <= 6:
+        return "Tecrübeli Hılez"
+    elif p <= 9:
+        return "Bu Abi Biri Mi?"
+    elif p <= 11:
+        return "Miço"
+    else:
+        return "Grand Miço"
 
 live_vars = get_live_data()
-kasa = float(live_vars.get("kasa", 600))
-ana_para = float(live_vars.get("ana_para", 600))
-duyuru_metni = live_vars.get("duyuru", "SİSTEM ÇEVRİMİÇİ... OG CORE")
+
+kasa = float(get_num(live_vars, "kasa", 600))
+ana_para = float(get_num(live_vars, "ana_para", 600))
+duyuru_metni = get_str(live_vars, "duyuru", "SİSTEM ÇEVRİMİÇİ... OG CORE")
 
 # --- KİŞİSEL KASA VERİLERİ ---
-og_kasa = float(live_vars.get("oguzo_kasa", kasa / 3))
-er_kasa = float(live_vars.get("ero7_kasa", kasa / 3))
-fy_kasa = float(live_vars.get("fybey_kasa", kasa / 3))
+og_kasa = float(get_num(live_vars, "oguzo_kasa", kasa / 3))
+er_kasa = float(get_num(live_vars, "ero7_kasa", kasa / 3))
+fy_kasa = float(get_num(live_vars, "fybey_kasa", kasa / 3))
 
 # --- RÜTBE VERİLERİ ---
-og_p = live_vars.get("oguzo_puan", "0")
-er_p = live_vars.get("ero7_puan", "0")
-fy_p = live_vars.get("fybey_puan", "0")
+og_p = get_str(live_vars, "oguzo_puan", "0")
+er_p = get_str(live_vars, "ero7_puan", "0")
+fy_p = get_str(live_vars, "fybey_puan", "0")
 
-aktif_soru_1 = live_vars.get("aktif_soru", "yeni soru yakında...")
-aktif_soru_2 = live_vars.get("aktif_soru2", "yeni soru yakında...")
+aktif_soru_1 = get_str(live_vars, "aktif_soru", "yeni soru yakında...")
+aktif_soru_2 = get_str(live_vars, "aktif_soru2", "yeni soru yakında...")
 
 # --- 💰 FORMLINE HESAPLAMA ---
-w1_kar = float(live_vars.get("w1_sonuc", -100)) 
-w2_kar = float(live_vars.get("w2_sonuc", 553))
-w3_kar = float(live_vars.get("w3_sonuc", 879)) 
-w4_kar = float(live_vars.get("w4_sonuc", -100))
-w5_kar = float(live_vars.get("w5_sonuc", -100))
-w6_kar = float(live_vars.get("w6_sonuc", -100))
-w7_kar = float(live_vars.get("w7_sonuc", +650))
-w8_kar = float(live_vars.get("w8_sonuc", -100))
-w9_kar = float(live_vars.get("w8_sonuc", -100))
+w1_kar = float(get_num(live_vars, "w1_sonuc", -100))
+w2_kar = float(get_num(live_vars, "w2_sonuc", 553))
+w3_kar = float(get_num(live_vars, "w3_sonuc", 879))
+w4_kar = float(get_num(live_vars, "w4_sonuc", -100))
+w5_kar = float(get_num(live_vars, "w5_sonuc", -100))
+w6_kar = float(get_num(live_vars, "w6_sonuc", -100))
+w7_kar = float(get_num(live_vars, "w7_sonuc", 650))
+w8_kar = float(get_num(live_vars, "w8_sonuc", -100))
+w9_kar = float(get_num(live_vars, "w9_sonuc", -100))
 toplam_bahis_kar = w1_kar + w2_kar + w3_kar + w4_kar + w5_kar + w6_kar + w7_kar + w8_kar + w9_kar
 
-wr_oran = live_vars.get("win_rate", "0")
-son_islemler_raw = str(live_vars.get("son_islemler", "Veri yok"))
+wr_oran = get_str(live_vars, "win_rate", "0")
+son_islemler_raw = get_str(live_vars, "son_islemler", "Veri yok")
 
 # --- 3. CSS STİLLERİ ---
 common_css = """
@@ -78,38 +131,258 @@ common_css = """
 [data-testid="stSidebar"] span, [data-testid="stSidebar"] small {font-size: 0 !important; color: transparent !important;}
 [data-testid="stSidebar"] p {font-size: 14px !important; color: #d1d1d1 !important; visibility: visible !important;}
 
-section[data-testid="stSidebar"] { background-color: rgba(5, 5, 5, 0.95) !important; border-right: 1px solid rgba(204, 122, 0, 0.15); padding-top: 20px; min-width: 340px !important; max-width: 340px !important;}
-.stButton button, .stLinkButton a { width: 100% !important; background: rgba(204, 122, 0, 0.1) !important; border: 1px solid rgba(204, 122, 0, 0.3) !important; color: #cc7a00 !important; font-family: 'Orbitron' !important; padding: 12px !important; border-radius: 6px !important;}
-body, [data-testid="stAppViewContainer"], p, div, span, button, input { font-family: 'JetBrains Mono', monospace !important; color: #d1d1d1 !important;}
-.terminal-row { display: flex; justify-content: space-between; align-items: center; font-size: 14px; margin-bottom: 12px; line-height: 1.6;}
+section[data-testid="stSidebar"] {
+    background-color: rgba(5, 5, 5, 0.95) !important;
+    border-right: 1px solid rgba(204, 122, 0, 0.15);
+    padding-top: 20px;
+    min-width: 340px !important;
+    max-width: 340px !important;
+}
 
-.industrial-card { 
-    background: rgba(15, 15, 15, 0.8) !important; 
-    backdrop-filter: blur(5px); 
-    border: 1px solid rgba(255, 255, 255, 0.03) !important; 
-    border-top: 2px solid rgba(204, 122, 0, 0.4) !important; 
-    padding: 22px; 
-    margin-bottom: 20px; 
+.stButton button, .stLinkButton a {
+    width: 100% !important;
+    background: rgba(204, 122, 0, 0.1) !important;
+    border: 1px solid rgba(204, 122, 0, 0.3) !important;
+    color: #cc7a00 !important;
+    font-family: 'Orbitron' !important;
+    padding: 12px !important;
+    border-radius: 6px !important;
+}
+
+body, [data-testid="stAppViewContainer"], p, div, span, button, input {
+    font-family: 'JetBrains Mono', monospace !important;
+    color: #d1d1d1 !important;
+}
+
+.terminal-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    margin-bottom: 12px;
+    line-height: 1.6;
+    gap: 12px;
+}
+
+.industrial-card {
+    background: rgba(15, 15, 15, 0.82) !important;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.03) !important;
+    border-top: 2px solid rgba(204, 122, 0, 0.4) !important;
+    padding: 22px;
+    margin-bottom: 20px;
     border-radius: 4px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.5); 
-    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    transition: all 0.25s ease;
 }
 
-.industrial-card:hover { 
-    transform: translateY(-5px); 
+.industrial-card:hover {
+    transform: translateY(-3px);
     border-top-color: #ffae00 !important;
-    background: rgba(25, 25, 25, 0.9) !important;
-    box-shadow: 0 8px 25px rgba(204, 122, 0, 0.15);
+    background: rgba(21, 21, 21, 0.9) !important;
+    box-shadow: 0 8px 22px rgba(204, 122, 0, 0.11);
 }
 
-.terminal-header { color: #666; font-size: 11px; font-weight: 800; letter-spacing: 2.5px; text-transform: uppercase; margin-bottom: 18px; border-left: 3px solid #cc7a00; padding-left: 12px;}
-.highlight { color: #FFFFFF !important; font-weight: 400; font-size: 14px; font-family: 'JetBrains Mono', monospace; }
-.val-std { font-size: 22px !important; font-weight: 800 !important; font-family: 'Orbitron'; }
-.ticker-wrap { width: 100%; overflow: hidden; background: rgba(204, 122, 0, 0.03); border-bottom: 1px solid rgba(204, 122, 0, 0.2); padding: 10px 0; margin-bottom: 25px;}
-.ticker { display: flex; white-space: nowrap; animation: ticker 30s linear infinite; }
-.ticker-item { font-size: 12px; color: #cc7a00; letter-spacing: 4px; padding-right: 50%; }
-@keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
-.equal-card { min-height: 180px; display: flex; flex-direction: column; justify-content: space-between; }
+.terminal-header {
+    color: #8b8b8b;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2.8px;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+    border-left: 3px solid #cc7a00;
+    padding-left: 12px;
+}
+
+.highlight {
+    color: #FFFFFF !important;
+    font-weight: 500;
+    font-size: 14px;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.val-std {
+    font-size: 22px !important;
+    font-weight: 800 !important;
+    font-family: 'Orbitron';
+}
+
+.ticker-wrap {
+    width: 100%;
+    overflow: hidden;
+    background: rgba(204, 122, 0, 0.03);
+    border-bottom: 1px solid rgba(204, 122, 0, 0.2);
+    padding: 10px 0;
+    margin-bottom: 25px;
+}
+
+.ticker {
+    display: flex;
+    white-space: nowrap;
+    animation: ticker 30s linear infinite;
+}
+
+.ticker-item {
+    font-size: 12px;
+    color: #cc7a00;
+    letter-spacing: 4px;
+    padding-right: 50%;
+}
+
+@keyframes ticker {
+    0% { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
+}
+
+.equal-card {
+    min-height: 180px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* --- PORTFÖY V2 --- */
+.portfolio-hero {
+    background: linear-gradient(180deg, rgba(18,18,18,0.92), rgba(10,10,10,0.92));
+    border: 1px solid rgba(255,255,255,0.03);
+    border-top: 2px solid rgba(204,122,0,0.75);
+    border-radius: 4px;
+    padding: 30px 24px 26px 24px;
+    margin-bottom: 22px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.45);
+}
+
+.portfolio-hero-sub {
+    font-size: 13px;
+    color: #7a7a7a !important;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+}
+
+.portfolio-hero-main {
+    font-size: 62px;
+    line-height: 1;
+    font-family: 'Orbitron', monospace !important;
+    color: #e5e5e5 !important;
+    font-weight: 900;
+}
+
+.portfolio-hero-try {
+    margin-top: 12px;
+    font-size: 18px;
+    color: #8c8c8c !important;
+}
+
+.asset-mini-title {
+    font-size: 11px;
+    color: #7d7d7d !important;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
+.asset-mini-value {
+    font-size: 22px;
+    color: #f3f3f3 !important;
+    font-family: 'Orbitron', monospace !important;
+    font-weight: 700;
+}
+
+.asset-mini-sub {
+    margin-top: 8px;
+    font-size: 12px;
+    color: #8d8d8d !important;
+}
+
+.alloc-row {
+    margin-bottom: 14px;
+}
+
+.alloc-head {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 7px;
+    gap: 12px;
+    font-size: 13px;
+}
+
+.alloc-bar-wrap {
+    width: 100%;
+    height: 9px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.05);
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.03);
+}
+
+.alloc-bar-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, rgba(204,122,0,0.95), rgba(255,174,0,0.95));
+    box-shadow: 0 0 12px rgba(204,122,0,0.22);
+}
+
+.info-strip {
+    display:flex;
+    justify-content:space-between;
+    gap:18px;
+    flex-wrap:wrap;
+    font-size:12px;
+    color:#7a7a7a;
+    letter-spacing:1px;
+    padding-top: 4px;
+}
+
+.info-strip span strong {
+    color:#c9c9c9 !important;
+    font-weight: 500;
+}
+
+.breakdown-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.breakdown-table tr {
+    border-bottom: 1px solid rgba(255,255,255,0.045);
+}
+
+.breakdown-table tr:last-child {
+    border-bottom: none;
+}
+
+.breakdown-table td {
+    padding: 13px 0;
+    font-size: 14px;
+}
+
+.breakdown-table td:nth-child(2),
+.breakdown-table td:nth-child(3),
+.breakdown-table td:nth-child(4) {
+    text-align: right;
+}
+
+.breakdown-name {
+    color: #dedede !important;
+}
+
+.breakdown-sub {
+    color: #7f7f7f !important;
+    font-size: 12px;
+}
+
+.breakdown-money {
+    color: #ffffff !important;
+    font-weight: 500;
+}
+
+.breakdown-total {
+    color: #cc7a00 !important;
+    font-family: 'Orbitron', monospace !important;
+    font-size: 20px;
+    font-weight: 800;
+}
 </style>
 """
 
@@ -121,6 +394,7 @@ login_bg_css = """
                 linear-gradient(135deg, #050505 0%, #0b0b0b 40%, #111111 100%) !important;
     background-attachment: fixed !important;
 }
+
 div[data-testid="stVerticalBlock"] > div:has(input[type="password"]) {
     background: rgba(10, 10, 10, 0.75) !important;
     backdrop-filter: blur(30px) !important;
@@ -135,6 +409,7 @@ div[data-testid="stVerticalBlock"] > div:has(input[type="password"]) {
     z-index: 9999 !important;
     width: 360px !important;
 }
+
 input[type="password"] {
     background: rgba(0, 0, 0, 0.5) !important;
     border: 1px solid rgba(204, 122, 0, 0.6) !important;
@@ -145,6 +420,7 @@ input[type="password"] {
     padding: 12px !important;
     border-radius: 10px !important;
 }
+
 .stButton { visibility: hidden; height: 0; margin: 0; padding: 0; }
 </style>
 """
@@ -171,7 +447,8 @@ w2_coupon_html = f"<div class='industrial-card' style='border-top-color: #00ff41
 w1_coupon_html = f"<div class='industrial-card' style='border-top-color: #ff4b4b !important;'><div class='terminal-header' style='color:#ff4b4b;'>❌ W1 KUPONU (BAŞARISIZ)</div>{w1_matches}<span style='color:#ff4b4b; font-weight:bold;'>SONUÇLANDI ❌</span></div>"
 
 # --- 5. GÜVENLİK ---
-if "password_correct" not in st.session_state: st.session_state["password_correct"] = False
+if "password_correct" not in st.session_state:
+    st.session_state["password_correct"] = False
 
 def check_password():
     if not st.session_state["password_correct"]:
@@ -182,302 +459,618 @@ def check_password():
             if pwd == "1608":
                 st.session_state["password_correct"] = True
                 st.rerun()
-            else: st.error("ACCESS DENIED")
+            else:
+                st.error("ACCESS DENIED")
         return False
     return True
+
+# --- PORTFÖY V2 YARDIMCI FONKSİYONLAR ---
+def discover_dynamic_instruments(data, users):
+    """
+    Yeni yapı:
+    price_btc, label_btc, unit_btc, currency_btc, order_btc
+    oguzo_btc, ero7_btc, fybey_btc
+    """
+    instrument_codes = set()
+
+    for key in data.keys():
+        if key.startswith("price_"):
+            code = key.replace("price_", "", 1).strip()
+            if code:
+                instrument_codes.add(code)
+
+    instruments = []
+    for code in instrument_codes:
+        label = get_str(data, f"label_{code}", code.upper())
+        unit = get_str(data, f"unit_{code}", "adet")
+        currency = get_str(data, f"currency_{code}", "TRY").upper()
+        order = get_num(data, f"order_{code}", 999)
+        show = int(get_num(data, f"show_{code}", 1))
+        price = get_num(data, f"price_{code}", 0)
+
+        if show == 0:
+            continue
+
+        has_any_user_key = any(f"{u}_{code}" in data for u in users)
+        if not has_any_user_key:
+            continue
+
+        instruments.append({
+            "code": code,
+            "label": label,
+            "unit": unit,
+            "currency": currency,
+            "price": price,
+            "order": order,
+        })
+
+    instruments = sorted(instruments, key=lambda x: (x["order"], x["label"]))
+    return instruments
+
+def build_legacy_fallback_instruments(data):
+    """
+    Eski sheet yapın bozulmasın diye fallback.
+    Eğer yeni dynamic price_ key'leri yoksa bunu kullanır.
+    """
+    return [
+        {
+            "code": "usd_cash",
+            "label": "NAKİT",
+            "unit": "USD",
+            "currency": "USD",
+            "price": 1.0,
+            "order": 1,
+            "legacy_map": {"oguzo": "oguzo_usd", "ero7": "ero7_usd", "fybey": "fybey_usd"},
+        },
+        {
+            "code": "gram_altin",
+            "label": "GRAM ALTIN",
+            "unit": "gr",
+            "currency": "TRY",
+            "price": get_num(data, "gram_altin_fiyat", 7136),
+            "order": 2,
+            "legacy_map": {"oguzo": "oguzo_altin", "ero7": "ero7_altin", "fybey": "fybey_altin"},
+        },
+        {
+            "code": "ceyrek",
+            "label": "ÇEYREK",
+            "unit": "adet",
+            "currency": "TRY",
+            "price": get_num(data, "ceyrek_altin_fiyat", 12417),
+            "order": 3,
+            "legacy_map": {"oguzo": "oguzo_ceyrek", "ero7": "ero7_ceyrek", "fybey": "fybey_ceyrek"},
+        },
+        {
+            "code": "aft",
+            "label": "AFT",
+            "unit": "adet",
+            "currency": "TRY",
+            "price": get_num(data, "aft_fiyat_tl", 0.8295),
+            "order": 4,
+            "legacy_map": {"oguzo": "oguzo_aft_adet", "ero7": "ero7_aft_adet", "fybey": "fybey_aft_adet"},
+        },
+        {
+            "code": "btc",
+            "label": "BTC",
+            "unit": "adet",
+            "currency": "USD",
+            "price": get_num(data, "btc_fiyat_usd", 84250),
+            "order": 5,
+            "legacy_map": {"oguzo": "oguzo_btc", "ero7": "ero7_btc", "fybey": "fybey_btc"},
+        },
+        {
+            "code": "eth",
+            "label": "ETH",
+            "unit": "adet",
+            "currency": "USD",
+            "price": get_num(data, "eth_fiyat_usd", 2107.89),
+            "order": 6,
+            "legacy_map": {"oguzo": "oguzo_eth", "ero7": "ero7_eth", "fybey": "fybey_eth"},
+        },
+        {
+            "code": "gumus",
+            "label": "GÜMÜŞ",
+            "unit": "gr",
+            "currency": "TRY",
+            "price": get_num(data, "gumus_fiyat_tl", 41.2),
+            "order": 7,
+            "legacy_map": {"oguzo": "oguzo_gumus", "ero7": "ero7_gumus", "fybey": "fybey_gumus"},
+        },
+    ]
+
+def get_user_quantity_for_instrument(data, user, instrument):
+    # Yeni dinamik yapı
+    direct_key = f"{user}_{instrument['code']}"
+    if direct_key in data:
+        return get_num(data, direct_key, 0)
+
+    # Legacy fallback
+    if "legacy_map" in instrument and user in instrument["legacy_map"]:
+        return get_num(data, instrument["legacy_map"][user], 0)
+
+    return 0.0
+
+def convert_to_try_and_usd(quantity, price, currency, usdtry):
+    currency = (currency or "TRY").upper()
+    if currency == "USD":
+        total_usd = quantity * price
+        total_try = total_usd * usdtry
+    elif currency == "TRY":
+        total_try = quantity * price
+        total_usd = total_try / usdtry if usdtry > 0 else 0
+    else:
+        # Bilinmeyen currency gelirse TRY varsay
+        total_try = quantity * price
+        total_usd = total_try / usdtry if usdtry > 0 else 0
+    return total_try, total_usd
+
+def build_user_portfolio(data, user, instruments, usdtry):
+    rows = []
+
+    for ins in instruments:
+        qty = get_user_quantity_for_instrument(data, user, ins)
+        total_try, total_usd = convert_to_try_and_usd(qty, ins["price"], ins["currency"], usdtry)
+
+        rows.append({
+            "code": ins["code"],
+            "label": ins["label"],
+            "unit": ins["unit"],
+            "currency": ins["currency"],
+            "price": ins["price"],
+            "quantity": qty,
+            "total_try": total_try,
+            "total_usd": total_usd,
+            "order": ins["order"],
+        })
+
+    df = pd.DataFrame(rows)
+    if df.empty:
+        return df
+
+    df = df.sort_values(["order", "label"]).reset_index(drop=True)
+    return df
+
+def render_top_asset_cards(df_nonzero):
+    """
+    En yüksek 4 enstrümanı özet kart olarak göster.
+    Boş olanları zaten gizliyoruz.
+    """
+    if df_nonzero.empty:
+        return
+
+    top_df = df_nonzero.sort_values("total_usd", ascending=False).head(4).copy()
+    cols = st.columns(min(4, len(top_df)))
+
+    for idx, (_, row) in enumerate(top_df.iterrows()):
+        with cols[idx]:
+            sub_value = fmt_money_usd(row["total_usd"]) if row["currency"] == "USD" else fmt_money_try(row["total_try"])
+            qty_text = fmt_unit_value(row["quantity"], row["unit"])
+            st.markdown(
+                f"""
+                <div class='industrial-card' style='text-align:center; min-height:118px;'>
+                    <div class='asset-mini-title'>{row["label"]}</div>
+                    <div class='asset-mini-value'>{qty_text}</div>
+                    <div class='asset-mini-sub'>{sub_value}</div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+def render_secondary_asset_cards(df_nonzero):
+    """
+    İlk 4 dışındaki diğer dolu enstrümanları göster.
+    """
+    extra_df = df_nonzero.sort_values("total_usd", ascending=False).iloc[4:].copy()
+    if extra_df.empty:
+        return
+
+    rows = [extra_df.iloc[i:i+4] for i in range(0, len(extra_df), 4)]
+
+    for chunk in rows:
+        cols = st.columns(len(chunk))
+        for idx, (_, row) in enumerate(chunk.iterrows()):
+            with cols[idx]:
+                qty_text = fmt_unit_value(row["quantity"], row["unit"])
+                sub_value = fmt_money_usd(row["total_usd"]) if row["currency"] == "USD" else fmt_money_try(row["total_try"])
+                st.markdown(
+                    f"""
+                    <div class='industrial-card' style='text-align:center; min-height:105px; border-top:1px solid rgba(255,255,255,0.06) !important;'>
+                        <div class='asset-mini-title'>{row["label"]}</div>
+                        <div class='highlight' style='font-size:18px; margin-top:10px;'>{qty_text}</div>
+                        <div class='asset-mini-sub'>{sub_value}</div>
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
+
+def render_allocation_panel(df_nonzero):
+    if df_nonzero.empty:
+        st.markdown(
+            "<div class='industrial-card'><div class='terminal-header'>Dağılım</div><div class='highlight'>Aktif enstrüman bulunamadı.</div></div>",
+            unsafe_allow_html=True
+        )
+        return
+
+    total_usd = df_nonzero["total_usd"].sum()
+    if total_usd <= 0:
+        total_usd = 1
+
+    html = "<div class='industrial-card'><div class='terminal-header'>Dağılım Yüzdesi</div>"
+
+    alloc_df = df_nonzero.sort_values("total_usd", ascending=False).copy()
+    for _, row in alloc_df.iterrows():
+        pct = (row["total_usd"] / total_usd) * 100
+        value_text = fmt_money_usd(row["total_usd"])
+        html += f"""
+        <div class='alloc-row'>
+            <div class='alloc-head'>
+                <span>{row["label"]}</span>
+                <span>{pct:.1f}% // {value_text}</span>
+            </div>
+            <div class='alloc-bar-wrap'>
+                <div class='alloc-bar-fill' style='width:{pct:.2f}%;'></div>
+            </div>
+        </div>
+        """
+
+    html += "</div>"
+    st.markdown(html, unsafe_allow_html=True)
+
+def render_breakdown_panel(df_nonzero):
+    if df_nonzero.empty:
+        st.markdown(
+            "<div class='industrial-card'><div class='terminal-header'>Varlık Kırılımı</div><div class='highlight'>Aktif varlık bulunamadı.</div></div>",
+            unsafe_allow_html=True
+        )
+        return
+
+    html = """
+    <div class='industrial-card'>
+        <div class='terminal-header'>Varlık Kırılımı</div>
+        <table class='breakdown-table'>
+            <thead></thead>
+            <tbody>
+    """
+
+    for _, row in df_nonzero.iterrows():
+        if row["currency"] == "USD":
+            price_text = fmt_money_usd(row["price"])
+            total_text = fmt_money_usd(row["total_usd"])
+        else:
+            price_text = fmt_money_try(row["price"])
+            total_text = fmt_money_try(row["total_try"])
+
+        qty_text = fmt_unit_value(row["quantity"], row["unit"])
+
+        html += f"""
+        <tr>
+            <td>
+                <div class='breakdown-name'>{row["label"]}</div>
+                <div class='breakdown-sub'>{row["currency"]} bazlı / {row["unit"]}</div>
+            </td>
+            <td>{qty_text}</td>
+            <td>{price_text}</td>
+            <td class='breakdown-money'>{total_text}</td>
+        </tr>
+        """
+
+    total_usd = df_nonzero["total_usd"].sum()
+    total_try = df_nonzero["total_try"].sum()
+
+    html += f"""
+            </tbody>
+        </table>
+
+        <hr style='border:0; height:1px; background:rgba(255,255,255,0.06); margin:20px 0 16px 0;'>
+
+        <div class='terminal-row' style='margin-bottom:0;'>
+            <span style='font-weight:700;'>Toplam</span>
+            <span class='breakdown-total'>{fmt_money_usd(total_usd)} &nbsp; // &nbsp; {fmt_money_try(total_try)}</span>
+        </div>
+    </div>
+    """
+
+    st.markdown(html, unsafe_allow_html=True)
+
+def render_info_strip(instruments, usdtry):
+    parts = [f"<span>USD/TRY: <strong>₺{usdtry:.2f}</strong></span>"]
+
+    for ins in instruments:
+        if ins["currency"] == "USD":
+            price_text = fmt_money_usd(ins["price"])
+        else:
+            price_text = fmt_money_try(ins["price"])
+        parts.append(f"<span>{ins['label']}: <strong>{price_text}</strong></span>")
+
+    html = f"<div class='info-strip'>{''.join(parts)}</div>"
+    st.markdown(html, unsafe_allow_html=True)
+
+def render_portfolio_v2(data):
+    st.markdown("<div class='terminal-header'>🏛️ PORTFÖY KOMUTA MERKEZİ</div>", unsafe_allow_html=True)
+
+    users = ["oguzo", "ero7", "fybey"]
+    user_labels = {"oguzo": "OGUZO", "ero7": "ERO7", "fybey": "FYBEY"}
+
+    usdtry = get_num(data, "usdtry", 44.18)
+
+    dynamic_instruments = discover_dynamic_instruments(data, users)
+    instruments = dynamic_instruments if len(dynamic_instruments) > 0 else build_legacy_fallback_instruments(data)
+
+    if len(instruments) == 0:
+        st.error("Portföy enstrümanları bulunamadı.")
+        return
+
+    selected_user_label = st.selectbox("Kullanıcı Portföy Detayı:", [user_labels[u] for u in users])
+    selected_user = [k for k, v in user_labels.items() if v == selected_user_label][0]
+
+    df_user = build_user_portfolio(data, selected_user, instruments, usdtry)
+
+    if df_user.empty:
+        st.error("Seçilen kullanıcı için portföy verisi bulunamadı.")
+        return
+
+    total_usd = df_user["total_usd"].sum()
+    total_try = df_user["total_try"].sum()
+
+    # Boş kartları gizleme
+    df_nonzero = df_user[df_user["quantity"] > 0].copy()
+
+    st.markdown(
+        f"""
+        <div class='portfolio-hero'>
+            <div class='portfolio-hero-sub'>Toplam Portföy Değeri</div>
+            <div class='portfolio-hero-main'>{fmt_money_usd(total_usd)}</div>
+            <div class='portfolio-hero-try'>≈ {fmt_money_try(total_try)}</div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    render_top_asset_cards(df_nonzero)
+    render_secondary_asset_cards(df_nonzero)
+
+    left, right = st.columns([1.1, 0.9])
+
+    with left:
+        render_breakdown_panel(df_nonzero)
+
+    with right:
+        render_allocation_panel(df_nonzero)
+
+    st.divider()
+    render_info_strip(instruments, usdtry)
 
 # --- 6. ANA UYGULAMA ---
 if check_password():
     st.markdown(common_css, unsafe_allow_html=True)
     st.markdown("<style>.stApp { background: #030303 !important; background-image: none !important; }</style>", unsafe_allow_html=True)
-    st.markdown(f'<div class="ticker-wrap"><div class="ticker"><span class="ticker-item">{duyuru_metni}</span><span class="ticker-item">{duyuru_metni}</span></div></div>', unsafe_allow_html=True)
+    st.markdown(
+        f'<div class="ticker-wrap"><div class="ticker"><span class="ticker-item">{duyuru_metni}</span><span class="ticker-item">{duyuru_metni}</span></div></div>',
+        unsafe_allow_html=True
+    )
 
     with st.sidebar:
-        st.markdown("<h1 style='color:white; font-family:Orbitron; font-size:24px; letter-spacing:5px; text-align:center; margin-bottom:40px;'>OG CORE</h1>", unsafe_allow_html=True)
-        st.markdown("<div style='margin-bottom:10px; color:#666; font-size:11px; letter-spacing:2px; font-weight:800;'>SİSTEM MODÜLLERİ</div>", unsafe_allow_html=True)
+        st.markdown(
+            "<h1 style='color:white; font-family:Orbitron; font-size:24px; letter-spacing:5px; text-align:center; margin-bottom:40px;'>OG CORE</h1>",
+            unsafe_allow_html=True
+        )
+        st.markdown(
+            "<div style='margin-bottom:10px; color:#666; font-size:11px; letter-spacing:2px; font-weight:800;'>SİSTEM MODÜLLERİ</div>",
+            unsafe_allow_html=True
+        )
         page = st.radio("Menu", ["⚡ ULTRA ATAK", "⚽ FORMLINE", "🎲 CHALLANGE", "📊 Portföy Takip", "💠 FTMO"], label_visibility="collapsed")
         st.divider()
-        st.markdown("<div style='color:#666; font-size:11px; letter-spacing:2px; font-weight:800; margin-bottom:15px;'>📂 TERMİNAL ERİŞİMİ</div>", unsafe_allow_html=True)
+        st.markdown(
+            "<div style='color:#666; font-size:11px; letter-spacing:2px; font-weight:800; margin-bottom:15px;'>📂 TERMİNAL ERİŞİMİ</div>",
+            unsafe_allow_html=True
+        )
         admin_pwd = st.text_input("PIN", type="password", placeholder="Admin PIN", label_visibility="collapsed")
         if admin_pwd == "0644":
-            st.markdown("<a href='https://docs.google.com/spreadsheets/d/15izevdpRjs8Om5BAHKVWmdL3FxEHml35DGECfhQUG_s/edit' target='_blank' style='text-decoration:none;'><div style='background:rgba(204, 122, 0, 0.2); border: 1px solid #cc7a00; color:#cc7a00; text-align:center; padding:10px; border-radius:4px; font-family:Orbitron; font-size:12px; font-weight:bold;'>VERİ TABANINA BAĞLAN</div></a>", unsafe_allow_html=True)
+            st.markdown(
+                "<a href='https://docs.google.com/spreadsheets/d/15izevdpRjs8Om5BAHKVWmdL3FxEHml35DGECfhQUG_s/edit' target='_blank' style='text-decoration:none;'><div style='background:rgba(204, 122, 0, 0.2); border: 1px solid #cc7a00; color:#cc7a00; text-align:center; padding:10px; border-radius:4px; font-family:Orbitron; font-size:12px; font-weight:bold;'>VERİ TABANINA BAĞLAN</div></a>",
+                unsafe_allow_html=True
+            )
         st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("SİSTEMDEN ÇIK"): 
+        if st.button("SİSTEMDEN ÇIK"):
             st.session_state["password_correct"] = False
             st.rerun()
 
     if page == "⚡ ULTRA ATAK":
         st.markdown("<div class='terminal-header'>💰 Kişisel Kasa Dağılımı</div>", unsafe_allow_html=True)
         k1, k2, k3 = st.columns(3)
-        with k1: st.markdown(f"<div class='industrial-card' style='text-align:center; border-top-color: #cc7a00;'><div style='font-size:11px; color:#666;'>Oguzo Bakiye</div><div class='highlight'>${og_kasa:,.2f}</div></div>", unsafe_allow_html=True)
-        with k2: st.markdown(f"<div class='industrial-card' style='text-align:center; border-top-color: #cc7a00;'><div style='font-size:11px; color:#666;'>Ero7 Bakiye</div><div class='highlight'>${er_kasa:,.2f}</div></div>", unsafe_allow_html=True)
-        with k3: st.markdown(f"<div class='industrial-card' style='text-align:center; border-top-color: #cc7a00;'><div style='font-size:11px; color:#666;'>Fybey Bakiye</div><div class='highlight'>${fy_kasa:,.2f}</div></div>", unsafe_allow_html=True)
+
+        with k1:
+            st.markdown(
+                f"<div class='industrial-card' style='text-align:center; border-top-color: #cc7a00;'><div style='font-size:11px; color:#666;'>Oguzo Bakiye</div><div class='highlight'>${og_kasa:,.2f}</div></div>",
+                unsafe_allow_html=True
+            )
+        with k2:
+            st.markdown(
+                f"<div class='industrial-card' style='text-align:center; border-top-color: #cc7a00;'><div style='font-size:11px; color:#666;'>Ero7 Bakiye</div><div class='highlight'>${er_kasa:,.2f}</div></div>",
+                unsafe_allow_html=True
+            )
+        with k3:
+            st.markdown(
+                f"<div class='industrial-card' style='text-align:center; border-top-color: #cc7a00;'><div style='font-size:11px; color:#666;'>Fybey Bakiye</div><div class='highlight'>${fy_kasa:,.2f}</div></div>",
+                unsafe_allow_html=True
+            )
+
         st.divider()
+
         net_kar = kasa - ana_para
         current_pct = max(0, min(100, ((kasa - 600) / (1200 - 600)) * 100))
-        st.markdown(f"<div class='industrial-card'><div class='terminal-header'>HEDEF YOLCULUĞU ($1.200)</div><div style='background:#111; height:8px; border-radius:10px;'><div style='background:linear-gradient(90deg, #cc7a00, #ffae00); width:{current_pct}%; height:100%; border-radius:10px;'></div></div><div style='text-align:right; font-size:10px; color:#555; margin-top:5px;'>%{current_pct:.1f}</div></div>", unsafe_allow_html=True)
+
+        st.markdown(
+            f"""
+            <div class='industrial-card'>
+                <div class='terminal-header'>HEDEF YOLCULUĞU ($1.200)</div>
+                <div style='background:#111; height:8px; border-radius:10px;'>
+                    <div style='background:linear-gradient(90deg, #cc7a00, #ffae00); width:{current_pct}%; height:100%; border-radius:10px;'></div>
+                </div>
+                <div style='text-align:right; font-size:10px; color:#555; margin-top:5px;'>%{current_pct:.1f}</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
         col1, col2, col3 = st.columns(3)
-        with col1: st.markdown(f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>💎 KASA</div><div class='terminal-row'><span>TOPLAM</span><span class='highlight'>${kasa:,.2f}</span></div><div class='terminal-row'><span>K/Z</span><span style='color:{'#00ff41' if net_kar >=0 else '#ff4b4b'};' class='val-std'>${net_kar:,.2f}</span></div></div>", unsafe_allow_html=True)
+
+        with col1:
+            st.markdown(
+                f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>💎 KASA</div><div class='terminal-row'><span>TOPLAM</span><span class='highlight'>${kasa:,.2f}</span></div><div class='terminal-row'><span>K/Z</span><span style='color:{'#00ff41' if net_kar >=0 else '#ff4b4b'};' class='val-std'>${net_kar:,.2f}</span></div></div>",
+                unsafe_allow_html=True
+            )
+
         with col2:
             try:
-                btc = yf.Ticker("BTC-USD").history(period="1d")['Close'].iloc[-1]
-                eth = yf.Ticker("ETH-USD").history(period="1d")['Close'].iloc[-1]
-                sol = yf.Ticker("SOL-USD").history(period="1d")['Close'].iloc[-1]
-                st.markdown(f"""<div class='industrial-card' style='height:230px;'><div class='terminal-header'>⚡ PİYASA</div><div class='terminal-row'><span>BITCOIN</span><span class='highlight'>${btc:,.0f}</span></div><div class='terminal-row'><span>ETHEREUM</span><span style='color:#cc7a00;'>${eth:,.0f}</span></div><div class='terminal-row'><span>SOLANA</span><span style='color:#cc7a00;'>${sol:,.2f}</span></div></div>""", unsafe_allow_html=True)
-            except: st.write("Piyasa verisi bekleniyor...")
-        with col3: st.markdown(f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>📊 Win Rate</div><div style='text-align:center;'><span style='font-size:45px; font-weight:900; color:#cc7a00; font-family:Orbitron;'>%{wr_oran}</span></div></div>", unsafe_allow_html=True)
+                if yf is not None:
+                    btc = yf.Ticker("BTC-USD").history(period="1d")["Close"].iloc[-1]
+                    eth = yf.Ticker("ETH-USD").history(period="1d")["Close"].iloc[-1]
+                    sol = yf.Ticker("SOL-USD").history(period="1d")["Close"].iloc[-1]
+                    st.markdown(
+                        f"""
+                        <div class='industrial-card' style='height:230px;'>
+                            <div class='terminal-header'>⚡ PİYASA</div>
+                            <div class='terminal-row'><span>BITCOIN</span><span class='highlight'>${btc:,.0f}</span></div>
+                            <div class='terminal-row'><span>ETHEREUM</span><span style='color:#cc7a00;'>${eth:,.0f}</span></div>
+                            <div class='terminal-row'><span>SOLANA</span><span style='color:#cc7a00;'>${sol:,.2f}</span></div>
+                        </div>
+                        """,
+                        unsafe_allow_html=True
+                    )
+                else:
+                    raise Exception("yfinance yok")
+            except:
+                st.markdown(
+                    "<div class='industrial-card' style='height:230px;'><div class='terminal-header'>⚡ PİYASA</div><div class='highlight'>Piyasa verisi bekleniyor...</div></div>",
+                    unsafe_allow_html=True
+                )
+
+        with col3:
+            st.markdown(
+                f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>📊 Win Rate</div><div style='text-align:center;'><span style='font-size:45px; font-weight:900; color:#cc7a00; font-family:Orbitron;'>%{wr_oran}</span></div></div>",
+                unsafe_allow_html=True
+            )
+
         st.markdown("### 📜 SON İŞLEMLER")
-        st.markdown(f"<div class='industrial-card'><div class='terminal-header'>AKTİVİTE LOGLARI</div><p style='font-family:JetBrains Mono; color:#888;'>{son_islemler_raw}</p></div>", unsafe_allow_html=True)
+        st.markdown(
+            f"<div class='industrial-card'><div class='terminal-header'>AKTİVİTE LOGLARI</div><p style='font-family:JetBrains Mono; color:#888;'>{son_islemler_raw}</p></div>",
+            unsafe_allow_html=True
+        )
 
     elif page == "🎲 CHALLANGE":
         st.markdown("<div class='terminal-header'>🏆 SIRALAMA</div>", unsafe_allow_html=True)
+
         s1, s2, s3 = st.columns(3)
-        with s1: st.markdown(f"<div class='industrial-card' style='padding:15px; text-align:center; border-top: 2px solid #cc7a00;'><div style='font-size:11px; color:#666;'>oguzo</div><div class='highlight'>{og_p} P</div><div style='font-size:12px;'>{rutbe_getir(og_p)}</div></div>", unsafe_allow_html=True)
-        with s2: st.markdown(f"<div class='industrial-card' style='padding:15px; text-align:center; border-top: 2px solid #cc7a00;'><div style='font-size:11px; color:#666;'>ero7</div><div class='highlight'>{er_p} P</div><div style='font-size:12px;'>{rutbe_getir(er_p)}</div></div>", unsafe_allow_html=True)
-        with s3: st.markdown(f"<div class='industrial-card' style='padding:15px; text-align:center; border-top: 2px solid #cc7a00;'><div style='font-size:11px; color:#666;'>fybey</div><div class='highlight'>{fy_p} P</div><div style='font-size:12px;'>{rutbe_getir(fy_p)}</div></div>", unsafe_allow_html=True)
+        with s1:
+            st.markdown(
+                f"<div class='industrial-card' style='padding:15px; text-align:center; border-top: 2px solid #cc7a00;'><div style='font-size:11px; color:#666;'>oguzo</div><div class='highlight'>{og_p} P</div><div style='font-size:12px;'>{rutbe_getir(og_p)}</div></div>",
+                unsafe_allow_html=True
+            )
+        with s2:
+            st.markdown(
+                f"<div class='industrial-card' style='padding:15px; text-align:center; border-top: 2px solid #cc7a00;'><div style='font-size:11px; color:#666;'>ero7</div><div class='highlight'>{er_p} P</div><div style='font-size:12px;'>{rutbe_getir(er_p)}</div></div>",
+                unsafe_allow_html=True
+            )
+        with s3:
+            st.markdown(
+                f"<div class='industrial-card' style='padding:15px; text-align:center; border-top: 2px solid #cc7a00;'><div style='font-size:11px; color:#666;'>fybey</div><div class='highlight'>{fy_p} P</div><div style='font-size:12px;'>{rutbe_getir(fy_p)}</div></div>",
+                unsafe_allow_html=True
+            )
+
         st.divider()
         q_col1, q_col2 = st.columns(2)
         base_url = "https://script.google.com/macros/s/AKfycbz0cvMHSrHchkksvFCixr9NDnMsvfLQ6T_K2jsXfohgs7eFXP5x-wxTX_YQej1EZhSX/exec"
+
         with q_col1:
-            st.markdown(f"<div class='industrial-card equal-card'><div class='terminal-header'>📢 AKTİF SORU 1</div><h3 style='color:white; margin:0;'>{aktif_soru_1}</h3></div>", unsafe_allow_html=True)
+            st.markdown(
+                f"<div class='industrial-card equal-card'><div class='terminal-header'>📢 AKTİF SORU 1</div><h3 style='color:white; margin:0;'>{aktif_soru_1}</h3></div>",
+                unsafe_allow_html=True
+            )
             u_name_1 = st.selectbox("İsim (Soru 1)", ["oguzo", "ero7", "fybey"], key="n1")
-            u_vote_1 = st.radio("Tahmin (Soru 1)", ["-","-", "-","-","-"], key="v1")
+            u_vote_1 = st.radio("Tahmin (Soru 1)", ["A", "B", "C", "D", "E"], key="v1")
             final_link_1 = f"{base_url}?isim={u_name_1}&tahmin={u_vote_1}&soru=1"
-            st.markdown(f"""<a href='{final_link_1}' target='_blank' style='text-decoration:none;'><div style='background:rgba(204, 122, 0, 0.2); border: 1px solid #cc7a00; color:#cc7a00; text-align:center; padding:15px; border-radius:5px; font-family:Orbitron; font-weight:bold; cursor:pointer;'>1. OYU ONAYLA</div></a>""", unsafe_allow_html=True)
+            st.markdown(
+                f"<a href='{final_link_1}' target='_blank' style='text-decoration:none;'><div style='background:rgba(204, 122, 0, 0.2); border: 1px solid #cc7a00; color:#cc7a00; text-align:center; padding:15px; border-radius:5px; font-family:Orbitron; font-weight:bold; cursor:pointer;'>1. OYU ONAYLA</div></a>",
+                unsafe_allow_html=True
+            )
+
         with q_col2:
-            st.markdown(f"<div class='industrial-card equal-card'><div class='terminal-header'>📢 AKTİF SORU 2</div><h3 style='color:white; margin:0;'>{aktif_soru_2}</h3></div>", unsafe_allow_html=True)
+            st.markdown(
+                f"<div class='industrial-card equal-card'><div class='terminal-header'>📢 AKTİF SORU 2</div><h3 style='color:white; margin:0;'>{aktif_soru_2}</h3></div>",
+                unsafe_allow_html=True
+            )
             u_name_2 = st.selectbox("İsim (Soru 2)", ["oguzo", "ero7", "fybey"], key="n2")
-            u_vote_2 = st.radio("Tahmin (Soru 2)", ["-", "-", "-", "-", "-"], key="v2")
+            u_vote_2 = st.radio("Tahmin (Soru 2)", ["A", "B", "C", "D", "E"], key="v2")
             final_link_2 = f"{base_url}?isim={u_name_2}&tahmin={u_vote_2}&soru=2"
-            st.markdown(f"""<a href='{final_link_2}' target='_blank' style='text-decoration:none;'><div style='background:rgba(204, 122, 0, 0.2); border: 1px solid #cc7a00; color:#cc7a00; text-align:center; padding:15px; border-radius:5px; font-family:Orbitron; font-weight:bold; cursor:pointer;'>2. OYU ONAYLA</div></a>""", unsafe_allow_html=True)
+            st.markdown(
+                f"<a href='{final_link_2}' target='_blank' style='text-decoration:none;'><div style='background:rgba(204, 122, 0, 0.2); border: 1px solid #cc7a00; color:#cc7a00; text-align:center; padding:15px; border-radius:5px; font-family:Orbitron; font-weight:bold; cursor:pointer;'>2. OYU ONAYLA</div></a>",
+                unsafe_allow_html=True
+            )
 
     elif page == "⚽ FORMLINE":
-        st.markdown(f"<div class='industrial-card'><div class='terminal-header'>📈 PERFORMANS</div><div class='terminal-row'><span>NET:</span><span style='color:#00ff41; font-size:32px; font-family:Orbitron;'>${toplam_bahis_kar:,.2f}</span></div></div>", unsafe_allow_html=True)
-        t9, t8, t7, t6, t5, t4, t1, t2, t3 = st.tabs(["⏳ W9", "❌ W8", "✅ W7", "❌ W6", "❌ W5", "❌ W4", "✅ W3", "✅ W2", "❌ W1"])
+        st.markdown(
+            f"<div class='industrial-card'><div class='terminal-header'>📈 PERFORMANS</div><div class='terminal-row'><span>NET:</span><span style='color:#00ff41; font-size:32px; font-family:Orbitron;'>${toplam_bahis_kar:,.2f}</span></div></div>",
+            unsafe_allow_html=True
+        )
 
-        with t9: st.markdown(w9_coupon_html, unsafe_allow_html=True)
-        with t8: st.markdown(w8_coupon_html, unsafe_allow_html=True)
-        with t7: st.markdown(w7_coupon_html, unsafe_allow_html=True)
-        with t6: st.markdown(w6_coupon_html, unsafe_allow_html=True)
-        with t5: st.markdown(w5_coupon_html, unsafe_allow_html=True)
-        with t4: st.markdown(w4_coupon_html, unsafe_allow_html=True)
-        with t1: st.markdown(w3_coupon_html, unsafe_allow_html=True)
-        with t2: st.markdown(w2_coupon_html, unsafe_allow_html=True)
-        with t3: st.markdown(w1_coupon_html, unsafe_allow_html=True)
+        t9, t8, t7, t6, t5, t4, t1, t2, t3 = st.tabs(["⏳ W9", "❌ W8", "✅ W7", "❌ W6", "❌ W5", "❌ W4", "✅ W3", "✅ W2", "❌ W1"])
+        with t9:
+            st.markdown(w9_coupon_html, unsafe_allow_html=True)
+        with t8:
+            st.markdown(w8_coupon_html, unsafe_allow_html=True)
+        with t7:
+            st.markdown(w7_coupon_html, unsafe_allow_html=True)
+        with t6:
+            st.markdown(w6_coupon_html, unsafe_allow_html=True)
+        with t5:
+            st.markdown(w5_coupon_html, unsafe_allow_html=True)
+        with t4:
+            st.markdown(w4_coupon_html, unsafe_allow_html=True)
+        with t1:
+            st.markdown(w3_coupon_html, unsafe_allow_html=True)
+        with t2:
+            st.markdown(w2_coupon_html, unsafe_allow_html=True)
+        with t3:
+            st.markdown(w1_coupon_html, unsafe_allow_html=True)
 
     elif page == "📊 Portföy Takip":
-        st.markdown("<div class='terminal-header'>🏛️ PORTFÖY KOMUTA MERKEZİ</div>", unsafe_allow_html=True)
+        render_portfolio_v2(live_vars)
 
-        def get_val(key, default=0.0):
-            try:
-                val = live_vars.get(key, default)
-                if val is None or str(val).strip() == "":
-                    return float(default)
-                return float(str(val).replace(",", ".").strip())
-            except:
-                return float(default)
-
-        # --- Manuel fiyatlar ---
-        usd_try = get_val("usdtry", 44.18)
-        gram_altin = get_val("gram_altin_fiyat", 7136)
-        ceyrek_fiyat = get_val("ceyrek_altin_fiyat", 12417)
-        aft_fiyat_tl = get_val("aft_fiyat_tl", 0.8295)
-        btc_fiyat_usd = get_val("btc_fiyat_usd", 84250)
-        eth_fiyat_usd = get_val("eth_fiyat_usd", 2107.89)
-        gumus_fiyat_tl = get_val("gumus_fiyat_tl", 41.20)
-
-        users = ["oguzo", "ero7", "fybey"]
-        display_data = []
-
-        for u in users:
-            u_usd = get_val(f"{u}_usd")
-            u_gr = get_val(f"{u}_altin")
-            u_cy = get_val(f"{u}_ceyrek")
-            u_aft_adet = get_val(f"{u}_aft_adet")
-            u_btc = get_val(f"{u}_btc")
-            u_eth = get_val(f"{u}_eth")
-            u_gumus = get_val(f"{u}_gumus")
-
-            usd_tl = u_usd * usd_try
-            altin_tl = u_gr * gram_altin
-            ceyrek_tl = u_cy * ceyrek_fiyat
-            aft_tl = u_aft_adet * aft_fiyat_tl
-            gumus_tl = u_gumus * gumus_fiyat_tl
-
-            btc_usd = u_btc * btc_fiyat_usd
-            eth_usd = u_eth * eth_fiyat_usd
-
-            altin_usd = altin_tl / usd_try if usd_try > 0 else 0
-            ceyrek_usd = ceyrek_tl / usd_try if usd_try > 0 else 0
-            aft_usd = aft_tl / usd_try if usd_try > 0 else 0
-            gumus_usd = gumus_tl / usd_try if usd_try > 0 else 0
-
-            toplam_usd = u_usd + altin_usd + ceyrek_usd + aft_usd + btc_usd + eth_usd + gumus_usd
-            toplam_tl = toplam_usd * usd_try
-
-            display_data.append({
-                "Kullanıcı": u.upper(),
-                "USD": u_usd,
-                "Gram": u_gr,
-                "Çeyrek": u_cy,
-                "AFT_Adet": u_aft_adet,
-                "BTC": u_btc,
-                "ETH": u_eth,
-                "Gümüş": u_gumus,
-                "TOPLAM_USD": toplam_usd,
-                "TOPLAM_TL": toplam_tl,
-                "USD_TL": usd_tl,
-                "ALTIN_TL": altin_tl,
-                "CEYREK_TL": ceyrek_tl,
-                "AFT_TL": aft_tl,
-                "BTC_USD": btc_usd,
-                "ETH_USD": eth_usd,
-                "GUMUS_TL": gumus_tl
-            })
-
-        df_portfoy = pd.DataFrame(display_data)
-
-        if not df_portfoy.empty:
-            secilen_user = st.selectbox("Kullanıcı Portföy Detayı:", ["OGUZO", "ERO7", "FYBEY"])
-            u_row = df_portfoy[df_portfoy["Kullanıcı"] == secilen_user].iloc[0]
-
-            total_val = float(u_row["TOPLAM_USD"])
-            total_tl = float(u_row["TOPLAM_TL"])
-
-            st.markdown(f"""
-                <div class='industrial-card' style='text-align:center; border-top: 2px solid rgba(204, 122, 0, 0.65) !important; padding:30px 25px;'>
-                    <div style='font-size:13px; color:#8a8a8a; letter-spacing:3px; text-transform:uppercase; margin-bottom:14px;'>
-                        Toplam Portföy Değeri
-                    </div>
-                    <div style='font-size:64px; font-weight:900; color:#d9d9d9; font-family:Orbitron; line-height:1;'>
-                        ${total_val:,.2f}
-                    </div>
-                    <div style='font-size:18px; color:#8c8c8c; margin-top:14px;'>
-                        ≈ ₺{total_tl:,.0f}
-                    </div>
-                </div>
-            """, unsafe_allow_html=True)
-
-            # Ana varlık kartları
-            c1, c2, c3, c4 = st.columns(4)
-            with c1:
-                st.markdown(f"""
-                    <div class='industrial-card' style='text-align:center; min-height:110px;'>
-                        <div style='font-size:11px; color:#777; letter-spacing:2px;'>NAKİT</div>
-                        <div class='highlight' style='font-size:18px; margin-top:12px;'>${u_row['USD']:,.0f}</div>
-                    </div>
-                """, unsafe_allow_html=True)
-            with c2:
-                st.markdown(f"""
-                    <div class='industrial-card' style='text-align:center; min-height:110px;'>
-                        <div style='font-size:11px; color:#777; letter-spacing:2px;'>GRAM ALTIN</div>
-                        <div class='highlight' style='font-size:18px; margin-top:12px;'>{u_row['Gram']:,.2f} gr</div>
-                    </div>
-                """, unsafe_allow_html=True)
-            with c3:
-                st.markdown(f"""
-                    <div class='industrial-card' style='text-align:center; min-height:110px;'>
-                        <div style='font-size:11px; color:#777; letter-spacing:2px;'>ÇEYREK ADET</div>
-                        <div class='highlight' style='font-size:18px; margin-top:12px;'>{u_row['Çeyrek']:,.0f}</div>
-                    </div>
-                """, unsafe_allow_html=True)
-            with c4:
-                st.markdown(f"""
-                    <div class='industrial-card' style='text-align:center; min-height:110px;'>
-                        <div style='font-size:11px; color:#777; letter-spacing:2px;'>AFT (ADET)</div>
-                        <div class='highlight' style='font-size:18px; margin-top:12px;'>{u_row['AFT_Adet']:,.0f}</div>
-                    </div>
-                """, unsafe_allow_html=True)
-
-            # Alt modül kartları
-            a1, a2, a3 = st.columns(3)
-            with a1:
-                st.markdown(f"""
-                    <div class='industrial-card' style='text-align:center; min-height:95px; border-top: 1px solid rgba(255,255,255,0.06) !important;'>
-                        <div style='font-size:11px; color:#777; letter-spacing:2px;'>BTC</div>
-                        <div class='highlight' style='font-size:17px; margin-top:10px;'>{u_row['BTC']:,.4f}</div>
-                    </div>
-                """, unsafe_allow_html=True)
-            with a2:
-                st.markdown(f"""
-                    <div class='industrial-card' style='text-align:center; min-height:95px; border-top: 1px solid rgba(255,255,255,0.06) !important;'>
-                        <div style='font-size:11px; color:#777; letter-spacing:2px;'>ETH</div>
-                        <div class='highlight' style='font-size:17px; margin-top:10px;'>{u_row['ETH']:,.4f}</div>
-                    </div>
-                """, unsafe_allow_html=True)
-            with a3:
-                st.markdown(f"""
-                    <div class='industrial-card' style='text-align:center; min-height:95px; border-top: 1px solid rgba(255,255,255,0.06) !important;'>
-                        <div style='font-size:11px; color:#777; letter-spacing:2px;'>GÜMÜŞ (gr)</div>
-                        <div class='highlight' style='font-size:17px; margin-top:10px;'>{u_row['Gümüş']:,.2f}</div>
-                    </div>
-                """, unsafe_allow_html=True)
-
-            st.markdown("<div style='height:18px;'></div>", unsafe_allow_html=True)
-
-            # Terminal tarzı breakdown panel
-            detay_html = f"""
-            <div class='industrial-card' style='padding:24px 24px 18px 24px;'>
-                <div class='terminal-header'>Varlık Kırılımı</div>
-
-                <div class='terminal-row'><span>USD Nakit</span><span class='highlight'>${u_row['USD']:,.0f}</span></div>
-                <div class='terminal-row'><span>Gram Altın ({u_row['Gram']:,.2f} gr)</span><span class='highlight'>₺{u_row['ALTIN_TL']:,.0f}</span></div>
-                <div class='terminal-row'><span>Çeyrek Altın ({u_row['Çeyrek']:,.0f} adet)</span><span class='highlight'>₺{u_row['CEYREK_TL']:,.0f}</span></div>
-                <div class='terminal-row'><span>AFT ({u_row['AFT_Adet']:,.0f} adet)</span><span class='highlight'>₺{u_row['AFT_TL']:,.2f}</span></div>
-                <div class='terminal-row'><span>BTC ({u_row['BTC']:,.4f})</span><span class='highlight'>${u_row['BTC_USD']:,.2f}</span></div>
-                <div class='terminal-row'><span>ETH ({u_row['ETH']:,.4f})</span><span class='highlight'>${u_row['ETH_USD']:,.2f}</span></div>
-                <div class='terminal-row'><span>Gümüş ({u_row['Gümüş']:,.2f} gr)</span><span class='highlight'>₺{u_row['GUMUS_TL']:,.2f}</span></div>
-
-                <hr style='border:0; height:1px; background:rgba(255,255,255,0.06); margin:18px 0;'>
-
-                <div class='terminal-row' style='font-weight:700;'>
-                    <span>Toplam</span>
-                    <span style='color:#cc7a00; font-family:Orbitron; font-size:22px;'>${u_row['TOPLAM_USD']:,.2f}</span>
-                </div>
-            </div>
-            """
-            st.markdown(detay_html, unsafe_allow_html=True)
-
-        st.divider()
-        strip = f"""
-        <div style='display:flex; justify-content:space-between; gap:18px; flex-wrap:wrap; font-size:12px; color:#7a7a7a; letter-spacing:1px;'>
-            <span>USD/TRY: <span style='color:#bdbdbd;'>₺{usd_try:.2f}</span></span>
-            <span>Gram Altın: <span style='color:#bdbdbd;'>₺{gram_altin:.0f}</span></span>
-            <span>Çeyrek Altın: <span style='color:#bdbdbd;'>₺{ceyrek_fiyat:.0f}</span></span>
-            <span>AFT: <span style='color:#bdbdbd;'>₺{aft_fiyat_tl:.4f}</span></span>
-            <span>BTC: <span style='color:#bdbdbd;'>${btc_fiyat_usd:,.0f}</span></span>
-            <span>ETH: <span style='color:#bdbdbd;'>${eth_fiyat_usd:,.2f}</span></span>
-            <span>Gümüş: <span style='color:#bdbdbd;'>₺{gumus_fiyat_tl:.2f}</span></span>
-        </div>
-        """
-        st.markdown(strip, unsafe_allow_html=True)
-        
     elif page == "💠 FTMO":
         st.markdown("<div class='terminal-header'>💠 FTMO FON TAKİP</div>", unsafe_allow_html=True)
-        
-        # Verileri Google Sheets'ten çek
-        bf_balance = float(live_vars.get("bf_balance", 100000))
-        bf_equity = float(live_vars.get("bf_equity", 100000))
-        bf_daily_loss = float(live_vars.get("bf_daily_loss", 0.0))
-        bf_target_pct = float(live_vars.get("bf_target_pct", 10)) / 100
+
+        bf_balance = float(get_num(live_vars, "bf_balance", 100000))
+        bf_equity = float(get_num(live_vars, "bf_equity", 100000))
+        bf_daily_loss = float(get_num(live_vars, "bf_daily_loss", 0.0))
+        bf_target_pct = float(get_num(live_vars, "bf_target_pct", 10)) / 100
         bf_target_price = bf_balance * (1 + bf_target_pct)
-        
-        # Üst Metrikler
+
         m1, m2, m3 = st.columns(3)
-        bf_net_pnl = bf_equity - bf_balance 
+        bf_net_pnl = bf_equity - bf_balance
         bf_pnl_color = "#00ff41" if bf_net_pnl >= 0 else "#ff4b4b"
-        
+
         with m1:
-            st.markdown(f"<div class='industrial-card' style='text-align:center; border-top-color: #cc7a00;'><div style='font-size:11px; color:#666;'>GÜNCEL EQUITY</div><div class='highlight' style='font-size:24px;'>${bf_equity:,.2f}</div></div>", unsafe_allow_html=True)
+            st.markdown(
+                f"<div class='industrial-card' style='text-align:center; border-top-color: #cc7a00;'><div style='font-size:11px; color:#666;'>GÜNCEL EQUITY</div><div class='highlight' style='font-size:24px;'>${bf_equity:,.2f}</div></div>",
+                unsafe_allow_html=True
+            )
         with m2:
-            st.markdown(f"<div class='industrial-card' style='text-align:center; border-top-color: {bf_pnl_color};'><div style='font-size:11px; color:#666;'>NET K/Z</div><div style='color:{bf_pnl_color}; font-size:24px;' class='val-std'>${bf_net_pnl:,.2f}</div></div>", unsafe_allow_html=True)
+            st.markdown(
+                f"<div class='industrial-card' style='text-align:center; border-top-color: {bf_pnl_color};'><div style='font-size:11px; color:#666;'>NET K/Z</div><div style='color:{bf_pnl_color}; font-size:24px;' class='val-std'>${bf_net_pnl:,.2f}</div></div>",
+                unsafe_allow_html=True
+            )
         with m3:
             bf_limit_pct = (abs(bf_daily_loss) / (bf_balance * 0.05)) * 100 if bf_balance > 0 else 0
-            st.markdown(f"<div class='industrial-card' style='text-align:center; border-top-color: #ff4b4b;'><div style='font-size:11px; color:#666;'>GÜNLÜK LİMİT DOLULUK</div><div class='highlight' style='font-size:24px;'>%{bf_limit_pct:.2f}</div></div>", unsafe_allow_html=True)
+            st.markdown(
+                f"<div class='industrial-card' style='text-align:center; border-top-color: #ff4b4b;'><div style='font-size:11px; color:#666;'>GÜNLÜK LİMİT DOLULUK</div><div class='highlight' style='font-size:24px;'>%{bf_limit_pct:.2f}</div></div>",
+                unsafe_allow_html=True
+            )
 
-        # Hedef Progress Bar
         bf_progress = max(0.0, min(1.0, (bf_equity - bf_balance) / (bf_target_price - bf_balance))) if (bf_target_price - bf_balance) != 0 else 0
-        st.markdown(f"""
+
+        st.markdown(
+            f"""
             <div class='industrial-card'>
                 <div class='terminal-header'>🎯 HEDEF YOLCULUĞU (HEDEF: ${bf_target_price:,.0f})</div>
                 <div style='background:#111; height:15px; border-radius:10px; border: 1px solid rgba(255,255,255,0.05);'>
@@ -489,11 +1082,12 @@ if check_password():
                     <span style='font-size:12px; color:#555;'>HEDEF: ${bf_target_price:,.0f}</span>
                 </div>
             </div>
-        """, unsafe_allow_html=True)
+            """,
+            unsafe_allow_html=True
+        )
 
-     # --- HEDEFLER & LİMİTLER (FTMO 100K) ---
         st.markdown("<div class='terminal-header'>🎯 Hedefler & Limitler (100K Hesap)</div>", unsafe_allow_html=True)
-        
+
         c1, c2 = st.columns(2)
         with c1:
             st.markdown("<div class='industrial-card' style='border-top:1px solid #333;'><div style='font-size:11px; color:#666;'>Phase 1 hedef</div><div class='highlight'>$10,000 Kazanç</div></div>", unsafe_allow_html=True)
