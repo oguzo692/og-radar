@@ -4,8 +4,6 @@ import pandas as pd
 import textwrap
 import streamlit.components.v1 as components
 
-# Sadece ULTRA ATAK sekmesindeki piyasa kutusu için kullanılıyor.
-# İstersen bunu da sonra manuel sisteme çeviririz.
 try:
     import yfinance as yf
 except:
