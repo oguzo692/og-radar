@@ -1067,7 +1067,7 @@ if check_password():
             unsafe_allow_html=True
         )
 
-        t9, t8, t7, t6, t5, t4, t1, t2, t3 = st.tabs(["⏳ W9", "❌ W8", "✅ W7", "❌ W6", "❌ W5", "❌ W4", "✅ W3", "✅ W2", "❌ W1"])
+        t9, t8, t7, t6, t5, t4, t1, t2, t3 = st.tabs(["❌ W9", "❌ W8", "✅ W7", "❌ W6", "❌ W5", "❌ W4", "✅ W3", "✅ W2", "❌ W1"])
         with t9:
             st.markdown(w9_coupon_html, unsafe_allow_html=True)
         with t8:
