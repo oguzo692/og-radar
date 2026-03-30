@@ -1051,7 +1051,7 @@ def render_love_fund(data):
     st.markdown(
         f"""
         <div class='love-wrap'>
-            <div class='love-title'>Aşkımla Ortak Fon</div>
+            <div class='love-title'>Askimla Ortak Fon</div>
             <div class='love-big'>₺{love_current:,.0f}</div>
             <div class='love-sub'>Fon adı: {love_name}</div>
             <div class='love-sub'>Hedef: ₺{love_target:,.0f} · Kalan: ₺{remaining:,.0f} · Hedef tarih: {love_goal_date}</div>
@@ -1073,31 +1073,9 @@ def render_love_fund(data):
         unsafe_allow_html=True
     )
 
-    c1, c2, c3, c4 = st.columns(4)
+    c1, c2, = st.columns(2)
 
     with c1:
-        st.markdown(
-            f"""
-            <div class='love-card'>
-                <div class='love-label'>Aylık Katkı</div>
-                <div class='love-value'>₺{love_monthly:,.0f}</div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-    with c2:
-        st.markdown(
-            f"""
-            <div class='love-card'>
-                <div class='love-label'>Son Eklenen</div>
-                <div class='love-value'>₺{love_last_add:,.0f}</div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-    with c3:
         st.markdown(
             f"""
             <div class='love-card'>
@@ -1108,7 +1086,7 @@ def render_love_fund(data):
             unsafe_allow_html=True
         )
 
-    with c4:
+    with c2:
         st.markdown(
             f"""
             <div class='love-card'>
