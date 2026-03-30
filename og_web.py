@@ -350,56 +350,58 @@ input[type="password"] {
 </style>
 """
 
+# --- LOVE FUND CSS ---
 love_css = """
 <style>
 .love-wrap {
-    background: linear-gradient(135deg, rgba(255,192,203,0.10), rgba(255,105,180,0.08), rgba(255,20,147,0.06));
-    border: 1px solid rgba(255, 182, 193, 0.22);
-    border-top: 2px solid rgba(255, 105, 180, 0.75);
-    border-radius: 14px;
-    padding: 24px;
+    background: linear-gradient(135deg, rgba(255,182,193,0.14), rgba(255,105,180,0.11), rgba(255,20,147,0.08));
+    border: 1px solid rgba(255, 182, 193, 0.20);
+    border-top: 2px solid rgba(255, 105, 180, 0.72);
+    border-radius: 18px;
+    padding: 28px;
     margin-bottom: 20px;
-    box-shadow: 0 8px 24px rgba(255, 105, 180, 0.12);
+    box-shadow: 0 10px 30px rgba(255, 105, 180, 0.10);
 }
 
 .love-title {
     font-family: 'Orbitron', monospace !important;
-    font-size: 13px;
+    font-size: 12px;
     letter-spacing: 3px;
     text-transform: uppercase;
-    color: #ff9ecb !important;
-    margin-bottom: 10px;
+    color: #ff9ac3 !important;
+    margin-bottom: 12px;
 }
 
 .love-big {
     font-family: 'Orbitron', monospace !important;
-    font-size: 40px;
+    font-size: 44px;
+    line-height: 1;
     font-weight: 900;
-    color: #fff0f6 !important;
+    color: #fff2f7 !important;
 }
 
 .love-sub {
     font-size: 13px;
-    color: #f3bfd7 !important;
-    margin-top: 8px;
+    color: #ffd0e1 !important;
+    margin-top: 10px;
 }
 
 .love-card {
     background: rgba(255, 182, 193, 0.08) !important;
-    border: 1px solid rgba(255, 182, 193, 0.18) !important;
-    border-top: 2px solid rgba(255, 105, 180, 0.6) !important;
-    border-radius: 12px;
-    padding: 18px;
+    border: 1px solid rgba(255, 182, 193, 0.16) !important;
+    border-top: 2px solid rgba(255, 105, 180, 0.55) !important;
+    border-radius: 14px;
+    padding: 20px;
     margin-bottom: 18px;
-    box-shadow: 0 4px 15px rgba(255, 20, 147, 0.10);
+    box-shadow: 0 4px 16px rgba(255, 20, 147, 0.08);
 }
 
 .love-label {
     font-size: 11px;
     letter-spacing: 2px;
     text-transform: uppercase;
-    color: #ffb6d5 !important;
-    margin-bottom: 8px;
+    color: #ffb3d0 !important;
+    margin-bottom: 10px;
 }
 
 .love-value {
@@ -409,26 +411,36 @@ love_css = """
     color: #fff5fa !important;
 }
 
+.love-note {
+    color: #ffe3ee !important;
+    font-size: 14px;
+    line-height: 1.7;
+}
+
 .love-progress-outer {
     width: 100%;
     height: 14px;
     background: rgba(255,255,255,0.05);
     border-radius: 999px;
     overflow: hidden;
-    border: 1px solid rgba(255, 182, 193, 0.14);
+    border: 1px solid rgba(255, 182, 193, 0.15);
 }
 
 .love-progress-inner {
     height: 100%;
     border-radius: 999px;
-    background: linear-gradient(90deg, #ff8ab5, #ff4f9a, #ffb6c1);
-    box-shadow: 0 0 16px rgba(255, 105, 180, 0.28);
+    background: linear-gradient(90deg, #ff9dc6, #ff5ca8, #ffc1d8);
+    box-shadow: 0 0 16px rgba(255, 105, 180, 0.25);
 }
 
-.love-note {
-    color: #ffd5e7 !important;
-    font-size: 14px;
-    line-height: 1.7;
+.love-mini {
+    font-size: 12px;
+    color: #ffcade !important;
+    margin-top: 8px;
+}
+
+div[data-testid="stSidebar"] .love-side {
+    color: #ffb6d8 !important;
 }
 </style>
 """
@@ -460,19 +472,33 @@ w1_coupon_html = f"<div class='industrial-card' style='border-top-color: #ff4b4b
 if "password_correct" not in st.session_state:
     st.session_state["password_correct"] = False
 
+if "love_password_correct" not in st.session_state:
+    st.session_state["love_password_correct"] = False
+
 def check_password():
-    def check_love_password():
-    if "love_password_correct" not in st.session_state:
-        st.session_state["love_password_correct"] = False
+    if not st.session_state["password_correct"]:
+        st.markdown(common_css, unsafe_allow_html=True)
+        st.markdown(login_bg_css, unsafe_allow_html=True)
+        pwd = st.text_input("PIN", type="password", placeholder="----", label_visibility="collapsed")
+        if pwd:
+            if pwd == "1608":
+                st.session_state["password_correct"] = True
+                st.rerun()
+            else:
+                st.error("ACCESS DENIED")
+        return False
+    return True
+
+def check_love_password():
+    st.markdown(love_css, unsafe_allow_html=True)
 
     if not st.session_state["love_password_correct"]:
-        st.markdown(love_css, unsafe_allow_html=True)
         st.markdown(
             """
             <div class='love-wrap'>
-                <div class='love-title'>Private Area</div>
+                <div class='love-title'>Private Couple Space</div>
                 <div class='love-big'>💗 LOVE FUND</div>
-                <div class='love-sub'>Bu alan size özel korumalı sekmedir.</div>
+                <div class='love-sub'>Bu sekme yalnızca size özel ikinci şifre ile açılır.</div>
             </div>
             """,
             unsafe_allow_html=True
@@ -490,7 +516,7 @@ def check_password():
                 st.session_state["love_password_correct"] = True
                 st.rerun()
             else:
-                st.error("Bu sekme için şifre yanlış.")
+                st.error("LOVE FUND şifresi yanlış.")
 
         return False
 
@@ -1001,17 +1027,20 @@ def render_portfolio_v2(data):
     st.divider()
     render_info_strip(instruments, usdtry)
 
+# --- LOVE FUND RENDER ---
 def render_love_fund(data):
     st.markdown(love_css, unsafe_allow_html=True)
 
+    love_name = get_str(data, "love_name", "OGUZO & IKRA FUND")
     love_target = get_num(data, "love_target", 50000)
     love_current = get_num(data, "love_current", 12500)
     love_monthly = get_num(data, "love_monthly", 2500)
-    love_note = get_str(data, "love_note", "Birlikte kurduğumuz hedef için düzenli ilerliyoruz.")
-    love_name = get_str(data, "love_name", "Bizim Fon")
-    love_goal_date = get_str(data, "love_goal_date", "Yakında")
+    love_note = get_str(data, "love_note", "Birlikte kurduğumuz hedef için küçük ama düzenli adımlar atıyoruz.")
+    love_goal_date = get_str(data, "love_goal_date", "2026 yaz")
     love_gift_fund = get_num(data, "love_gift_fund", 3000)
     love_trip_fund = get_num(data, "love_trip_fund", 4500)
+    love_home_fund = get_num(data, "love_home_fund", 5500)
+    love_last_add = get_num(data, "love_last_add", 1000)
 
     progress = 0
     if love_target > 0:
@@ -1022,9 +1051,10 @@ def render_love_fund(data):
     st.markdown(
         f"""
         <div class='love-wrap'>
-            <div class='love-title'>Ortak Hedef Fonu</div>
+            <div class='love-title'>Couple Fund Overview</div>
             <div class='love-big'>₺{love_current:,.0f}</div>
-            <div class='love-sub'>Hedef: ₺{love_target:,.0f} · Kalan: ₺{remaining:,.0f}</div>
+            <div class='love-sub'>Fon adı: {love_name}</div>
+            <div class='love-sub'>Hedef: ₺{love_target:,.0f} · Kalan: ₺{remaining:,.0f} · Hedef tarih: {love_goal_date}</div>
         </div>
         """,
         unsafe_allow_html=True
@@ -1037,20 +1067,20 @@ def render_love_fund(data):
             <div class='love-progress-outer'>
                 <div class='love-progress-inner' style='width:{progress:.1f}%;'></div>
             </div>
-            <div class='love-sub' style='margin-top:10px;'>%{progress:.1f} tamamlandı · hedef tarih: {love_goal_date}</div>
+            <div class='love-mini'>%{progress:.1f} tamamlandı</div>
         </div>
         """,
         unsafe_allow_html=True
     )
 
-    c1, c2, c3 = st.columns(3)
+    c1, c2, c3, c4 = st.columns(4)
 
     with c1:
         st.markdown(
             f"""
             <div class='love-card'>
-                <div class='love-label'>Fon Adı</div>
-                <div class='love-value'>{love_name}</div>
+                <div class='love-label'>Aylık Katkı</div>
+                <div class='love-value'>₺{love_monthly:,.0f}</div>
             </div>
             """,
             unsafe_allow_html=True
@@ -1060,8 +1090,8 @@ def render_love_fund(data):
         st.markdown(
             f"""
             <div class='love-card'>
-                <div class='love-label'>Aylık Katkı</div>
-                <div class='love-value'>₺{love_monthly:,.0f}</div>
+                <div class='love-label'>Son Eklenen</div>
+                <div class='love-value'>₺{love_last_add:,.0f}</div>
             </div>
             """,
             unsafe_allow_html=True
@@ -1078,9 +1108,20 @@ def render_love_fund(data):
             unsafe_allow_html=True
         )
 
-    a1, a2 = st.columns(2)
+    with c4:
+        st.markdown(
+            f"""
+            <div class='love-card'>
+                <div class='love-label'>Toplam Hedef</div>
+                <div class='love-value'>₺{love_target:,.0f}</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
-    with a1:
+    s1, s2, s3 = st.columns(3)
+
+    with s1:
         st.markdown(
             f"""
             <div class='love-card'>
@@ -1091,12 +1132,23 @@ def render_love_fund(data):
             unsafe_allow_html=True
         )
 
-    with a2:
+    with s2:
         st.markdown(
             f"""
             <div class='love-card'>
-                <div class='love-label'>Tatıl / Gezi Fonu</div>
+                <div class='love-label'>Gezi Fonu</div>
                 <div class='love-value'>₺{love_trip_fund:,.0f}</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    with s3:
+        st.markdown(
+            f"""
+            <div class='love-card'>
+                <div class='love-label'>Ev / Ortak Plan</div>
+                <div class='love-value'>₺{love_home_fund:,.0f}</div>
             </div>
             """,
             unsafe_allow_html=True
@@ -1111,6 +1163,10 @@ def render_love_fund(data):
         """,
         unsafe_allow_html=True
     )
+
+    if st.button("LOVE FUND OTURUMUNU KAPAT"):
+        st.session_state["love_password_correct"] = False
+        st.rerun()
 
 # --- 6. ANA UYGULAMA ---
 if check_password():
@@ -1130,7 +1186,13 @@ if check_password():
             "<div style='margin-bottom:10px; color:#666; font-size:11px; letter-spacing:2px; font-weight:800;'>SİSTEM MODÜLLERİ</div>",
             unsafe_allow_html=True
         )
-        page = st.radio("Menu", ["⚡ ULTRA ATAK", "⚽ FORMLINE", "🎲 CHALLANGE", "📊 Portföy Takip", "💠 FTMO", "💗 LOVE FUND"], label_visibility="collapsed")
+
+        page = st.radio(
+            "Menu",
+            ["⚡ ULTRA ATAK", "⚽ FORMLINE", "🎲 CHALLANGE", "📊 Portföy Takip", "💠 FTMO", "💗 LOVE FUND"],
+            label_visibility="collapsed"
+        )
+
         st.divider()
         st.markdown(
             "<div style='color:#666; font-size:11px; letter-spacing:2px; font-weight:800; margin-bottom:15px;'>📂 TERMİNAL ERİŞİMİ</div>",
@@ -1145,6 +1207,7 @@ if check_password():
         st.markdown("<br>", unsafe_allow_html=True)
         if st.button("SİSTEMDEN ÇIK"):
             st.session_state["password_correct"] = False
+            st.session_state["love_password_correct"] = False
             st.rerun()
 
     if page == "⚡ ULTRA ATAK":
@@ -1372,8 +1435,8 @@ if check_password():
             st.markdown("<div class='industrial-card' style='border-top:1px solid #333;'><div style='font-size:11px; color:#666;'>Phase 2 r</div><div class='highlight'>$250</div></div>", unsafe_allow_html=True)
             st.markdown("<div class='industrial-card' style='border-top:1px solid #333;'><div style='font-size:11px; color:#666;'>Toplam limit</div><div class='highlight'>$10,000 Kayıp</div></div>", unsafe_allow_html=True)
 
-        st.markdown(f"<div style='text-align:center; color:#444; font-size:10px; margin-top:50px;'>OG CORE // {datetime.now().year}</div>", unsafe_allow_html=True)
-        
-            elif page == "💗 LOVE FUND":
+    elif page == "💗 LOVE FUND":
         if check_love_password():
             render_love_fund(live_vars)
+
+    st.markdown(f"<div style='text-align:center; color:#444; font-size:10px; margin-top:50px;'>OG CORE // {datetime.now().year}</div>", unsafe_allow_html=True)
