@@ -611,7 +611,7 @@ def check_love_password():
         st.markdown(
             """
             <div class='love-wrap'>
-                <div class='love-title'>Private Couple Space</div>
+                <div class='love-title'>AŞKIMLA ÖZEL FON ALANIMIZ</div>
                 <div class='love-big'>💗 LOVE FUND</div>
                 <div class='love-sub'>Bu sekme yalnızca bize özel ikinci şifre ile açılır.</div>
             </div>
