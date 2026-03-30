@@ -397,6 +397,55 @@ love_css = """
     color: rgba(255, 182, 193, 0.10);
 }
 
+.love-cover {
+    height: 100%;
+    min-height: 210px;
+    border-radius: 18px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background:
+        radial-gradient(circle at top right, rgba(255,182,193,0.20), transparent 35%),
+        radial-gradient(circle at bottom left, rgba(255,105,180,0.18), transparent 40%),
+        linear-gradient(135deg, rgba(255,192,203,0.10), rgba(255,20,147,0.10), rgba(20,10,20,0.95));
+    border: 1px solid rgba(255, 182, 193, 0.18);
+    border-top: 2px solid rgba(255, 105, 180, 0.65);
+    box-shadow: 0 8px 28px rgba(255, 105, 180, 0.12);
+    position: relative;
+    overflow: hidden;
+}
+
+.love-cover::after {
+    content: "❤";
+    position: absolute;
+    right: 18px;
+    bottom: 10px;
+    font-size: 56px;
+    color: rgba(255, 182, 193, 0.10);
+}
+
+.love-cover-mini {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #ffc1db !important;
+}
+
+.love-cover-main {
+    font-family: 'Orbitron', monospace !important;
+    font-size: 48px;
+    font-weight: 900;
+    color: #fff4f8 !important;
+}
+
+.love-cover-sub {
+    font-size: 13px;
+    color: #ffd3e5 !important;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
 .love-cover-mini {
     font-size: 11px;
     letter-spacing: 3px;
@@ -1089,17 +1138,15 @@ def render_portfolio_v2(data):
 
 # --- LOVE FUND RENDER ---
 def render_love_fund(data):
+    def render_love_fund(data):
     st.markdown(love_css, unsafe_allow_html=True)
 
-    love_name = get_str(data, "love_name", "OGUZO & IKRA FON")
+    love_name = get_str(data, "love_name", "OGUZO & IKRA FUND")
     love_target = get_num(data, "love_target", 50000)
     love_current = get_num(data, "love_current", 12500)
     love_monthly = get_num(data, "love_monthly", 2500)
     love_note = get_str(data, "love_note", "Birlikte kurduğumuz hedef için küçük ama düzenli adımlar atıyoruz.")
     love_goal_date = get_str(data, "love_goal_date", "2026 yaz")
-    love_gift_fund = get_num(data, "love_gift_fund", 3000)
-    love_trip_fund = get_num(data, "love_trip_fund", 4500)
-    love_home_fund = get_num(data, "love_home_fund", 5500)
     love_last_add = get_num(data, "love_last_add", 1000)
 
     progress = 0
@@ -1110,30 +1157,30 @@ def render_love_fund(data):
 
     hero_left, hero_right = st.columns([1.45, 0.55])
 
-  with hero_left:
-    st.markdown(
-        f"""
-        <div class='love-wrap'>
-            <div class='love-title'>Aşkımla Ortak Fon</div>
-            <div class='love-big'>₺{love_current:,.0f}</div>
-            <div class='love-sub'>Fon adı: {love_name}</div>
-            <div class='love-sub'>Hedef: ₺{love_target:,.0f} · Kalan: ₺{remaining:,.0f} · Hedef tarih: {love_goal_date}</div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    with hero_left:
+        st.markdown(
+            f"""
+            <div class='love-wrap'>
+                <div class='love-title'>Aşkımla Ortak Fon</div>
+                <div class='love-big'>₺{love_current:,.0f}</div>
+                <div class='love-sub'>Fon adı: {love_name}</div>
+                <div class='love-sub'>Hedef: ₺{love_target:,.0f} · Kalan: ₺{remaining:,.0f} · Hedef tarih: {love_goal_date}</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
-with hero_right:
-    st.markdown(
-        """
-        <div class='love-cover'>
-            <div class='love-cover-mini'>Private Fund</div>
-            <div class='love-cover-main'>O & I</div>
-            <div class='love-cover-sub'>Summer Mission</div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    with hero_right:
+        st.markdown(
+            """
+            <div class='love-cover'>
+                <div class='love-cover-mini'>Private Fund</div>
+                <div class='love-cover-main'>O & I</div>
+                <div class='love-cover-sub'>Summer Mission</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
     st.markdown(
         f"""
@@ -1148,7 +1195,7 @@ with hero_right:
         unsafe_allow_html=True
     )
 
-    c1, c2, = st.columns(2)
+    c1, c2 = st.columns(2)
 
     with c1:
         st.markdown(
