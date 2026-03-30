@@ -359,117 +359,93 @@ input[type="password"] {
 # --- LOVE FUND CSS ---
 love_css = """
 <style>
+.love-shell {
+    position: relative;
+}
+
+.love-shell::before {
+    content: "";
+    position: absolute;
+    top: -20px;
+    right: 40px;
+    width: 240px;
+    height: 240px;
+    background: radial-gradient(circle, rgba(255,105,180,0.12), transparent 65%);
+    filter: blur(18px);
+    pointer-events: none;
+}
+
+.love-shell::after {
+    content: "";
+    position: absolute;
+    bottom: 40px;
+    left: 20px;
+    width: 180px;
+    height: 180px;
+    background: radial-gradient(circle, rgba(255,182,193,0.10), transparent 70%);
+    filter: blur(18px);
+    pointer-events: none;
+}
+
 .love-wrap {
     background: linear-gradient(135deg, rgba(255,182,193,0.14), rgba(255,105,180,0.11), rgba(255,20,147,0.08));
     border: 1px solid rgba(255, 182, 193, 0.20);
     border-top: 2px solid rgba(255, 105, 180, 0.72);
     border-radius: 18px;
     padding: 28px;
-    margin-bottom: 20px;
+    margin-bottom: 18px;
     box-shadow: 0 10px 30px rgba(255, 105, 180, 0.10);
+    min-height: 188px;
 }
 
 .love-cover {
-    height: 100%;
-    min-height: 210px;
+    min-height: 188px;
     border-radius: 18px;
-    padding: 24px;
+    padding: 22px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     background:
-        radial-gradient(circle at top right, rgba(255,182,193,0.20), transparent 35%),
-        radial-gradient(circle at bottom left, rgba(255,105,180,0.18), transparent 40%),
-        linear-gradient(135deg, rgba(255,192,203,0.10), rgba(255,20,147,0.10), rgba(20,10,20,0.95));
-    border: 1px solid rgba(255, 182, 193, 0.18);
-    border-top: 2px solid rgba(255, 105, 180, 0.65);
-    box-shadow: 0 8px 28px rgba(255, 105, 180, 0.12);
+        radial-gradient(circle at top right, rgba(255,182,193,0.16), transparent 35%),
+        radial-gradient(circle at bottom left, rgba(255,105,180,0.14), transparent 40%),
+        linear-gradient(135deg, rgba(255,192,203,0.08), rgba(255,20,147,0.08), rgba(20,10,20,0.95));
+    border: 1px solid rgba(255, 182, 193, 0.14);
+    border-top: 2px solid rgba(255, 105, 180, 0.38);
+    box-shadow: 0 8px 24px rgba(255, 105, 180, 0.08);
     position: relative;
     overflow: hidden;
+    margin-bottom: 18px;
 }
 
 .love-cover::after {
     content: "❤";
     position: absolute;
-    right: 18px;
-    bottom: 10px;
-    font-size: 56px;
-    color: rgba(255, 182, 193, 0.10);
-}
-
-.love-cover {
-    height: 100%;
-    min-height: 210px;
-    border-radius: 18px;
-    padding: 24px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    background:
-        radial-gradient(circle at top right, rgba(255,182,193,0.20), transparent 35%),
-        radial-gradient(circle at bottom left, rgba(255,105,180,0.18), transparent 40%),
-        linear-gradient(135deg, rgba(255,192,203,0.10), rgba(255,20,147,0.10), rgba(20,10,20,0.95));
-    border: 1px solid rgba(255, 182, 193, 0.18);
-    border-top: 2px solid rgba(255, 105, 180, 0.65);
-    box-shadow: 0 8px 28px rgba(255, 105, 180, 0.12);
-    position: relative;
-    overflow: hidden;
-}
-
-.love-cover::after {
-    content: "❤";
-    position: absolute;
-    right: 18px;
-    bottom: 10px;
-    font-size: 56px;
-    color: rgba(255, 182, 193, 0.10);
+    right: 16px;
+    bottom: 6px;
+    font-size: 34px;
+    color: rgba(255, 182, 193, 0.08);
 }
 
 .love-cover-mini {
-    font-size: 11px;
-    letter-spacing: 3px;
+    font-size: 10px;
+    letter-spacing: 2px;
     text-transform: uppercase;
     color: #ffc1db !important;
 }
 
 .love-cover-main {
     font-family: 'Orbitron', monospace !important;
-    font-size: 48px;
-    font-weight: 900;
+    font-size: 34px;
+    font-weight: 800;
     color: #fff4f8 !important;
+    line-height: 1;
 }
 
 .love-cover-sub {
-    font-size: 13px;
-    color: #ffd3e5 !important;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-}
-
-.love-cover-mini {
     font-size: 11px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: #ffc1db !important;
-}
-
-.love-cover-main {
-    font-family: 'Orbitron', monospace !important;
-    font-size: 48px;
-    font-weight: 900;
-    color: #fff4f8 !important;
-}
-
-.love-cover-sub {
-    font-size: 13px;
     color: #ffd3e5 !important;
-    letter-spacing: 2px;
+    letter-spacing: 1.5px;
     text-transform: uppercase;
-}
-
-.love-progress-inner {
-    background: linear-gradient(90deg, #ff4fa3, #ff9dc6, #ffd1e6);
-    box-shadow: 0 0 20px rgba(255,105,180,0.4);
 }
 
 .love-title {
@@ -497,12 +473,18 @@ love_css = """
 
 .love-card {
     background: rgba(255, 182, 193, 0.08) !important;
-    border: 1px solid rgba(255, 182, 193, 0.16) !important;
-    border-top: 2px solid rgba(255, 105, 180, 0.55) !important;
+    border: 1px solid rgba(255, 182, 193, 0.14) !important;
+    border-top: 2px solid rgba(255, 105, 180, 0.42) !important;
     border-radius: 14px;
     padding: 20px;
     margin-bottom: 18px;
     box-shadow: 0 4px 16px rgba(255, 20, 147, 0.08);
+    transition: all 0.25s ease;
+}
+
+.love-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0 25px rgba(255,105,180,0.16);
 }
 
 .love-label {
@@ -538,14 +520,38 @@ love_css = """
 .love-progress-inner {
     height: 100%;
     border-radius: 999px;
-    background: linear-gradient(90deg, #ff9dc6, #ff5ca8, #ffc1d8);
-    box-shadow: 0 0 16px rgba(255, 105, 180, 0.25);
+    background: linear-gradient(90deg, #ff82ba, #ffb5d3, #ffe3ef);
+    box-shadow: 0 0 16px rgba(255, 105, 180, 0.22);
 }
 
 .love-mini {
     font-size: 12px;
     color: #ffcade !important;
     margin-top: 8px;
+}
+
+.love-soft {
+    font-size: 12px;
+    color: #ffcfe0 !important;
+    margin-top: 6px;
+}
+
+.love-pill {
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #ffe6f0 !important;
+    border: 1px solid rgba(255, 182, 193, 0.16);
+    background: rgba(255,255,255,0.04);
+}
+
+.love-tiny-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
 }
 
 div[data-testid="stSidebar"] .love-side {
@@ -621,7 +627,7 @@ def check_love_password():
         )
 
         if love_pwd:
-            if love_pwd == "ikra1608":
+            if love_pwd == "1701":
                 st.session_state["love_password_correct"] = True
                 st.rerun()
             else:
@@ -1138,33 +1144,52 @@ def render_portfolio_v2(data):
 
 # --- LOVE FUND RENDER ---
 def render_love_fund(data):
-    def render_love_fund(data):
-        st.markdown(love_css, unsafe_allow_html=True)
+    st.markdown(love_css, unsafe_allow_html=True)
 
     love_name = get_str(data, "love_name", "OGUZO & IKRA FUND")
-    love_target = get_num(data, "love_target", 50000)
-    love_current = get_num(data, "love_current", 12500)
-    love_monthly = get_num(data, "love_monthly", 2500)
+    love_start = get_num(data, "love_start", 20000)
+    love_target = get_num(data, "love_target", 40000)
+    love_current = get_num(data, "love_current", love_start)
+    love_monthly = get_num(data, "love_monthly", 3000)
     love_note = get_str(data, "love_note", "Birlikte kurduğumuz hedef için küçük ama düzenli adımlar atıyoruz.")
     love_goal_date = get_str(data, "love_goal_date", "2026 yaz")
     love_last_add = get_num(data, "love_last_add", 1000)
+    love_status = get_str(data, "love_status", "aktif")
+    love_focus = get_str(data, "love_focus", "yaz planı")
+
+    goal_span = love_target - love_start
+    current_gain = love_current - love_start
 
     progress = 0
-    if love_target > 0:
-        progress = max(0, min(100, (love_current / love_target) * 100))
+    if goal_span > 0:
+        progress = max(0, min(100, (current_gain / goal_span) * 100))
 
     remaining = max(0, love_target - love_current)
 
-    hero_left, hero_right = st.columns([1.45, 0.55])
+    months_left = 0
+    if love_monthly > 0 and remaining > 0:
+        months_left = int((remaining + love_monthly - 1) // love_monthly)
+
+    st.markdown("<div class='love-shell'>", unsafe_allow_html=True)
+
+    hero_left, hero_right = st.columns([1.68, 0.32])
 
     with hero_left:
         st.markdown(
             f"""
             <div class='love-wrap'>
-                <div class='love-title'>Aşkımla Ortak Fon</div>
-                <div class='love-big'>₺{love_current:,.0f}</div>
-                <div class='love-sub'>Fon adı: {love_name}</div>
-                <div class='love-sub'>Hedef: ₺{love_target:,.0f} · Kalan: ₺{remaining:,.0f} · Hedef tarih: {love_goal_date}</div>
+                <div style='display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap;'>
+                    <div>
+                        <div class='love-title'>Aşkımla Ortak Fon</div>
+                        <div class='love-big'>₺{love_current:,.0f}</div>
+                        <div class='love-sub'>Fon adı: {love_name}</div>
+                        <div class='love-sub'>Başlangıç: ₺{love_start:,.0f} · Hedef: ₺{love_target:,.0f}</div>
+                        <div class='love-sub'>Kalan: ₺{remaining:,.0f} · Hedef tarih: {love_goal_date}</div>
+                    </div>
+                    <div>
+                        <span class='love-pill'>{love_status}</span>
+                    </div>
+                </div>
             </div>
             """,
             unsafe_allow_html=True
@@ -1172,11 +1197,11 @@ def render_love_fund(data):
 
     with hero_right:
         st.markdown(
-            """
+            f"""
             <div class='love-cover'>
                 <div class='love-cover-mini'>Private Fund</div>
                 <div class='love-cover-main'>O & I</div>
-                <div class='love-cover-sub'>Summer Mission</div>
+                <div class='love-cover-sub'>{love_focus}</div>
             </div>
             """,
             unsafe_allow_html=True
@@ -1190,14 +1215,37 @@ def render_love_fund(data):
                 <div class='love-progress-inner' style='width:{progress:.1f}%;'></div>
             </div>
             <div class='love-mini'>%{progress:.1f} tamamlandı</div>
+            <div class='love-soft'>başlangıç ₺{love_start:,.0f} → hedef ₺{love_target:,.0f}</div>
         </div>
         """,
         unsafe_allow_html=True
     )
 
-    c1, c2 = st.columns(2)
+    c1, c2, c3, c4 = st.columns(4)
 
     with c1:
+        st.markdown(
+            f"""
+            <div class='love-card'>
+                <div class='love-label'>Başlangıç</div>
+                <div class='love-value'>₺{love_start:,.0f}</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    with c2:
+        st.markdown(
+            f"""
+            <div class='love-card'>
+                <div class='love-label'>Son Eklenen</div>
+                <div class='love-value'>₺{love_last_add:,.0f}</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    with c3:
         st.markdown(
             f"""
             <div class='love-card'>
@@ -1208,7 +1256,7 @@ def render_love_fund(data):
             unsafe_allow_html=True
         )
 
-    with c2:
+    with c4:
         st.markdown(
             f"""
             <div class='love-card'>
@@ -1219,15 +1267,41 @@ def render_love_fund(data):
             unsafe_allow_html=True
         )
 
-    st.markdown(
-        f"""
-        <div class='love-card'>
-            <div class='love-label'>Not</div>
-            <div class='love-note'>{love_note}</div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    d1, d2 = st.columns([1.1, 0.9])
+
+    with d1:
+        eta_text = f"{months_left} ay kaldı" if months_left > 0 else "hedefe çok yakın"
+        st.markdown(
+            f"""
+            <div class='love-card'>
+                <div class='love-label'>Plan Özeti</div>
+                <div class='love-tiny-grid'>
+                    <div>
+                        <div class='love-soft'>Aylık katkı</div>
+                        <div class='love-value'>₺{love_monthly:,.0f}</div>
+                    </div>
+                    <div>
+                        <div class='love-soft'>Tahmini süre</div>
+                        <div class='love-value'>{eta_text}</div>
+                    </div>
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    with d2:
+        st.markdown(
+            f"""
+            <div class='love-card'>
+                <div class='love-label'>Not</div>
+                <div class='love-note'>{love_note}</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    st.markdown("</div>", unsafe_allow_html=True)
 
     if st.button("LOVE FUND OTURUMUNU KAPAT"):
         st.session_state["love_password_correct"] = False
