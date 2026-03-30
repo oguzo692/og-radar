@@ -631,7 +631,7 @@ def check_love_password():
                 st.session_state["love_password_correct"] = True
                 st.rerun()
             else:
-                st.error("yanlış şifre aşkım :(.")
+                st.error("yanlış şifre aşkım :(")
 
         return False
 
