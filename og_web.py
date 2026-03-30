@@ -369,6 +369,11 @@ love_css = """
     box-shadow: 0 10px 30px rgba(255, 105, 180, 0.10);
 }
 
+.love-progress-inner {
+    background: linear-gradient(90deg, #ff4fa3, #ff9dc6, #ffd1e6);
+    box-shadow: 0 0 20px rgba(255,105,180,0.4);
+}
+
 .love-title {
     font-family: 'Orbitron', monospace !important;
     font-size: 12px;
