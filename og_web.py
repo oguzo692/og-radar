@@ -1108,13 +1108,28 @@ def render_love_fund(data):
 
     remaining = max(0, love_target - love_current)
 
+    hero_left, hero_right = st.columns([1.45, 0.55])
+
+with hero_left:
     st.markdown(
         f"""
         <div class='love-wrap'>
-            <div class='love-title'>Askimla Ortak Fon</div>
+            <div class='love-title'>Aşkımla Ortak Fon</div>
             <div class='love-big'>₺{love_current:,.0f}</div>
             <div class='love-sub'>Fon adı: {love_name}</div>
             <div class='love-sub'>Hedef: ₺{love_target:,.0f} · Kalan: ₺{remaining:,.0f} · Hedef tarih: {love_goal_date}</div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+with hero_right:
+    st.markdown(
+        """
+        <div class='love-cover'>
+            <div class='love-cover-mini'>Private Fund</div>
+            <div class='love-cover-main'>O & I</div>
+            <div class='love-cover-sub'>Summer Mission</div>
         </div>
         """,
         unsafe_allow_html=True
