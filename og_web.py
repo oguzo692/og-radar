@@ -369,6 +369,55 @@ love_css = """
     box-shadow: 0 10px 30px rgba(255, 105, 180, 0.10);
 }
 
+.love-cover {
+    height: 100%;
+    min-height: 210px;
+    border-radius: 18px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background:
+        radial-gradient(circle at top right, rgba(255,182,193,0.20), transparent 35%),
+        radial-gradient(circle at bottom left, rgba(255,105,180,0.18), transparent 40%),
+        linear-gradient(135deg, rgba(255,192,203,0.10), rgba(255,20,147,0.10), rgba(20,10,20,0.95));
+    border: 1px solid rgba(255, 182, 193, 0.18);
+    border-top: 2px solid rgba(255, 105, 180, 0.65);
+    box-shadow: 0 8px 28px rgba(255, 105, 180, 0.12);
+    position: relative;
+    overflow: hidden;
+}
+
+.love-cover::after {
+    content: "❤";
+    position: absolute;
+    right: 18px;
+    bottom: 10px;
+    font-size: 56px;
+    color: rgba(255, 182, 193, 0.10);
+}
+
+.love-cover-mini {
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #ffc1db !important;
+}
+
+.love-cover-main {
+    font-family: 'Orbitron', monospace !important;
+    font-size: 48px;
+    font-weight: 900;
+    color: #fff4f8 !important;
+}
+
+.love-cover-sub {
+    font-size: 13px;
+    color: #ffd3e5 !important;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
 .love-progress-inner {
     background: linear-gradient(90deg, #ff4fa3, #ff9dc6, #ffd1e6);
     box-shadow: 0 0 20px rgba(255,105,180,0.4);
