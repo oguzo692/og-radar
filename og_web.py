@@ -622,7 +622,7 @@ def check_love_password():
         love_pwd = st.text_input(
             "Love PIN",
             type="password",
-            placeholder="Özel şifre",
+            placeholder="sevgili olduğumuz tarih gün.ay",
             key="love_pwd_input"
         )
 
@@ -631,7 +631,7 @@ def check_love_password():
                 st.session_state["love_password_correct"] = True
                 st.rerun()
             else:
-                st.error("LOVE FUND şifresi yanlış.")
+                st.error("yanlış şifre aşkım :(.")
 
         return False
 
