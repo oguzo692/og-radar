@@ -613,7 +613,7 @@ def check_love_password():
             <div class='love-wrap'>
                 <div class='love-title'>Private Couple Space</div>
                 <div class='love-big'>💗 LOVE FUND</div>
-                <div class='love-sub'>Bu sekme yalnızca size özel ikinci şifre ile açılır.</div>
+                <div class='love-sub'>Bu sekme yalnızca bize özel ikinci şifre ile açılır.</div>
             </div>
             """,
             unsafe_allow_html=True
