@@ -137,6 +137,12 @@ section[data-testid="stSidebar"] {
     max-width: 340px !important;
 }
 
+.love-card:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 0 25px rgba(255,105,180,0.25);
+    transition: all 0.25s ease;
+}
+
 .stButton button, .stLinkButton a {
     width: 100% !important;
     background: rgba(204, 122, 0, 0.1) !important;
