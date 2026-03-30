@@ -1031,7 +1031,7 @@ def render_portfolio_v2(data):
 def render_love_fund(data):
     st.markdown(love_css, unsafe_allow_html=True)
 
-    love_name = get_str(data, "love_name", "OGUZO & IKRA FUND")
+    love_name = get_str(data, "love_name", "OGUZO & IKRA FON")
     love_target = get_num(data, "love_target", 50000)
     love_current = get_num(data, "love_current", 12500)
     love_monthly = get_num(data, "love_monthly", 2500)
