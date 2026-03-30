@@ -1172,7 +1172,7 @@ def render_love_fund(data):
 
     st.markdown("<div class='love-shell'>", unsafe_allow_html=True)
 
-    hero_left, hero_right = st.columns([1.68, 0.32])
+    hero_left = st.container()
 
     with hero_left:
         st.markdown(
