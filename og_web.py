@@ -1195,18 +1195,6 @@ def render_love_fund(data):
             unsafe_allow_html=True
         )
 
-    with hero_right:
-        st.markdown(
-            f"""
-            <div class='love-cover'>
-                <div class='love-cover-mini'>Private Fund</div>
-                <div class='love-cover-main'>O & I</div>
-                <div class='love-cover-sub'>{love_focus}</div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
     st.markdown(
         f"""
         <div class='love-card'>
