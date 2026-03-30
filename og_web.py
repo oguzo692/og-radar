@@ -1110,7 +1110,7 @@ def render_love_fund(data):
 
     hero_left, hero_right = st.columns([1.45, 0.55])
 
-with hero_left:
+ with hero_left:
     st.markdown(
         f"""
         <div class='love-wrap'>
