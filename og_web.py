@@ -1119,41 +1119,6 @@ def render_love_fund(data):
             unsafe_allow_html=True
         )
 
-    s1, s2, s3 = st.columns(3)
-
-    with s1:
-        st.markdown(
-            f"""
-            <div class='love-card'>
-                <div class='love-label'>Hediye Fonu</div>
-                <div class='love-value'>₺{love_gift_fund:,.0f}</div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-    with s2:
-        st.markdown(
-            f"""
-            <div class='love-card'>
-                <div class='love-label'>Gezi Fonu</div>
-                <div class='love-value'>₺{love_trip_fund:,.0f}</div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-    with s3:
-        st.markdown(
-            f"""
-            <div class='love-card'>
-                <div class='love-label'>Ev / Ortak Plan</div>
-                <div class='love-value'>₺{love_home_fund:,.0f}</div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
     st.markdown(
         f"""
         <div class='love-card'>
