@@ -1139,7 +1139,7 @@ def render_portfolio_v2(data):
 # --- LOVE FUND RENDER ---
 def render_love_fund(data):
     def render_love_fund(data):
-    st.markdown(love_css, unsafe_allow_html=True)
+        st.markdown(love_css, unsafe_allow_html=True)
 
     love_name = get_str(data, "love_name", "OGUZO & IKRA FUND")
     love_target = get_num(data, "love_target", 50000)
