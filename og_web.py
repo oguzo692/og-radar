@@ -24,16 +24,18 @@ def get_live_data():
         sheet_url = "https://docs.google.com/spreadsheets/d/15izevdpRjs8Om5BAHKVWmdL3FxEHml35DGECfhQUG_s/export?format=csv&gid=0"
         df = pd.read_csv(sheet_url)
 
-if "key" not in df.columns or "value" not in df.columns:
-    raise Exception("Google Sheets tablosunda key/value kolonları yok")
+        if "key" not in df.columns or "value" not in df.columns:
+            raise Exception("Google Sheets tablosunda key/value kolonları yok")
 
-df = df.dropna(subset=["key"])
-df["key"] = df["key"].astype(str).str.strip()
-df["value"] = df["value"].fillna("").astype(str).str.strip()
-df = df[df["key"] != ""]
+        df = df.dropna(subset=["key"])
+        df["key"] = df["key"].astype(str).str.strip()
+        df["value"] = df["value"].fillna("").astype(str).str.strip()
+        df = df[df["key"] != ""]
 
-return dict(zip(df["key"], df["value"]))
-    except Exception:
+        return dict(zip(df["key"], df["value"]))
+
+    except Exception as e:
+        print("DATA ERROR:", e)
         return {"kasa": "600.0", "ana_para": "600.0"}
 
 # --- YARDIMCI FONKSİYONLAR ---
