@@ -1097,7 +1097,7 @@ def render_portfolio_v2(data):
 
     usdtry = get_num(data, "usdtry", 44.18)
 
-    dynamic_instruments = discover_dynamic_instruments(data, users)
+    dynamic_instruments = discover_dynamic_instruments(data , users)
     instruments = dynamic_instruments if len(dynamic_instruments) > 0 else build_legacy_fallback_instruments(data)
 
     if len(instruments) == 0:
