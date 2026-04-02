@@ -22,10 +22,17 @@ st.set_page_config(
 def get_live_data():
     try:
         sheet_url = "https://docs.google.com/spreadsheets/d/15izevdpRjs8Om5BAHKVWmdL3FxEHml35DGECfhQUG_s/export?format=csv&gid=0"
-        df = pd.read_csv(sheet_url)
-        df["key"] = df["key"].astype(str).str.strip()
-        df["value"] = df["value"].astype(str).str.strip()
-        return dict(zip(df["key"], df["value"]))
+      df = pd.read_csv(sheet_url)
+
+if "key" not in df.columns or "value" not in df.columns:
+    raise Exception("Google Sheets tablosunda key/value kolonları yok")
+
+df = df.dropna(subset=["key"])
+df["key"] = df["key"].astype(str).str.strip()
+df["value"] = df["value"].fillna("").astype(str).str.strip()
+df = df[df["key"] != ""]
+
+return dict(zip(df["key"], df["value"]))
     except Exception:
         return {"kasa": "600.0", "ana_para": "600.0"}
 
@@ -642,6 +649,11 @@ def discover_dynamic_instruments(data, users):
     instrument_codes = set()
 
     for key in data.keys():
+        if not isinstance(key, str):
+            continue
+        key = key.strip()
+        if not key:
+            continue
         if key.startswith("price_"):
             code = key.replace("price_", "", 1).strip()
             if code:
