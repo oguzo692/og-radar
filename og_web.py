@@ -22,7 +22,7 @@ st.set_page_config(
 def get_live_data():
     try:
         sheet_url = "https://docs.google.com/spreadsheets/d/15izevdpRjs8Om5BAHKVWmdL3FxEHml35DGECfhQUG_s/export?format=csv&gid=0"
-      df = pd.read_csv(sheet_url)
+        df = pd.read_csv(sheet_url)
 
 if "key" not in df.columns or "value" not in df.columns:
     raise Exception("Google Sheets tablosunda key/value kolonları yok")
