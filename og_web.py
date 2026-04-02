@@ -3,9 +3,8 @@ from datetime import datetime
 import pandas as pd
 import textwrap
 import streamlit.components.v1 as components
+import yfinance as yf
 
-try:
-    import yfinance as yf
 except:
     yf = None
 
