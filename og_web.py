@@ -598,7 +598,7 @@ def check_password():
         st.markdown(login_bg_css, unsafe_allow_html=True)
         pwd = st.text_input("PIN", type="password", placeholder="----", label_visibility="collapsed")
         if pwd:
-            if pwd == "1608":
+            if pwd == "0644":
                 st.session_state["password_correct"] = True
                 st.rerun()
             else:
