@@ -1428,8 +1428,8 @@ if check_password():
         )
 
     elif page == "⚽ FORMLINE":
-        
-        st.markdown(
+    
+    st.markdown(
         f"<div class='industrial-card'><div class='terminal-header'>📈 PERFORMANS</div><div class='terminal-row'><span>NET:</span><span style='color:#00ff41; font-size:32px; font-family:Orbitron;'>${toplam_bahis_kar:,.2f}</span></div></div>",
         unsafe_allow_html=True
     )
@@ -1465,7 +1465,6 @@ if check_password():
         st.markdown(w2_coupon_html, unsafe_allow_html=True)
     with t3:
         st.markdown(w1_coupon_html, unsafe_allow_html=True)
-
 elif page == "📊 Portföy Takip":
     render_portfolio_v2(live_vars)
 
