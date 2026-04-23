@@ -375,10 +375,11 @@ def discover_dynamic_instruments(data, users):
     for key in data.keys():
     if not isinstance(key, str):
         continue
+
     if key.startswith("price_"):
-            code = key.replace("price_", "", 1).strip()
-            if code:
-                instrument_codes.add(code)
+        code = key.replace("price_", "", 1).strip()
+        if code:
+            instrument_codes.add(code)
 
     instruments = []
     for code in instrument_codes:
