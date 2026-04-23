@@ -1542,7 +1542,7 @@ if check_password():
     # ⚡ ULTRA ATAK
     # =========================
         elif page == "⚡ ULTRA ATAK":
-        st.markdown("<div class='terminal-header'>💰 Kişisel Kasa Dağılımı</div>", unsafe_allow_html=True)
+         st.markdown("<div class='terminal-header'>💰 Kişisel Kasa Dağılımı</div>", unsafe_allow_html=True)
 
         ultra_ana_para = 2250.0
         ultra_final_target = 22500.0
