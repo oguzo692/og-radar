@@ -1466,7 +1466,7 @@ if check_password():
     with t3:
         st.markdown(w1_coupon_html, unsafe_allow_html=True)
 
-   elif page == "📊 Portföy Takip":
+    elif page == "📊 Portföy Takip":
     render_portfolio_v2(live_vars)
 
    elif page == "💗 LOVE FUND":
