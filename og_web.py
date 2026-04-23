@@ -1677,14 +1677,13 @@ if check_password():
                 unsafe_allow_html=True
             )
 
-    # =========================
+     # =========================
     # ⚽ FORMLINE
     # =========================
-     elif page == "⚽ FORMLINE":
-         st.markdown("<div class='terminal-header'>⚽ FORMLINE</div>", unsafe_allow_html=True)
+    elif page == "⚽ FORMLINE":
+        st.markdown("<div class='terminal-header'>⚽ FORMLINE</div>", unsafe_allow_html=True)
 
         kar_renk = "#00ff41" if toplam_bahis_kar >= 0 else "#ff4b4b"
-
         st.markdown(
             f"""
             <div class='industrial-card' style='min-height:180px; border-top-color:{kar_renk} !important;'>
