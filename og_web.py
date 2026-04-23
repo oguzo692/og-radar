@@ -1455,46 +1455,34 @@ elif page == "⚽ FORMLINE":
         unsafe_allow_html=True
     )
 
-        t13, t12, t11, t10, t9, t8, t7, t6, t5, t4, t1, t2, t3 = st.tabs(
-            "⏳ W13", "❌ W12", "❌ W11", "✅ W10", "❌ W9", "❌ W8", "✅ W7",
-            "❌ W6", "❌ W5", "❌ W4", "✅ W3", "✅ W2", "❌ W1"
-        )
+    t13, t12, t11, t10, t9, t8, t7, t6, t5, t4, t1, t2, t3 = st.tabs([
+        "⏳ W13", "❌ W12", "❌ W11", "✅ W10", "❌ W9", "❌ W8", "✅ W7",
+        "❌ W6", "❌ W5", "❌ W4", "✅ W3", "✅ W2", "❌ W1"
+    ])
 
-        with t13:
-            st.markdown(w13_coupon_html, unsafe_allow_html=True)
-        with t12:
-            st.markdown(w12_coupon_html, unsafe_allow_html=True)
-        with t11:
-            st.markdown(w11_coupon_html, unsafe_allow_html=True)
-        with t10:
-            st.markdown(w10_coupon_html, unsafe_allow_html=True)
-        with t9:
-            st.markdown(w9_coupon_html, unsafe_allow_html=True)
-        with t8:
-            st.markdown(w8_coupon_html, unsafe_allow_html=True)
-        with t7:
-            st.markdown(w7_coupon_html, unsafe_allow_html=True)
-        with t6:
-            st.markdown(w6_coupon_html, unsafe_allow_html=True)
-        with t5:
-            st.markdown(w5_coupon_html, unsafe_allow_html=True)
-        with t4:
-            st.markdown(w4_coupon_html, unsafe_allow_html=True)
-        with t1:
-            st.markdown(w3_coupon_html, unsafe_allow_html=True)
-        with t2:
-            st.markdown(w2_coupon_html, unsafe_allow_html=True)
-        with t3:
-            st.markdown(w1_coupon_html, unsafe_allow_html=True)
-
-    elif page == "📊 Portföy Takip":
-        render_portfolio_v2(live_vars)
-
-    elif page == "💗 LOVE FUND":
-        if check_love_password():
-            render_love_fund(live_vars)
-
-    st.markdown(
-        f"<div style='text-align:center; color:#444; font-size:12px;'>...</div>",
-        unsafe_allow_html=True
-    )
+    with t13:
+        st.markdown(w13_coupon_html, unsafe_allow_html=True)
+    with t12:
+        st.markdown(w12_coupon_html, unsafe_allow_html=True)
+    with t11:
+        st.markdown(w11_coupon_html, unsafe_allow_html=True)
+    with t10:
+        st.markdown(w10_coupon_html, unsafe_allow_html=True)
+    with t9:
+        st.markdown(w9_coupon_html, unsafe_allow_html=True)
+    with t8:
+        st.markdown(w8_coupon_html, unsafe_allow_html=True)
+    with t7:
+        st.markdown(w7_coupon_html, unsafe_allow_html=True)
+    with t6:
+        st.markdown(w6_coupon_html, unsafe_allow_html=True)
+    with t5:
+        st.markdown(w5_coupon_html, unsafe_allow_html=True)
+    with t4:
+        st.markdown(w4_coupon_html, unsafe_allow_html=True)
+    with t1:
+        st.markdown(w3_coupon_html, unsafe_allow_html=True)
+    with t2:
+        st.markdown(w2_coupon_html, unsafe_allow_html=True)
+    with t3:
+        st.markdown(w1_coupon_html, unsafe_allow_html=True)
