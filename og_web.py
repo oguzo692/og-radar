@@ -1535,22 +1535,21 @@ if check_password():
             st.session_state["love_password_correct"] = False
             st.rerun()
 
-if page == "⚡ ULTRA ATAK":
-    st.markdown("<div class='terminal-header'>💰 Kişisel Kasa Dağılımı</div>", unsafe_allow_html=True)
+    if page == "⚡ ULTRA ATAK":
+        st.markdown("<div class='terminal-header'>💰 Kişisel Kasa Dağılımı</div>", unsafe_allow_html=True)
 
-    ultra_ana_para = 2250.0
-    ultra_final_target = 22500.0
-    ultra_step_count = 5
-    ultra_step_gap = (ultra_final_target - ultra_ana_para) / ultra_step_count
-    ultra_targets = [ultra_ana_para + (ultra_step_gap * i) for i in range(ultra_step_count + 1)]
-    current_pct = max(0, min(100, ((kasa - ultra_ana_para) / (ultra_final_target - ultra_ana_para)) * 100))
-    net_kar = kasa - ultra_ana_para
-    remaining_to_final = max(0.0, ultra_final_target - kasa)
-    reached_count = sum(1 for t in ultra_targets[1:] if kasa >= t)
-    next_target = next((t for t in ultra_targets if t > kasa), ultra_final_target)
+        ultra_ana_para = 2250.0
+        ultra_final_target = 22500.0
+        ultra_step_count = 5
+        ultra_step_gap = (ultra_final_target - ultra_ana_para) / ultra_step_count
+        ultra_targets = [ultra_ana_para + (ultra_step_gap * i) for i in range(ultra_step_count + 1)]
+        current_pct = max(0, min(100, ((kasa - ultra_ana_para) / (ultra_final_target - ultra_ana_para)) * 100))
+        net_kar = kasa - ultra_ana_para
+        remaining_to_final = max(0.0, ultra_final_target - kasa)
+        reached_count = sum(1 for t in ultra_targets[1:] if kasa >= t)
+        next_target = next((t for t in ultra_targets if t > kasa), ultra_final_target)
 
-    k1 = st.columns(1)[0]
-
+        k1 = st.columns(1)[0]
     with k1:
         st.markdown(
             f"<div class='industrial-card premium-panel' style='text-align:center; border-top-color: #cc7a00;'><div style='font-size:11px; color:#666;'>Oguzo Bakiye</div><div class='highlight'>${og_kasa:,.2f}</div></div>",
