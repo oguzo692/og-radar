@@ -913,23 +913,18 @@ if check_password():
             st.session_state["password_correct"] = False
             st.rerun()
 
-    if page == "⚡ ULTRA ATAK":
-        st.markdown("<div class='terminal-header'>💰 Kişisel Kasa Dağılımı</div>", unsafe_allow_html=True)
-        k1 = st.columns(1)[0]
+   elif page == "⚡ ULTRA ATAK":
 
-        with k1:
-        st.markdown(
-        f"<div class='industrial-card' style='text-align:center; border-top-color: #cc7a00;'><div style='font-size:11px; color:#666;'>Oguzo Bakiye</div><div class='highlight'>${og_kasa:,.2f}</div></div>",
-        unsafe_allow_html=True
-            )
-                st.divider()
+    st.markdown("<div class='terminal-header'>💰 Kişisel Kasa</div>", unsafe_allow_html=True)
 
-        net_kar = kasa - ana_para
+    st.divider()
 
-        start = 2250
-        target = 22500
-        steps = 6
-        step_size = (target - start) / steps
+    net_kar = kasa - ana_para
+
+    start = 2250
+    target = 22500
+    steps = 6
+    step_size = (target - start) / steps
 
         progress = (kasa - start) / (target - start)
         progress = max(0, min(1, progress))
