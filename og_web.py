@@ -938,7 +938,7 @@ if page == "⚡ ULTRA ATAK":
 
     remaining = max(0, next_target - kasa)
 
-    if page == "⚡ ULTRA ATAK":
+if page == "⚡ ULTRA ATAK":
     milestone_html = ""
     label_html = ""
 
