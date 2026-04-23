@@ -1469,10 +1469,9 @@ if check_password():
     elif page == "📊 Portföy Takip":
     render_portfolio_v2(live_vars)
 
-    elif page == "💗 LOVE FUND":
+elif page == "💗 LOVE FUND":
     if check_love_password():
         render_love_fund(live_vars)
-
 st.markdown(
     f"<div style='text-align:center; color:#444; font-size:12px;'>...</div>",
     unsafe_allow_html=True
