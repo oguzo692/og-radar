@@ -969,6 +969,9 @@ if page == "⚡ ULTRA ATAK":
 milestone_html = ""
 label_html = ""
 
+milestone_html = ""
+label_html = ""
+
 for m in milestones:
     pct = ((m - start) / (target - start)) * 100
     milestone_html += f"<div style='position:absolute; left:{pct}%; top:-4px; width:2px; height:18px; background:rgba(255,174,0,0.8);'></div>"
@@ -994,8 +997,6 @@ hero_html = f"""
             <div class='highlight' style='font-size:18px;'>${target:,.0f}</div>
         </div>
     </div>
-</div>
-"""
 
     <div style='position:relative; margin-top:6px; padding-bottom:34px;'>
         <div style='background:rgba(255,255,255,0.05); height:14px; border-radius:999px; overflow:hidden; border:1px solid rgba(255,255,255,0.05); position:relative;'>
@@ -1010,10 +1011,12 @@ hero_html = f"""
             <div style='font-size:10px; color:#666; letter-spacing:1.5px;'>MEVCUT KASA</div>
             <div class='highlight' style='font-size:16px;'>${kasa:,.2f}</div>
         </div>
+
         <div style='background:rgba(255,255,255,0.03); padding:10px 14px; border-radius:8px; border:1px solid rgba(255,255,255,0.04);'>
             <div style='font-size:10px; color:#666; letter-spacing:1.5px;'>SONRAKİ ARA HEDEF</div>
             <div class='highlight' style='font-size:16px;'>${next_target:,.0f}</div>
         </div>
+
         <div style='background:rgba(255,255,255,0.03); padding:10px 14px; border-radius:8px; border:1px solid rgba(255,255,255,0.04);'>
             <div style='font-size:10px; color:#666; letter-spacing:1.5px;'>KALAN TUTAR</div>
             <div style='font-size:16px; font-family:Orbitron; color:#00ff41; font-weight:800;'>${remaining:,.2f}</div>
@@ -1022,81 +1025,81 @@ hero_html = f"""
 </div>
 """
 
-        st.markdown(textwrap.dedent(hero_html), unsafe_allow_html=True)
+st.markdown(textwrap.dedent(hero_html), unsafe_allow_html=True)
 
-        col1, col2, col3 = st.columns(3)
+col1, col2, col3 = st.columns(3)
 
-        with col1:
+with col1:
+    st.markdown(
+        f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>💎 KASA</div><div class='terminal-row'><span>TOPLAM</span><span class='highlight'>${kasa:,.2f}</span></div><div class='terminal-row'><span>K/Z</span><span style='color:{'#00ff41' if net_kar >= 0 else '#ff4b4b'};' class='val-std'>${net_kar:,.2f}</span></div></div>",
+        unsafe_allow_html=True
+    )
+
+with col2:
+    try:
+        if yf is not None:
+            btc = yf.Ticker("BTC-USD").history(period="1d")["Close"].iloc[-1]
+            eth = yf.Ticker("ETH-USD").history(period="1d")["Close"].iloc[-1]
+            sol = yf.Ticker("SOL-USD").history(period="1d")["Close"].iloc[-1]
+
             st.markdown(
-                f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>💎 KASA</div><div class='terminal-row'><span>TOPLAM</span><span class='highlight'>${kasa:,.2f}</span></div><div class='terminal-row'><span>K/Z</span><span style='color:{'#00ff41' if net_kar >= 0 else '#ff4b4b'};' class='val-std'>${net_kar:,.2f}</span></div></div>",
+                f"""
+                <div class='industrial-card' style='height:230px;'>
+                    <div class='terminal-header'>⚡ PİYASA</div>
+                    <div class='terminal-row'><span>BITCOIN</span><span class='highlight'>${btc:,.0f}</span></div>
+                    <div class='terminal-row'><span>ETHEREUM</span><span style='color:#cc7a00;'>${eth:,.0f}</span></div>
+                    <div class='terminal-row'><span>SOLANA</span><span style='color:#cc7a00;'>${sol:,.2f}</span></div>
+                </div>
+                """,
                 unsafe_allow_html=True
             )
-
-        with col2:
-            try:
-                if yf is not None:
-                    btc = yf.Ticker("BTC-USD").history(period="1d")["Close"].iloc[-1]
-                    eth = yf.Ticker("ETH-USD").history(period="1d")["Close"].iloc[-1]
-                    sol = yf.Ticker("SOL-USD").history(period="1d")["Close"].iloc[-1]
-                    st.markdown(
-                        f"""
-                        <div class='industrial-card' style='height:230px;'>
-                            <div class='terminal-header'>⚡ PİYASA</div>
-                            <div class='terminal-row'><span>BITCOIN</span><span class='highlight'>${btc:,.0f}</span></div>
-                            <div class='terminal-row'><span>ETHEREUM</span><span style='color:#cc7a00;'>${eth:,.0f}</span></div>
-                            <div class='terminal-row'><span>SOLANA</span><span style='color:#cc7a00;'>${sol:,.2f}</span></div>
-                        </div>
-                        """,
-                        unsafe_allow_html=True
-                    )
-                else:
-                    raise Exception("yfinance yok")
-            except:
-                st.markdown(
-                    "<div class='industrial-card' style='height:230px;'><div class='terminal-header'>⚡ PİYASA</div><div class='highlight'>Piyasa verisi bekleniyor...</div></div>",
-                    unsafe_allow_html=True
-                )
-
-        with col3:
-            st.markdown(
-                f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>📊 Win Rate</div><div style='text-align:center;'><span style='font-size:45px; font-weight:900; color:#cc7a00; font-family:Orbitron;'>%{wr_oran}</span></div></div>",
-                unsafe_allow_html=True
-            )
-
-        st.markdown("### 📜 SON İŞLEMLER")
+        else:
+            raise Exception("yfinance yok")
+    except Exception:
         st.markdown(
-            f"<div class='industrial-card'><div class='terminal-header'>AKTİVİTE LOGLARI</div><p style='font-family:JetBrains Mono; color:#888;'>{son_islemler_raw}</p></div>",
+            "<div class='industrial-card' style='height:230px;'><div class='terminal-header'>⚡ PİYASA</div><div class='highlight'>Piyasa verisi bekleniyor...</div></div>",
             unsafe_allow_html=True
         )
 
-    elif page == "⚽ FORMLINE":
-        st.markdown(
-            f"<div class='industrial-card'><div class='terminal-header'>📈 PERFORMANS</div><div class='terminal-row'><span>NET:</span><span style='color:#00ff41; font-size:32px; font-family:Orbitron;'>${toplam_bahis_kar:,.2f}</span></div></div>",
-            unsafe_allow_html=True
-        )
+with col3:
+    st.markdown(
+        f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>📊 Win Rate</div><div style='text-align:center;'><span style='font-size:45px; font-weight:900; color:#cc7a00; font-family:Orbitron;'>%{wr_oran}</span></div></div>",
+        unsafe_allow_html=True
+    )
 
-        t10, t9, t8, t7, t6, t5, t4, t1, t2, t3 = st.tabs(["🆕 W10", "❌ W9", "❌ W8", "✅ W7", "❌ W6", "❌ W5", "❌ W4", "✅ W3", "✅ W2", "❌ W1"])
-        with t10:
-            st.markdown(w10_coupon_html, unsafe_allow_html=True)
-        with t9:
-            st.markdown(w9_coupon_html, unsafe_allow_html=True)
-        with t8:
-            st.markdown(w8_coupon_html, unsafe_allow_html=True)
-        with t7:
-            st.markdown(w7_coupon_html, unsafe_allow_html=True)
-        with t6:
-            st.markdown(w6_coupon_html, unsafe_allow_html=True)
-        with t5:
-            st.markdown(w5_coupon_html, unsafe_allow_html=True)
-        with t4:
-            st.markdown(w4_coupon_html, unsafe_allow_html=True)
-        with t1:
-            st.markdown(w3_coupon_html, unsafe_allow_html=True)
-        with t2:
-            st.markdown(w2_coupon_html, unsafe_allow_html=True)
-        with t3:
-            st.markdown(w1_coupon_html, unsafe_allow_html=True)
+st.markdown("### 📜 SON İŞLEMLER")
+st.markdown(
+    f"<div class='industrial-card'><div class='terminal-header'>AKTİVİTE LOGLARI</div><p style='font-family:JetBrains Mono; color:#888;'>{son_islemler_raw}</p></div>",
+    unsafe_allow_html=True
+)
 
-    elif page == "📊 Portföy Takip":
-        render_portfolio_v2(live_vars)
+elif page == "⚽ FORMLINE":
+    st.markdown(
+        f"<div class='industrial-card'><div class='terminal-header'>📈 PERFORMANS</div><div class='terminal-row'><span>NET:</span><span style='color:#00ff41; font-size:32px; font-family:Orbitron;'>${toplam_bahis_kar:,.2f}</span></div></div>",
+        unsafe_allow_html=True
+    )
 
+    t10, t9, t8, t7, t6, t5, t4, t1, t2, t3 = st.tabs(["🆕 W10", "❌ W9", "❌ W8", "✅ W7", "❌ W6", "❌ W5", "❌ W4", "✅ W3", "✅ W2", "❌ W1"])
+    with t10:
+        st.markdown(w10_coupon_html, unsafe_allow_html=True)
+    with t9:
+        st.markdown(w9_coupon_html, unsafe_allow_html=True)
+    with t8:
+        st.markdown(w8_coupon_html, unsafe_allow_html=True)
+    with t7:
+        st.markdown(w7_coupon_html, unsafe_allow_html=True)
+    with t6:
+        st.markdown(w6_coupon_html, unsafe_allow_html=True)
+    with t5:
+        st.markdown(w5_coupon_html, unsafe_allow_html=True)
+    with t4:
+        st.markdown(w4_coupon_html, unsafe_allow_html=True)
+    with t1:
+        st.markdown(w3_coupon_html, unsafe_allow_html=True)
+    with t2:
+        st.markdown(w2_coupon_html, unsafe_allow_html=True)
+    with t3:
+        st.markdown(w1_coupon_html, unsafe_allow_html=True)
+
+elif page == "📊 Portföy Takip":
+    render_portfolio_v2(live_vars)
