@@ -1367,12 +1367,12 @@ if check_password():
         st.divider()
 
         net_kar = kasa - ana_para
-        current_pct = max(0, min(100, ((kasa - 600) / (1200 - 600)) * 100))
+        current_pct = max(0, min(100, ((kasa - 2250) / (4500 - 2250)) * 100))
 
         st.markdown(
             f"""
             <div class='industrial-card'>
-                <div class='terminal-header'>HEDEF YOLCULUĞU ($1.200)</div>
+                <div class='terminal-header'>HEDEF YOLCULUĞU (2.250)</div>
                 <div style='background:#111; height:8px; border-radius:10px;'>
                     <div style='background:linear-gradient(90deg, #cc7a00, #ffae00); width:{current_pct}%; height:100%; border-radius:10px;'></div>
                 </div>
