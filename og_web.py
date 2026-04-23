@@ -1541,7 +1541,7 @@ if check_password():
     # =========================
     # ⚡ ULTRA ATAK
     # =========================
-    if page == "⚡ ULTRA ATAK":
+       elif page == "⚡ ULTRA ATAK":
         st.markdown("<div class='terminal-header'>💰 Kişisel Kasa Dağılımı</div>", unsafe_allow_html=True)
 
         ultra_ana_para = 2250.0
@@ -1574,47 +1574,50 @@ if check_password():
         markers_html = ""
         for idx, target in enumerate(ultra_targets):
             left_pct = (idx / ultra_step_count) * 100
-            reached_class = "background:#ffae00; box-shadow:0 0 14px rgba(255,174,0,0.45);" if kasa >= target else "background:#2b2b2b;"
+            is_reached = kasa >= target
+
+            dot_style = "#ffae00" if is_reached else "#2b2b2b"
+            glow_style = "0 0 14px rgba(255,174,0,0.45)" if is_reached else "none"
+
             markers_html += f"""
-            <div style='position:absolute; left:{left_pct}%; top:-6px; transform:translateX(-50%); text-align:center;'>
-                <div style='width:14px; height:14px; border-radius:50%; {reached_class} border:1px solid rgba(255,255,255,0.18); margin:0 auto 8px auto;'></div>
-                <div style='font-size:10px; color:#8c8c8c; white-space:nowrap;'>{fmt_money_usd(target)}</div>
+            <div style="position:absolute; left:{left_pct}%; top:-10px; transform:translateX(-50%); text-align:center;">
+                <div style="width:15px; height:15px; border-radius:50%; background:{dot_style}; border:1px solid rgba(255,255,255,0.20); box-shadow:{glow_style}; margin:0 auto 10px auto;"></div>
+                <div style="font-size:10px; color:#8c8c8c; white-space:nowrap;">{fmt_money_usd(target)}</div>
             </div>
             """
 
-        st.markdown(
-            f"""
-            <div class='industrial-card' style='padding:26px; border-top-color:#ffae00 !important;'>
-                <div class='terminal-header'>HEDEF YOLCULUĞU · 5 AŞAMA</div>
+        goal_html = f"""
+        <div class='industrial-card' style='padding:26px; border-top-color:#ffae00 !important;'>
+            <div class='terminal-header'>HEDEF YOLCULUĞU · 5 AŞAMA</div>
 
-                <div style='display:flex; justify-content:space-between; align-items:flex-start; gap:16px; flex-wrap:wrap; margin-bottom:18px;'>
-                    <div>
-                        <div style='font-size:11px; color:#777; letter-spacing:2px; text-transform:uppercase;'>Mevcut Seviye</div>
-                        <div style='font-family:Orbitron; font-size:34px; color:#f3f3f3;'>{fmt_money_usd(kasa)}</div>
-                    </div>
-                    <div style='text-align:right;'>
-                        <div style='font-size:11px; color:#777; letter-spacing:2px; text-transform:uppercase;'>Tamamlanan Aşama</div>
-                        <div style='font-family:Orbitron; font-size:28px; color:#ffae00;'>{reached_count}/{ultra_step_count}</div>
-                    </div>
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:16px; flex-wrap:wrap; margin-bottom:18px;">
+                <div>
+                    <div style="font-size:11px; color:#777; letter-spacing:2px; text-transform:uppercase;">Mevcut Seviye</div>
+                    <div style="font-family:Orbitron; font-size:34px; color:#f3f3f3;">{fmt_money_usd(kasa)}</div>
                 </div>
-
-                <div style='position:relative; margin:34px 8px 14px 8px; padding-top:18px;'>
-                    <div style='background:rgba(255,255,255,0.06); height:12px; border-radius:999px; overflow:hidden;'>
-                        <div style='background:linear-gradient(90deg, #cc7a00, #ffae00); width:{current_pct}%; height:100%; border-radius:999px; box-shadow:0 0 18px rgba(255,174,0,0.35);'></div>
-                    </div>
-                    {markers_html}
-                </div>
-
-                <div style='display:flex; justify-content:space-between; gap:14px; flex-wrap:wrap; margin-top:18px; font-size:12px; color:#909090;'>
-                    <span>Başlangıç: <strong style='color:#d8d8d8;'>{fmt_money_usd(ultra_ana_para)}</strong></span>
-                    <span>Sonraki hedef: <strong style='color:#d8d8d8;'>{fmt_money_usd(next_target)}</strong></span>
-                    <span>Kalan: <strong style='color:#d8d8d8;'>{fmt_money_usd(remaining_to_final)}</strong></span>
-                    <span>İlerleme: <strong style='color:#ffae00;'>%{current_pct:.1f}</strong></span>
+                <div style="text-align:right;">
+                    <div style="font-size:11px; color:#777; letter-spacing:2px; text-transform:uppercase;">Tamamlanan Aşama</div>
+                    <div style="font-family:Orbitron; font-size:28px; color:#ffae00;">{reached_count}/{ultra_step_count}</div>
                 </div>
             </div>
-            """,
-            unsafe_allow_html=True
-        )
+
+            <div style="position:relative; margin:38px 10px 16px 10px; padding-top:18px;">
+                <div style="background:rgba(255,255,255,0.06); height:12px; border-radius:999px; overflow:hidden;">
+                    <div style="background:linear-gradient(90deg, #cc7a00, #ffae00); width:{current_pct:.2f}%; height:100%; border-radius:999px; box-shadow:0 0 18px rgba(255,174,0,0.35);"></div>
+                </div>
+                {markers_html}
+            </div>
+
+            <div style="display:flex; justify-content:space-between; gap:14px; flex-wrap:wrap; margin-top:18px; font-size:12px; color:#909090;">
+                <span>Başlangıç: <strong style='color:#d8d8d8;'>{fmt_money_usd(ultra_ana_para)}</strong></span>
+                <span>Sonraki hedef: <strong style='color:#d8d8d8;'>{fmt_money_usd(next_target)}</strong></span>
+                <span>Kalan: <strong style='color:#d8d8d8;'>{fmt_money_usd(remaining_to_final)}</strong></span>
+                <span>İlerleme: <strong style='color:#ffae00;'>%{current_pct:.1f}</strong></span>
+            </div>
+        </div>
+        """
+
+        st.markdown(goal_html, unsafe_allow_html=True)
 
         col1, col2, col3 = st.columns(3)
 
@@ -1677,38 +1680,23 @@ if check_password():
     # =========================
     # ⚽ FORMLINE
     # =========================
-    elif page == "⚽ FORMLINE":
+        elif page == "⚽ FORMLINE":
         st.markdown("<div class='terminal-header'>⚽ FORMLINE</div>", unsafe_allow_html=True)
 
         kar_renk = "#00ff41" if toplam_bahis_kar >= 0 else "#ff4b4b"
 
-        top1, top2 = st.columns([1.2, 0.8])
-
-        with top1:
-            st.markdown(
-                f"""
-                <div class='industrial-card' style='min-height:180px; border-top-color:{kar_renk} !important;'>
-                    <div class='terminal-header'>💸 TOPLAM KAR / ZARAR</div>
-                    <div style='font-family:Orbitron; font-size:42px; color:{kar_renk}; margin-top:22px; font-weight:900;'>
-                        ${toplam_bahis_kar:,.2f}
-                    </div>
-                    <div style='font-size:12px; color:#777; margin-top:12px;'>W1 - W13 toplam sonuç</div>
+        st.markdown(
+            f"""
+            <div class='industrial-card' style='min-height:180px; border-top-color:{kar_renk} !important;'>
+                <div class='terminal-header'>💸 TOPLAM KAR / ZARAR</div>
+                <div style='font-family:Orbitron; font-size:42px; color:{kar_renk}; margin-top:22px; font-weight:900;'>
+                    ${toplam_bahis_kar:,.2f}
                 </div>
-                """,
-                unsafe_allow_html=True
-            )
-
-        with top2:
-            st.markdown(
-                f"""
-                <div class='industrial-card' style='min-height:180px;'>
-                    <div class='terminal-header'>📊 GENEL DURUM</div>
-                    <div class='terminal-row'><span>WIN RATE</span><span class='highlight'>%{wr_oran}</span></div>
-                    <div class='terminal-row'><span>SON İŞLEMLER</span><span class='highlight'>{son_islemler_raw}</span></div>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
+                <div style='font-size:12px; color:#777; margin-top:12px;'>W1 - W13 toplam sonuç</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
         st.divider()
 
