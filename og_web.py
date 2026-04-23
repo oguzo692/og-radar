@@ -1681,7 +1681,7 @@ if check_password():
     # ⚽ FORMLINE
     # =========================
         elif page == "⚽ FORMLINE":
-        st.markdown("<div class='terminal-header'>⚽ FORMLINE</div>", unsafe_allow_html=True)
+         st.markdown("<div class='terminal-header'>⚽ FORMLINE</div>", unsafe_allow_html=True)
 
         kar_renk = "#00ff41" if toplam_bahis_kar >= 0 else "#ff4b4b"
 
