@@ -76,6 +76,10 @@ def fmt_unit_value(qty, unit):
     else:
         return f"{qty:,.4f}".rstrip("0").rstrip(".")
 
+def fmt_money_usd_compact(x):
+    sign = "-" if x < 0 else ""
+    return f"{sign}${abs(x):,.2f}"
+
 # --- RÜTBE FONKSİYONU ---
 def rutbe_getir(puan_str):
     try:
@@ -319,6 +323,183 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input {
 .info-strip span strong {
     color:#c9c9c9 !important;
     font-weight: 500;
+}
+
+.premium-panel {
+    position: relative;
+    overflow: hidden;
+    border-radius: 16px !important;
+    border: 1px solid rgba(255,255,255,0.05) !important;
+    border-top: 1px solid rgba(255,174,0,0.55) !important;
+    background:
+        radial-gradient(circle at top right, rgba(255,174,0,0.12), transparent 28%),
+        radial-gradient(circle at bottom left, rgba(204,122,0,0.10), transparent 32%),
+        linear-gradient(145deg, rgba(22,22,22,0.96), rgba(9,9,9,0.98)) !important;
+    box-shadow: 0 12px 34px rgba(0,0,0,0.42), inset 0 1px 0 rgba(255,255,255,0.03);
+}
+
+.premium-panel::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.035), transparent);
+    transform: translateX(-100%);
+    animation: premiumShine 6s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes premiumShine {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.goal-shell {
+    position: relative;
+    border-radius: 18px;
+    padding: 24px 22px 20px 22px;
+    background:
+        radial-gradient(circle at top right, rgba(255,174,0,0.12), transparent 24%),
+        linear-gradient(145deg, rgba(17,17,17,0.97), rgba(8,8,8,0.98));
+    border: 1px solid rgba(255,255,255,0.05);
+    border-top: 2px solid rgba(255,174,0,0.62);
+    box-shadow: 0 14px 34px rgba(0,0,0,0.40);
+    overflow: hidden;
+    margin-bottom: 22px;
+}
+
+.goal-shell::after {
+    content: "";
+    position: absolute;
+    right: -40px;
+    top: -40px;
+    width: 180px;
+    height: 180px;
+    background: radial-gradient(circle, rgba(255,174,0,0.12), transparent 70%);
+    filter: blur(8px);
+    pointer-events: none;
+}
+
+.goal-topline {
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    gap:16px;
+    flex-wrap:wrap;
+    margin-bottom:18px;
+}
+
+.goal-kicker {
+    font-size:11px;
+    color:#7c7c7c !important;
+    letter-spacing:2.8px;
+    text-transform:uppercase;
+    margin-bottom:8px;
+}
+
+.goal-main {
+    font-family:'Orbitron', monospace !important;
+    font-size:34px;
+    font-weight:900;
+    color:#f4f4f4 !important;
+    line-height:1;
+}
+
+.goal-side {
+    text-align:right;
+}
+
+.goal-side-label {
+    font-size:10px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    color:#727272 !important;
+    margin-bottom:8px;
+}
+
+.goal-side-value {
+    font-family:'Orbitron', monospace !important;
+    font-size:24px;
+    color:#ffb347 !important;
+    font-weight:800;
+}
+
+.goal-track {
+    position: relative;
+    height: 18px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, rgba(255,255,255,0.04), rgba(255,255,255,0.08));
+    border: 1px solid rgba(255,255,255,0.05);
+    overflow: visible;
+}
+
+.goal-fill {
+    height:100%;
+    border-radius:999px;
+    background: linear-gradient(90deg, #8f5600 0%, #cc7a00 32%, #ffae00 68%, #ffd27a 100%);
+    box-shadow: 0 0 22px rgba(255,174,0,0.26);
+    position: relative;
+}
+
+.goal-fill::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 50%;
+    width: 18px;
+    height: 18px;
+    transform: translate(35%, -50%);
+    border-radius: 50%;
+    background: #ffd27a;
+    box-shadow: 0 0 0 4px rgba(255,174,0,0.18), 0 0 16px rgba(255,174,0,0.45);
+}
+
+.goal-markers {
+    position:relative;
+    height:42px;
+    margin-top:14px;
+}
+
+.goal-marker {
+    position:absolute;
+    transform:translateX(-50%);
+    text-align:center;
+}
+
+.goal-dot {
+    width:12px;
+    height:12px;
+    border-radius:50%;
+    margin:0 auto 8px auto;
+    background: rgba(255,255,255,0.14);
+    border:1px solid rgba(255,255,255,0.10);
+    box-shadow: inset 0 0 0 2px rgba(0,0,0,0.18);
+}
+
+.goal-marker.reached .goal-dot {
+    background: #ffb347;
+    box-shadow: 0 0 16px rgba(255,174,0,0.40);
+    border-color: rgba(255,211,122,0.9);
+}
+
+.goal-label {
+    font-size:10px;
+    color:#8d8d8d !important;
+    letter-spacing:1px;
+    white-space:nowrap;
+}
+
+.goal-bottomline {
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-top:18px;
+    font-size:12px;
+    color:#8e8e8e !important;
+}
+
+.goal-bottomline strong {
+    color:#e3e3e3 !important;
 }
 </style>
 """
@@ -1357,29 +1538,58 @@ if check_password():
 if page == "⚡ ULTRA ATAK":
     st.markdown("<div class='terminal-header'>💰 Kişisel Kasa Dağılımı</div>", unsafe_allow_html=True)
 
+    ultra_ana_para = 2250.0
+    ultra_final_target = 22500.0
+    ultra_step_count = 5
+    ultra_step_gap = (ultra_final_target - ultra_ana_para) / ultra_step_count
+    ultra_targets = [ultra_ana_para + (ultra_step_gap * i) for i in range(ultra_step_count + 1)]
+    current_pct = max(0, min(100, ((kasa - ultra_ana_para) / (ultra_final_target - ultra_ana_para)) * 100))
+    net_kar = kasa - ultra_ana_para
+    remaining_to_final = max(0.0, ultra_final_target - kasa)
+    reached_count = sum(1 for t in ultra_targets[1:] if kasa >= t)
+    next_target = next((t for t in ultra_targets if t > kasa), ultra_final_target)
+
     k1 = st.columns(1)[0]
 
     with k1:
         st.markdown(
-            f"<div class='industrial-card' style='text-align:center; border-top-color: #cc7a00;'><div style='font-size:11px; color:#666;'>Oguzo Bakiye</div><div class='highlight'>${og_kasa:,.2f}</div></div>",
+            f"<div class='industrial-card premium-panel' style='text-align:center; border-top-color: #cc7a00;'><div style='font-size:11px; color:#666;'>Oguzo Bakiye</div><div class='highlight'>${og_kasa:,.2f}</div></div>",
             unsafe_allow_html=True
         )
 
-    st.divider()
-
-    net_kar = kasa - ana_para
-    current_pct = max(0, min(100, ((kasa - 2250) / (4500 - 2250)) * 100))
-
     st.markdown(
-        f'''
-        <div class='industrial-card'>
-            <div class='terminal-header'>HEDEF YOLCULUĞU (2.250)</div>
-            <div style='background:#111; height:8px; border-radius:10px;'>
-                <div style='background:linear-gradient(90deg, #cc7a00, #ffae00); width:{current_pct}%; height:100%; border-radius:10px;'></div>
+        f"""
+        <div class='goal-shell'>
+            <div class='goal-topline'>
+                <div>
+                    <div class='goal-kicker'>Ultra Atak · 5 Aşamalı Hedef Rotası</div>
+                    <div class='goal-main'>{fmt_money_usd(kasa)}</div>
+                </div>
+                <div class='goal-side'>
+                    <div class='goal-side-label'>Tamamlanma</div>
+                    <div class='goal-side-value'>%{current_pct:.1f}</div>
+                </div>
             </div>
-            <div style='text-align:right; font-size:10px; color:#555; margin-top:5px;'>%{current_pct:.1f}</div>
+
+            <div class='goal-track'>
+                <div class='goal-fill' style='width:{current_pct:.2f}%;'></div>
+            </div>
+
+            <div class='goal-markers'>
+                {''.join([
+                    f"<div class='goal-marker {'reached' if kasa >= target else ''}' style='left:{(idx / ultra_step_count) * 100:.2f}%;'><div class='goal-dot'></div><div class='goal-label'>{fmt_money_usd(target)}</div></div>"
+                    for idx, target in enumerate(ultra_targets)
+                ])}
+            </div>
+
+            <div class='goal-bottomline'>
+                <span>Başlangıç: <strong>{fmt_money_usd(ultra_ana_para)}</strong></span>
+                <span>Geçilen hedef: <strong>{reached_count}/{ultra_step_count}</strong></span>
+                <span>Sıradaki hedef: <strong>{fmt_money_usd(next_target)}</strong></span>
+                <span>Finale kalan: <strong>{fmt_money_usd(remaining_to_final)}</strong></span>
+            </div>
         </div>
-        ''',
+        """,
         unsafe_allow_html=True
     )
 
@@ -1387,7 +1597,7 @@ if page == "⚡ ULTRA ATAK":
 
     with col1:
         st.markdown(
-            f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>💎 KASA</div><div class='terminal-row'><span>TOPLAM</span><span class='highlight'>${kasa:,.2f}</span></div><div class='terminal-row'><span>K/Z</span><span style='color:{'#00ff41' if net_kar >= 0 else '#ff4b4b'};' class='val-std'>${net_kar:,.2f}</span></div></div>",
+            f"<div class='industrial-card premium-panel' style='height:230px;'><div class='terminal-header'>💎 KASA</div><div class='terminal-row'><span>TOPLAM</span><span class='highlight'>${kasa:,.2f}</span></div><div class='terminal-row'><span>ANA PARA</span><span class='highlight'>${ultra_ana_para:,.2f}</span></div><div class='terminal-row'><span>K/Z</span><span style='color:{'#00ff41' if net_kar >= 0 else '#ff4b4b'};' class='val-std'>{fmt_money_usd_compact(net_kar)}</span></div></div>",
             unsafe_allow_html=True
         )
 
@@ -1399,7 +1609,7 @@ if page == "⚡ ULTRA ATAK":
                 sol = yf.Ticker("SOL-USD").history(period="1d")["Close"].iloc[-1]
                 st.markdown(
                     f"""
-                    <div class='industrial-card' style='height:230px;'>
+                    <div class='industrial-card premium-panel' style='height:230px;'>
                         <div class='terminal-header'>⚡ PİYASA</div>
                         <div class='terminal-row'><span>BITCOIN</span><span class='highlight'>${btc:,.0f}</span></div>
                         <div class='terminal-row'><span>ETHEREUM</span><span style='color:#cc7a00;'>${eth:,.0f}</span></div>
@@ -1412,19 +1622,19 @@ if page == "⚡ ULTRA ATAK":
                 raise Exception("yfinance yok")
         except:
             st.markdown(
-                "<div class='industrial-card' style='height:230px;'><div class='terminal-header'>⚡ PİYASA</div><div class='highlight'>Piyasa verisi bekleniyor...</div></div>",
+                "<div class='industrial-card premium-panel' style='height:230px;'><div class='terminal-header'>⚡ PİYASA</div><div class='highlight'>Piyasa verisi bekleniyor...</div></div>",
                 unsafe_allow_html=True
             )
 
     with col3:
         st.markdown(
-            f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>📊 Win Rate</div><div style='text-align:center;'><span style='font-size:45px; font-weight:900; color:#cc7a00; font-family:Orbitron;'>%{wr_oran}</span></div></div>",
+            f"<div class='industrial-card premium-panel' style='height:230px;'><div class='terminal-header'>🎯 HEDEF DURUMU</div><div class='terminal-row'><span>SON HEDEF</span><span class='highlight'>${ultra_final_target:,.2f}</span></div><div class='terminal-row'><span>AŞAMA</span><span style='color:#cc7a00;' class='highlight'>{reached_count}/{ultra_step_count}</span></div><div class='terminal-row'><span>İLERLEME</span><span style='color:#ffae00;' class='val-std'>%{current_pct:.1f}</span></div></div>",
             unsafe_allow_html=True
         )
 
     st.markdown("### 📜 SON İŞLEMLER")
     st.markdown(
-        f"<div class='industrial-card'><div class='terminal-header'>AKTİVİTE LOGLARI</div><p style='font-family:JetBrains Mono; color:#888;'>{son_islemler_raw}</p></div>",
+        f"<div class='industrial-card premium-panel'><div class='terminal-header'>AKTİVİTE LOGLARI</div><p style='font-family:JetBrains Mono; color:#888;'>{son_islemler_raw}</p></div>",
         unsafe_allow_html=True
     )
 
@@ -1432,7 +1642,21 @@ elif page == "⚽ FORMLINE":
     st.markdown("## ⚽ FORMLINE")
 
     st.markdown(
-        f"<div class='industrial-card'><div class='terminal-header'>📈 PERFORMANS</div><div class='terminal-row'><span>NET</span><span style='color:#00ff41;'>$300</span></div><div class='terminal-row'><span>WIN RATE</span><span style='color:#cc7a00;'>%{wr_oran}</span></div><div class='terminal-row'><span>DURUM</span><span style='color:#cc7a00;'>AKTİF</span></div></div>",
+        f"""
+        <div class='industrial-card premium-panel'>
+            <div class='terminal-header'>💸 TOPLAM KAR / ZARAR</div>
+            <div style='display:flex; justify-content:space-between; align-items:flex-end; gap:12px; flex-wrap:wrap;'>
+                <div>
+                    <div style='font-size:11px; color:#666; letter-spacing:2px; text-transform:uppercase;'>Kuponlardan Hesaplanan Net Sonuç</div>
+                    <div class='val-std' style='color:{'#00ff41' if toplam_bahis_kar >= 0 else '#ff4b4b'} !important; font-size:42px !important; margin-top:10px;'>{fmt_money_usd_compact(toplam_bahis_kar)}</div>
+                </div>
+                <div style='text-align:right;'>
+                    <div style='font-size:10px; color:#666; letter-spacing:2px; text-transform:uppercase; margin-bottom:8px;'>Win Rate</div>
+                    <div style='font-family:Orbitron; font-size:28px; color:#ffae00;'>%{wr_oran}</div>
+                </div>
+            </div>
+        </div>
+        """,
         unsafe_allow_html=True
     )
 
