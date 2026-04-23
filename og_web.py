@@ -1433,7 +1433,7 @@ if check_password():
             unsafe_allow_html=True
         )
 
-        t13, t12, t11, t10, t9, t8, t7, t6, t5, t4, t1, t2, t3 = st.tabs(["⏳ W13", "❌ W12", "❌ W11", "✅ W10", "❌ W9", "❌ W8", "✅ W7", "❌ W6", "❌ W5", "❌ W4", "✅ W3", "✅ W2", "❌ W1"])
+    t13, t12, t11, t10, t9, t8, t7, t6, t5, t4, t1, t2, t3 = st.tabs(["⏳ W13", "❌ W12", "❌ W11", "✅ W10", "❌ W9", "❌ W8", "✅ W7", "❌ W6", "❌ W5", "❌ W4", "✅ W3", "✅ W2", "❌ W1"])
          with t13:
             st.markdown(w13_coupon_html, unsafe_allow_html=True)
         with t12:
