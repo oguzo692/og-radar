@@ -922,7 +922,6 @@ if check_password():
                 f"<div class='industrial-card' style='text-align:center; border-top-color: #cc7a00;'><div style='font-size:11px; color:#666;'>Oguzo Bakiye</div><div class='highlight'>${og_kasa:,.2f}</div></div>",
                 unsafe_allow_html=True
             )
-
                 st.divider()
 
         net_kar = kasa - ana_para
