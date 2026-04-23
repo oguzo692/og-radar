@@ -372,14 +372,15 @@ def check_password():
 def discover_dynamic_instruments(data, users):
     instrument_codes = set()
 
-    for key in data.keys():
-    if not isinstance(key, str):
-        continue
+    for raw_key in data.keys():
+        key = str(raw_key).strip()
+        if not key or key.lower() == "nan":
+            continue
 
-    if key.startswith("price_"):
-        code = key.replace("price_", "", 1).strip()
-        if code:
-            instrument_codes.add(code)
+        if key.startswith("price_"):
+            code = key.replace("price_", "", 1).strip()
+            if code:
+                instrument_codes.add(code)
 
     instruments = []
     for code in instrument_codes:
