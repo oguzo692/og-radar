@@ -974,10 +974,10 @@ for m in milestones:
     milestone_html += f"<div style='position:absolute; left:{pct}%; top:-4px; width:2px; height:18px; background:rgba(255,174,0,0.8);'></div>"
     label_html += f"<div style='position:absolute; left:{pct}%; top:22px; transform:translateX(-50%); font-size:10px; color:#777;'>{int(m)}</div>"
 
-        hero_html = f"""
+hero_html = f"""
 <div class='industrial-card' style='padding:26px; border-top:2px solid rgba(255,174,0,0.65) !important; background:linear-gradient(180deg, rgba(18,18,18,0.96), rgba(8,8,8,0.96)) !important; box-shadow:0 0 22px rgba(255,174,0,0.08);'>
     <div class='terminal-header'>🎯 ULTRA ATAK HEDEF YOLCULUĞU</div>
-
+"""
     <div style='display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; gap:12px; flex-wrap:wrap;'>
         <div>
             <div style='font-size:11px; color:#666; letter-spacing:2px;'>BAŞLANGIÇ</div>
