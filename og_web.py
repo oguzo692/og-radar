@@ -1432,26 +1432,7 @@ elif page == "⚽ FORMLINE":
     st.markdown("## ⚽ FORMLINE")
 
     st.markdown(
-        f"""
-        <div class='industrial-card'>
-            <div class='terminal-header'>📈 PERFORMANS</div>
-
-            <div class='terminal-row'>
-                <span>NET</span>
-                <span style='color:#00ff41;'>$300</span>
-            </div>
-
-            <div class='terminal-row'>
-                <span>WIN RATE</span>
-                <span style='color:#cc7a00;'>%{wr_oran}</span>
-            </div>
-
-            <div class='terminal-row'>
-                <span>DURUM</span>
-                <span style='color:#cc7a00;'>AKTİF</span>
-            </div>
-        </div>
-        """,
+        f"<div class='industrial-card'><div class='terminal-header'>📈 PERFORMANS</div><div class='terminal-row'><span>NET</span><span style='color:#00ff41;'>$300</span></div><div class='terminal-row'><span>WIN RATE</span><span style='color:#cc7a00;'>%{wr_oran}</span></div><div class='terminal-row'><span>DURUM</span><span style='color:#cc7a00;'>AKTİF</span></div></div>",
         unsafe_allow_html=True
     )
 
@@ -1486,3 +1467,15 @@ elif page == "⚽ FORMLINE":
         st.markdown(w2_coupon_html, unsafe_allow_html=True)
     with t3:
         st.markdown(w1_coupon_html, unsafe_allow_html=True)
+
+elif page == "📊 Portföy Takip":
+    render_portfolio_v2(live_vars)
+
+elif page == "💗 LOVE FUND":
+    if check_love_password():
+        render_love_fund(live_vars)
+
+st.markdown(
+    f"<div style='text-align:center; color:#444; font-size:12px;'>...</div>",
+    unsafe_allow_html=True
+)
