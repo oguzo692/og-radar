@@ -1354,110 +1354,40 @@ if check_password():
             st.session_state["love_password_correct"] = False
             st.rerun()
 
-    if page == "⚡ ULTRA ATAK":
-        st.markdown("<div class='terminal-header'>💰 Kişisel Kasa Dağılımı</div>", unsafe_allow_html=True)
+if page == "⚡ ULTRA ATAK":
+    st.markdown("<div class='terminal-header'>💰 Kişisel Kasa Dağılımı</div>", unsafe_allow_html=True)
+
     k1 = st.columns(1)[0]
-
-    # Temel hesaplamalar
-    net_kar = kasa - ana_para
-
-    baslangic_hedef = 2250
-    son_hedef = 4500
-    hedef_farki = son_hedef - baslangic_hedef
-
-    current_pct = 0
-    if hedef_farki > 0:
-        current_pct = max(0, min(100, ((kasa - baslangic_hedef) / hedef_farki) * 100))
-
-    kalan_tutar = max(0, son_hedef - kasa)
-
-    # Durum analizi
-    if net_kar < 0:
-        sistem_durumu = "RİSKLİ"
-        durum_renk = "#ff4b4b"
-    elif wr_oran >= 70:
-        sistem_durumu = "ULTRA ATAK"
-        durum_renk = "#00ff41"
-    elif wr_oran >= 55:
-        sistem_durumu = "DENGELİ"
-        durum_renk = "#ffae00"
-    else:
-        sistem_durumu = "TEMKİNLİ"
-        durum_renk = "#cccccc"
 
     with k1:
         st.markdown(
-            f"""
-            <div class='industrial-card' style='text-align:center; border-top-color: #cc7a00;'>
-                <div style='font-size:11px; color:#666;'>Oguzo Bakiye</div>
-                <div class='highlight'>${og_kasa:,.2f}</div>
-                <div style='margin-top:8px; font-size:11px; color:{durum_renk}; font-weight:700;'>
-                    MOD: {sistem_durumu}
-                </div>
-            </div>
-            """,
+            f"<div class='industrial-card' style='text-align:center; border-top-color: #cc7a00;'><div style='font-size:11px; color:#666;'>Oguzo Bakiye</div><div class='highlight'>${og_kasa:,.2f}</div></div>",
             unsafe_allow_html=True
         )
 
     st.divider()
 
-    # Gelişmiş hedef kartı
+    net_kar = kasa - ana_para
+    current_pct = max(0, min(100, ((kasa - 2250) / (4500 - 2250)) * 100))
+
     st.markdown(
-        f"""
+        f'''
         <div class='industrial-card'>
-            <div class='terminal-header'>HEDEF YOLCULUĞU (${son_hedef:,.0f})</div>
-
-            <div style='display:flex; justify-content:space-between; font-size:11px; color:#777; margin-bottom:6px;'>
-                <span>Başlangıç: ${baslangic_hedef:,.0f}</span>
-                <span>Güncel: ${kasa:,.2f}</span>
-                <span>Hedef: ${son_hedef:,.0f}</span>
-            </div>
-
-            <div style='background:#111; height:10px; border-radius:10px; overflow:hidden; position:relative;'>
+            <div class='terminal-header'>HEDEF YOLCULUĞU (2.250)</div>
+            <div style='background:#111; height:8px; border-radius:10px;'>
                 <div style='background:linear-gradient(90deg, #cc7a00, #ffae00); width:{current_pct}%; height:100%; border-radius:10px;'></div>
             </div>
-
-            <div style='display:flex; justify-content:space-between; margin-top:6px; font-size:10px; color:#555;'>
-                <span>%{current_pct:.1f} tamamlandı</span>
-                <span>Kalan: ${kalan_tutar:,.2f}</span>
-            </div>
+            <div style='text-align:right; font-size:10px; color:#555; margin-top:5px;'>%{current_pct:.1f}</div>
         </div>
-        """,
+        ''',
         unsafe_allow_html=True
     )
 
-    # Milestone bar
-    milestone_1 = 3000
-    milestone_2 = 3750
-    milestone_3 = 4500
-
-    def milestone_check(x):
-        return "#00ff41" if kasa >= x else "#444"
-
-    st.markdown(
-        f"""
-        <div class='industrial-card'>
-            <div class='terminal-header'>🎯 MILESTONE TAKİBİ</div>
-            <div class='terminal-row'><span>$3,000</span><span style='color:{milestone_check(milestone_1)};'>{"TAMAMLANDI" if kasa >= milestone_1 else "BEKLİYOR"}</span></div>
-            <div class='terminal-row'><span>$3,750</span><span style='color:{milestone_check(milestone_2)};'>{"TAMAMLANDI" if kasa >= milestone_2 else "BEKLİYOR"}</span></div>
-            <div class='terminal-row'><span>$4,500</span><span style='color:{milestone_check(milestone_3)};'>{"TAMAMLANDI" if kasa >= milestone_3 else "BEKLİYOR"}</span></div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    col1, col2, col3, col4 = st.columns(4)
+    col1, col2, col3 = st.columns(3)
 
     with col1:
         st.markdown(
-            f"""
-            <div class='industrial-card' style='height:230px;'>
-                <div class='terminal-header'>💎 KASA</div>
-                <div class='terminal-row'><span>TOPLAM</span><span class='highlight'>${kasa:,.2f}</span></div>
-                <div class='terminal-row'><span>K/Z</span><span style='color:{'#00ff41' if net_kar >= 0 else '#ff4b4b'};' class='val-std'>${net_kar:,.2f}</span></div>
-                <div class='terminal-row'><span>ANA PARA</span><span class='val-std'>${ana_para:,.2f}</span></div>
-            </div>
-            """,
+            f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>💎 KASA</div><div class='terminal-row'><span>TOPLAM</span><span class='highlight'>${kasa:,.2f}</span></div><div class='terminal-row'><span>K/Z</span><span style='color:{'#00ff41' if net_kar >= 0 else '#ff4b4b'};' class='val-std'>${net_kar:,.2f}</span></div></div>",
             unsafe_allow_html=True
         )
 
@@ -1482,73 +1412,24 @@ if check_password():
                 raise Exception("yfinance yok")
         except:
             st.markdown(
-                """
-                <div class='industrial-card' style='height:230px;'>
-                    <div class='terminal-header'>⚡ PİYASA</div>
-                    <div class='highlight'>Piyasa verisi bekleniyor...</div>
-                </div>
-                """,
+                "<div class='industrial-card' style='height:230px;'><div class='terminal-header'>⚡ PİYASA</div><div class='highlight'>Piyasa verisi bekleniyor...</div></div>",
                 unsafe_allow_html=True
             )
 
     with col3:
         st.markdown(
-            f"""
-            <div class='industrial-card' style='height:230px;'>
-                <div class='terminal-header'>📊 Win Rate</div>
-                <div style='text-align:center;'>
-                    <span style='font-size:45px; font-weight:900; color:#cc7a00; font-family:Orbitron;'>%{wr_oran}</span>
-                </div>
-                <div style='text-align:center; font-size:11px; color:#777; margin-top:8px;'>
-                    Sistem Modu: <span style='color:{durum_renk}; font-weight:700;'>{sistem_durumu}</span>
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-    with col4:
-        roi = 0 if ana_para == 0 else (net_kar / ana_para) * 100
-        st.markdown(
-            f"""
-            <div class='industrial-card' style='height:230px;'>
-                <div class='terminal-header'>🚀 ROI</div>
-                <div style='text-align:center;'>
-                    <span style='font-size:45px; font-weight:900; color:{'#00ff41' if roi >= 0 else '#ff4b4b'}; font-family:Orbitron;'>
-                        %{roi:.1f}
-                    </span>
-                </div>
-                <div style='text-align:center; font-size:11px; color:#777; margin-top:8px;'>
-                    Ana paraya göre performans
-                </div>
-            </div>
-            """,
+            f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>📊 Win Rate</div><div style='text-align:center;'><span style='font-size:45px; font-weight:900; color:#cc7a00; font-family:Orbitron;'>%{wr_oran}</span></div></div>",
             unsafe_allow_html=True
         )
 
     st.markdown("### 📜 SON İŞLEMLER")
-
-    # Son işlemleri satırlı hale getirme
-    log_satirlari = str(son_islemler_raw).split("\n")
-    log_html = "".join([
-        f"<div style='padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.05); color:#888; font-family:JetBrains Mono;'>{satir}</div>"
-        for satir in log_satirlari if satir.strip()
-    ])
-
     st.markdown(
-        f"""
-        <div class='industrial-card'>
-            <div class='terminal-header'>AKTİVİTE LOGLARI</div>
-            <div style='max-height:260px; overflow-y:auto; padding-right:4px;'>
-                {log_html if log_html else "<div style='color:#666;'>Henüz işlem kaydı yok.</div>"}
-            </div>
-        </div>
-        """,
+        f"<div class='industrial-card'><div class='terminal-header'>AKTİVİTE LOGLARI</div><p style='font-family:JetBrains Mono; color:#888;'>{son_islemler_raw}</p></div>",
         unsafe_allow_html=True
     )
 
-    elif page == "⚽ FORMLINE":
-        st.markdown(
+elif page == "⚽ FORMLINE":
+    st.markdown("## ⚽ FORMLINE")
             f"<div class='industrial-card'><div class='terminal-header'>📈 PERFORMANS</div><div class='terminal-row'><span>NET:</span><span style='color:#00ff41; font-size:32px; font-family:Orbitron;'>${toplam_bahis_kar:,.2f}</span></div></div>",
             unsafe_allow_html=True
         )
