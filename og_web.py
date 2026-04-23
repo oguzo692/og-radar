@@ -922,7 +922,7 @@ if check_password():
                 unsafe_allow_html=True
             )
 
-                st.divider()
+        st.divider()
 
         net_kar = kasa - ana_para
 
