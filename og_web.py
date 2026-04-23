@@ -977,21 +977,25 @@ for m in milestones:
 hero_html = f"""
 <div class='industrial-card' style='padding:26px; border-top:2px solid rgba(255,174,0,0.65) !important; background:linear-gradient(180deg, rgba(18,18,18,0.96), rgba(8,8,8,0.96)) !important; box-shadow:0 0 22px rgba(255,174,0,0.08);'>
     <div class='terminal-header'>🎯 ULTRA ATAK HEDEF YOLCULUĞU</div>
-"""
+
     <div style='display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; gap:12px; flex-wrap:wrap;'>
         <div>
             <div style='font-size:11px; color:#666; letter-spacing:2px;'>BAŞLANGIÇ</div>
             <div class='highlight' style='font-size:18px;'>${start:,.0f}</div>
         </div>
+
         <div style='text-align:center;'>
             <div style='font-size:11px; color:#666; letter-spacing:2px;'>ANLIK İLERLEME</div>
             <div style='font-size:28px; font-family:Orbitron; color:#ffae00; font-weight:900;'>%{progress*100:.1f}</div>
         </div>
+
         <div style='text-align:right;'>
             <div style='font-size:11px; color:#666; letter-spacing:2px;'>HEDEF</div>
             <div class='highlight' style='font-size:18px;'>${target:,.0f}</div>
         </div>
     </div>
+</div>
+"""
 
     <div style='position:relative; margin-top:6px; padding-bottom:34px;'>
         <div style='background:rgba(255,255,255,0.05); height:14px; border-radius:999px; overflow:hidden; border:1px solid rgba(255,255,255,0.05); position:relative;'>
