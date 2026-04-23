@@ -913,11 +913,10 @@ if check_password():
             st.session_state["password_correct"] = False
             st.rerun()
 
-   if page == "⚡ ULTRA ATAK":
+  if page == "⚡ ULTRA ATAK":
+    st.markdown("<div class='terminal-header'>💰 Kişisel Kasa</div>", unsafe_allow_html=True)
 
-       st.markdown("<div class='terminal-header'>💰 Kişisel Kasa</div>", unsafe_allow_html=True)
-
-       st.divider()
+    st.divider()
 
     net_kar = kasa - ana_para
 
