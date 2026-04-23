@@ -1550,155 +1550,19 @@ if check_password():
         next_target = next((t for t in ultra_targets if t > kasa), ultra_final_target)
 
         k1 = st.columns(1)[0]
-    with k1:
-        st.markdown(
-            f"<div class='industrial-card premium-panel' style='text-align:center; border-top-color: #cc7a00;'><div style='font-size:11px; color:#666;'>Oguzo Bakiye</div><div class='highlight'>${og_kasa:,.2f}</div></div>",
-            unsafe_allow_html=True
-        )
 
-    st.markdown(
-        f"""
-        <div class='goal-shell'>
-            <div class='goal-topline'>
-                <div>
-                    <div class='goal-kicker'>Ultra Atak · 5 Aşamalı Hedef Rotası</div>
-                    <div class='goal-main'>{fmt_money_usd(kasa)}</div>
-                </div>
-                <div class='goal-side'>
-                    <div class='goal-side-label'>Tamamlanma</div>
-                    <div class='goal-side-value'>%{current_pct:.1f}</div>
-                </div>
-            </div>
-
-            <div class='goal-track'>
-                <div class='goal-fill' style='width:{current_pct:.2f}%;'></div>
-            </div>
-
-            <div class='goal-markers'>
-                {''.join([
-                    f"<div class='goal-marker {'reached' if kasa >= target else ''}' style='left:{(idx / ultra_step_count) * 100:.2f}%;'><div class='goal-dot'></div><div class='goal-label'>{fmt_money_usd(target)}</div></div>"
-                    for idx, target in enumerate(ultra_targets)
-                ])}
-            </div>
-
-            <div class='goal-bottomline'>
-                <span>Başlangıç: <strong>{fmt_money_usd(ultra_ana_para)}</strong></span>
-                <span>Geçilen hedef: <strong>{reached_count}/{ultra_step_count}</strong></span>
-                <span>Sıradaki hedef: <strong>{fmt_money_usd(next_target)}</strong></span>
-                <span>Finale kalan: <strong>{fmt_money_usd(remaining_to_final)}</strong></span>
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    col1, col2, col3 = st.columns(3)
-
-    with col1:
-        st.markdown(
-            f"<div class='industrial-card premium-panel' style='height:230px;'><div class='terminal-header'>💎 KASA</div><div class='terminal-row'><span>TOPLAM</span><span class='highlight'>${kasa:,.2f}</span></div><div class='terminal-row'><span>ANA PARA</span><span class='highlight'>${ultra_ana_para:,.2f}</span></div><div class='terminal-row'><span>K/Z</span><span style='color:{'#00ff41' if net_kar >= 0 else '#ff4b4b'};' class='val-std'>{fmt_money_usd_compact(net_kar)}</span></div></div>",
-            unsafe_allow_html=True
-        )
-
-    with col2:
-        try:
-            if yf is not None:
-                btc = yf.Ticker("BTC-USD").history(period="1d")["Close"].iloc[-1]
-                eth = yf.Ticker("ETH-USD").history(period="1d")["Close"].iloc[-1]
-                sol = yf.Ticker("SOL-USD").history(period="1d")["Close"].iloc[-1]
-                st.markdown(
-                    f"""
-                    <div class='industrial-card premium-panel' style='height:230px;'>
-                        <div class='terminal-header'>⚡ PİYASA</div>
-                        <div class='terminal-row'><span>BITCOIN</span><span class='highlight'>${btc:,.0f}</span></div>
-                        <div class='terminal-row'><span>ETHEREUM</span><span style='color:#cc7a00;'>${eth:,.0f}</span></div>
-                        <div class='terminal-row'><span>SOLANA</span><span style='color:#cc7a00;'>${sol:,.2f}</span></div>
-                    </div>
-                    """,
-                    unsafe_allow_html=True
-                )
-            else:
-                raise Exception("yfinance yok")
-        except:
+        with k1:
             st.markdown(
-                "<div class='industrial-card premium-panel' style='height:230px;'><div class='terminal-header'>⚡ PİYASA</div><div class='highlight'>Piyasa verisi bekleniyor...</div></div>",
+                f"<div class='industrial-card' style='text-align:center; border-top-color: #cc7a00;'><div style='font-size:11px; color:#666;'>Oguzo Bakiye</div><div class='highlight'>${og_kasa:,.2f}</div></div>",
                 unsafe_allow_html=True
             )
 
-    with col3:
-        st.markdown(
-            f"<div class='industrial-card premium-panel' style='height:230px;'><div class='terminal-header'>🎯 HEDEF DURUMU</div><div class='terminal-row'><span>SON HEDEF</span><span class='highlight'>${ultra_final_target:,.2f}</span></div><div class='terminal-row'><span>AŞAMA</span><span style='color:#cc7a00;' class='highlight'>{reached_count}/{ultra_step_count}</span></div><div class='terminal-row'><span>İLERLEME</span><span style='color:#ffae00;' class='val-std'>%{current_pct:.1f}</span></div></div>",
-            unsafe_allow_html=True
-        )
+    elif page == "⚽ FORMLINE":
+        st.markdown("<div class='terminal-header'>⚽ FORMLINE</div>", unsafe_allow_html=True)
 
-    st.markdown("### 📜 SON İŞLEMLER")
-    st.markdown(
-        f"<div class='industrial-card premium-panel'><div class='terminal-header'>AKTİVİTE LOGLARI</div><p style='font-family:JetBrains Mono; color:#888;'>{son_islemler_raw}</p></div>",
-        unsafe_allow_html=True
-    )
+    elif page == "📊 Portföy Takip":
+        render_portfolio_v2(live_vars)
 
-elif page == "⚽ FORMLINE":
-    st.markdown("## ⚽ FORMLINE")
-
-    st.markdown(
-        f"""
-        <div class='industrial-card premium-panel'>
-            <div class='terminal-header'>💸 TOPLAM KAR / ZARAR</div>
-            <div style='display:flex; justify-content:space-between; align-items:flex-end; gap:12px; flex-wrap:wrap;'>
-                <div>
-                    <div style='font-size:11px; color:#666; letter-spacing:2px; text-transform:uppercase;'>Kuponlardan Hesaplanan Net Sonuç</div>
-                    <div class='val-std' style='color:{'#00ff41' if toplam_bahis_kar >= 0 else '#ff4b4b'} !important; font-size:42px !important; margin-top:10px;'>{fmt_money_usd_compact(toplam_bahis_kar)}</div>
-                </div>
-                <div style='text-align:right;'>
-                    <div style='font-size:10px; color:#666; letter-spacing:2px; text-transform:uppercase; margin-bottom:8px;'>Win Rate</div>
-                    <div style='font-family:Orbitron; font-size:28px; color:#ffae00;'>%{wr_oran}</div>
-                </div>
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    t13, t12, t11, t10, t9, t8, t7, t6, t5, t4, t1, t2, t3 = st.tabs([
-        "⏳ W13", "❌ W12", "❌ W11", "✅ W10", "❌ W9", "❌ W8", "✅ W7",
-        "❌ W6", "❌ W5", "❌ W4", "✅ W3", "✅ W2", "❌ W1"
-    ])
-
-    with t13:
-        st.markdown(w13_coupon_html, unsafe_allow_html=True)
-    with t12:
-        st.markdown(w12_coupon_html, unsafe_allow_html=True)
-    with t11:
-        st.markdown(w11_coupon_html, unsafe_allow_html=True)
-    with t10:
-        st.markdown(w10_coupon_html, unsafe_allow_html=True)
-    with t9:
-        st.markdown(w9_coupon_html, unsafe_allow_html=True)
-    with t8:
-        st.markdown(w8_coupon_html, unsafe_allow_html=True)
-    with t7:
-        st.markdown(w7_coupon_html, unsafe_allow_html=True)
-    with t6:
-        st.markdown(w6_coupon_html, unsafe_allow_html=True)
-    with t5:
-        st.markdown(w5_coupon_html, unsafe_allow_html=True)
-    with t4:
-        st.markdown(w4_coupon_html, unsafe_allow_html=True)
-    with t1:
-        st.markdown(w3_coupon_html, unsafe_allow_html=True)
-    with t2:
-        st.markdown(w2_coupon_html, unsafe_allow_html=True)
-    with t3:
-        st.markdown(w1_coupon_html, unsafe_allow_html=True)
-
-elif page == "📊 Portföy Takip":
-    render_portfolio_v2(live_vars)
-
-elif page == "💗 LOVE FUND":
-    if check_love_password():
-        render_love_fund(live_vars)
-
-st.markdown(
-    f"<div style='text-align:center; color:#444; font-size:12px;'>...</div>",
-    unsafe_allow_html=True
-)
+    elif page == "💗 LOVE FUND":
+        if check_love_password():
+            render_love_fund(live_vars)
