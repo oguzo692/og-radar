@@ -67,6 +67,23 @@ def fmt_unit_value(qty, unit):
     else:
         return f"{qty:,.4f}".rstrip("0").rstrip(".")
 
+# --- RÜTBE FONKSİYONU ---
+def rutbe_getir(puan_str):
+    try:
+        p = int(float(puan_str))
+    except:
+        p = 0
+    if p <= 3:
+        return "Hılez"
+    elif p <= 6:
+        return "Tecrübeli Hılez"
+    elif p <= 9:
+        return "Bu Abi Biri Mi?"
+    elif p <= 11:
+        return "Miço"
+    else:
+        return "Grand Miço"
+
 live_vars = get_live_data()
 
 kasa = float(get_num(live_vars, "kasa", 600))
