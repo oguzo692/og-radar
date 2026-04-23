@@ -1430,9 +1430,30 @@ if page == "⚡ ULTRA ATAK":
 
 elif page == "⚽ FORMLINE":
     st.markdown("## ⚽ FORMLINE")
-            f"<div class='industrial-card'><div class='terminal-header'>📈 PERFORMANS</div><div class='terminal-row'><span>NET:</span><span style='color:#00ff41; font-size:32px; font-family:Orbitron;'>${toplam_bahis_kar:,.2f}</span></div></div>",
-            unsafe_allow_html=True
-        )
+
+    st.markdown(
+        f"""
+        <div class='industrial-card'>
+            <div class='terminal-header'>📈 PERFORMANS</div>
+
+            <div class='terminal-row'>
+                <span>NET</span>
+                <span style='color:#00ff41;'>$300</span>
+            </div>
+
+            <div class='terminal-row'>
+                <span>WIN RATE</span>
+                <span style='color:#cc7a00;'>%{wr_oran}</span>
+            </div>
+
+            <div class='terminal-row'>
+                <span>DURUM</span>
+                <span style='color:#cc7a00;'>AKTİF</span>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
         t13, t12, t11, t10, t9, t8, t7, t6, t5, t4, t1, t2, t3 = st.tabs([
             "⏳ W13", "❌ W12", "❌ W11", "✅ W10", "❌ W9", "❌ W8", "✅ W7",
