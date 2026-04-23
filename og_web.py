@@ -1355,7 +1355,7 @@ if check_password():
             st.rerun()
 
     if page == "⚡ ULTRA ATAK":
-    st.markdown("<div class='terminal-header'>💰 Kişisel Kasa Dağılımı</div>", unsafe_allow_html=True)
+        st.markdown("<div class='terminal-header'>💰 Kişisel Kasa Dağılımı</div>", unsafe_allow_html=True)
     k1 = st.columns(1)[0]
 
     # Temel hesaplamalar
