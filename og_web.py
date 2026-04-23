@@ -914,36 +914,10 @@ if check_password():
             st.rerun()
 
 if page == "⚡ ULTRA ATAK":
-    st.markdown("<div class='terminal-header'>💰 Kişisel Kasa</div>", unsafe_allow_html=True)
-
-    st.divider()
-
-    net_kar = kasa - ana_para
-
-    start = 2250
-    target = 22500
-    steps = 6
-    step_size = (target - start) / steps
-
-    progress = (kasa - start) / (target - start)
-    progress = max(0, min(1, progress))
-
-    milestones = [start + step_size * i for i in range(1, steps)]
-
-    next_target = target
-    for m in milestones:
-        if kasa < m:
-            next_target = m
-            break
-
-    remaining = max(0, next_target - kasa)
-
-if page == "⚡ ULTRA ATAK":
     milestone_html = ""
     label_html = ""
 
     st.markdown("<div class='terminal-header'>💰 Kişisel Kasa</div>", unsafe_allow_html=True)
-
     st.divider()
 
     net_kar = kasa - ana_para
@@ -966,114 +940,114 @@ if page == "⚡ ULTRA ATAK":
 
     remaining = max(0, next_target - kasa)
 
-milestone_html = ""
-label_html = ""
+    for m in milestones:
+        pct = ((m - start) / (target - start)) * 100
+        milestone_html += (
+            f"<div style='position:absolute; left:{pct}%; top:-4px; width:2px; "
+            f"height:18px; background:rgba(255,174,0,0.8);'></div>"
+        )
+        label_html += (
+            f"<div style='position:absolute; left:{pct}%; top:22px; "
+            f"transform:translateX(-50%); font-size:10px; color:#777;'>{int(m)}</div>"
+        )
 
-milestone_html = ""
-label_html = ""
+    hero_html = f"""
+    <div class='industrial-card' style='padding:26px; border-top:2px solid rgba(255,174,0,0.65) !important; background:linear-gradient(180deg, rgba(18,18,18,0.96), rgba(8,8,8,0.96)) !important; box-shadow:0 0 22px rgba(255,174,0,0.08);'>
+        <div class='terminal-header'>🎯 ULTRA ATAK HEDEF YOLCULUĞU</div>
 
-for m in milestones:
-    pct = ((m - start) / (target - start)) * 100
-    milestone_html += f"<div style='position:absolute; left:{pct}%; top:-4px; width:2px; height:18px; background:rgba(255,174,0,0.8);'></div>"
-    label_html += f"<div style='position:absolute; left:{pct}%; top:22px; transform:translateX(-50%); font-size:10px; color:#777;'>{int(m)}</div>"
+        <div style='display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; gap:12px; flex-wrap:wrap;'>
+            <div>
+                <div style='font-size:11px; color:#666; letter-spacing:2px;'>BAŞLANGIÇ</div>
+                <div class='highlight' style='font-size:18px;'>${start:,.0f}</div>
+            </div>
 
-hero_html = f"""
-<div class='industrial-card' style='padding:26px; border-top:2px solid rgba(255,174,0,0.65) !important; background:linear-gradient(180deg, rgba(18,18,18,0.96), rgba(8,8,8,0.96)) !important; box-shadow:0 0 22px rgba(255,174,0,0.08);'>
-    <div class='terminal-header'>🎯 ULTRA ATAK HEDEF YOLCULUĞU</div>
+            <div style='text-align:center;'>
+                <div style='font-size:11px; color:#666; letter-spacing:2px;'>ANLIK İLERLEME</div>
+                <div style='font-size:28px; font-family:Orbitron; color:#ffae00; font-weight:900;'>%{progress*100:.1f}</div>
+            </div>
 
-    <div style='display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; gap:12px; flex-wrap:wrap;'>
-        <div>
-            <div style='font-size:11px; color:#666; letter-spacing:2px;'>BAŞLANGIÇ</div>
-            <div class='highlight' style='font-size:18px;'>${start:,.0f}</div>
+            <div style='text-align:right;'>
+                <div style='font-size:11px; color:#666; letter-spacing:2px;'>HEDEF</div>
+                <div class='highlight' style='font-size:18px;'>${target:,.0f}</div>
+            </div>
         </div>
 
-        <div style='text-align:center;'>
-            <div style='font-size:11px; color:#666; letter-spacing:2px;'>ANLIK İLERLEME</div>
-            <div style='font-size:28px; font-family:Orbitron; color:#ffae00; font-weight:900;'>%{progress*100:.1f}</div>
+        <div style='position:relative; margin-top:6px; padding-bottom:34px;'>
+            <div style='background:rgba(255,255,255,0.05); height:14px; border-radius:999px; overflow:hidden; border:1px solid rgba(255,255,255,0.05); position:relative;'>
+                <div style='width:{progress*100}%; height:100%; border-radius:999px; background:linear-gradient(90deg, #cc7a00 0%, #ffae00 55%, #ffd36a 100%); box-shadow:0 0 18px rgba(255,174,0,0.35);'></div>
+                {milestone_html}
+            </div>
+            {label_html}
         </div>
 
-        <div style='text-align:right;'>
-            <div style='font-size:11px; color:#666; letter-spacing:2px;'>HEDEF</div>
-            <div class='highlight' style='font-size:18px;'>${target:,.0f}</div>
+        <div style='display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-top:10px;'>
+            <div style='background:rgba(255,255,255,0.03); padding:10px 14px; border-radius:8px; border:1px solid rgba(255,255,255,0.04);'>
+                <div style='font-size:10px; color:#666; letter-spacing:1.5px;'>MEVCUT KASA</div>
+                <div class='highlight' style='font-size:16px;'>${kasa:,.2f}</div>
+            </div>
+
+            <div style='background:rgba(255,255,255,0.03); padding:10px 14px; border-radius:8px; border:1px solid rgba(255,255,255,0.04);'>
+                <div style='font-size:10px; color:#666; letter-spacing:1.5px;'>SONRAKİ ARA HEDEF</div>
+                <div class='highlight' style='font-size:16px;'>${next_target:,.0f}</div>
+            </div>
+
+            <div style='background:rgba(255,255,255,0.03); padding:10px 14px; border-radius:8px; border:1px solid rgba(255,255,255,0.04);'>
+                <div style='font-size:10px; color:#666; letter-spacing:1.5px;'>KALAN TUTAR</div>
+                <div style='font-size:16px; font-family:Orbitron; color:#00ff41; font-weight:800;'>${remaining:,.2f}</div>
+            </div>
         </div>
     </div>
+    """
 
-    <div style='position:relative; margin-top:6px; padding-bottom:34px;'>
-        <div style='background:rgba(255,255,255,0.05); height:14px; border-radius:999px; overflow:hidden; border:1px solid rgba(255,255,255,0.05); position:relative;'>
-            <div style='width:{progress*100}%; height:100%; border-radius:999px; background:linear-gradient(90deg, #cc7a00 0%, #ffae00 55%, #ffd36a 100%); box-shadow:0 0 18px rgba(255,174,0,0.35);'></div>
-            {milestone_html}
-        </div>
-        {label_html}
-    </div>
+    st.markdown(textwrap.dedent(hero_html), unsafe_allow_html=True)
 
-    <div style='display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-top:10px;'>
-        <div style='background:rgba(255,255,255,0.03); padding:10px 14px; border-radius:8px; border:1px solid rgba(255,255,255,0.04);'>
-            <div style='font-size:10px; color:#666; letter-spacing:1.5px;'>MEVCUT KASA</div>
-            <div class='highlight' style='font-size:16px;'>${kasa:,.2f}</div>
-        </div>
+    col1, col2, col3 = st.columns(3)
 
-        <div style='background:rgba(255,255,255,0.03); padding:10px 14px; border-radius:8px; border:1px solid rgba(255,255,255,0.04);'>
-            <div style='font-size:10px; color:#666; letter-spacing:1.5px;'>SONRAKİ ARA HEDEF</div>
-            <div class='highlight' style='font-size:16px;'>${next_target:,.0f}</div>
-        </div>
-
-        <div style='background:rgba(255,255,255,0.03); padding:10px 14px; border-radius:8px; border:1px solid rgba(255,255,255,0.04);'>
-            <div style='font-size:10px; color:#666; letter-spacing:1.5px;'>KALAN TUTAR</div>
-            <div style='font-size:16px; font-family:Orbitron; color:#00ff41; font-weight:800;'>${remaining:,.2f}</div>
-        </div>
-    </div>
-</div>
-"""
-
-st.markdown(textwrap.dedent(hero_html), unsafe_allow_html=True)
-
-col1, col2, col3 = st.columns(3)
-
-with col1:
-    st.markdown(
-        f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>💎 KASA</div><div class='terminal-row'><span>TOPLAM</span><span class='highlight'>${kasa:,.2f}</span></div><div class='terminal-row'><span>K/Z</span><span style='color:{'#00ff41' if net_kar >= 0 else '#ff4b4b'};' class='val-std'>${net_kar:,.2f}</span></div></div>",
-        unsafe_allow_html=True
-    )
-
-with col2:
-    try:
-        if yf is not None:
-            btc = yf.Ticker("BTC-USD").history(period="1d")["Close"].iloc[-1]
-            eth = yf.Ticker("ETH-USD").history(period="1d")["Close"].iloc[-1]
-            sol = yf.Ticker("SOL-USD").history(period="1d")["Close"].iloc[-1]
-
-            st.markdown(
-                f"""
-                <div class='industrial-card' style='height:230px;'>
-                    <div class='terminal-header'>⚡ PİYASA</div>
-                    <div class='terminal-row'><span>BITCOIN</span><span class='highlight'>${btc:,.0f}</span></div>
-                    <div class='terminal-row'><span>ETHEREUM</span><span style='color:#cc7a00;'>${eth:,.0f}</span></div>
-                    <div class='terminal-row'><span>SOLANA</span><span style='color:#cc7a00;'>${sol:,.2f}</span></div>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-        else:
-            raise Exception("yfinance yok")
-    except Exception:
+    with col1:
         st.markdown(
-            "<div class='industrial-card' style='height:230px;'><div class='terminal-header'>⚡ PİYASA</div><div class='highlight'>Piyasa verisi bekleniyor...</div></div>",
+            f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>💎 KASA</div><div class='terminal-row'><span>TOPLAM</span><span class='highlight'>${kasa:,.2f}</span></div><div class='terminal-row'><span>K/Z</span><span style='color:{'#00ff41' if net_kar >= 0 else '#ff4b4b'};' class='val-std'>${net_kar:,.2f}</span></div></div>",
             unsafe_allow_html=True
         )
 
-with col3:
+    with col2:
+        try:
+            if yf is not None:
+                btc = yf.Ticker("BTC-USD").history(period="1d")["Close"].iloc[-1]
+                eth = yf.Ticker("ETH-USD").history(period="1d")["Close"].iloc[-1]
+                sol = yf.Ticker("SOL-USD").history(period="1d")["Close"].iloc[-1]
+
+                st.markdown(
+                    f"""
+                    <div class='industrial-card' style='height:230px;'>
+                        <div class='terminal-header'>⚡ PİYASA</div>
+                        <div class='terminal-row'><span>BITCOIN</span><span class='highlight'>${btc:,.0f}</span></div>
+                        <div class='terminal-row'><span>ETHEREUM</span><span style='color:#cc7a00;'>${eth:,.0f}</span></div>
+                        <div class='terminal-row'><span>SOLANA</span><span style='color:#cc7a00;'>${sol:,.2f}</span></div>
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
+            else:
+                raise Exception("yfinance yok")
+        except Exception:
+            st.markdown(
+                "<div class='industrial-card' style='height:230px;'><div class='terminal-header'>⚡ PİYASA</div><div class='highlight'>Piyasa verisi bekleniyor...</div></div>",
+                unsafe_allow_html=True
+            )
+
+    with col3:
+        st.markdown(
+            f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>📊 Win Rate</div><div style='text-align:center;'><span style='font-size:45px; font-weight:900; color:#cc7a00; font-family:Orbitron;'>%{wr_oran}</span></div></div>",
+            unsafe_allow_html=True
+        )
+
+    st.markdown("### 📜 SON İŞLEMLER")
     st.markdown(
-        f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>📊 Win Rate</div><div style='text-align:center;'><span style='font-size:45px; font-weight:900; color:#cc7a00; font-family:Orbitron;'>%{wr_oran}</span></div></div>",
+        f"<div class='industrial-card'><div class='terminal-header'>AKTİVİTE LOGLARI</div><p style='font-family:JetBrains Mono; color:#888;'>{son_islemler_raw}</p></div>",
         unsafe_allow_html=True
     )
 
-st.markdown("### 📜 SON İŞLEMLER")
-st.markdown(
-    f"<div class='industrial-card'><div class='terminal-header'>AKTİVİTE LOGLARI</div><p style='font-family:JetBrains Mono; color:#888;'>{son_islemler_raw}</p></div>",
-    unsafe_allow_html=True
-)
-
-   elif page == "⚽ FORMLINE":
+elif page == "⚽ FORMLINE":
     st.markdown(
         f"""
         <div class='industrial-card'>
@@ -1089,30 +1063,30 @@ st.markdown(
         unsafe_allow_html=True
     )
 
-    t10, t9, t8, t7, t6, t5, t4, t3, t2, t1 = st.tabs(
-        ["🆕 W10", "❌ W9", "❌ W8", "✅ W7", "❌ W6", "❌ W5", "❌ W4", "✅ W3", "✅ W2", "❌ W1"]
+    t0, t1, t2, t3, t4, t5, t6, t7, t8, t9 = st.tabs(
+        ["🆕 W0", "W1", "W2", "W3", "W4", "W5", "W6", "W7", "W8", "W9"]
     )
 
-    with t10:
-        st.markdown(w10_coupon_html, unsafe_allow_html=True)
-    with t9:
-        st.markdown(w9_coupon_html, unsafe_allow_html=True)
-    with t8:
-        st.markdown(w8_coupon_html, unsafe_allow_html=True)
-    with t7:
-        st.markdown(w7_coupon_html, unsafe_allow_html=True)
-    with t6:
-        st.markdown(w6_coupon_html, unsafe_allow_html=True)
-    with t5:
-        st.markdown(w5_coupon_html, unsafe_allow_html=True)
-    with t4:
-        st.markdown(w4_coupon_html, unsafe_allow_html=True)
-    with t3:
-        st.markdown(w3_coupon_html, unsafe_allow_html=True)
-    with t2:
-        st.markdown(w2_coupon_html, unsafe_allow_html=True)
+    with t0:
+        st.markdown(w0_coupon_html if 'w0_coupon_html' in locals() else "<div class='industrial-card'>W0 henüz yok.</div>", unsafe_allow_html=True)
     with t1:
         st.markdown(w1_coupon_html, unsafe_allow_html=True)
+    with t2:
+        st.markdown(w2_coupon_html, unsafe_allow_html=True)
+    with t3:
+        st.markdown(w3_coupon_html, unsafe_allow_html=True)
+    with t4:
+        st.markdown(w4_coupon_html, unsafe_allow_html=True)
+    with t5:
+        st.markdown(w5_coupon_html, unsafe_allow_html=True)
+    with t6:
+        st.markdown(w6_coupon_html, unsafe_allow_html=True)
+    with t7:
+        st.markdown(w7_coupon_html, unsafe_allow_html=True)
+    with t8:
+        st.markdown(w8_coupon_html, unsafe_allow_html=True)
+    with t9:
+        st.markdown(w9_coupon_html, unsafe_allow_html=True)
 
 elif page == "📊 Portföy Takip":
     render_portfolio_v2(live_vars)
