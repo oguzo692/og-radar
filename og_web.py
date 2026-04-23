@@ -1073,13 +1073,26 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-    elif page == "⚽ FORMLINE":
-        st.markdown(
-        f"<div class='industrial-card'><div class='terminal-header'>📈 PERFORMANS</div><div class='terminal-row'><span>NET:</span><span style='color:#00ff41; font-size:32px; font-family:Orbitron;'>${toplam_bahis_kar:,.2f}</span></div></div>",
+   elif page == "⚽ FORMLINE":
+    st.markdown(
+        f"""
+        <div class='industrial-card'>
+            <div class='terminal-header'>📈 PERFORMANS</div>
+            <div class='terminal-row'>
+                <span>NET:</span>
+                <span style='color:#00ff41; font-size:32px; font-family:Orbitron;'>
+                    ${toplam_bahis_kar:,.2f}
+                </span>
+            </div>
+        </div>
+        """,
         unsafe_allow_html=True
     )
 
-    t10, t9, t8, t7, t6, t5, t4, t1, t2, t3 = st.tabs(["🆕 W10", "❌ W9", "❌ W8", "✅ W7", "❌ W6", "❌ W5", "❌ W4", "✅ W3", "✅ W2", "❌ W1"])
+    t10, t9, t8, t7, t6, t5, t4, t3, t2, t1 = st.tabs(
+        ["🆕 W10", "❌ W9", "❌ W8", "✅ W7", "❌ W6", "❌ W5", "❌ W4", "✅ W3", "✅ W2", "❌ W1"]
+    )
+
     with t10:
         st.markdown(w10_coupon_html, unsafe_allow_html=True)
     with t9:
@@ -1094,11 +1107,11 @@ st.markdown(
         st.markdown(w5_coupon_html, unsafe_allow_html=True)
     with t4:
         st.markdown(w4_coupon_html, unsafe_allow_html=True)
-    with t1:
+    with t3:
         st.markdown(w3_coupon_html, unsafe_allow_html=True)
     with t2:
         st.markdown(w2_coupon_html, unsafe_allow_html=True)
-    with t3:
+    with t1:
         st.markdown(w1_coupon_html, unsafe_allow_html=True)
 
 elif page == "📊 Portföy Takip":
