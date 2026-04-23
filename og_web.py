@@ -913,7 +913,7 @@ if check_password():
             st.session_state["password_correct"] = False
             st.rerun()
 
-    if page == "⚡ ULTRA ATAK":
+   if page == "⚡ ULTRA ATAK":
 
     st.markdown("<div class='terminal-header'>💰 Kişisel Kasa</div>", unsafe_allow_html=True)
 
@@ -926,22 +926,48 @@ if check_password():
     steps = 6
     step_size = (target - start) / steps
 
-        progress = (kasa - start) / (target - start)
-        progress = max(0, min(1, progress))
+    progress = (kasa - start) / (target - start)
+    progress = max(0, min(1, progress))
 
-        milestones = [start + step_size * i for i in range(1, steps)]
+    milestones = [start + step_size * i for i in range(1, steps)]
 
-        next_target = target
-        for m in milestones:
-            if kasa < m:
-                next_target = m
-                break
+    next_target = target
+    for m in milestones:
+        if kasa < m:
+            next_target = m
+            break
 
-        remaining = max(0, next_target - kasa)
+    remaining = max(0, next_target - kasa)
 
-        milestone_html = ""
-        label_html = ""
+    milestone_html = ""
+    label_html = ""if page == "⚡ ULTRA ATAK":
 
+    st.markdown("<div class='terminal-header'>💰 Kişisel Kasa</div>", unsafe_allow_html=True)
+
+    st.divider()
+
+    net_kar = kasa - ana_para
+
+    start = 2250
+    target = 22500
+    steps = 6
+    step_size = (target - start) / steps
+
+    progress = (kasa - start) / (target - start)
+    progress = max(0, min(1, progress))
+
+    milestones = [start + step_size * i for i in range(1, steps)]
+
+    next_target = target
+    for m in milestones:
+        if kasa < m:
+            next_target = m
+            break
+
+    remaining = max(0, next_target - kasa)
+
+    milestone_html = ""
+    label_html = ""
         for m in milestones:
             pct = ((m - start) / (target - start)) * 100
             milestone_html += f"<div style='position:absolute; left:{pct}%; top:-4px; width:2px; height:18px; background:rgba(255,174,0,0.95); box-shadow:0 0 8px rgba(255,174,0,0.35);'></div>"
