@@ -1493,233 +1493,128 @@ def render_love_fund(data):
         st.session_state["love_password_correct"] = False
         st.rerun()
 
-# --- 6. ANA UYGULAMA ---
-if check_password():
-    st.markdown(common_css, unsafe_allow_html=True)
-    st.markdown("<style>.stApp { background: #030303 !important; background-image: none !important; }</style>", unsafe_allow_html=True)
+if page == "⚡ ULTRA ATAK":
+    st.markdown("<div class='terminal-header'>💰 Kişisel Kasa Dağılımı</div>", unsafe_allow_html=True)
+
+    k1 = st.columns(1)[0]
+
+    with k1:
+        st.markdown(
+            f"<div class='industrial-card' style='text-align:center; border-top-color: #cc7a00;'><div style='font-size:11px; color:#666;'>Oguzo Bakiye</div><div class='highlight'>${og_kasa:,.2f}</div></div>",
+            unsafe_allow_html=True
+        )
+
+    st.divider()
+
+    net_kar = kasa - ana_para
+    current_pct = max(0, min(100, ((kasa - 2250) / (4500 - 2250)) * 100))
+
     st.markdown(
-        f'<div class="ticker-wrap"><div class="ticker"><span class="ticker-item">{duyuru_metni}</span><span class="ticker-item">{duyuru_metni}</span></div></div>',
+        f'''
+        <div class='industrial-card'>
+            <div class='terminal-header'>HEDEF YOLCULUĞU (2.250)</div>
+            <div style='background:#111; height:8px; border-radius:10px;'>
+                <div style='background:linear-gradient(90deg, #cc7a00, #ffae00); width:{current_pct}%; height:100%; border-radius:10px;'></div>
+            </div>
+            <div style='text-align:right; font-size:10px; color:#555; margin-top:5px;'>%{current_pct:.1f}</div>
+        </div>
+        ''',
         unsafe_allow_html=True
     )
 
-    with st.sidebar:
-        st.markdown(
-            "<h1 style='color:white; font-family:Orbitron; font-size:24px; letter-spacing:5px; text-align:center; margin-bottom:40px;'>OG CORE</h1>",
-            unsafe_allow_html=True
-        )
-        st.markdown(
-            "<div style='margin-bottom:10px; color:#666; font-size:11px; letter-spacing:2px; font-weight:800;'>SİSTEM MODÜLLERİ</div>",
-            unsafe_allow_html=True
-        )
+    col1, col2, col3 = st.columns(3)
 
-        page = st.radio(
-            "Menu",
-            ["⚡ ULTRA ATAK", "⚽ FORMLINE", "📊 Portföy Takip", "💗 LOVE FUND"],
-            label_visibility="collapsed"
-        )
-
-        st.divider()
+    with col1:
         st.markdown(
-            "<div style='color:#666; font-size:11px; letter-spacing:2px; font-weight:800; margin-bottom:15px;'>📂 TERMİNAL ERİŞİMİ</div>",
+            f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>💎 KASA</div><div class='terminal-row'><span>TOPLAM</span><span class='highlight'>${kasa:,.2f}</span></div><div class='terminal-row'><span>K/Z</span><span style='color:{'#00ff41' if net_kar >= 0 else '#ff4b4b'};' class='val-std'>${net_kar:,.2f}</span></div></div>",
             unsafe_allow_html=True
         )
 
-        admin_pwd = st.text_input("PIN", type="password", placeholder="Admin PIN", label_visibility="collapsed")
-        if admin_pwd == "0644":
-            st.markdown(
-                "<a href='https://docs.google.com/spreadsheets/d/15izevdpRjs8Om5BAHKVWmdL3FxEHml35DGECfhQUG_s/edit' target='_blank' style='text-decoration:none;'><div style='background:rgba(204, 122, 0, 0.2); border: 1px solid #cc7a00; color:#cc7a00; text-align:center; padding:10px; border-radius:4px; font-family:Orbitron; font-size:12px; font-weight:bold;'>VERİ TABANINA BAĞLAN</div></a>",
-                unsafe_allow_html=True
-            )
-
-        st.markdown("<br>", unsafe_allow_html=True)
-
-        if st.button("SİSTEMDEN ÇIK"):
-            st.session_state["password_correct"] = False
-            st.session_state["love_password_correct"] = False
-            st.rerun()
-
-    # =========================
-    # ⚡ ULTRA ATAK
-    # =========================
-        elif page == "⚡ ULTRA ATAK":
-         st.markdown("<div class='terminal-header'>💰 Kişisel Kasa Dağılımı</div>", unsafe_allow_html=True)
-
-        ultra_ana_para = 2250.0
-        ultra_final_target = 22500.0
-        ultra_step_count = 5
-        ultra_step_gap = (ultra_final_target - ultra_ana_para) / ultra_step_count
-        ultra_targets = [ultra_ana_para + (ultra_step_gap * i) for i in range(ultra_step_count + 1)]
-
-        current_pct = max(0, min(100, ((kasa - ultra_ana_para) / (ultra_final_target - ultra_ana_para)) * 100))
-        net_kar = kasa - ultra_ana_para
-        remaining_to_final = max(0.0, ultra_final_target - kasa)
-        reached_count = sum(1 for t in ultra_targets[1:] if kasa >= t)
-        next_target = next((t for t in ultra_targets if t > kasa), ultra_final_target)
-
-        k1 = st.columns(1)[0]
-
-        with k1:
-            st.markdown(
-                f"""
-                <div class='industrial-card' style='text-align:center; border-top-color: #cc7a00;'>
-                    <div style='font-size:11px; color:#666;'>Oguzo Bakiye</div>
-                    <div class='highlight'>${og_kasa:,.2f}</div>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-
-        st.divider()
-
-        markers_html = ""
-        for idx, target in enumerate(ultra_targets):
-            left_pct = (idx / ultra_step_count) * 100
-            is_reached = kasa >= target
-
-            dot_style = "#ffae00" if is_reached else "#2b2b2b"
-            glow_style = "0 0 14px rgba(255,174,0,0.45)" if is_reached else "none"
-
-            markers_html += f"""
-            <div style="position:absolute; left:{left_pct}%; top:-10px; transform:translateX(-50%); text-align:center;">
-                <div style="width:15px; height:15px; border-radius:50%; background:{dot_style}; border:1px solid rgba(255,255,255,0.20); box-shadow:{glow_style}; margin:0 auto 10px auto;"></div>
-                <div style="font-size:10px; color:#8c8c8c; white-space:nowrap;">{fmt_money_usd(target)}</div>
-            </div>
-            """
-
-        goal_html = f"""
-        <div class='industrial-card' style='padding:26px; border-top-color:#ffae00 !important;'>
-            <div class='terminal-header'>HEDEF YOLCULUĞU · 5 AŞAMA</div>
-
-            <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:16px; flex-wrap:wrap; margin-bottom:18px;">
-                <div>
-                    <div style="font-size:11px; color:#777; letter-spacing:2px; text-transform:uppercase;">Mevcut Seviye</div>
-                    <div style="font-family:Orbitron; font-size:34px; color:#f3f3f3;">{fmt_money_usd(kasa)}</div>
-                </div>
-                <div style="text-align:right;">
-                    <div style="font-size:11px; color:#777; letter-spacing:2px; text-transform:uppercase;">Tamamlanan Aşama</div>
-                    <div style="font-family:Orbitron; font-size:28px; color:#ffae00;">{reached_count}/{ultra_step_count}</div>
-                </div>
-            </div>
-
-            <div style="position:relative; margin:38px 10px 16px 10px; padding-top:18px;">
-                <div style="background:rgba(255,255,255,0.06); height:12px; border-radius:999px; overflow:hidden;">
-                    <div style="background:linear-gradient(90deg, #cc7a00, #ffae00); width:{current_pct:.2f}%; height:100%; border-radius:999px; box-shadow:0 0 18px rgba(255,174,0,0.35);"></div>
-                </div>
-                {markers_html}
-            </div>
-
-            <div style="display:flex; justify-content:space-between; gap:14px; flex-wrap:wrap; margin-top:18px; font-size:12px; color:#909090;">
-                <span>Başlangıç: <strong style='color:#d8d8d8;'>{fmt_money_usd(ultra_ana_para)}</strong></span>
-                <span>Sonraki hedef: <strong style='color:#d8d8d8;'>{fmt_money_usd(next_target)}</strong></span>
-                <span>Kalan: <strong style='color:#d8d8d8;'>{fmt_money_usd(remaining_to_final)}</strong></span>
-                <span>İlerleme: <strong style='color:#ffae00;'>%{current_pct:.1f}</strong></span>
-            </div>
-        </div>
-        """
-
-        st.markdown(goal_html, unsafe_allow_html=True)
-
-        col1, col2, col3 = st.columns(3)
-
-        with col1:
-            st.markdown(
-                f"""
-                <div class='industrial-card' style='height:230px;'>
-                    <div class='terminal-header'>💎 KASA</div>
-                    <div class='terminal-row'><span>TOPLAM</span><span class='highlight'>${kasa:,.2f}</span></div>
-                    <div class='terminal-row'><span>K/Z</span><span style='color:{'#00ff41' if net_kar >= 0 else '#ff4b4b'};' class='val-std'>${net_kar:,.2f}</span></div>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-
-        with col2:
-            try:
-                if yf is not None:
-                    btc = yf.Ticker("BTC-USD").history(period="1d")["Close"].iloc[-1]
-                    eth = yf.Ticker("ETH-USD").history(period="1d")["Close"].iloc[-1]
-                    sol = yf.Ticker("SOL-USD").history(period="1d")["Close"].iloc[-1]
-
-                    st.markdown(
-                        f"""
-                        <div class='industrial-card' style='height:230px;'>
-                            <div class='terminal-header'>⚡ PİYASA</div>
-                            <div class='terminal-row'><span>BITCOIN</span><span class='highlight'>${btc:,.0f}</span></div>
-                            <div class='terminal-row'><span>ETHEREUM</span><span style='color:#cc7a00;'>${eth:,.0f}</span></div>
-                            <div class='terminal-row'><span>SOLANA</span><span style='color:#cc7a00;'>${sol:,.2f}</span></div>
-                        </div>
-                        """,
-                        unsafe_allow_html=True
-                    )
-                else:
-                    raise Exception("yfinance yok")
-            except:
+    with col2:
+        try:
+            if yf is not None:
+                btc = yf.Ticker("BTC-USD").history(period="1d")["Close"].iloc[-1]
+                eth = yf.Ticker("ETH-USD").history(period="1d")["Close"].iloc[-1]
+                sol = yf.Ticker("SOL-USD").history(period="1d")["Close"].iloc[-1]
                 st.markdown(
-                    """
+                    f"""
                     <div class='industrial-card' style='height:230px;'>
                         <div class='terminal-header'>⚡ PİYASA</div>
-                        <div class='highlight'>Piyasa verisi bekleniyor...</div>
+                        <div class='terminal-row'><span>BITCOIN</span><span class='highlight'>${btc:,.0f}</span></div>
+                        <div class='terminal-row'><span>ETHEREUM</span><span style='color:#cc7a00;'>${eth:,.0f}</span></div>
+                        <div class='terminal-row'><span>SOLANA</span><span style='color:#cc7a00;'>${sol:,.2f}</span></div>
                     </div>
                     """,
                     unsafe_allow_html=True
                 )
-
-        with col3:
+            else:
+                raise Exception("yfinance yok")
+        except:
             st.markdown(
-                f"""
-                <div class='industrial-card' style='height:230px;'>
-                    <div class='terminal-header'>🎯 HEDEF DURUMU</div>
-                    <div class='terminal-row'><span>ANA PARA</span><span class='highlight'>{fmt_money_usd(ultra_ana_para)}</span></div>
-                    <div class='terminal-row'><span>SON HEDEF</span><span class='highlight'>{fmt_money_usd(ultra_final_target)}</span></div>
-                    <div class='terminal-row'><span>KALAN</span><span style='color:#cc7a00;' class='highlight'>{fmt_money_usd(remaining_to_final)}</span></div>
-                </div>
-                """,
+                "<div class='industrial-card' style='height:230px;'><div class='terminal-header'>⚡ PİYASA</div><div class='highlight'>Piyasa verisi bekleniyor...</div></div>",
                 unsafe_allow_html=True
             )
 
-     # =========================
-    # ⚽ FORMLINE
-    # =========================
-    if page == "⚽ FORMLINE":
-        st.markdown("<div class='terminal-header'>⚽ FORMLINE</div>", unsafe_allow_html=True)
-
-        kar_renk = "#00ff41" if toplam_bahis_kar >= 0 else "#ff4b4b"
+    with col3:
         st.markdown(
-            f"""
-            <div class='industrial-card' style='min-height:180px; border-top-color:{kar_renk} !important;'>
-                <div class='terminal-header'>💸 TOPLAM KAR / ZARAR</div>
-                <div style='font-family:Orbitron; font-size:42px; color:{kar_renk}; margin-top:22px; font-weight:900;'>
-                    ${toplam_bahis_kar:,.2f}
-                </div>
-                <div style='font-size:12px; color:#777; margin-top:12px;'>W1 - W13 toplam sonuç</div>
-            </div>
-            """,
+            f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>📊 Win Rate</div><div style='text-align:center;'><span style='font-size:45px; font-weight:900; color:#cc7a00; font-family:Orbitron;'>%{wr_oran}</span></div></div>",
             unsafe_allow_html=True
         )
 
-        st.divider()
+    st.markdown("### 📜 SON İŞLEMLER")
+    st.markdown(
+        f"<div class='industrial-card'><div class='terminal-header'>AKTİVİTE LOGLARI</div><p style='font-family:JetBrains Mono; color:#888;'>{son_islemler_raw}</p></div>",
+        unsafe_allow_html=True
+    )
 
-        coupon_tabs = st.tabs(["W13", "W12", "W11", "W10", "W9", "W8", "W7", "W6", "W5", "W4", "W3", "W2", "W1"])
+elif page == "⚽ FORMLINE":
+    st.markdown("## ⚽ FORMLINE")
 
-        coupon_htmls = [
-            w13_coupon_html, w12_coupon_html, w11_coupon_html, w10_coupon_html, w9_coupon_html,
-            w8_coupon_html, w7_coupon_html, w6_coupon_html, w5_coupon_html, w4_coupon_html,
-            w3_coupon_html, w2_coupon_html, w1_coupon_html
-        ]
+    st.markdown(
+        f"<div class='industrial-card'><div class='terminal-header'>📈 PERFORMANS</div><div class='terminal-row'><span>NET</span><span style='color:#00ff41;'>$300</span></div><div class='terminal-row'><span>WIN RATE</span><span style='color:#cc7a00;'>%{wr_oran}</span></div><div class='terminal-row'><span>DURUM</span><span style='color:#cc7a00;'>AKTİF</span></div></div>",
+        unsafe_allow_html=True
+    )
 
-        for tab, html in zip(coupon_tabs, coupon_htmls):
-            with tab:
-                st.markdown(html, unsafe_allow_html=True)
+    t13, t12, t11, t10, t9, t8, t7, t6, t5, t4, t1, t2, t3 = st.tabs([
+        "⏳ W13", "❌ W12", "❌ W11", "✅ W10", "❌ W9", "❌ W8", "✅ W7",
+        "❌ W6", "❌ W5", "❌ W4", "✅ W3", "✅ W2", "❌ W1"
+    ])
 
-    # =========================
-    # 📊 PORTFÖY
-    # =========================
-    elif page == "📊 Portföy Takip":
-        render_portfolio_v2(live_vars)
+    with t13:
+        st.markdown(w13_coupon_html, unsafe_allow_html=True)
+    with t12:
+        st.markdown(w12_coupon_html, unsafe_allow_html=True)
+    with t11:
+        st.markdown(w11_coupon_html, unsafe_allow_html=True)
+    with t10:
+        st.markdown(w10_coupon_html, unsafe_allow_html=True)
+    with t9:
+        st.markdown(w9_coupon_html, unsafe_allow_html=True)
+    with t8:
+        st.markdown(w8_coupon_html, unsafe_allow_html=True)
+    with t7:
+        st.markdown(w7_coupon_html, unsafe_allow_html=True)
+    with t6:
+        st.markdown(w6_coupon_html, unsafe_allow_html=True)
+    with t5:
+        st.markdown(w5_coupon_html, unsafe_allow_html=True)
+    with t4:
+        st.markdown(w4_coupon_html, unsafe_allow_html=True)
+    with t1:
+        st.markdown(w3_coupon_html, unsafe_allow_html=True)
+    with t2:
+        st.markdown(w2_coupon_html, unsafe_allow_html=True)
+    with t3:
+        st.markdown(w1_coupon_html, unsafe_allow_html=True)
 
-    # =========================
-    # 💗 LOVE FUND
-    # =========================
-    elif page == "💗 LOVE FUND":
-        if check_love_password():
-            render_love_fund(live_vars)
+elif page == "📊 Portföy Takip":
+    render_portfolio_v2(live_vars)
+
+elif page == "💗 LOVE FUND":
+    if check_love_password():
+        render_love_fund(live_vars)
+
+st.markdown(
+    f"<div style='text-align:center; color:#444; font-size:12px;'>...</div>",
+    unsafe_allow_html=True
+)
