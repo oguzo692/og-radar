@@ -938,8 +938,9 @@ if page == "⚡ ULTRA ATAK":
 
     remaining = max(0, next_target - kasa)
 
+    if page == "⚡ ULTRA ATAK":
     milestone_html = ""
-    label_html = ""if page == "⚡ ULTRA ATAK":
+    label_html = ""
 
     st.markdown("<div class='terminal-header'>💰 Kişisel Kasa</div>", unsafe_allow_html=True)
 
