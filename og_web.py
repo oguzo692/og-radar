@@ -915,9 +915,9 @@ if check_password():
 
    if page == "⚡ ULTRA ATAK":
 
-    st.markdown("<div class='terminal-header'>💰 Kişisel Kasa</div>", unsafe_allow_html=True)
+       st.markdown("<div class='terminal-header'>💰 Kişisel Kasa</div>", unsafe_allow_html=True)
 
-    st.divider()
+       st.divider()
 
     net_kar = kasa - ana_para
 
