@@ -3,6 +3,7 @@ from datetime import datetime
 import pandas as pd
 import textwrap
 import streamlit.components.v1 as components
+import textwrap
 
 try:
     import yfinance as yf
@@ -922,7 +923,7 @@ if check_password():
                 unsafe_allow_html=True
             )
 
-        st.divider()
+                st.divider()
 
         net_kar = kasa - ana_para
 
@@ -949,61 +950,54 @@ if check_password():
 
         for m in milestones:
             pct = ((m - start) / (target - start)) * 100
-            milestone_html += f"""
-            <div style='position:absolute; left:{pct}%; top:-4px; width:2px; height:18px; background:rgba(255,174,0,0.95); box-shadow:0 0 8px rgba(255,174,0,0.35);'></div>
-            """
-            label_html += f"""
-            <div style='position:absolute; left:{pct}%; top:22px; transform:translateX(-50%); font-size:10px; color:#777; white-space:nowrap;'>
-                ${m:,.0f}
-            </div>
-            """
+            milestone_html += f"<div style='position:absolute; left:{pct}%; top:-4px; width:2px; height:18px; background:rgba(255,174,0,0.95); box-shadow:0 0 8px rgba(255,174,0,0.35);'></div>"
+            label_html += f"<div style='position:absolute; left:{pct}%; top:22px; transform:translateX(-50%); font-size:10px; color:#777; white-space:nowrap;'>${m:,.0f}</div>"
 
-        st.markdown(
-            f"""
-            <div class='industrial-card' style='padding:26px; border-top:2px solid rgba(255,174,0,0.65) !important; background:linear-gradient(180deg, rgba(18,18,18,0.96), rgba(8,8,8,0.96)) !important; box-shadow:0 0 22px rgba(255,174,0,0.08);'>
-                <div class='terminal-header'>🎯 ULTRA ATAK HEDEF YOLCULUĞU</div>
+        hero_html = f"""
+<div class='industrial-card' style='padding:26px; border-top:2px solid rgba(255,174,0,0.65) !important; background:linear-gradient(180deg, rgba(18,18,18,0.96), rgba(8,8,8,0.96)) !important; box-shadow:0 0 22px rgba(255,174,0,0.08);'>
+    <div class='terminal-header'>🎯 ULTRA ATAK HEDEF YOLCULUĞU</div>
 
-                <div style='display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; gap:12px; flex-wrap:wrap;'>
-                    <div>
-                        <div style='font-size:11px; color:#666; letter-spacing:2px;'>BAŞLANGIÇ</div>
-                        <div class='highlight' style='font-size:18px;'>${start:,.0f}</div>
-                    </div>
-                    <div style='text-align:center;'>
-                        <div style='font-size:11px; color:#666; letter-spacing:2px;'>ANLIK İLERLEME</div>
-                        <div style='font-size:28px; font-family:Orbitron; color:#ffae00; font-weight:900;'>%{progress*100:.1f}</div>
-                    </div>
-                    <div style='text-align:right;'>
-                        <div style='font-size:11px; color:#666; letter-spacing:2px;'>HEDEF</div>
-                        <div class='highlight' style='font-size:18px;'>${target:,.0f}</div>
-                    </div>
-                </div>
+    <div style='display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; gap:12px; flex-wrap:wrap;'>
+        <div>
+            <div style='font-size:11px; color:#666; letter-spacing:2px;'>BAŞLANGIÇ</div>
+            <div class='highlight' style='font-size:18px;'>${start:,.0f}</div>
+        </div>
+        <div style='text-align:center;'>
+            <div style='font-size:11px; color:#666; letter-spacing:2px;'>ANLIK İLERLEME</div>
+            <div style='font-size:28px; font-family:Orbitron; color:#ffae00; font-weight:900;'>%{progress*100:.1f}</div>
+        </div>
+        <div style='text-align:right;'>
+            <div style='font-size:11px; color:#666; letter-spacing:2px;'>HEDEF</div>
+            <div class='highlight' style='font-size:18px;'>${target:,.0f}</div>
+        </div>
+    </div>
 
-                <div style='position:relative; margin-top:6px; padding-bottom:34px;'>
-                    <div style='background:rgba(255,255,255,0.05); height:14px; border-radius:999px; overflow:hidden; border:1px solid rgba(255,255,255,0.05); position:relative;'>
-                        <div style='width:{progress*100}%; height:100%; border-radius:999px; background:linear-gradient(90deg, #cc7a00 0%, #ffae00 55%, #ffd36a 100%); box-shadow:0 0 18px rgba(255,174,0,0.35);'></div>
-                        {milestone_html}
-                    </div>
-                    {label_html}
-                </div>
+    <div style='position:relative; margin-top:6px; padding-bottom:34px;'>
+        <div style='background:rgba(255,255,255,0.05); height:14px; border-radius:999px; overflow:hidden; border:1px solid rgba(255,255,255,0.05); position:relative;'>
+            <div style='width:{progress*100}%; height:100%; border-radius:999px; background:linear-gradient(90deg, #cc7a00 0%, #ffae00 55%, #ffd36a 100%); box-shadow:0 0 18px rgba(255,174,0,0.35);'></div>
+            {milestone_html}
+        </div>
+        {label_html}
+    </div>
 
-                <div style='display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-top:10px;'>
-                    <div style='background:rgba(255,255,255,0.03); padding:10px 14px; border-radius:8px; border:1px solid rgba(255,255,255,0.04);'>
-                        <div style='font-size:10px; color:#666; letter-spacing:1.5px;'>MEVCUT KASA</div>
-                        <div class='highlight' style='font-size:16px;'>${kasa:,.2f}</div>
-                    </div>
-                    <div style='background:rgba(255,255,255,0.03); padding:10px 14px; border-radius:8px; border:1px solid rgba(255,255,255,0.04);'>
-                        <div style='font-size:10px; color:#666; letter-spacing:1.5px;'>SONRAKİ ARA HEDEF</div>
-                        <div class='highlight' style='font-size:16px;'>${next_target:,.0f}</div>
-                    </div>
-                    <div style='background:rgba(255,255,255,0.03); padding:10px 14px; border-radius:8px; border:1px solid rgba(255,255,255,0.04);'>
-                        <div style='font-size:10px; color:#666; letter-spacing:1.5px;'>KALAN TUTAR</div>
-                        <div style='font-size:16px; font-family:Orbitron; color:#00ff41; font-weight:800;'>${remaining:,.2f}</div>
-                    </div>
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+    <div style='display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-top:10px;'>
+        <div style='background:rgba(255,255,255,0.03); padding:10px 14px; border-radius:8px; border:1px solid rgba(255,255,255,0.04);'>
+            <div style='font-size:10px; color:#666; letter-spacing:1.5px;'>MEVCUT KASA</div>
+            <div class='highlight' style='font-size:16px;'>${kasa:,.2f}</div>
+        </div>
+        <div style='background:rgba(255,255,255,0.03); padding:10px 14px; border-radius:8px; border:1px solid rgba(255,255,255,0.04);'>
+            <div style='font-size:10px; color:#666; letter-spacing:1.5px;'>SONRAKİ ARA HEDEF</div>
+            <div class='highlight' style='font-size:16px;'>${next_target:,.0f}</div>
+        </div>
+        <div style='background:rgba(255,255,255,0.03); padding:10px 14px; border-radius:8px; border:1px solid rgba(255,255,255,0.04);'>
+            <div style='font-size:10px; color:#666; letter-spacing:1.5px;'>KALAN TUTAR</div>
+            <div style='font-size:16px; font-family:Orbitron; color:#00ff41; font-weight:800;'>${remaining:,.2f}</div>
+        </div>
+    </div>
+</div>
+"""
+
+        st.markdown(textwrap.dedent(hero_html), unsafe_allow_html=True)
 
         col1, col2, col3 = st.columns(3)
 
