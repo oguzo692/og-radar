@@ -918,9 +918,9 @@ if check_password():
         k1 = st.columns(1)[0]
 
         with k1:
-            st.markdown(
-                f"<div class='industrial-card' style='text-align:center; border-top-color: #cc7a00;'><div style='font-size:11px; color:#666;'>Oguzo Bakiye</div><div class='highlight'>${og_kasa:,.2f}</div></div>",
-                unsafe_allow_html=True
+        st.markdown(
+        f"<div class='industrial-card' style='text-align:center; border-top-color: #cc7a00;'><div style='font-size:11px; color:#666;'>Oguzo Bakiye</div><div class='highlight'>${og_kasa:,.2f}</div></div>",
+        unsafe_allow_html=True
             )
                 st.divider()
 
