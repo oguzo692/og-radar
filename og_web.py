@@ -966,12 +966,13 @@ if page == "⚡ ULTRA ATAK":
 
     remaining = max(0, next_target - kasa)
 
-    milestone_html = ""
-    label_html = ""
-        for m in milestones:
-            pct = ((m - start) / (target - start)) * 100
-            milestone_html += f"<div style='position:absolute; left:{pct}%; top:-4px; width:2px; height:18px; background:rgba(255,174,0,0.95); box-shadow:0 0 8px rgba(255,174,0,0.35);'></div>"
-            label_html += f"<div style='position:absolute; left:{pct}%; top:22px; transform:translateX(-50%); font-size:10px; color:#777; white-space:nowrap;'>${m:,.0f}</div>"
+milestone_html = ""
+label_html = ""
+
+for m in milestones:
+    pct = ((m - start) / (target - start)) * 100
+    milestone_html += f"<div style='position:absolute; left:{pct}%; top:-4px; width:2px; height:18px; background:rgba(255,174,0,0.8);'></div>"
+    label_html += f"<div style='position:absolute; left:{pct}%; top:22px; transform:translateX(-50%); font-size:10px; color:#777;'>{int(m)}</div>"
 
         hero_html = f"""
 <div class='industrial-card' style='padding:26px; border-top:2px solid rgba(255,174,0,0.65) !important; background:linear-gradient(180deg, rgba(18,18,18,0.96), rgba(8,8,8,0.96)) !important; box-shadow:0 0 22px rgba(255,174,0,0.08);'>
