@@ -913,7 +913,7 @@ if check_password():
             st.session_state["password_correct"] = False
             st.rerun()
 
-   elif page == "⚡ ULTRA ATAK":
+    elif page == "⚡ ULTRA ATAK":
 
     st.markdown("<div class='terminal-header'>💰 Kişisel Kasa</div>", unsafe_allow_html=True)
 
