@@ -1429,7 +1429,7 @@ if check_password():
 
     elif page == "⚽ FORMLINE":
         
-    st.markdown(
+        st.markdown(
         f"<div class='industrial-card'><div class='terminal-header'>📈 PERFORMANS</div><div class='terminal-row'><span>NET:</span><span style='color:#00ff41; font-size:32px; font-family:Orbitron;'>${toplam_bahis_kar:,.2f}</span></div></div>",
         unsafe_allow_html=True
     )
