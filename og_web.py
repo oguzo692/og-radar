@@ -1469,7 +1469,7 @@ if check_password():
     elif page == "📊 Portföy Takip":
     render_portfolio_v2(live_vars)
 
-    elif page == "💗 LOVE FUND":
+elif page == "💗 LOVE FUND":
     if check_love_password():
         render_love_fund(live_vars)
 
