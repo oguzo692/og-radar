@@ -1466,11 +1466,14 @@ if check_password():
     with t3:
         st.markdown(w1_coupon_html, unsafe_allow_html=True)
 
-    elif page == "📊 Portföy Takip":
-        render_portfolio_v2(live_vars)
+   elif page == "📊 Portföy Takip":
+    render_portfolio_v2(live_vars)
 
-    elif page == "💗 LOVE FUND":
-        if check_love_password():
-            render_love_fund(live_vars)
+elif page == "💗 LOVE FUND":
+    if check_love_password():
+        render_love_fund(live_vars)
 
-    st.markdown(f"<div style='text-align:center; color:#444; font-size:10px; margin-top:50px;'>OG CORE // {datetime.now().year}</div>", unsafe_allow_html=True)
+st.markdown(
+    f"<div style='text-align:center; color:#444; font-size:12px;'>...</div>",
+    unsafe_allow_html=True
+)
