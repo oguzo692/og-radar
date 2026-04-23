@@ -1471,7 +1471,7 @@ if check_password():
 
     elif page == "💗 LOVE FUND":
     if check_love_password():
-    render_love_fund(live_vars)
+        render_love_fund(live_vars)
 
 st.markdown(
     f"<div style='text-align:center; color:#444; font-size:12px;'>...</div>",
