@@ -535,37 +535,254 @@ def render_kasa_history_chart(data, current_kasa):
     first_value = float(history_df["Kasa"].iloc[0])
     last_value = float(history_df["Kasa"].iloc[-1])
     high_value = float(history_df["Kasa"].max())
+    low_value = float(history_df["Kasa"].min())
     change_value = last_value - first_value
     change_pct = (change_value / first_value * 100) if first_value > 0 else 0
     change_color = "#00ff41" if change_value >= 0 else "#ff4b4b"
+    width = 900
+    height = 230
+    pad_x = 34
+    pad_y = 26
+    values = [float(v) for v in history_df["Kasa"].tolist()]
+    dates = history_df["Tarih"].tolist()
+    value_range = max(high_value - low_value, 1)
+    point_count = len(values)
 
-    st.markdown(
-        f"""
-        <div class='industrial-card'>
-            <div class='terminal-header'>Kasa Geçmişi</div>
-            <div style='display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:14px; margin-bottom:18px;'>
-                <div>
-                    <div style='font-size:11px; color:#777; letter-spacing:2px;'>GÜNCEL</div>
-                    <div style='font-size:22px; font-weight:900; font-family:Orbitron;'>{fmt_money_usd(last_value)}</div>
-                </div>
-                <div>
-                    <div style='font-size:11px; color:#777; letter-spacing:2px;'>ZİRVE</div>
-                    <div style='font-size:22px; font-weight:900; font-family:Orbitron;'>{fmt_money_usd(high_value)}</div>
-                </div>
-                <div>
-                    <div style='font-size:11px; color:#777; letter-spacing:2px;'>DEĞİŞİM</div>
-                    <div style='font-size:22px; font-weight:900; font-family:Orbitron; color:{change_color};'>{fmt_money_usd(change_value)} / %{change_pct:.1f}</div>
-                </div>
+    points = []
+    for idx, value in enumerate(values):
+        x = pad_x if point_count == 1 else pad_x + (idx / (point_count - 1)) * (width - pad_x * 2)
+        y = pad_y + (1 - ((value - low_value) / value_range)) * (height - pad_y * 2)
+        points.append((x, y, value))
+
+    line_points = " ".join([f"{x:.1f},{y:.1f}" for x, y, _ in points])
+    area_points = f"{pad_x},{height - pad_y} {line_points} {width - pad_x},{height - pad_y}"
+    circles = ""
+    for x, y, value in points:
+        circles += f"<circle cx='{x:.1f}' cy='{y:.1f}' r='4.2' class='chart-dot'><title>{fmt_money_usd(value)}</title></circle>"
+
+    first_label = dates[0].strftime("%d.%m") if dates else "-"
+    last_label = dates[-1].strftime("%d.%m") if dates else "-"
+    period_label = f"{len(history_df)} kayıt · {first_label} - {last_label}"
+    trend_label = "POZİTİF" if change_value >= 0 else "NEGATİF"
+
+    chart_html = f"""
+    <div class="kasa-history-card">
+        <div class="kasa-history-head">
+            <div>
+                <div class="kasa-eyebrow">Kasa Geçmişi</div>
+                <div class="kasa-title">Performans İzleme</div>
+            </div>
+            <div class="kasa-badge">{trend_label}</div>
+        </div>
+
+        <div class="kasa-metrics">
+            <div class="metric">
+                <span>Güncel</span>
+                <strong>{fmt_money_usd(last_value)}</strong>
+            </div>
+            <div class="metric">
+                <span>Zirve</span>
+                <strong>{fmt_money_usd(high_value)}</strong>
+            </div>
+            <div class="metric">
+                <span>Değişim</span>
+                <strong style="color:{change_color};">{fmt_money_usd(change_value)} / %{change_pct:.1f}</strong>
             </div>
         </div>
-        """,
-        unsafe_allow_html=True
-    )
 
-    chart_df = history_df.copy()
-    chart_df["Tarih"] = pd.to_datetime(chart_df["Tarih"])
-    chart_df = chart_df.set_index("Tarih")
-    st.line_chart(chart_df["Kasa"], height=260)
+        <div class="chart-wrap">
+            <svg viewBox="0 0 {width} {height}" preserveAspectRatio="none" role="img">
+                <defs>
+                    <linearGradient id="areaFill" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="rgba(255,174,0,0.26)" />
+                        <stop offset="100%" stop-color="rgba(255,174,0,0.00)" />
+                    </linearGradient>
+                    <filter id="glow">
+                        <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+                        <feMerge>
+                            <feMergeNode in="coloredBlur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                </defs>
+                <line x1="{pad_x}" y1="{pad_y}" x2="{pad_x}" y2="{height - pad_y}" class="grid-axis" />
+                <line x1="{pad_x}" y1="{height - pad_y}" x2="{width - pad_x}" y2="{height - pad_y}" class="grid-axis" />
+                <line x1="{pad_x}" y1="{pad_y + (height - pad_y * 2) * 0.33:.1f}" x2="{width - pad_x}" y2="{pad_y + (height - pad_y * 2) * 0.33:.1f}" class="grid-line" />
+                <line x1="{pad_x}" y1="{pad_y + (height - pad_y * 2) * 0.66:.1f}" x2="{width - pad_x}" y2="{pad_y + (height - pad_y * 2) * 0.66:.1f}" class="grid-line" />
+                <polygon points="{area_points}" class="chart-area" />
+                <polyline points="{line_points}" class="chart-line" filter="url(#glow)" />
+                {circles}
+            </svg>
+        </div>
+
+        <div class="kasa-history-foot">
+            <span>{period_label}</span>
+            <span>Dip {fmt_money_usd(low_value)}</span>
+        </div>
+    </div>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&family=Orbitron:wght@400;700;900&display=swap');
+        html, body {{
+            margin: 0;
+            padding: 0;
+            background: transparent;
+            overflow: hidden;
+        }}
+        .kasa-history-card {{
+            box-sizing: border-box;
+            height: 100%;
+            background:
+                radial-gradient(circle at 12% 0%, rgba(255,174,0,0.12), transparent 28%),
+                linear-gradient(180deg, rgba(16,16,16,0.96), rgba(7,7,7,0.96));
+            border: 1px solid rgba(255,255,255,0.05);
+            border-top: 2px solid rgba(204,122,0,0.72);
+            border-radius: 6px;
+            padding: 22px;
+            font-family: 'JetBrains Mono', monospace;
+            color: #d1d1d1;
+            box-shadow: 0 18px 45px rgba(0,0,0,0.42);
+            animation: panelIn 520ms ease-out both;
+        }}
+        .kasa-history-head,
+        .kasa-history-foot {{
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+        }}
+        .kasa-eyebrow {{
+            color: #8b8b8b;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 2.8px;
+            text-transform: uppercase;
+            border-left: 3px solid #cc7a00;
+            padding-left: 12px;
+            margin-bottom: 8px;
+        }}
+        .kasa-title {{
+            color: #f0f0f0;
+            font-family: 'Orbitron', monospace;
+            font-size: 22px;
+            font-weight: 900;
+        }}
+        .kasa-badge {{
+            border: 1px solid rgba(255,174,0,0.32);
+            background: rgba(255,174,0,0.08);
+            color: #ffae00;
+            border-radius: 999px;
+            padding: 8px 12px;
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 2px;
+        }}
+        .kasa-metrics {{
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+            margin: 18px 0 14px 0;
+        }}
+        .metric {{
+            background: rgba(255,255,255,0.026);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 6px;
+            padding: 14px;
+        }}
+        .metric span {{
+            display: block;
+            color: #777;
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }}
+        .metric strong {{
+            display: block;
+            color: #f0f0f0;
+            font-family: 'Orbitron', monospace;
+            font-size: 18px;
+            font-weight: 900;
+            white-space: nowrap;
+        }}
+        .chart-wrap {{
+            height: 210px;
+            border: 1px solid rgba(255,255,255,0.035);
+            background: rgba(0,0,0,0.18);
+            border-radius: 6px;
+            overflow: hidden;
+        }}
+        svg {{
+            width: 100%;
+            height: 100%;
+            display: block;
+        }}
+        .grid-axis {{
+            stroke: rgba(255,255,255,0.13);
+            stroke-width: 1;
+        }}
+        .grid-line {{
+            stroke: rgba(255,255,255,0.06);
+            stroke-width: 1;
+            stroke-dasharray: 6 8;
+        }}
+        .chart-area {{
+            fill: url(#areaFill);
+        }}
+        .chart-line {{
+            fill: none;
+            stroke: #ffae00;
+            stroke-width: 4;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }}
+        .chart-dot {{
+            fill: #050505;
+            stroke: #ffae00;
+            stroke-width: 3;
+        }}
+        .kasa-history-foot {{
+            color: #858585;
+            font-size: 11px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-top: 12px;
+        }}
+        @keyframes panelIn {{
+            from {{ opacity: 0; transform: translateY(12px); }}
+            to {{ opacity: 1; transform: translateY(0); }}
+        }}
+        @media (max-width: 620px) {{
+            .kasa-history-card {{
+                padding: 16px;
+            }}
+            .kasa-history-head,
+            .kasa-history-foot {{
+                align-items: flex-start;
+                flex-direction: column;
+            }}
+            .kasa-title {{
+                font-size: 18px;
+            }}
+            .kasa-metrics {{
+                grid-template-columns: 1fr;
+                gap: 8px;
+                margin: 14px 0;
+            }}
+            .metric {{
+                padding: 12px;
+            }}
+            .metric strong {{
+                font-size: 16px;
+            }}
+            .chart-wrap {{
+                height: 170px;
+            }}
+        }}
+    </style>
+    """
+
+    components.html(chart_html, height=440, scrolling=False)
 
 def render_risk_module(current_kasa):
     risk_profiles = {
