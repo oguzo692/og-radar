@@ -343,7 +343,7 @@ def check_password():
         return False
     return True
 
-# --- PORTFÖY V2 YARDIMCI FONKSİYONLAR ---
+# --- PORTFÖY YARDIMCI FONKSİYONLAR ---
 def discover_dynamic_instruments(data, users):
     instrument_codes = set()
 
@@ -945,8 +945,42 @@ if page == "⚡ ULTRA ATAK":
         unsafe_allow_html=True
     )
 
-    st.progress(int(current_pct))
+st.progress(int(current_pct))
+risk_profiles = {
+    "Koruma": 0.015,
+    "Standart": 0.03,
+    "Atak": 0.05,
+}
 
+selected_risk = st.radio(
+    "Risk Seviyesi",
+    ["Koruma", "Standart", "Atak"],
+    horizontal=True
+)
+
+risk_rate = risk_profiles[selected_risk]
+risk_limit = ultra_kasa * risk_rate
+
+st.markdown(
+    f"""
+    <div class='industrial-card'>
+        <div class='terminal-header'>Risk Modülü</div>
+        <div class='terminal-row'>
+            <span>MOD</span>
+            <span class='highlight'>{selected_risk}</span>
+        </div>
+        <div class='terminal-row'>
+            <span>ORAN</span>
+            <span class='highlight'>%{risk_rate * 100:.1f}</span>
+        </div>
+        <div class='terminal-row'>
+            <span>AKTİF LİMİT</span>
+            <span class='highlight'>${risk_limit:,.2f}</span>
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True
+    
     st.markdown(
         f"""
         <div style='margin-top:8px; font-size:13px; color:#888; text-align:right;'>
