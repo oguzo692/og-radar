@@ -883,33 +883,32 @@ if check_password():
             st.session_state["password_correct"] = False
             st.rerun()
 
-    if page == "⚡ ULTRA ATAK":
-        st.markdown("<div class='terminal-header'>💰 Oguzo Kasa</div>", unsafe_allow_html=True)
+  if page == "⚡ ULTRA ATAK":
+    st.markdown("<div class='terminal-header'>💰 Oguzo Kasa</div>", unsafe_allow_html=True)
 
-        st.markdown(
-        f"""
-        <div class='industrial-card' style='text-align:center; border-top-color:#cc7a00;'>
-            <div style='font-size:11px; color:#666;'>Oguzo Bakiye</div>
-            <div class='highlight'>${og_kasa:,.2f}</div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    st.divider()
-
+    kasa = og_kasa
     baslangic_kasa = 2250
     hedefler = [4500, 9000, 14000, 18000, 22500]
 
-    kasa = og_kasa
     net_kar = kasa - baslangic_kasa
-
     aktif_hedef = next((h for h in hedefler if kasa < h), hedefler[-1])
 
     current_pct = max(
         0,
         min(100, ((kasa - baslangic_kasa) / (aktif_hedef - baslangic_kasa)) * 100)
     )
+
+    st.markdown(
+        f"""
+        <div class='industrial-card' style='text-align:center; border-top-color:#cc7a00;'>
+            <div style='font-size:11px; color:#666;'>Oguzo Bakiye</div>
+            <div class='highlight'>${kasa:,.2f}</div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.divider()
 
     st.markdown(
         f"""
@@ -940,7 +939,6 @@ if check_password():
         """,
         unsafe_allow_html=True
     )
-
   st.markdown(
     f"""
     <div class='industrial-card'>
