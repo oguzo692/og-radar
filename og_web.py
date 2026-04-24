@@ -6,7 +6,7 @@ import streamlit.components.v1 as components
 
 try:
     import yfinance as yf
-except:
+except Exception:
     yf = None
 
 # --- 1. AYARLAR ---
@@ -36,7 +36,7 @@ def get_num(data, key, default=0.0):
         if val is None or str(val).strip() == "":
             return float(default)
         return float(str(val).replace(",", ".").strip())
-    except:
+    except Exception:
         return float(default)
 
 def get_str(data, key, default=""):
@@ -45,7 +45,7 @@ def get_str(data, key, default=""):
         if val is None:
             return default
         return str(val).strip()
-    except:
+    except Exception:
         return default
 
 def fmt_money_usd(x):
@@ -849,39 +849,41 @@ def render_portfolio_v2(data):
     render_info_strip(instruments, usdtry)
 
 # --- 6. ANA UYGULAMA ---
-if check_password():
-    st.markdown(common_css, unsafe_allow_html=True)
-    st.markdown("<style>.stApp { background: #030303 !important; background-image: none !important; }</style>", unsafe_allow_html=True)
+if not check_password():
+    st.stop()
+
+st.markdown(common_css, unsafe_allow_html=True)
+st.markdown("<style>.stApp { background: #030303 !important; background-image: none !important; }</style>", unsafe_allow_html=True)
+st.markdown(
+    f'<div class="ticker-wrap"><div class="ticker"><span class="ticker-item">{duyuru_metni}</span><span class="ticker-item">{duyuru_metni}</span></div></div>',
+    unsafe_allow_html=True
+)
+
+with st.sidebar:
     st.markdown(
-        f'<div class="ticker-wrap"><div class="ticker"><span class="ticker-item">{duyuru_metni}</span><span class="ticker-item">{duyuru_metni}</span></div></div>',
+        "<h1 style='color:white; font-family:Orbitron; font-size:24px; letter-spacing:5px; text-align:center; margin-bottom:40px;'>OG CORE</h1>",
         unsafe_allow_html=True
     )
-
-    with st.sidebar:
+    st.markdown(
+        "<div style='margin-bottom:10px; color:#666; font-size:11px; letter-spacing:2px; font-weight:800;'>SİSTEM MODÜLLERİ</div>",
+        unsafe_allow_html=True
+    )
+    page = st.radio("Menu", ["⚡ ULTRA ATAK", "⚽ FORMLINE", "📊 Portföy Takip"], label_visibility="collapsed")
+    st.divider()
+    st.markdown(
+        "<div style='color:#666; font-size:11px; letter-spacing:2px; font-weight:800; margin-bottom:15px;'>📂 TERMİNAL ERİŞİMİ</div>",
+        unsafe_allow_html=True
+    )
+    admin_pwd = st.text_input("PIN", type="password", placeholder="Admin PIN", label_visibility="collapsed")
+    if admin_pwd == "0644":
         st.markdown(
-            "<h1 style='color:white; font-family:Orbitron; font-size:24px; letter-spacing:5px; text-align:center; margin-bottom:40px;'>OG CORE</h1>",
+            "<a href='https://docs.google.com/spreadsheets/d/15izevdpRjs8Om5BAHKVWmdL3FxEHml35DGECfhQUG_s/edit' target='_blank' style='text-decoration:none;'><div style='background:rgba(204, 122, 0, 0.2); border: 1px solid #cc7a00; color:#cc7a00; text-align:center; padding:10px; border-radius:4px; font-family:Orbitron; font-size:12px; font-weight:bold;'>VERİ TABANINA BAĞLAN</div></a>",
             unsafe_allow_html=True
         )
-        st.markdown(
-            "<div style='margin-bottom:10px; color:#666; font-size:11px; letter-spacing:2px; font-weight:800;'>SİSTEM MODÜLLERİ</div>",
-            unsafe_allow_html=True
-        )
-        page = st.radio("Menu", ["⚡ ULTRA ATAK", "⚽ FORMLINE", "📊 Portföy Takip"], label_visibility="collapsed")
-        st.divider()
-        st.markdown(
-            "<div style='color:#666; font-size:11px; letter-spacing:2px; font-weight:800; margin-bottom:15px;'>📂 TERMİNAL ERİŞİMİ</div>",
-            unsafe_allow_html=True
-        )
-        admin_pwd = st.text_input("PIN", type="password", placeholder="Admin PIN", label_visibility="collapsed")
-        if admin_pwd == "0644":
-            st.markdown(
-                "<a href='https://docs.google.com/spreadsheets/d/15izevdpRjs8Om5BAHKVWmdL3FxEHml35DGECfhQUG_s/edit' target='_blank' style='text-decoration:none;'><div style='background:rgba(204, 122, 0, 0.2); border: 1px solid #cc7a00; color:#cc7a00; text-align:center; padding:10px; border-radius:4px; font-family:Orbitron; font-size:12px; font-weight:bold;'>VERİ TABANINA BAĞLAN</div></a>",
-                unsafe_allow_html=True
-            )
-        st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("SİSTEMDEN ÇIK"):
-            st.session_state["password_correct"] = False
-            st.rerun()
+    st.markdown("<br>", unsafe_allow_html=True)
+    if st.button("SİSTEMDEN ÇIK"):
+        st.session_state["password_correct"] = False
+        st.rerun()
 
 if page == "⚡ ULTRA ATAK":
     st.markdown("<div class='terminal-header'>💰 Oguzo Kasa</div>", unsafe_allow_html=True)
@@ -1030,7 +1032,6 @@ if page == "⚡ ULTRA ATAK":
         unsafe_allow_html=True
     )
 
-
 elif page == "⚽ FORMLINE":
     st.markdown(
         f"""
@@ -1055,6 +1056,6 @@ elif page == "⚽ FORMLINE":
 
     with t3:
         st.markdown(w1_coupon_html, unsafe_allow_html=True)
-        
+
 elif page == "📊 Portföy Takip":
     render_portfolio_v2(live_vars)
