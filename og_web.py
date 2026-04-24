@@ -884,8 +884,8 @@ if check_password():
             st.rerun()
 
     if page == "⚡ ULTRA ATAK":
-        st.markdown("<div class='terminal-header'>💰 Kişisel Kasa Dağılımı</div>", unsafe_allow_html=True)
-        k1, k2, k3 = st.columns(3)
+        st.markdown("<div class='terminal-header'>💰 Kasa Dağılımı</div>", unsafe_allow_html=True)
+        k1 = st.columns(1)
 
         with k1:
             st.markdown(
