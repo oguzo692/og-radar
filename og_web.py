@@ -67,23 +67,6 @@ def fmt_unit_value(qty, unit):
     else:
         return f"{qty:,.4f}".rstrip("0").rstrip(".")
 
-# --- RÜTBE FONKSİYONU ---
-def rutbe_getir(puan_str):
-    try:
-        p = int(float(puan_str))
-    except:
-        p = 0
-    if p <= 3:
-        return "Hılez"
-    elif p <= 6:
-        return "Tecrübeli Hılez"
-    elif p <= 9:
-        return "Bu Abi Biri Mi?"
-    elif p <= 11:
-        return "Miço"
-    else:
-        return "Grand Miço"
-
 live_vars = get_live_data()
 
 kasa = float(get_num(live_vars, "kasa", 600))
@@ -91,17 +74,7 @@ ana_para = float(get_num(live_vars, "ana_para", 600))
 duyuru_metni = get_str(live_vars, "duyuru", "SİSTEM ÇEVRİMİÇİ... OG CORE")
 
 # --- KİŞİSEL KASA VERİLERİ ---
-og_kasa = float(get_num(live_vars, "oguzo_kasa", kasa / 3))
-er_kasa = float(get_num(live_vars, "ero7_kasa", kasa / 3))
-fy_kasa = float(get_num(live_vars, "fybey_kasa", kasa / 3))
-
-# --- RÜTBE VERİLERİ ---
-og_p = get_str(live_vars, "oguzo_puan", "0")
-er_p = get_str(live_vars, "ero7_puan", "0")
-fy_p = get_str(live_vars, "fybey_puan", "0")
-
-aktif_soru_1 = get_str(live_vars, "aktif_soru", "yeni soru yakında...")
-aktif_soru_2 = get_str(live_vars, "aktif_soru2", "yeni soru yakında...")
+og_kasa = float(get_num(live_vars, "oguzo_kasa", kasa / 1))
 
 # --- 💰 FORMLINE HESAPLAMA ---
 w1_kar = float(get_num(live_vars, "w1_sonuc", 0))
@@ -416,7 +389,7 @@ def build_legacy_fallback_instruments(data):
             "currency": "USD",
             "price": 1.0,
             "order": 1,
-            "legacy_map": {"oguzo": "oguzo_usd", "ero7": "ero7_usd", "fybey": "fybey_usd"},
+            "legacy_map": {"oguzo": "oguzo_usd"},
         },
         {
             "code": "gram_altin",
