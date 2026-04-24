@@ -980,7 +980,7 @@ def render_portfolio_v2(data):
         main_asset_pct = (main_asset["total_usd"] / total_usd) * 100
 
     st.markdown(
-        f"""
+        textwrap.dedent(f"""
         <div class='portfolio-shell'>
             <div class='portfolio-topline'>
                 <span>Portföy Sahibi</span>
@@ -1014,18 +1014,18 @@ def render_portfolio_v2(data):
                 </div>
             </div>
         </div>
-        """,
+        """),
         unsafe_allow_html=True
     )
 
     if df_nonzero.empty:
         st.markdown(
-            """
+            textwrap.dedent("""
             <div class='portfolio-table-card'>
                 <div class='portfolio-table-title'>Varlıklar</div>
                 <div class='portfolio-empty'>Aktif varlık bulunamadı.</div>
             </div>
-            """,
+            """),
             unsafe_allow_html=True
         )
         return
@@ -1037,7 +1037,7 @@ def render_portfolio_v2(data):
         value_text = fmt_money_usd(row["total_usd"])
         local_text = fmt_money_try(row["total_try"])
 
-        rows_html += f"""
+        rows_html += textwrap.dedent(f"""
         <div class='portfolio-row'>
             <div class='portfolio-row-name'>
                 <strong>{row["label"]}</strong>
@@ -1048,15 +1048,15 @@ def render_portfolio_v2(data):
                 <span>{local_text}</span>
             </div>
         </div>
-        """
+        """)
 
     st.markdown(
-        f"""
+        textwrap.dedent(f"""
         <div class='portfolio-table-card'>
             <div class='portfolio-table-title'>Varlıklar</div>
             {rows_html}
         </div>
-        """,
+        """),
         unsafe_allow_html=True
     )
 
