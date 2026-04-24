@@ -918,9 +918,9 @@ st.markdown(
         unsafe_allow_html=True
     )
 
-    st.divider()
+st.divider()
 
-    st.markdown(
+st.markdown(
         f"""
         <div class='industrial-card'>
             <div class='terminal-header'>{hedef_baslik}</div>
@@ -943,9 +943,9 @@ st.markdown(
         unsafe_allow_html=True
     )
 
-    st.progress(int(current_pct))
+st.progress(int(current_pct))
 
-    st.markdown(
+st.markdown(
         f"""
         <div style='margin-top:8px; font-size:13px; color:#888; text-align:right;'>
             %{current_pct:.1f}
