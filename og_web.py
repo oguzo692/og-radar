@@ -941,17 +941,21 @@ if check_password():
                 <div style='font-size:22px; font-weight:900; color:{'#00ff41' if net_kar >= 0 else '#ff4b4b'};'>${net_kar:,.2f}</div>
             </div>
         </div>
-
-        <progress value="{current_pct:.2f}" max="100" style="width:100%; height:18px;"></progress>
-
-        <div style='margin-top:8px; font-size:13px; color:#888; text-align:right;'>
-            %{current_pct:.1f}
-        </div>
     </div>
     """,
     unsafe_allow_html=True
 )
 
+st.progress(int(current_pct))
+
+st.markdown(
+    f"""
+    <div style='margin-top:8px; font-size:13px; color:#888; text-align:right;'>
+        %{current_pct:.1f}
+    </div>
+    """,
+    unsafe_allow_html=True
+)
         col1, col2, col3 = st.columns(3)
 
         with col1:
