@@ -67,12 +67,6 @@ def fmt_unit_value(qty, unit):
     else:
         return f"{qty:,.4f}".rstrip("0").rstrip(".")
 
-live_vars = get_live_data()
-
-kasa = float(get_num(live_vars, "kasa", 600))
-ana_para = float(get_num(live_vars, "ana_para", 600))
-duyuru_metni = get_str(live_vars, "duyuru", "SİSTEM ÇEVRİMİÇİ... OG CORE")
-
 # --- KİŞİSEL KASA VERİLERİ ---
 og_kasa = float(get_num(live_vars, "oguzo_kasa", kasa / 1))
 
