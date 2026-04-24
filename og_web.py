@@ -1000,7 +1000,7 @@ with col3:
             f"<div class='industrial-card'><div class='terminal-header'>AKTİVİTE LOGLARI</div><p style='font-family:JetBrains Mono; color:#888;'>{son_islemler_raw}</p></div>",
             unsafe_allow_html=True
         )
-                elif page == "⚽ FORMLINE":
+    if page == "⚽ FORMLINE":
                     st.markdown(
                     f"<div class='industrial-card'><div class='terminal-header'>📈 PERFORMANS</div><div class='terminal-row'><span>NET:</span><span style='color:#00ff41; font-size:32px; font-family:Orbitron;'>${toplam_bahis_kar:,.2f}</span></div></div>",
                     unsafe_allow_html=True
@@ -1014,5 +1014,5 @@ with col3:
         with t3:
             st.markdown(w1_coupon_html, unsafe_allow_html=True)
             
-                elif page == "📊 Portföy Takip":
+    if page == "📊 Portföy Takip":
                     render_portfolio_v2(live_vars)
