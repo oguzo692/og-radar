@@ -903,7 +903,7 @@ if page == "⚡ ULTRA ATAK":
 if ultra_kasa >= hedefler[-1]:
         current_pct = 100
         hedef_baslik = "Final Hedef Tamamlandı"
-    else:
+else:
         hedef_aralik = max(1, aktif_hedef - onceki_hedef)
         current_pct = max(0, min(100, ((ultra_kasa - onceki_hedef) / hedef_aralik) * 100))
         hedef_baslik = f"Hedef Yolculuğu ({fmt_money_usd(aktif_hedef)})"
