@@ -798,8 +798,8 @@ def render_info_strip(instruments, usdtry):
 def render_portfolio_v2(data):
     st.markdown("<div class='terminal-header'>🏛️ PORTFÖY KOMUTA MERKEZİ</div>", unsafe_allow_html=True)
 
-    users = ["oguzo", "ero7", "fybey"]
-    user_labels = {"oguzo": "OGUZO", "ero7": "ERO7", "fybey": "FYBEY"}
+    users = ["oguzo"]
+    user_labels = {"oguzo": "OGUZO"}
 
     usdtry = get_num(data, "usdtry", 44.18)
 
