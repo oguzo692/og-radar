@@ -900,15 +900,15 @@ if page == "⚡ ULTRA ATAK":
         else:
             break
 
-if ultra_kasa >= hedefler[-1]:
+    if ultra_kasa >= hedefler[-1]:
         current_pct = 100
         hedef_baslik = "Final Hedef Tamamlandı"
-else:
+    else:
         hedef_aralik = max(1, aktif_hedef - onceki_hedef)
         current_pct = max(0, min(100, ((ultra_kasa - onceki_hedef) / hedef_aralik) * 100))
         hedef_baslik = f"Hedef Yolculuğu ({fmt_money_usd(aktif_hedef)})"
 
-st.markdown(
+    st.markdown(
         f"""
         <div class='industrial-card' style='text-align:center; border-top-color:#cc7a00;'>
             <div style='font-size:11px; color:#666;'>Oguzo Bakiye</div>
@@ -918,9 +918,9 @@ st.markdown(
         unsafe_allow_html=True
     )
 
-st.divider()
+    st.divider()
 
-st.markdown(
+    st.markdown(
         f"""
         <div class='industrial-card'>
             <div class='terminal-header'>{hedef_baslik}</div>
@@ -943,9 +943,9 @@ st.markdown(
         unsafe_allow_html=True
     )
 
-st.progress(int(current_pct))
+    st.progress(int(current_pct))
 
-st.markdown(
+    st.markdown(
         f"""
         <div style='margin-top:8px; font-size:13px; color:#888; text-align:right;'>
             %{current_pct:.1f}
@@ -954,62 +954,108 @@ st.markdown(
         unsafe_allow_html=True
     )
 
-col1, col2, col3 = st.columns(3)
+    col1, col2, col3 = st.columns(3)
 
-with col1:
-    st.markdown(
-        f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>💎 KASA</div><div class='terminal-row'><span>TOPLAM</span><span class='highlight'>${ultra_kasa:,.2f}</span></div><div class='terminal-row'><span>K/Z</span><span style='color:{'#00ff41' if net_kar >= 0 else '#ff4b4b'};' class='val-std'>${net_kar:,.2f}</span></div></div>",
-        unsafe_allow_html=True
-    )
+    with col1:
+        st.markdown(
+            f"""
+            <div class='industrial-card' style='height:230px;'>
+                <div class='terminal-header'>💎 KASA</div>
+                <div class='terminal-row'>
+                    <span>TOPLAM</span>
+                    <span class='highlight'>${ultra_kasa:,.2f}</span>
+                </div>
+                <div class='terminal-row'>
+                    <span>K/Z</span>
+                    <span style='color:{'#00ff41' if net_kar >= 0 else '#ff4b4b'};' class='val-std'>${net_kar:,.2f}</span>
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
-with col2:
-    try:
-        if yf is not None:
-            btc = yf.Ticker("BTC-USD").history(period="1d")["Close"].iloc[-1]
-            eth = yf.Ticker("ETH-USD").history(period="1d")["Close"].iloc[-1]
-            sol = yf.Ticker("SOL-USD").history(period="1d")["Close"].iloc[-1]
+    with col2:
+        try:
+            if yf is not None:
+                btc = yf.Ticker("BTC-USD").history(period="1d")["Close"].iloc[-1]
+                eth = yf.Ticker("ETH-USD").history(period="1d")["Close"].iloc[-1]
+                sol = yf.Ticker("SOL-USD").history(period="1d")["Close"].iloc[-1]
+
+                st.markdown(
+                    f"""
+                    <div class='industrial-card' style='height:230px;'>
+                        <div class='terminal-header'>⚡ PİYASA</div>
+                        <div class='terminal-row'><span>BITCOIN</span><span class='highlight'>${btc:,.0f}</span></div>
+                        <div class='terminal-row'><span>ETHEREUM</span><span style='color:#cc7a00;'>${eth:,.0f}</span></div>
+                        <div class='terminal-row'><span>SOLANA</span><span style='color:#cc7a00;'>${sol:,.2f}</span></div>
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
+            else:
+                raise Exception("yfinance yok")
+
+        except Exception:
             st.markdown(
-                f"""
+                """
                 <div class='industrial-card' style='height:230px;'>
                     <div class='terminal-header'>⚡ PİYASA</div>
-                    <div class='terminal-row'><span>BITCOIN</span><span class='highlight'>${btc:,.0f}</span></div>
-                    <div class='terminal-row'><span>ETHEREUM</span><span style='color:#cc7a00;'>${eth:,.0f}</span></div>
-                    <div class='terminal-row'><span>SOLANA</span><span style='color:#cc7a00;'>${sol:,.2f}</span></div>
+                    <div class='highlight'>Piyasa verisi bekleniyor...</div>
                 </div>
                 """,
                 unsafe_allow_html=True
             )
-        else:
-            raise Exception("yfinance yok")
-    except Exception:
+
+    with col3:
         st.markdown(
-            "<div class='industrial-card' style='height:230px;'><div class='terminal-header'>⚡ PİYASA</div><div class='highlight'>Piyasa verisi bekleniyor...</div></div>",
+            f"""
+            <div class='industrial-card' style='height:230px;'>
+                <div class='terminal-header'>📊 Win Rate</div>
+                <div style='text-align:center;'>
+                    <span style='font-size:45px; font-weight:900; color:#cc7a00; font-family:Orbitron;'>%{wr_oran}</span>
+                </div>
+            </div>
+            """,
             unsafe_allow_html=True
         )
 
-with col3:
+    st.markdown("### 📜 SON İŞLEMLER")
     st.markdown(
-        f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>📊 Win Rate</div><div style='text-align:center;'><span style='font-size:45px; font-weight:900; color:#cc7a00; font-family:Orbitron;'>%{wr_oran}</span></div></div>",
+        f"""
+        <div class='industrial-card'>
+            <div class='terminal-header'>AKTİVİTE LOGLARI</div>
+            <p style='font-family:JetBrains Mono; color:#888;'>{son_islemler_raw}</p>
+        </div>
+        """,
         unsafe_allow_html=True
     )
 
-    st.markdown("### 📜 SON İŞLEMLER")
-    st.markdown(
-        f"<div class='industrial-card'><div class='terminal-header'>AKTİVİTE LOGLARI</div><p style='font-family:JetBrains Mono; color:#888;'>{son_islemler_raw}</p></div>",
-        unsafe_allow_html=True
-    )
+
 elif page == "⚽ FORMLINE":
     st.markdown(
-        f"<div class='industrial-card'><div class='terminal-header'>📈 PERFORMANS</div><div class='terminal-row'><span>NET:</span><span style='color:#00ff41; font-size:32px; font-family:Orbitron;'>${toplam_bahis_kar:,.2f}</span></div></div>",
+        f"""
+        <div class='industrial-card'>
+            <div class='terminal-header'>📈 PERFORMANS</div>
+            <div class='terminal-row'>
+                <span>NET:</span>
+                <span style='color:#00ff41; font-size:32px; font-family:Orbitron;'>${toplam_bahis_kar:,.2f}</span>
+            </div>
+        </div>
+        """,
         unsafe_allow_html=True
     )
 
     t1, t2, t3 = st.tabs(["✅ W3", "✅ W2", "❌ W1"])
+
     with t1:
         st.markdown(w3_coupon_html, unsafe_allow_html=True)
+
     with t2:
         st.markdown(w2_coupon_html, unsafe_allow_html=True)
+
     with t3:
         st.markdown(w1_coupon_html, unsafe_allow_html=True)
+
+
 elif page == "📊 Portföy Takip":
     render_portfolio_v2(live_vars)
