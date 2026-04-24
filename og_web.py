@@ -883,7 +883,7 @@ if check_password():
             st.session_state["password_correct"] = False
             st.rerun()
 
-    if page == "⚡ ULTRA ATAK":
+if page == "⚡ ULTRA ATAK":
     st.markdown("<div class='terminal-header'>💰 Oguzo Kasa</div>", unsafe_allow_html=True)
 
     ultra_kasa = og_kasa
@@ -900,7 +900,7 @@ if check_password():
         else:
             break
 
-    if ultra_kasa >= hedefler[-1]:
+if ultra_kasa >= hedefler[-1]:
         current_pct = 100
         hedef_baslik = "Final Hedef Tamamlandı"
     else:
