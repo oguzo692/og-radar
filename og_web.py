@@ -999,10 +999,10 @@ if check_password():
             unsafe_allow_html=True
         )
 
-    elif page == "⚽ FORMLINE":
-            st.markdown(
-            f"<div class='industrial-card'><div class='terminal-header'>📈 PERFORMANS</div><div class='terminal-row'><span>NET:</span><span style='color:#00ff41; font-size:32px; font-family:Orbitron;'>${toplam_bahis_kar:,.2f}</span></div></div>",
-            unsafe_allow_html=True
+elif page == "⚽ FORMLINE":
+    st.markdown(
+    f"<div class='industrial-card'><div class='terminal-header'>📈 PERFORMANS</div><div class='terminal-row'><span>NET:</span><span style='color:#00ff41; font-size:32px; font-family:Orbitron;'>${toplam_bahis_kar:,.2f}</span></div></div>",
+    unsafe_allow_html=True
         )
 
         t1, t2, t3 = st.tabs(["✅ W3", "✅ W2", "❌ W1"])
@@ -1013,5 +1013,5 @@ if check_password():
         with t3:
             st.markdown(w1_coupon_html, unsafe_allow_html=True)
 
-    elif page == "📊 Portföy Takip":
-        render_portfolio_v2(live_vars)
+elif page == "📊 Portföy Takip":
+    render_portfolio_v2(live_vars)
