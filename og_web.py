@@ -884,20 +884,62 @@ if check_password():
             st.rerun()
 
     if page == "⚡ ULTRA ATAK":
-        st.markdown("<div class='terminal-header'>💰 Kasa Dağılımı</div>", unsafe_allow_html=True)
-        k1, k2, k3 = st.columns(3)
+    st.markdown("<div class='terminal-header'>💰 Oguzo Kasa</div>", unsafe_allow_html=True)
 
-        with k1:
-            st.markdown(
-                f"<div class='industrial-card' style='text-align:center; border-top-color: #cc7a00;'><div style='font-size:11px; color:#666;'>Oguzo Bakiye</div><div class='highlight'>${og_kasa:,.2f}</div></div>",
-                unsafe_allow_html=True
-         
-            )
+    st.markdown(
+        f"""
+        <div class='industrial-card' style='text-align:center; border-top-color:#cc7a00;'>
+            <div style='font-size:11px; color:#666;'>Oguzo Bakiye</div>
+            <div class='highlight'>${og_kasa:,.2f}</div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
-        st.divider()
+    st.divider()
 
-        net_kar = kasa - ana_para
-        current_pct = max(0, min(100, ((kasa - 600) / (1200 - 600)) * 100))
+    baslangic_kasa = 2250
+    hedefler = [4500, 9000, 14000, 18000, 22500]
+
+    kasa = og_kasa
+    net_kar = kasa - baslangic_kasa
+
+    aktif_hedef = next((h for h in hedefler if kasa < h), hedefler[-1])
+
+    current_pct = max(
+        0,
+        min(100, ((kasa - baslangic_kasa) / (aktif_hedef - baslangic_kasa)) * 100)
+    )
+
+    st.markdown(
+        f"""
+        <div class='industrial-card'>
+            <div style='font-size:12px; color:#666;'>Başlangıç Kasa</div>
+            <div style='font-size:22px; font-weight:800;'>${baslangic_kasa:,.2f}</div>
+
+            <br>
+
+            <div style='font-size:12px; color:#666;'>Aktif Hedef</div>
+            <div style='font-size:26px; font-weight:900; color:#cc7a00;'>${aktif_hedef:,.2f}</div>
+
+            <br>
+
+            <div style='font-size:12px; color:#666;'>Net Kâr</div>
+            <div style='font-size:24px; font-weight:900;'>${net_kar:,.2f}</div>
+
+            <br>
+
+            <div style='background:#222; border-radius:20px; height:18px; overflow:hidden;'>
+                <div style='width:{current_pct}%; height:100%; background:linear-gradient(90deg,#cc7a00,#ffcc66);'></div>
+            </div>
+
+            <div style='margin-top:8px; font-size:13px; color:#888; text-align:right;'>
+                %{current_pct:.1f}
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
         st.markdown(
             f"""
