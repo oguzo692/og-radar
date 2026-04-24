@@ -982,7 +982,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-    st.markdown(
+st.markdown(
         f"""
         <div style='margin-top:8px; font-size:13px; color:#888; text-align:right;'>
             %{current_pct:.1f}
