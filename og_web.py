@@ -67,6 +67,43 @@ def fmt_unit_value(qty, unit):
     else:
         return f"{qty:,.4f}".rstrip("0").rstrip(".")
 
+def render_risk_module(current_kasa):
+    risk_profiles = {
+        "Koruma": 0.015,
+        "Standart": 0.03,
+        "Atak": 0.05,
+    }
+
+    selected_risk = st.radio(
+        "Risk Seviyesi",
+        ["Koruma", "Standart", "Atak"],
+        horizontal=True
+    )
+
+    risk_rate = risk_profiles[selected_risk]
+    risk_limit = current_kasa * risk_rate
+
+    st.markdown(
+        f"""
+        <div class='industrial-card'>
+            <div class='terminal-header'>Risk Modülü</div>
+            <div class='terminal-row'>
+                <span>MOD</span>
+                <span class='highlight'>{selected_risk}</span>
+            </div>
+            <div class='terminal-row'>
+                <span>ORAN</span>
+                <span class='highlight'>%{risk_rate * 100:.1f}</span>
+            </div>
+            <div class='terminal-row'>
+                <span>AKTİF LİMİT</span>
+                <span class='highlight'>{fmt_money_usd(risk_limit)}</span>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
 live_vars = get_live_data()
 
 kasa = float(get_num(live_vars, "kasa", 600))
@@ -945,44 +982,9 @@ if page == "⚡ ULTRA ATAK":
         unsafe_allow_html=True
     )
 
-st.progress(int(current_pct))
-risk_profiles = {
-    "Koruma": 0.015,
-    "Standart": 0.03,
-    "Atak": 0.05,
-}
+    st.progress(int(current_pct))
 
-selected_risk = st.radio(
-    "Risk Seviyesi",
-    ["Koruma", "Standart", "Atak"],
-    horizontal=True
-)
-
-risk_rate = risk_profiles[selected_risk]
-risk_limit = ultra_kasa * risk_rate
-
-st.markdown(
-    f"""
-    <div class='industrial-card'>
-        <div class='terminal-header'>Risk Modülü</div>
-        <div class='terminal-row'>
-            <span>MOD</span>
-            <span class='highlight'>{selected_risk}</span>
-        </div>
-        <div class='terminal-row'>
-            <span>ORAN</span>
-            <span class='highlight'>%{risk_rate * 100:.1f}</span>
-        </div>
-        <div class='terminal-row'>
-            <span>AKTİF LİMİT</span>
-            <span class='highlight'>${risk_limit:,.2f}</span>
-        </div>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
-
-st.markdown(
+    st.markdown(
         f"""
         <div style='margin-top:8px; font-size:13px; color:#888; text-align:right;'>
             %{current_pct:.1f}
@@ -991,10 +993,12 @@ st.markdown(
         unsafe_allow_html=True
     )
 
-col1, col2, col3 = st.columns(3)
+    render_risk_module(ultra_kasa)
 
-with col1:
-st.markdown(
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        st.markdown(
             f"""
             <div class='industrial-card' style='height:230px;'>
                 <div class='terminal-header'>💎 KASA</div>
@@ -1011,7 +1015,7 @@ st.markdown(
             unsafe_allow_html=True
         )
 
-with col2:
+    with col2:
         try:
             if yf is not None:
                 btc = yf.Ticker("BTC-USD").history(period="1d")["Close"].iloc[-1]
@@ -1043,7 +1047,7 @@ with col2:
                 unsafe_allow_html=True
             )
 
-with col3:
+    with col3:
         st.markdown(
             f"""
             <div class='industrial-card' style='height:230px;'>
@@ -1056,8 +1060,8 @@ with col3:
             unsafe_allow_html=True
         )
 
-st.markdown("### 📜 SON İŞLEMLER")
-st.markdown(
+    st.markdown("### 📜 SON İŞLEMLER")
+    st.markdown(
         f"""
         <div class='industrial-card'>
             <div class='terminal-header'>AKTİVİTE LOGLARI</div>
