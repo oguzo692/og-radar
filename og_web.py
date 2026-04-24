@@ -67,9 +67,6 @@ def fmt_unit_value(qty, unit):
     else:
         return f"{qty:,.4f}".rstrip("0").rstrip(".")
 
-# --- KİŞİSEL KASA VERİLERİ ---
-og_kasa = float(get_num(live_vars, "oguzo_kasa", kasa / 1))
-
 # --- 💰 FORMLINE HESAPLAMA ---
 w1_kar = float(get_num(live_vars, "w1_sonuc", 0))
 w2_kar = float(get_num(live_vars, "w2_sonuc", 0))
