@@ -961,7 +961,7 @@ selected_risk = st.radio(
 risk_rate = risk_profiles[selected_risk]
 risk_limit = ultra_kasa * risk_rate
 
-st.markdown(
+    st.markdown(
     f"""
     <div class='industrial-card'>
         <div class='terminal-header'>Risk Modülü</div>
@@ -982,7 +982,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.markdown(
+    st.markdown(
         f"""
         <div style='margin-top:8px; font-size:13px; color:#888; text-align:right;'>
             %{current_pct:.1f}
