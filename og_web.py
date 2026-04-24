@@ -921,35 +921,36 @@ if check_password():
         st.divider()
 
         st.markdown(
-            f"""
-            <div class='industrial-card'>
-                <div class='terminal-header'>{hedef_baslik}</div>
-                <div style='display:flex; justify-content:space-between; gap:18px; flex-wrap:wrap; margin-bottom:18px;'>
-                    <div>
-                        <div style='font-size:12px; color:#666;'>Başlangıç Kasa</div>
-                        <div style='font-size:22px; font-weight:800;'>${baslangic_kasa:,.2f}</div>
-                    </div>
-                    <div>
-                        <div style='font-size:12px; color:#666;'>Aktif Hedef</div>
-                        <div style='font-size:22px; font-weight:900; color:#cc7a00;'>${aktif_hedef:,.2f}</div>
-                    </div>
-                    <div>
-                        <div style='font-size:12px; color:#666;'>Net Kâr</div>
-                        <div style='font-size:22px; font-weight:900; color:{'#00ff41' if net_kar >= 0 else '#ff4b4b'};'>${net_kar:,.2f}</div>
-                    </div>
-                </div>
+    f"""
+    <div class='industrial-card'>
+        <div class='terminal-header'>{hedef_baslik}</div>
 
-                <div style='background:#222; border-radius:20px; height:18px; overflow:hidden;'>
-                    <div style='width:{current_pct}%; height:100%; background:linear-gradient(90deg,#cc7a00,#ffcc66);'></div>
-                </div>
-
-                <div style='margin-top:8px; font-size:13px; color:#888; text-align:right;'>
-                    %{current_pct:.1f}
-                </div>
+        <div style='display:flex; justify-content:space-between; gap:18px; flex-wrap:wrap; margin-bottom:18px;'>
+            <div>
+                <div style='font-size:12px; color:#666;'>Başlangıç Kasa</div>
+                <div style='font-size:22px; font-weight:800;'>${baslangic_kasa:,.2f}</div>
             </div>
-            """,
-            unsafe_allow_html=True
-        )
+
+            <div>
+                <div style='font-size:12px; color:#666;'>Aktif Hedef</div>
+                <div style='font-size:22px; font-weight:900; color:#cc7a00;'>${aktif_hedef:,.2f}</div>
+            </div>
+
+            <div>
+                <div style='font-size:12px; color:#666;'>Net Kâr</div>
+                <div style='font-size:22px; font-weight:900; color:{'#00ff41' if net_kar >= 0 else '#ff4b4b'};'>${net_kar:,.2f}</div>
+            </div>
+        </div>
+
+        <progress value="{current_pct:.2f}" max="100" style="width:100%; height:18px;"></progress>
+
+        <div style='margin-top:8px; font-size:13px; color:#888; text-align:right;'>
+            %{current_pct:.1f}
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
         col1, col2, col3 = st.columns(3)
 
