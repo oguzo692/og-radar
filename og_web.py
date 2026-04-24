@@ -980,7 +980,8 @@ st.markdown(
     </div>
     """,
     unsafe_allow_html=True
-    
+)
+
     st.markdown(
         f"""
         <div style='margin-top:8px; font-size:13px; color:#888; text-align:right;'>
