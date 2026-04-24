@@ -941,18 +941,35 @@ if check_password():
         unsafe_allow_html=True
     )
 
-    st.markdown(
-        f"""
-        <div class='industrial-card'>
-            <div class='terminal-header'>HEDEF YOLCULUĞU ($1.200)</div>
-            <div style='background:#111; height:8px; border-radius:10px;'>
-            <div style='background:linear-gradient(90deg, #cc7a00, #ffae00); width:{current_pct}%; height:100%; border-radius:10px;'></div>
-            </div>
-            <div style='text-align:right; font-size:10px; color:#555; margin-top:5px;'>%{current_pct:.1f}</div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+  st.markdown(
+    f"""
+    <div class='industrial-card'>
+        <div style='font-size:12px; color:#666;'>Başlangıç Kasa</div>
+        <div style='font-size:22px; font-weight:800;'>${baslangic_kasa:,.2f}</div>
+
+        <br>
+
+        <div style='font-size:12px; color:#666;'>Aktif Hedef</div>
+        <div style='font-size:26px; font-weight:900; color:#cc7a00;'>${aktif_hedef:,.2f}</div>
+
+        <br>
+
+        <div style='font-size:12px; color:#666;'>Net Kâr</div>
+        <div style='font-size:24px; font-weight:900;'>${net_kar:,.2f}</div>
+
+        <br>
+
+        <div style='background:#222; border-radius:20px; height:18px; overflow:hidden;'>
+            <div style='width:{current_pct}%; height:100%; background:linear-gradient(90deg,#cc7a00,#ffcc66);'></div>
+        </div>
+
+        <div style='margin-top:8px; font-size:13px; color:#888; text-align:right;'>
+            %{current_pct:.1f}
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
     col1, col2, col3 = st.columns(3)
 
