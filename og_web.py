@@ -966,7 +966,7 @@ with col1:
 
 with col2:
             try:
-                if yf is not None:
+    if yf is not None:
                     btc = yf.Ticker("BTC-USD").history(period="1d")["Close"].iloc[-1]
                     eth = yf.Ticker("ETH-USD").history(period="1d")["Close"].iloc[-1]
                     sol = yf.Ticker("SOL-USD").history(period="1d")["Close"].iloc[-1]
