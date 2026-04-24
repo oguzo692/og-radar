@@ -19,7 +19,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- 2. VERİ BAĞLANTISI (GOOGLE SHEETS / CSV EXPORT) ---
+# --- 2. VERİ KATMANI ---
 @st.cache_data(ttl=20)
 def get_live_data():
     try:
@@ -31,7 +31,7 @@ def get_live_data():
     except Exception:
         return {"kasa": "600.0", "ana_para": "600.0"}
 
-# --- YARDIMCI FONKSİYONLAR ---
+# --- 3. FORMAT VE TEMEL YARDIMCILAR ---
 def get_num(data, key, default=0.0):
     try:
         val = data.get(key, default)
@@ -111,6 +111,7 @@ def get_market_snapshot(data):
 
     return snapshot
 
+# --- 4. ORTAK UI BİLEŞENLERİ ---
 def render_market_ticker(data, announcement):
     market_items = [("DUYURU", announcement)] + get_market_snapshot(data)
     if len(market_items) == 1:
@@ -486,6 +487,82 @@ def build_portfolio_alerts(active_assets, main_asset_pct, main_asset_label, tota
 
     return alerts
 
+# --- 5. ULTRA ATAK KARAR PANELLERİ ---
+def build_next_move(ultra_kasa, baslangic_kasa, aktif_hedef, current_pct, net_kar, risk_state, peak_value):
+    selected_risk = risk_state.get("selected_risk", "Standart")
+    drawdown = max(0, peak_value - ultra_kasa)
+    drawdown_pct = (drawdown / peak_value * 100) if peak_value > 0 else 0
+
+    if ultra_kasa < baslangic_kasa:
+        return "KORU", "Başlangıç kasanın altındasın. Koruma modu ve düşük tempo daha doğru."
+    if current_pct >= 85:
+        return "KİLİTLE", f"Hedefe %{current_pct:.1f} yaklaşıldı. Risk artırmak yerine kârı koru."
+    if drawdown_pct >= 8:
+        return "RECOVERY", f"Zirveden %{drawdown_pct:.1f} aşağıdasın. Öncelik zirveye dönüş olsun."
+    if selected_risk == "Atak" and net_kar <= 0:
+        return "RİSK DÜŞÜR", "Atak modu negatif bölgede pahalı kalır. Standart veya Koruma daha sağlıklı."
+    if net_kar > 0 and selected_risk == "Koruma":
+        return "STANDART SERBEST", "Kasa pozitif bölgede. İstersen Standart moda geçiş alanı var."
+
+    remaining = max(0, aktif_hedef - ultra_kasa)
+    return "STANDARTTA KAL", f"Akış dengeli. Aktif hedefe kalan {fmt_money_usd(remaining)}."
+
+def render_ultra_decision_panels(data, ultra_kasa, baslangic_kasa, aktif_hedef, current_pct, net_kar, risk_state):
+    history_df = parse_kasa_history(data)
+    if history_df.empty:
+        peak_value = max(ultra_kasa, baslangic_kasa)
+    else:
+        peak_value = max(float(history_df["Kasa"].max()), ultra_kasa)
+
+    selected_risk = risk_state.get("selected_risk", "Standart")
+    risk_rate = float(risk_state.get("risk_rate", 0.03))
+    risk_limit = float(risk_state.get("risk_limit", ultra_kasa * risk_rate))
+
+    move_title, move_body = build_next_move(
+        ultra_kasa,
+        baslangic_kasa,
+        aktif_hedef,
+        current_pct,
+        net_kar,
+        risk_state,
+        peak_value,
+    )
+
+    safe_rate = 0.80
+    growth_rate = max(0, 1 - safe_rate - risk_rate)
+    safe_pool = ultra_kasa * safe_rate
+    growth_pool = ultra_kasa * growth_rate
+
+    recovery_needed = max(0, peak_value - ultra_kasa)
+    recovery_pct = 100 if peak_value <= 0 else max(0, min(100, (ultra_kasa / peak_value) * 100))
+    recovery_status = "ZİRVEDE" if recovery_needed <= 0 else "TOPARLANMA"
+
+    panel_html = (
+        "<div class='decision-grid'>"
+        "<div class='decision-card decision-primary'>"
+        "<div class='decision-kicker'>Next Move</div>"
+        f"<div class='decision-title'>{html.escape(move_title)}</div>"
+        f"<div class='decision-body'>{html.escape(move_body)}</div>"
+        "</div>"
+        "<div class='decision-card'>"
+        "<div class='decision-kicker'>Vault Split</div>"
+        "<div class='vault-row'><span>Safe Vault</span><strong>" + fmt_money_usd(safe_pool) + "</strong></div>"
+        "<div class='vault-bar'><i style='width:80%;'></i></div>"
+        f"<div class='vault-row'><span>Risk Pool · {html.escape(selected_risk)}</span><strong>{fmt_money_usd(risk_limit)}</strong></div>"
+        f"<div class='vault-row'><span>Growth Pool</span><strong>{fmt_money_usd(growth_pool)}</strong></div>"
+        "</div>"
+        "<div class='decision-card'>"
+        "<div class='decision-kicker'>Recovery Meter</div>"
+        f"<div class='decision-title'>{recovery_status}</div>"
+        f"<div class='decision-body'>Zirve {fmt_money_usd(peak_value)} · Geri dönüş {fmt_money_usd(recovery_needed)}</div>"
+        f"<div class='recovery-track'><i style='width:{recovery_pct:.1f}%;'></i></div>"
+        f"<div class='recovery-label'>%{recovery_pct:.1f}</div>"
+        "</div>"
+        "</div>"
+    )
+    st.markdown(panel_html, unsafe_allow_html=True)
+
+# --- 6. KASA GEÇMİŞİ ---
 def parse_kasa_history(data):
     rows = []
 
@@ -828,16 +905,17 @@ def render_risk_module(current_kasa):
         "risk_limit": risk_limit,
     }
 
+# --- 7. CANLI VERİ DEĞİŞKENLERİ ---
 live_vars = get_live_data()
 
 kasa = float(get_num(live_vars, "kasa", 600))
 ana_para = float(get_num(live_vars, "ana_para", 600))
 duyuru_metni = get_str(live_vars, "duyuru", "SİSTEM ÇEVRİMİÇİ... OG CORE")
 
-# --- KİŞİSEL KASA VERİLERİ ---
+# Kişisel kasa verileri
 og_kasa = float(get_num(live_vars, "oguzo_kasa", kasa / 1))
 
-# --- 💰 FORMLINE HESAPLAMA ---
+# Formline hesaplama
 w1_kar = float(get_num(live_vars, "w1_sonuc", 0))
 w2_kar = float(get_num(live_vars, "w2_sonuc", 0))
 w3_kar = float(get_num(live_vars, "w3_sonuc", 0))
@@ -846,7 +924,7 @@ toplam_bahis_kar = w1_kar + w2_kar + w3_kar
 wr_oran = get_str(live_vars, "win_rate", "0")
 son_islemler_raw = get_str(live_vars, "son_islemler", "Veri yok")
 
-# --- 3. CSS STİLLERİ ---
+# --- 8. STİL SİSTEMİ ---
 common_css = """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&family=Orbitron:wght@400;700;900&display=swap');
@@ -999,95 +1077,7 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input {
     justify-content: space-between;
 }
 
-/* --- PORTFÖY PREMIUM --- */
-.portfolio-shell {
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-}
-
-.portfolio-topline {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 16px;
-    color: #7b7b7b !important;
-    font-size: 11px;
-    letter-spacing: 2.4px;
-    text-transform: uppercase;
-}
-
-.portfolio-topline strong {
-    color: #e2e2e2 !important;
-    font-weight: 800;
-}
-
-.portfolio-hero {
-    display: grid;
-    grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
-    gap: 22px;
-    background:
-        linear-gradient(135deg, rgba(255,174,0,0.10), transparent 26%),
-        linear-gradient(180deg, rgba(18,18,18,0.96), rgba(8,8,8,0.96));
-    border: 1px solid rgba(255,255,255,0.045);
-    border-top: 2px solid rgba(204,122,0,0.72);
-    border-radius: 6px;
-    padding: 30px;
-    margin-bottom: 4px;
-    box-shadow: 0 18px 45px rgba(0,0,0,0.45);
-}
-
-.portfolio-hero-sub {
-    font-size: 12px;
-    color: #858585 !important;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    margin-bottom: 14px;
-}
-
-.portfolio-hero-main {
-    font-size: 58px;
-    line-height: 1;
-    font-family: 'Orbitron', monospace !important;
-    color: #f0f0f0 !important;
-    font-weight: 900;
-}
-
-.portfolio-hero-try {
-    margin-top: 14px;
-    font-size: 16px;
-    color: #9a9a9a !important;
-}
-
-.portfolio-meta-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-}
-
-.portfolio-meta-card {
-    background: rgba(255,255,255,0.025);
-    border: 1px solid rgba(255,255,255,0.055);
-    border-radius: 6px;
-    padding: 16px;
-    min-height: 88px;
-}
-
-.portfolio-meta-label {
-    color: #777 !important;
-    font-size: 10px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 10px;
-}
-
-.portfolio-meta-value {
-    color: #eeeeee !important;
-    font-family: 'Orbitron', monospace !important;
-    font-size: 18px;
-    font-weight: 800;
-}
-
+/* --- PORTFÖY TABLOSU --- */
 .portfolio-table-card {
     background: rgba(14,14,14,0.88);
     border: 1px solid rgba(255,255,255,0.045);
@@ -1189,6 +1179,97 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input {
     line-height: 1.55;
 }
 
+.decision-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr 1fr;
+    gap: 14px;
+    margin: 2px 0 20px 0;
+}
+
+.decision-card {
+    background:
+        linear-gradient(135deg, rgba(255,174,0,0.06), transparent 34%),
+        rgba(15,15,15,0.86);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-top: 2px solid rgba(204,122,0,0.54);
+    border-radius: 6px;
+    padding: 18px;
+    min-height: 160px;
+    box-shadow: 0 12px 28px rgba(0,0,0,0.32);
+}
+
+.decision-primary {
+    border-top-color: #ffae00;
+}
+
+.decision-kicker {
+    color: #858585 !important;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 2.4px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+}
+
+.decision-title {
+    color: #f2f2f2 !important;
+    font-family: 'Orbitron', monospace !important;
+    font-size: 24px;
+    line-height: 1.08;
+    font-weight: 900;
+    margin-bottom: 12px;
+}
+
+.decision-body {
+    color: #969696 !important;
+    font-size: 12px;
+    line-height: 1.55;
+}
+
+.vault-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    color: #858585 !important;
+    font-size: 12px;
+    margin: 10px 0;
+}
+
+.vault-row strong {
+    color: #f0f0f0 !important;
+    font-family: 'Orbitron', monospace !important;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.vault-bar,
+.recovery-track {
+    width: 100%;
+    height: 9px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.055);
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.035);
+    margin: 12px 0;
+}
+
+.vault-bar i,
+.recovery-track i {
+    display: block;
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #cc7a00, #ffae00);
+    box-shadow: 0 0 16px rgba(255,174,0,0.24);
+}
+
+.recovery-label {
+    color: #ffae00 !important;
+    font-family: 'Orbitron', monospace !important;
+    font-size: 18px;
+    font-weight: 900;
+    text-align: right;
+}
+
 @media (max-width: 900px) {
     .block-container {
         padding-left: 1rem !important;
@@ -1247,19 +1328,6 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input {
         gap: 8px;
     }
 
-    .portfolio-hero {
-        grid-template-columns: 1fr;
-        padding: 22px;
-    }
-
-    .portfolio-hero-main {
-        font-size: 38px;
-    }
-
-    .portfolio-meta-grid {
-        grid-template-columns: 1fr;
-    }
-
     .portfolio-row {
         grid-template-columns: 1fr;
         gap: 8px;
@@ -1271,6 +1339,14 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input {
 
     .smart-alert-grid {
         grid-template-columns: 1fr;
+    }
+
+    .decision-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .decision-card {
+        min-height: auto;
     }
 }
 
@@ -1345,6 +1421,14 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input {
         font-size: 11px;
         line-height: 1.45;
     }
+
+    .decision-title {
+        font-size: 20px;
+    }
+
+    .vault-row {
+        font-size: 11px;
+    }
 }
 </style>
 """
@@ -1401,7 +1485,7 @@ input[type="password"] {
 </style>
 """
 
-# --- 4. HTML ŞABLONLARI ---
+# --- 9. STATİK HTML ŞABLONLARI ---
 w3_matches = """<div class='terminal-row'><span>türkiye - xxx </span><span class='highlight'>türkiye w</span></div><div class='terminal-row'><span>türkiye - aaa</span><span class='highlight'>türkiye w</span></div><div class='terminal-row'><span>rizespor - gala</span><span class='highlight'></span></div><div class='terminal-row'><span></span><span class='highlight'></span></div><div class='terminal-row'><span></span><span class='highlight'></span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 8.79</span><span>Bet: 100 USD</span></div>"""
 w2_matches = """<div class='terminal-row'><span>gala - kayserispor</span><span style='color:#00ff41;'>gala w & iy +1 & 2+ ✅</span></div><div class='terminal-row'><span>liverpool - newcastle</span><span style='color:#00ff41;'>+2 & liverpool 1x ✅</span></div><div class='terminal-row'><span>bvb - heidenheim</span><span style='color:#00ff41;'>bvb w & iy +1 & 2+ ✅</span></div><div class='terminal-row'><span>kocaelispor - fenerbahçe</span><span style='color:#00ff41;'>fenerbahçe w & 2+ ✅</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 5.53</span><span>Bet: 100 USD</span></div>"""
 w1_matches = """<div class='terminal-row'><span>karagümrük - gala</span><span style='color:#ff4b4b;'>gala w & +2 ✅</span></div><div class='terminal-row'><span>bournemouth - liverpool</span><span style='color:#00ff41;'>kg ✅</span></div><div class='terminal-row'><span>union berlin - bvb</span><span style='color:#00ff41;'>iy +1 ✅</span></div><div class='terminal-row'><span>newcastle - aston villa</span><span style='color:#ff4b4b;'>newcastle +2 ❌</span></div><div class='terminal-row'><span>fenerbahçe - göztepe</span><span style='color:#ff4b4b;'>fenerbahçe w ❌</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 7.09</span><span>Bet: 100 USD</span></div>"""
@@ -1410,7 +1494,7 @@ w3_coupon_html = f"<div class='industrial-card' style='border-top-color: #00ff41
 w2_coupon_html = f"<div class='industrial-card' style='border-top-color: #00ff41 !important;'><div class='terminal-header' style='color:#00ff41;'>✅ W2 KUPONU (BAŞARILI)</div>{w2_matches}<span style='color:#00ff41; font-weight:bold;'>SONUÇLANDI ✅</span></div>"
 w1_coupon_html = f"<div class='industrial-card' style='border-top-color: #ff4b4b !important;'><div class='terminal-header' style='color:#ff4b4b;'>❌ W1 KUPONU (BAŞARISIZ)</div>{w1_matches}<span style='color:#ff4b4b; font-weight:bold;'>SONUÇLANDI ❌</span></div>"
 
-# --- 5. GÜVENLİK ---
+# --- 10. GÜVENLİK ---
 if "password_correct" not in st.session_state:
     st.session_state["password_correct"] = False
 
@@ -1428,7 +1512,7 @@ def check_password():
         return False
     return True
 
-# --- PORTFÖY YARDIMCI FONKSİYONLAR ---
+# --- 11. PORTFÖY MOTORU ---
 def discover_dynamic_instruments(data, users):
     instrument_codes = set()
 
@@ -1582,250 +1666,6 @@ def build_user_portfolio(data, user, instruments, usdtry):
 
     return df.sort_values(["order", "label"]).reset_index(drop=True)
 
-def render_top_asset_cards(df_nonzero):
-    if df_nonzero.empty:
-        return
-
-    top_df = df_nonzero.sort_values("total_usd", ascending=False).head(4).copy()
-    cols = st.columns(min(4, len(top_df)))
-
-    for idx, (_, row) in enumerate(top_df.iterrows()):
-        with cols[idx]:
-            sub_value = fmt_money_usd(row["total_usd"]) if row["currency"] == "USD" else fmt_money_try(row["total_try"])
-            qty_text = fmt_unit_value(row["quantity"], row["unit"])
-
-            st.markdown(
-                f"""
-                <div class='industrial-card' style='text-align:center; min-height:118px;'>
-                    <div class='asset-mini-title'>{row["label"]}</div>
-                    <div class='asset-mini-value'>{qty_text}</div>
-                    <div class='asset-mini-sub'>{sub_value}</div>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-
-def render_secondary_asset_cards(df_nonzero):
-    extra_df = df_nonzero.sort_values("total_usd", ascending=False).iloc[4:].copy()
-    if extra_df.empty:
-        return
-
-    chunks = [extra_df.iloc[i:i+4] for i in range(0, len(extra_df), 4)]
-
-    for chunk in chunks:
-        cols = st.columns(len(chunk))
-        for idx, (_, row) in enumerate(chunk.iterrows()):
-            with cols[idx]:
-                qty_text = fmt_unit_value(row["quantity"], row["unit"])
-                sub_value = fmt_money_usd(row["total_usd"]) if row["currency"] == "USD" else fmt_money_try(row["total_try"])
-
-                st.markdown(
-                    f"""
-                    <div class='industrial-card' style='text-align:center; min-height:105px; border-top:1px solid rgba(255,255,255,0.06) !important;'>
-                        <div class='asset-mini-title'>{row["label"]}</div>
-                        <div class='highlight' style='font-size:18px; margin-top:10px;'>{qty_text}</div>
-                        <div class='asset-mini-sub'>{sub_value}</div>
-                    </div>
-                    """,
-                    unsafe_allow_html=True
-                )
-
-def render_breakdown_panel(df_nonzero):
-    if df_nonzero.empty:
-        st.markdown(
-            """
-            <div class='industrial-card'>
-                <div class='terminal-header'>Varlık Kırılımı</div>
-                <div class='highlight'>Aktif varlık bulunamadı.</div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-        return
-
-    rows_html = ""
-
-    for _, row in df_nonzero.iterrows():
-        if row["currency"] == "USD":
-            price_text = fmt_money_usd(row["price"])
-            total_text = fmt_money_usd(row["total_usd"])
-        else:
-            price_text = fmt_money_try(row["price"])
-            total_text = fmt_money_try(row["total_try"])
-
-        qty_text = fmt_unit_value(row["quantity"], row["unit"])
-
-        rows_html += f"""
-        <div class="bd-row">
-            <div class="bd-col bd-name">
-                <div class="bd-title">{row["label"]}</div>
-                <div class="bd-sub">{row["currency"]} bazlı / {row["unit"]}</div>
-            </div>
-            <div class="bd-col bd-qty">{qty_text}</div>
-            <div class="bd-col bd-price">{price_text}</div>
-            <div class="bd-col bd-total">{total_text}</div>
-        </div>
-        """
-
-    total_usd = df_nonzero["total_usd"].sum()
-    total_try = df_nonzero["total_try"].sum()
-
-    html = f"""
-    <html>
-    <head>
-    <style>
-        body {{
-            margin: 0;
-            padding: 0;
-            background: transparent;
-            font-family: 'JetBrains Mono', monospace;
-            color: #d1d1d1;
-        }}
-
-        .card {{
-            background: rgba(15, 15, 15, 0.82);
-            border: 1px solid rgba(255, 255, 255, 0.03);
-            border-top: 2px solid rgba(204, 122, 0, 0.4);
-            border-radius: 4px;
-            padding: 22px;
-            box-sizing: border-box;
-        }}
-
-        .header {{
-            color: #8b8b8b;
-            font-size: 11px;
-            font-weight: 800;
-            letter-spacing: 2.8px;
-            text-transform: uppercase;
-            margin-bottom: 18px;
-            border-left: 3px solid #cc7a00;
-            padding-left: 12px;
-        }}
-
-        .head-row {{
-            display: flex;
-            justify-content: space-between;
-            gap: 14px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
-            margin-bottom: 6px;
-            color: #777;
-            font-size: 11px;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-        }}
-
-        .bd-row {{
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 14px;
-            padding: 12px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.045);
-        }}
-
-        .bd-col {{
-            font-size: 13px;
-        }}
-
-        .bd-name {{
-            flex: 1.6;
-            min-width: 0;
-        }}
-
-        .bd-qty {{
-            flex: 1;
-            text-align: right;
-            color: #d8d8d8;
-        }}
-
-        .bd-price {{
-            flex: 1;
-            text-align: right;
-            color: #a8a8a8;
-        }}
-
-        .bd-total {{
-            flex: 1.1;
-            text-align: right;
-            color: #ffffff;
-            font-weight: 500;
-        }}
-
-        .bd-title {{
-            color: #dedede;
-            font-size: 14px;
-            font-weight: 500;
-        }}
-
-        .bd-sub {{
-            color: #7f7f7f;
-            font-size: 12px;
-            margin-top: 4px;
-        }}
-
-        .spacer {{
-            height: 12px;
-        }}
-
-        .rule {{
-            border: 0;
-            height: 1px;
-            background: rgba(255,255,255,0.06);
-            margin: 8px 0 16px 0;
-        }}
-
-        .footer {{
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 12px;
-        }}
-
-        .footer-label {{
-            font-weight: 700;
-            color: #d0d0d0;
-            font-size: 14px;
-        }}
-
-        .footer-total {{
-            color: #cc7a00;
-            font-family: 'Orbitron', monospace;
-            font-size: 20px;
-            font-weight: 800;
-        }}
-    </style>
-    </head>
-    <body>
-        <div class="card">
-            <div class="header">Varlık Kırılımı</div>
-
-            <div class="head-row">
-                <div style="flex:1.6;">Enstrüman</div>
-                <div style="flex:1; text-align:right;">Miktar</div>
-                <div style="flex:1; text-align:right;">Birim</div>
-                <div style="flex:1.1; text-align:right;">Toplam</div>
-            </div>
-
-            {rows_html}
-
-            <div class="spacer"></div>
-            <hr class="rule">
-
-            <div class="footer">
-                <span class="footer-label">Toplam</span>
-                <span class="footer-total">{fmt_money_usd(total_usd)} &nbsp;//&nbsp; {fmt_money_try(total_try)}</span>
-            </div>
-        </div>
-    </body>
-    </html>
-    """
-
-    row_count = len(df_nonzero)
-    height = 145 + (row_count * 64)
-
-    components.html(html, height=height, scrolling=False)
-
 def render_allocation_panel(df_nonzero):
     if df_nonzero.empty:
         st.markdown(
@@ -1868,16 +1708,6 @@ def render_allocation_panel(df_nonzero):
     {rows_html}
 </div>
 """
-    st.markdown(textwrap.dedent(html), unsafe_allow_html=True)
-
-def render_info_strip(instruments, usdtry):
-    parts = [f"<span>USD/TRY: <strong>₺{usdtry:.2f}</strong></span>"]
-
-    for ins in instruments:
-        price_text = fmt_money_usd(ins["price"]) if ins["currency"] == "USD" else fmt_money_try(ins["price"])
-        parts.append(f"<span>{ins['label']}: <strong>{price_text}</strong></span>")
-
-    html = f"<div class='info-strip'>{''.join(parts)}</div>"
     st.markdown(textwrap.dedent(html), unsafe_allow_html=True)
 
 def render_portfolio_v2(data):
@@ -1974,7 +1804,7 @@ def render_portfolio_v2(data):
     if len(df_nonzero) > 1:
         render_allocation_panel(df_nonzero)
 
-# --- 6. ANA UYGULAMA ---
+# --- 12. ANA UYGULAMA ---
 if not check_password():
     st.stop()
 
@@ -2080,6 +1910,7 @@ if page == "⚡ ULTRA ATAK":
 
     risk_state = render_risk_module(ultra_kasa)
     render_smart_alerts(build_ultra_alerts(ultra_kasa, baslangic_kasa, current_pct, net_kar, risk_state))
+    render_ultra_decision_panels(live_vars, ultra_kasa, baslangic_kasa, aktif_hedef, current_pct, net_kar, risk_state)
     render_kasa_history_chart(live_vars, ultra_kasa)
 
     col1, col2, col3 = st.columns(3)
