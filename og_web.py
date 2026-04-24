@@ -1,5 +1,7 @@
 import streamlit as st
 from datetime import datetime
+import html
+import json
 import pandas as pd
 import textwrap
 import streamlit.components.v1 as components
@@ -67,6 +69,395 @@ def fmt_unit_value(qty, unit):
     else:
         return f"{qty:,.4f}".rstrip("0").rstrip(".")
 
+@st.cache_data(ttl=90)
+def get_market_snapshot(data):
+    snapshot = []
+
+    if yf is not None:
+        for symbol, label, decimals in [
+            ("BTC-USD", "BTC", 0),
+            ("ETH-USD", "ETH", 0),
+            ("SOL-USD", "SOL", 2),
+        ]:
+            try:
+                hist = yf.Ticker(symbol).history(period="1d")
+                if not hist.empty:
+                    price = float(hist["Close"].iloc[-1])
+                    snapshot.append((label, f"${price:,.{decimals}f}"))
+            except Exception:
+                pass
+
+    fallback_assets = [
+        ("BTC", get_num(data, "btc_fiyat_usd", 0), "$", 0),
+        ("ETH", get_num(data, "eth_fiyat_usd", 0), "$", 0),
+        ("SOL", get_num(data, "sol_fiyat_usd", 0), "$", 2),
+    ]
+
+    existing_labels = {label for label, _ in snapshot}
+    for label, price, prefix, decimals in fallback_assets:
+        if label not in existing_labels and price > 0:
+            snapshot.append((label, f"{prefix}{price:,.{decimals}f}"))
+
+    usdtry = get_num(data, "usdtry", 0)
+    gram_altin = get_num(data, "gram_altin_fiyat", 0)
+    ceyrek_altin = get_num(data, "ceyrek_altin_fiyat", 0)
+
+    if usdtry > 0:
+        snapshot.append(("USD/TRY", f"₺{usdtry:.2f}"))
+    if gram_altin > 0:
+        snapshot.append(("GRAM", fmt_money_try(gram_altin)))
+    if ceyrek_altin > 0:
+        snapshot.append(("ÇEYREK", fmt_money_try(ceyrek_altin)))
+
+    return snapshot
+
+def render_market_ticker(data, announcement):
+    market_items = [("DUYURU", announcement)] + get_market_snapshot(data)
+    if len(market_items) == 1:
+        market_items.append(("SİSTEM", "Piyasa verisi bekleniyor"))
+
+    item_html = ""
+    for label, value in market_items * 2:
+        item_html += (
+            "<span class='ticker-item'>"
+            f"<span class='ticker-label'>{html.escape(str(label))}</span>"
+            f"<span class='ticker-value'>{html.escape(str(value))}</span>"
+            "</span>"
+        )
+
+    st.markdown(
+        f"<div class='ticker-wrap'><div class='ticker'>{item_html}</div></div>",
+        unsafe_allow_html=True
+    )
+
+def render_animated_counter(label, value, prefix="", suffix="", decimals=2, subtitle="", accent="#cc7a00", height=152):
+    safe_value = float(value or 0)
+    card_html = f"""
+    <div class="counter-card">
+        <div class="counter-label">{html.escape(label)}</div>
+        <div class="counter-value" id="counter">0</div>
+        <div class="counter-subtitle">{html.escape(subtitle)}</div>
+    </div>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&family=Orbitron:wght@400;700;900&display=swap');
+        html, body {{
+            margin: 0;
+            padding: 0;
+            background: transparent;
+            overflow: hidden;
+        }}
+        .counter-card {{
+            height: {height - 4}px;
+            box-sizing: border-box;
+            background:
+                linear-gradient(135deg, rgba(204,122,0,0.12), transparent 35%),
+                rgba(15,15,15,0.86);
+            border: 1px solid rgba(255,255,255,0.045);
+            border-top: 2px solid {accent};
+            border-radius: 6px;
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            box-shadow: 0 14px 30px rgba(0,0,0,0.38);
+            animation: counterIn 520ms ease-out both;
+        }}
+        .counter-label {{
+            color: #858585;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 2.6px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }}
+        .counter-value {{
+            color: #f2f2f2;
+            font-family: 'Orbitron', monospace;
+            font-size: 36px;
+            line-height: 1;
+            font-weight: 900;
+            white-space: nowrap;
+        }}
+        .counter-subtitle {{
+            color: #8d8d8d;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            margin-top: 12px;
+        }}
+        @keyframes counterIn {{
+            from {{ opacity: 0; transform: translateY(10px); }}
+            to {{ opacity: 1; transform: translateY(0); }}
+        }}
+    </style>
+
+    <script>
+        const target = {safe_value};
+        const prefix = {json.dumps(prefix)};
+        const suffix = {json.dumps(suffix)};
+        const decimals = {int(decimals)};
+        const el = document.getElementById("counter");
+        const start = performance.now();
+        const duration = 950;
+
+        function formatValue(value) {{
+            const sign = value < 0 ? "-" : "";
+            const absolute = Math.abs(value);
+            const formatted = absolute.toLocaleString("en-US", {{
+                minimumFractionDigits: decimals,
+                maximumFractionDigits: decimals
+            }});
+            return sign + prefix + formatted + suffix;
+        }}
+
+        function tick(now) {{
+            const progress = Math.min((now - start) / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            el.textContent = formatValue(target * eased);
+            if (progress < 1) requestAnimationFrame(tick);
+        }}
+
+        requestAnimationFrame(tick);
+    </script>
+    """
+    components.html(card_html, height=height, scrolling=False)
+
+def render_portfolio_hero_component(selected_user_label, total_usd, total_try, active_assets, main_asset_label, main_asset_pct, usdtry):
+    hero_html = f"""
+    <div class="portfolio-shell">
+        <div class="portfolio-topline">
+            <span>Portföy Sahibi</span>
+            <strong>{html.escape(selected_user_label)}</strong>
+        </div>
+
+        <div class="portfolio-hero">
+            <div>
+                <div class="portfolio-hero-sub">Net Portföy Değeri</div>
+                <div class="portfolio-hero-main" id="portfolio-usd">$0.00</div>
+                <div class="portfolio-hero-try" id="portfolio-try">≈ ₺0</div>
+            </div>
+
+            <div class="portfolio-meta-grid">
+                <div class="portfolio-meta-card">
+                    <div class="portfolio-meta-label">Aktif Varlık</div>
+                    <div class="portfolio-meta-value">{active_assets}</div>
+                </div>
+                <div class="portfolio-meta-card">
+                    <div class="portfolio-meta-label">Ana Varlık</div>
+                    <div class="portfolio-meta-value">{html.escape(main_asset_label)}</div>
+                </div>
+                <div class="portfolio-meta-card">
+                    <div class="portfolio-meta-label">Yoğunluk</div>
+                    <div class="portfolio-meta-value">%{main_asset_pct:.1f}</div>
+                </div>
+                <div class="portfolio-meta-card">
+                    <div class="portfolio-meta-label">USD/TRY</div>
+                    <div class="portfolio-meta-value">₺{usdtry:.2f}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&family=Orbitron:wght@400;700;900&display=swap');
+        html, body {{
+            margin: 0;
+            padding: 0;
+            background: transparent;
+            overflow: hidden;
+        }}
+        .portfolio-shell {{
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            font-family: 'JetBrains Mono', monospace;
+        }}
+        .portfolio-topline {{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            color: #7b7b7b;
+            font-size: 11px;
+            letter-spacing: 2.4px;
+            text-transform: uppercase;
+        }}
+        .portfolio-topline strong {{
+            color: #e2e2e2;
+            font-weight: 800;
+        }}
+        .portfolio-hero {{
+            display: grid;
+            grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
+            gap: 22px;
+            background:
+                linear-gradient(135deg, rgba(255,174,0,0.10), transparent 26%),
+                linear-gradient(180deg, rgba(18,18,18,0.96), rgba(8,8,8,0.96));
+            border: 1px solid rgba(255,255,255,0.045);
+            border-top: 2px solid rgba(204,122,0,0.72);
+            border-radius: 6px;
+            padding: 30px;
+            box-sizing: border-box;
+            box-shadow: 0 18px 45px rgba(0,0,0,0.45);
+            animation: heroIn 560ms ease-out both;
+        }}
+        .portfolio-hero-sub {{
+            font-size: 12px;
+            color: #858585;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+        }}
+        .portfolio-hero-main {{
+            font-size: 58px;
+            line-height: 1;
+            font-family: 'Orbitron', monospace;
+            color: #f0f0f0;
+            font-weight: 900;
+            white-space: nowrap;
+        }}
+        .portfolio-hero-try {{
+            margin-top: 14px;
+            font-size: 16px;
+            color: #9a9a9a;
+        }}
+        .portfolio-meta-grid {{
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }}
+        .portfolio-meta-card {{
+            background: rgba(255,255,255,0.025);
+            border: 1px solid rgba(255,255,255,0.055);
+            border-radius: 6px;
+            padding: 16px;
+            min-height: 88px;
+            box-sizing: border-box;
+        }}
+        .portfolio-meta-label {{
+            color: #777;
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }}
+        .portfolio-meta-value {{
+            color: #eeeeee;
+            font-family: 'Orbitron', monospace;
+            font-size: 18px;
+            font-weight: 800;
+            white-space: nowrap;
+        }}
+        @keyframes heroIn {{
+            from {{ opacity: 0; transform: translateY(12px); }}
+            to {{ opacity: 1; transform: translateY(0); }}
+        }}
+        @media (max-width: 760px) {{
+            .portfolio-hero {{
+                grid-template-columns: 1fr;
+                padding: 22px;
+            }}
+            .portfolio-hero-main {{
+                font-size: 38px;
+            }}
+            .portfolio-meta-grid {{
+                grid-template-columns: 1fr;
+            }}
+        }}
+    </style>
+
+    <script>
+        const usdTarget = {float(total_usd or 0)};
+        const tryTarget = {float(total_try or 0)};
+        const usdEl = document.getElementById("portfolio-usd");
+        const tryEl = document.getElementById("portfolio-try");
+        const start = performance.now();
+        const duration = 1050;
+
+        function moneyUsd(value) {{
+            return "$" + value.toLocaleString("en-US", {{
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }});
+        }}
+
+        function moneyTry(value) {{
+            return "≈ ₺" + value.toLocaleString("en-US", {{
+                maximumFractionDigits: 0
+            }});
+        }}
+
+        function tick(now) {{
+            const progress = Math.min((now - start) / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            usdEl.textContent = moneyUsd(usdTarget * eased);
+            tryEl.textContent = moneyTry(tryTarget * eased);
+            if (progress < 1) requestAnimationFrame(tick);
+        }}
+
+        requestAnimationFrame(tick);
+    </script>
+    """
+    components.html(hero_html, height=270, scrolling=False)
+
+def render_smart_alerts(alerts):
+    if not alerts:
+        return
+
+    cards = ""
+    for level, title, body in alerts[:3]:
+        cards += (
+            f"<div class='smart-alert smart-alert-{level}'>"
+            f"<div class='smart-alert-title'>{html.escape(title)}</div>"
+            f"<div class='smart-alert-body'>{html.escape(body)}</div>"
+            f"</div>"
+        )
+
+    st.markdown(
+        f"<div class='smart-alert-grid'>{cards}</div>",
+        unsafe_allow_html=True
+    )
+
+def build_ultra_alerts(ultra_kasa, baslangic_kasa, current_pct, net_kar, risk_state):
+    alerts = []
+    selected_risk = risk_state.get("selected_risk", "Standart")
+    risk_limit = risk_state.get("risk_limit", ultra_kasa * 0.03)
+
+    if ultra_kasa < baslangic_kasa:
+        alerts.append(("warn", "Koruma bölgesi", "Kasa başlangıç seviyesinin altında. Koruma modu daha kontrollü kalır."))
+    elif current_pct >= 90:
+        alerts.append(("good", "Hedef kilidi", "Aktif hedefe çok yaklaşıldı. Kârı korumak burada daha değerli."))
+    elif current_pct >= 70:
+        alerts.append(("info", "Yaklaşan hedef", "Hedefin büyük kısmı tamamlandı. Risk artışı yerine istikrar daha mantıklı."))
+
+    if selected_risk == "Atak" and current_pct >= 70:
+        alerts.append(("warn", "Atak modu yüksek", f"Aktif limit {fmt_money_usd(risk_limit)}. Hedefe yakınken bu mod agresif kalabilir."))
+    elif selected_risk == "Koruma":
+        alerts.append(("info", "Düşük risk aktif", f"Aktif limit {fmt_money_usd(risk_limit)} ile kasa daha kontrollü ilerliyor."))
+
+    if net_kar > 0:
+        alerts.append(("good", "Pozitif bölge", f"Net kâr {fmt_money_usd(net_kar)}. Sistem başlangıcın üstünde çalışıyor."))
+
+    if not alerts:
+        alerts.append(("info", "Sistem dengede", "Kasa ve hedef akışı normal bölgede. Standart risk seviyesi yeterli görünüyor."))
+
+    return alerts
+
+def build_portfolio_alerts(active_assets, main_asset_pct, main_asset_label, total_usd):
+    if total_usd <= 0:
+        return [("warn", "Portföy boş", "Aktif varlık görünmüyor. Sheet tarafında miktar alanlarını kontrol et.")]
+
+    alerts = []
+    if active_assets == 1 and main_asset_pct >= 95:
+        alerts.append(("warn", "Yoğun portföy", f"Portföy neredeyse tamamen {main_asset_label} üzerinde. Dağılım tek noktada toplanmış."))
+    elif active_assets >= 3 and main_asset_pct <= 60:
+        alerts.append(("good", "Dengeli yapı", "Portföy birden fazla varlığa yayılmış. Yoğunluk riski düşük görünüyor."))
+    else:
+        alerts.append(("info", "Portföy izleniyor", "Dağılım normal bölgede. Yeni varlık ekledikçe analiz daha anlamlı olur."))
+
+    return alerts
+
 def render_risk_module(current_kasa):
     risk_profiles = {
         "Koruma": 0.015,
@@ -77,7 +468,8 @@ def render_risk_module(current_kasa):
     selected_risk = st.radio(
         "Risk Seviyesi",
         ["Koruma", "Standart", "Atak"],
-        horizontal=True
+        horizontal=True,
+        key="ultra_risk_level"
     )
 
     risk_rate = risk_profiles[selected_risk]
@@ -103,6 +495,12 @@ def render_risk_module(current_kasa):
         """,
         unsafe_allow_html=True
     )
+
+    return {
+        "selected_risk": selected_risk,
+        "risk_rate": risk_rate,
+        "risk_limit": risk_limit,
+    }
 
 live_vars = get_live_data()
 
@@ -211,28 +609,43 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input {
 .ticker-wrap {
     width: 100%;
     overflow: hidden;
-    background: rgba(204, 122, 0, 0.03);
+    background: linear-gradient(90deg, rgba(204, 122, 0, 0.10), rgba(255,255,255,0.025), rgba(204, 122, 0, 0.06));
     border-bottom: 1px solid rgba(204, 122, 0, 0.2);
-    padding: 10px 0;
+    border-top: 1px solid rgba(255,255,255,0.035);
+    padding: 11px 0;
     margin-bottom: 25px;
 }
 
 .ticker {
     display: flex;
     white-space: nowrap;
-    animation: ticker 30s linear infinite;
+    width: max-content;
+    animation: ticker 38s linear infinite;
 }
 
 .ticker-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
     font-size: 12px;
-    color: #cc7a00;
-    letter-spacing: 4px;
-    padding-right: 50%;
+    letter-spacing: 2.6px;
+    padding-right: 42px;
+    text-transform: uppercase;
+}
+
+.ticker-label {
+    color: #8e8e8e !important;
+    font-weight: 800;
+}
+
+.ticker-value {
+    color: #ffae00 !important;
+    font-weight: 900;
 }
 
 @keyframes ticker {
-    0% { transform: translateX(100%); }
-    100% { transform: translateX(-100%); }
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
 }
 
 .equal-card {
@@ -389,6 +802,49 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input {
     padding: 12px 0;
 }
 
+.smart-alert-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    margin: 4px 0 20px 0;
+}
+
+.smart-alert {
+    background: rgba(15, 15, 15, 0.82);
+    border: 1px solid rgba(255,255,255,0.045);
+    border-left: 3px solid #cc7a00;
+    border-radius: 6px;
+    padding: 16px;
+    box-shadow: 0 10px 24px rgba(0,0,0,0.28);
+}
+
+.smart-alert-good {
+    border-left-color: #00ff41;
+}
+
+.smart-alert-warn {
+    border-left-color: #ffae00;
+}
+
+.smart-alert-info {
+    border-left-color: #4ea3ff;
+}
+
+.smart-alert-title {
+    color: #f0f0f0 !important;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.smart-alert-body {
+    color: #969696 !important;
+    font-size: 12px;
+    line-height: 1.55;
+}
+
 @media (max-width: 900px) {
     section[data-testid="stSidebar"] {
         min-width: 280px !important;
@@ -415,6 +871,10 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input {
 
     .portfolio-row-value {
         text-align: left;
+    }
+
+    .smart-alert-grid {
+        grid-template-columns: 1fr;
     }
 }
 </style>
@@ -979,40 +1439,17 @@ def render_portfolio_v2(data):
         main_asset_label = main_asset["label"]
         main_asset_pct = (main_asset["total_usd"] / total_usd) * 100
 
-    portfolio_html = (
-        f"<div class='portfolio-shell'>"
-        f"<div class='portfolio-topline'>"
-        f"<span>Portföy Sahibi</span>"
-        f"<strong>{selected_user_label}</strong>"
-        f"</div>"
-        f"<div class='portfolio-hero'>"
-        f"<div>"
-        f"<div class='portfolio-hero-sub'>Net Portföy Değeri</div>"
-        f"<div class='portfolio-hero-main'>{fmt_money_usd(total_usd)}</div>"
-        f"<div class='portfolio-hero-try'>≈ {fmt_money_try(total_try)}</div>"
-        f"</div>"
-        f"<div class='portfolio-meta-grid'>"
-        f"<div class='portfolio-meta-card'>"
-        f"<div class='portfolio-meta-label'>Aktif Varlık</div>"
-        f"<div class='portfolio-meta-value'>{active_assets}</div>"
-        f"</div>"
-        f"<div class='portfolio-meta-card'>"
-        f"<div class='portfolio-meta-label'>Ana Varlık</div>"
-        f"<div class='portfolio-meta-value'>{main_asset_label}</div>"
-        f"</div>"
-        f"<div class='portfolio-meta-card'>"
-        f"<div class='portfolio-meta-label'>Yoğunluk</div>"
-        f"<div class='portfolio-meta-value'>%{main_asset_pct:.1f}</div>"
-        f"</div>"
-        f"<div class='portfolio-meta-card'>"
-        f"<div class='portfolio-meta-label'>USD/TRY</div>"
-        f"<div class='portfolio-meta-value'>₺{usdtry:.2f}</div>"
-        f"</div>"
-        f"</div>"
-        f"</div>"
-        f"</div>"
+    render_portfolio_hero_component(
+        selected_user_label,
+        total_usd,
+        total_try,
+        active_assets,
+        main_asset_label,
+        main_asset_pct,
+        usdtry,
     )
-    st.markdown(portfolio_html, unsafe_allow_html=True)
+
+    render_smart_alerts(build_portfolio_alerts(active_assets, main_asset_pct, main_asset_label, total_usd))
 
     if df_nonzero.empty:
         empty_html = (
@@ -1061,10 +1498,7 @@ if not check_password():
 
 st.markdown(common_css, unsafe_allow_html=True)
 st.markdown("<style>.stApp { background: #030303 !important; background-image: none !important; }</style>", unsafe_allow_html=True)
-st.markdown(
-    f'<div class="ticker-wrap"><div class="ticker"><span class="ticker-item">{duyuru_metni}</span><span class="ticker-item">{duyuru_metni}</span></div></div>',
-    unsafe_allow_html=True
-)
+render_market_ticker(live_vars, duyuru_metni)
 
 with st.sidebar:
     st.markdown(
@@ -1117,14 +1551,13 @@ if page == "⚡ ULTRA ATAK":
         current_pct = max(0, min(100, ((ultra_kasa - onceki_hedef) / hedef_aralik) * 100))
         hedef_baslik = f"Hedef Yolculuğu ({fmt_money_usd(aktif_hedef)})"
 
-    st.markdown(
-        f"""
-        <div class='industrial-card' style='text-align:center; border-top-color:#cc7a00;'>
-            <div style='font-size:11px; color:#666;'>Oguzo Bakiye</div>
-            <div class='highlight' style='font-size:28px; font-weight:900; font-family:Orbitron;'>${ultra_kasa:,.2f}</div>
-        </div>
-        """,
-        unsafe_allow_html=True
+    render_animated_counter(
+        "Oguzo Bakiye",
+        ultra_kasa,
+        prefix="$",
+        decimals=2,
+        subtitle=f"Net kâr: {fmt_money_usd(net_kar)}",
+        height=148
     )
 
     st.divider()
@@ -1163,7 +1596,8 @@ if page == "⚡ ULTRA ATAK":
         unsafe_allow_html=True
     )
 
-    render_risk_module(ultra_kasa)
+    risk_state = render_risk_module(ultra_kasa)
+    render_smart_alerts(build_ultra_alerts(ultra_kasa, baslangic_kasa, current_pct, net_kar, risk_state))
 
     col1, col2, col3 = st.columns(3)
 
@@ -1218,16 +1652,13 @@ if page == "⚡ ULTRA ATAK":
             )
 
     with col3:
-        st.markdown(
-            f"""
-            <div class='industrial-card' style='height:230px;'>
-                <div class='terminal-header'>📊 Win Rate</div>
-                <div style='text-align:center;'>
-                    <span style='font-size:45px; font-weight:900; color:#cc7a00; font-family:Orbitron;'>%{wr_oran}</span>
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True
+        render_animated_counter(
+            "Win Rate",
+            get_num({"wr": wr_oran}, "wr", 0),
+            prefix="%",
+            decimals=0,
+            subtitle="Performans göstergesi",
+            height=230
         )
 
     st.markdown("### 📜 SON İŞLEMLER")
@@ -1242,18 +1673,20 @@ if page == "⚡ ULTRA ATAK":
     )
 
 elif page == "⚽ FORMLINE":
-    st.markdown(
-        f"""
-        <div class='industrial-card'>
-            <div class='terminal-header'>📈 PERFORMANS</div>
-            <div class='terminal-row'>
-                <span>NET:</span>
-                <span style='color:#00ff41; font-size:32px; font-family:Orbitron;'>${toplam_bahis_kar:,.2f}</span>
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True
+    render_animated_counter(
+        "Formline Net",
+        toplam_bahis_kar,
+        prefix="$",
+        decimals=2,
+        subtitle="Toplam bahis performansı",
+        accent="#00ff41" if toplam_bahis_kar >= 0 else "#ff4b4b",
+        height=150
     )
+
+    if toplam_bahis_kar > 0:
+        render_smart_alerts([("good", "Formline pozitif", f"Net sonuç {fmt_money_usd(toplam_bahis_kar)}. Seri kârlı bölgede.")])
+    elif toplam_bahis_kar < 0:
+        render_smart_alerts([("warn", "Formline negatif", f"Net sonuç {fmt_money_usd(toplam_bahis_kar)}. Risk seviyesini düşük tutmak daha mantıklı.")])
 
     t1, t2, t3 = st.tabs(["✅ W3", "✅ W2", "❌ W1"])
 
