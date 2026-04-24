@@ -956,8 +956,8 @@ st.markdown(
 
 col1, col2, col3 = st.columns(3)
 
-    with col1:
-        st.markdown(
+with col1:
+st.markdown(
             f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>💎 KASA</div><div class='terminal-row'><span>TOPLAM</span><span class='highlight'>${ultra_kasa:,.2f}</span></div><div class='terminal-row'><span>K/Z</span><span style='color:{'#00ff41' if net_kar >= 0 else '#ff4b4b'};' class='val-std'>${net_kar:,.2f}</span></div></div>",
             unsafe_allow_html=True
         )
