@@ -486,6 +486,87 @@ def build_portfolio_alerts(active_assets, main_asset_pct, main_asset_label, tota
 
     return alerts
 
+def parse_kasa_history(data):
+    rows = []
+
+    for key, value in data.items():
+        if not isinstance(key, str) or not key.startswith("kasa_"):
+            continue
+
+        raw_date = key.replace("kasa_", "", 1)
+        try:
+            date_value = datetime.strptime(raw_date, "%Y_%m_%d").date()
+            raw_value = data.get(key, "")
+            if raw_value is None or str(raw_value).strip() == "":
+                continue
+            kasa_value = float(str(raw_value).replace(",", ".").strip())
+            rows.append({"Tarih": date_value, "Kasa": kasa_value})
+        except Exception:
+            continue
+
+    if not rows:
+        return pd.DataFrame(columns=["Tarih", "Kasa"])
+
+    df = pd.DataFrame(rows).sort_values("Tarih").drop_duplicates("Tarih", keep="last")
+    return df.reset_index(drop=True)
+
+def render_kasa_history_chart(data, current_kasa):
+    history_df = parse_kasa_history(data)
+
+    if history_df.empty:
+        st.markdown(
+            """
+            <div class='industrial-card'>
+                <div class='terminal-header'>Kasa Geçmişi</div>
+                <div class='highlight'>Grafik için Sheet'e kasa_YYYY_MM_DD satırları eklenmeli.</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+        return
+
+    today = datetime.now().date()
+    if today not in set(history_df["Tarih"]):
+        history_df = pd.concat(
+            [history_df, pd.DataFrame([{"Tarih": today, "Kasa": current_kasa}])],
+            ignore_index=True
+        ).sort_values("Tarih").drop_duplicates("Tarih", keep="last")
+
+    first_value = float(history_df["Kasa"].iloc[0])
+    last_value = float(history_df["Kasa"].iloc[-1])
+    high_value = float(history_df["Kasa"].max())
+    change_value = last_value - first_value
+    change_pct = (change_value / first_value * 100) if first_value > 0 else 0
+    change_color = "#00ff41" if change_value >= 0 else "#ff4b4b"
+
+    st.markdown(
+        f"""
+        <div class='industrial-card'>
+            <div class='terminal-header'>Kasa Geçmişi</div>
+            <div style='display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:14px; margin-bottom:18px;'>
+                <div>
+                    <div style='font-size:11px; color:#777; letter-spacing:2px;'>GÜNCEL</div>
+                    <div style='font-size:22px; font-weight:900; font-family:Orbitron;'>{fmt_money_usd(last_value)}</div>
+                </div>
+                <div>
+                    <div style='font-size:11px; color:#777; letter-spacing:2px;'>ZİRVE</div>
+                    <div style='font-size:22px; font-weight:900; font-family:Orbitron;'>{fmt_money_usd(high_value)}</div>
+                </div>
+                <div>
+                    <div style='font-size:11px; color:#777; letter-spacing:2px;'>DEĞİŞİM</div>
+                    <div style='font-size:22px; font-weight:900; font-family:Orbitron; color:{change_color};'>{fmt_money_usd(change_value)} / %{change_pct:.1f}</div>
+                </div>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    chart_df = history_df.copy()
+    chart_df["Tarih"] = pd.to_datetime(chart_df["Tarih"])
+    chart_df = chart_df.set_index("Tarih")
+    st.line_chart(chart_df["Kasa"], height=260)
+
 def render_risk_module(current_kasa):
     risk_profiles = {
         "Koruma": 0.015,
@@ -1782,6 +1863,7 @@ if page == "⚡ ULTRA ATAK":
 
     risk_state = render_risk_module(ultra_kasa)
     render_smart_alerts(build_ultra_alerts(ultra_kasa, baslangic_kasa, current_pct, net_kar, risk_state))
+    render_kasa_history_chart(live_vars, ultra_kasa)
 
     col1, col2, col3 = st.columns(3)
 
