@@ -396,7 +396,7 @@ def discover_dynamic_instruments(data, users):
     instrument_codes = set()
 
     for key in data.keys():
-        if key.startswith("price_"):
+        if isinstance(key, str) and key.startswith("price_"):
             code = key.replace("price_", "", 1).strip()
             if code:
                 instrument_codes.add(code)
