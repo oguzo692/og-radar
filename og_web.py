@@ -891,16 +891,7 @@ if check_password():
             st.markdown(
                 f"<div class='industrial-card' style='text-align:center; border-top-color: #cc7a00;'><div style='font-size:11px; color:#666;'>Oguzo Bakiye</div><div class='highlight'>${og_kasa:,.2f}</div></div>",
                 unsafe_allow_html=True
-            )
-        with k2:
-            st.markdown(
-                f"<div class='industrial-card' style='text-align:center; border-top-color: #cc7a00;'><div style='font-size:11px; color:#666;'>Ero7 Bakiye</div><div class='highlight'>${er_kasa:,.2f}</div></div>",
-                unsafe_allow_html=True
-            )
-        with k3:
-            st.markdown(
-                f"<div class='industrial-card' style='text-align:center; border-top-color: #cc7a00;'><div style='font-size:11px; color:#666;'>Fybey Bakiye</div><div class='highlight'>${fy_kasa:,.2f}</div></div>",
-                unsafe_allow_html=True
+         
             )
 
         st.divider()
