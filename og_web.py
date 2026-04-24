@@ -242,74 +242,180 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input {
     justify-content: space-between;
 }
 
-/* --- PORTFÖY V2 --- */
+/* --- PORTFÖY PREMIUM --- */
+.portfolio-shell {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.portfolio-topline {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    color: #7b7b7b !important;
+    font-size: 11px;
+    letter-spacing: 2.4px;
+    text-transform: uppercase;
+}
+
+.portfolio-topline strong {
+    color: #e2e2e2 !important;
+    font-weight: 800;
+}
+
 .portfolio-hero {
-    background: linear-gradient(180deg, rgba(18,18,18,0.92), rgba(10,10,10,0.92));
-    border: 1px solid rgba(255,255,255,0.03);
-    border-top: 2px solid rgba(204,122,0,0.75);
-    border-radius: 4px;
-    padding: 30px 24px 26px 24px;
-    margin-bottom: 22px;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.45);
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
+    gap: 22px;
+    background:
+        linear-gradient(135deg, rgba(255,174,0,0.10), transparent 26%),
+        linear-gradient(180deg, rgba(18,18,18,0.96), rgba(8,8,8,0.96));
+    border: 1px solid rgba(255,255,255,0.045);
+    border-top: 2px solid rgba(204,122,0,0.72);
+    border-radius: 6px;
+    padding: 30px;
+    margin-bottom: 4px;
+    box-shadow: 0 18px 45px rgba(0,0,0,0.45);
 }
 
 .portfolio-hero-sub {
-    font-size: 13px;
-    color: #7a7a7a !important;
+    font-size: 12px;
+    color: #858585 !important;
     letter-spacing: 3px;
     text-transform: uppercase;
     margin-bottom: 14px;
 }
 
 .portfolio-hero-main {
-    font-size: 62px;
+    font-size: 58px;
     line-height: 1;
     font-family: 'Orbitron', monospace !important;
-    color: #e5e5e5 !important;
+    color: #f0f0f0 !important;
     font-weight: 900;
 }
 
 .portfolio-hero-try {
-    margin-top: 12px;
-    font-size: 18px;
-    color: #8c8c8c !important;
+    margin-top: 14px;
+    font-size: 16px;
+    color: #9a9a9a !important;
 }
 
-.asset-mini-title {
-    font-size: 11px;
-    color: #7d7d7d !important;
+.portfolio-meta-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.portfolio-meta-card {
+    background: rgba(255,255,255,0.025);
+    border: 1px solid rgba(255,255,255,0.055);
+    border-radius: 6px;
+    padding: 16px;
+    min-height: 88px;
+}
+
+.portfolio-meta-label {
+    color: #777 !important;
+    font-size: 10px;
     letter-spacing: 2px;
     text-transform: uppercase;
     margin-bottom: 10px;
 }
 
-.asset-mini-value {
-    font-size: 22px;
-    color: #f3f3f3 !important;
+.portfolio-meta-value {
+    color: #eeeeee !important;
     font-family: 'Orbitron', monospace !important;
-    font-weight: 700;
+    font-size: 18px;
+    font-weight: 800;
 }
 
-.asset-mini-sub {
-    margin-top: 8px;
+.portfolio-table-card {
+    background: rgba(14,14,14,0.88);
+    border: 1px solid rgba(255,255,255,0.045);
+    border-radius: 6px;
+    padding: 22px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.32);
+}
+
+.portfolio-table-title {
+    color: #8b8b8b !important;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2.8px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    border-left: 3px solid #cc7a00;
+    padding-left: 12px;
+}
+
+.portfolio-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1.3fr) minmax(160px, 0.7fr);
+    gap: 18px;
+    align-items: center;
+    padding: 16px 0;
+    border-top: 1px solid rgba(255,255,255,0.055);
+}
+
+.portfolio-row:first-of-type {
+    border-top: 0;
+}
+
+.portfolio-row-name strong,
+.portfolio-row-value strong {
+    display: block;
+    color: #f0f0f0 !important;
+    font-size: 16px;
+    font-weight: 800;
+}
+
+.portfolio-row-name span,
+.portfolio-row-value span {
+    display: block;
+    color: #858585 !important;
     font-size: 12px;
-    color: #8d8d8d !important;
+    margin-top: 6px;
 }
 
-.info-strip {
-    display:flex;
-    justify-content:space-between;
-    gap:18px;
-    flex-wrap:wrap;
-    font-size:12px;
-    color:#7a7a7a;
-    letter-spacing:1px;
-    padding-top: 4px;
+.portfolio-row-value {
+    text-align: right;
 }
 
-.info-strip span strong {
-    color:#c9c9c9 !important;
-    font-weight: 500;
+.portfolio-empty {
+    color: #a0a0a0 !important;
+    font-size: 14px;
+    padding: 12px 0;
+}
+
+@media (max-width: 900px) {
+    section[data-testid="stSidebar"] {
+        min-width: 280px !important;
+        max-width: 280px !important;
+    }
+
+    .portfolio-hero {
+        grid-template-columns: 1fr;
+        padding: 22px;
+    }
+
+    .portfolio-hero-main {
+        font-size: 38px;
+    }
+
+    .portfolio-meta-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .portfolio-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .portfolio-row-value {
+        text-align: left;
+    }
 }
 </style>
 """
@@ -833,7 +939,7 @@ def render_info_strip(instruments, usdtry):
     st.markdown(textwrap.dedent(html), unsafe_allow_html=True)
 
 def render_portfolio_v2(data):
-    st.markdown("<div class='terminal-header'>🏛️ PORTFÖY KOMUTA MERKEZİ</div>", unsafe_allow_html=True)
+    st.markdown("<div class='terminal-header'>🏛️ PORTFÖY MERKEZİ</div>", unsafe_allow_html=True)
 
     users = ["oguzo"]
     user_labels = {"oguzo": "OGUZO"}
@@ -847,8 +953,12 @@ def render_portfolio_v2(data):
         st.error("Portföy enstrümanları bulunamadı.")
         return
 
-    selected_user_label = st.selectbox("Kullanıcı Portföy Detayı:", [user_labels[u] for u in users])
-    selected_user = [k for k, v in user_labels.items() if v == selected_user_label][0]
+    if len(users) > 1:
+        selected_user_label = st.selectbox("Portföy:", [user_labels[u] for u in users], label_visibility="collapsed")
+        selected_user = [k for k, v in user_labels.items() if v == selected_user_label][0]
+    else:
+        selected_user = users[0]
+        selected_user_label = user_labels[selected_user]
 
     df_user = build_user_portfolio(data, selected_user, instruments, usdtry)
 
@@ -860,30 +970,98 @@ def render_portfolio_v2(data):
     total_try = df_user["total_try"].sum()
     df_nonzero = df_user[df_user["quantity"] > 0].copy()
 
+    active_assets = len(df_nonzero)
+    if df_nonzero.empty or total_usd <= 0:
+        main_asset_label = "YOK"
+        main_asset_pct = 0
+    else:
+        main_asset = df_nonzero.sort_values("total_usd", ascending=False).iloc[0]
+        main_asset_label = main_asset["label"]
+        main_asset_pct = (main_asset["total_usd"] / total_usd) * 100
+
     st.markdown(
         f"""
-        <div class='portfolio-hero'>
-            <div class='portfolio-hero-sub'>Toplam Portföy Değeri</div>
-            <div class='portfolio-hero-main'>{fmt_money_usd(total_usd)}</div>
-            <div class='portfolio-hero-try'>≈ {fmt_money_try(total_try)}</div>
+        <div class='portfolio-shell'>
+            <div class='portfolio-topline'>
+                <span>Portföy Sahibi</span>
+                <strong>{selected_user_label}</strong>
+            </div>
+
+            <div class='portfolio-hero'>
+                <div>
+                    <div class='portfolio-hero-sub'>Net Portföy Değeri</div>
+                    <div class='portfolio-hero-main'>{fmt_money_usd(total_usd)}</div>
+                    <div class='portfolio-hero-try'>≈ {fmt_money_try(total_try)}</div>
+                </div>
+
+                <div class='portfolio-meta-grid'>
+                    <div class='portfolio-meta-card'>
+                        <div class='portfolio-meta-label'>Aktif Varlık</div>
+                        <div class='portfolio-meta-value'>{active_assets}</div>
+                    </div>
+                    <div class='portfolio-meta-card'>
+                        <div class='portfolio-meta-label'>Ana Varlık</div>
+                        <div class='portfolio-meta-value'>{main_asset_label}</div>
+                    </div>
+                    <div class='portfolio-meta-card'>
+                        <div class='portfolio-meta-label'>Yoğunluk</div>
+                        <div class='portfolio-meta-value'>%{main_asset_pct:.1f}</div>
+                    </div>
+                    <div class='portfolio-meta-card'>
+                        <div class='portfolio-meta-label'>USD/TRY</div>
+                        <div class='portfolio-meta-value'>₺{usdtry:.2f}</div>
+                    </div>
+                </div>
+            </div>
         </div>
         """,
         unsafe_allow_html=True
     )
 
-    render_top_asset_cards(df_nonzero)
-    render_secondary_asset_cards(df_nonzero)
+    if df_nonzero.empty:
+        st.markdown(
+            """
+            <div class='portfolio-table-card'>
+                <div class='portfolio-table-title'>Varlıklar</div>
+                <div class='portfolio-empty'>Aktif varlık bulunamadı.</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+        return
 
-    left, right = st.columns([1.18, 0.82])
+    rows_html = ""
+    for _, row in df_nonzero.sort_values("total_usd", ascending=False).iterrows():
+        qty_text = fmt_unit_value(row["quantity"], row["unit"])
+        price_text = fmt_money_usd(row["price"]) if row["currency"] == "USD" else fmt_money_try(row["price"])
+        value_text = fmt_money_usd(row["total_usd"])
+        local_text = fmt_money_try(row["total_try"])
 
-    with left:
-        render_breakdown_panel(df_nonzero)
+        rows_html += f"""
+        <div class='portfolio-row'>
+            <div class='portfolio-row-name'>
+                <strong>{row["label"]}</strong>
+                <span>{qty_text} · Birim {price_text}</span>
+            </div>
+            <div class='portfolio-row-value'>
+                <strong>{value_text}</strong>
+                <span>{local_text}</span>
+            </div>
+        </div>
+        """
 
-    with right:
+    st.markdown(
+        f"""
+        <div class='portfolio-table-card'>
+            <div class='portfolio-table-title'>Varlıklar</div>
+            {rows_html}
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    if len(df_nonzero) > 1:
         render_allocation_panel(df_nonzero)
-
-    st.divider()
-    render_info_strip(instruments, usdtry)
 
 # --- 6. ANA UYGULAMA ---
 if not check_password():
