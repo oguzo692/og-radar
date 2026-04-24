@@ -1270,6 +1270,49 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input {
     text-align: right;
 }
 
+.ops-summary-card {
+    background:
+        linear-gradient(135deg, rgba(255,174,0,0.07), transparent 34%),
+        rgba(15,15,15,0.86);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-top: 2px solid rgba(204,122,0,0.62);
+    border-radius: 6px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 12px 28px rgba(0,0,0,0.32);
+}
+
+.ops-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.ops-summary-item {
+    background: rgba(255,255,255,0.025);
+    border: 1px solid rgba(255,255,255,0.045);
+    border-radius: 6px;
+    padding: 14px;
+}
+
+.ops-summary-item span {
+    display: block;
+    color: #777 !important;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.ops-summary-item strong {
+    display: block;
+    color: #f0f0f0 !important;
+    font-family: 'Orbitron', monospace !important;
+    font-size: 18px;
+    font-weight: 900;
+    white-space: nowrap;
+}
+
 @media (max-width: 900px) {
     .block-container {
         padding-left: 1rem !important;
@@ -1347,6 +1390,10 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input {
 
     .decision-card {
         min-height: auto;
+    }
+
+    .ops-summary-grid {
+        grid-template-columns: 1fr 1fr;
     }
 }
 
@@ -1428,6 +1475,18 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input {
 
     .vault-row {
         font-size: 11px;
+    }
+
+    .ops-summary-card {
+        padding: 16px;
+    }
+
+    .ops-summary-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ops-summary-item strong {
+        font-size: 16px;
     }
 }
 </style>
@@ -1913,67 +1972,33 @@ if page == "⚡ ULTRA ATAK":
     render_ultra_decision_panels(live_vars, ultra_kasa, baslangic_kasa, aktif_hedef, current_pct, net_kar, risk_state)
     render_kasa_history_chart(live_vars, ultra_kasa)
 
-    col1, col2, col3 = st.columns(3)
-
-    with col1:
-        st.markdown(
-            f"""
-            <div class='industrial-card' style='height:230px;'>
-                <div class='terminal-header'>💎 KASA</div>
-                <div class='terminal-row'>
-                    <span>TOPLAM</span>
-                    <span class='highlight'>${ultra_kasa:,.2f}</span>
+    hedefe_kalan = max(0, aktif_hedef - ultra_kasa)
+    st.markdown(
+        f"""
+        <div class='ops-summary-card'>
+            <div class='terminal-header'>Operasyon Özeti</div>
+            <div class='ops-summary-grid'>
+                <div class='ops-summary-item'>
+                    <span>Win Rate</span>
+                    <strong>%{wr_oran}</strong>
                 </div>
-                <div class='terminal-row'>
-                    <span>K/Z</span>
-                    <span style='color:{'#00ff41' if net_kar >= 0 else '#ff4b4b'};' class='val-std'>${net_kar:,.2f}</span>
+                <div class='ops-summary-item'>
+                    <span>Risk Limiti</span>
+                    <strong>{fmt_money_usd(risk_state["risk_limit"])}</strong>
+                </div>
+                <div class='ops-summary-item'>
+                    <span>Hedefe Kalan</span>
+                    <strong>{fmt_money_usd(hedefe_kalan)}</strong>
+                </div>
+                <div class='ops-summary-item'>
+                    <span>Net K/Z</span>
+                    <strong style='color:{'#00ff41' if net_kar >= 0 else '#ff4b4b'};'>{fmt_money_usd(net_kar)}</strong>
                 </div>
             </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-    with col2:
-        try:
-            if yf is not None:
-                btc = yf.Ticker("BTC-USD").history(period="1d")["Close"].iloc[-1]
-                eth = yf.Ticker("ETH-USD").history(period="1d")["Close"].iloc[-1]
-                sol = yf.Ticker("SOL-USD").history(period="1d")["Close"].iloc[-1]
-
-                st.markdown(
-                    f"""
-                    <div class='industrial-card' style='height:230px;'>
-                        <div class='terminal-header'>⚡ PİYASA</div>
-                        <div class='terminal-row'><span>BITCOIN</span><span class='highlight'>${btc:,.0f}</span></div>
-                        <div class='terminal-row'><span>ETHEREUM</span><span style='color:#cc7a00;'>${eth:,.0f}</span></div>
-                        <div class='terminal-row'><span>SOLANA</span><span style='color:#cc7a00;'>${sol:,.2f}</span></div>
-                    </div>
-                    """,
-                    unsafe_allow_html=True
-                )
-            else:
-                raise Exception("yfinance yok")
-
-        except Exception:
-            st.markdown(
-                """
-                <div class='industrial-card' style='height:230px;'>
-                    <div class='terminal-header'>⚡ PİYASA</div>
-                    <div class='highlight'>Piyasa verisi bekleniyor...</div>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-
-    with col3:
-        render_animated_counter(
-            "Win Rate",
-            get_num({"wr": wr_oran}, "wr", 0),
-            prefix="%",
-            decimals=0,
-            subtitle="Performans göstergesi",
-            height=230
-        )
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
     st.markdown("### 📜 SON İŞLEMLER")
     st.markdown(
