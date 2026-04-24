@@ -962,7 +962,7 @@ if check_password():
                 unsafe_allow_html=True
             )
 
-        with col2:
+    with col2:
             try:
                 if yf is not None:
                     btc = yf.Ticker("BTC-USD").history(period="1d")["Close"].iloc[-1]
@@ -987,7 +987,7 @@ if check_password():
                     unsafe_allow_html=True
                 )
 
-        with col3:
+    with col3:
             st.markdown(
                 f"<div class='industrial-card' style='height:230px;'><div class='terminal-header'>📊 Win Rate</div><div style='text-align:center;'><span style='font-size:45px; font-weight:900; color:#cc7a00; font-family:Orbitron;'>%{wr_oran}</span></div></div>",
                 unsafe_allow_html=True
