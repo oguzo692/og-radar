@@ -2026,7 +2026,7 @@ elif page == "⚽ FORMLINE":
     t1, = st.tabs(["🔜 W1"])
 
     with t1:
-        st.markdown(w3_coupon_html, unsafe_allow_html=True)
+        st.markdown(w1_coupon_html, unsafe_allow_html=True)
 
 elif page == "📊 Portföy Takip":
     render_portfolio_v2(live_vars)
