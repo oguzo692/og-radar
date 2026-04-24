@@ -893,7 +893,7 @@ if check_password():
             "<div style='margin-bottom:10px; color:#666; font-size:11px; letter-spacing:2px; font-weight:800;'>SİSTEM MODÜLLERİ</div>",
             unsafe_allow_html=True
         )
-        page = st.radio("Menu", ["⚡ ULTRA ATAK", "⚽ FORMLINE", "🎲 CHALLANGE", "📊 Portföy Takip", "💠 FTMO"], label_visibility="collapsed")
+        page = st.radio("Menu", ["⚡ ULTRA ATAK", "⚽ FORMLINE", "📊 Portföy Takip"], label_visibility="collapsed")
         st.divider()
         st.markdown(
             "<div style='color:#666; font-size:11px; letter-spacing:2px; font-weight:800; margin-bottom:15px;'>📂 TERMİNAL ERİŞİMİ</div>",
