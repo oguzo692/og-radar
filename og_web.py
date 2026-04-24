@@ -1545,13 +1545,9 @@ input[type="password"] {
 """
 
 # --- 9. STATİK HTML ŞABLONLARI ---
-w3_matches = """<div class='terminal-row'><span>türkiye - xxx </span><span class='highlight'>türkiye w</span></div><div class='terminal-row'><span>türkiye - aaa</span><span class='highlight'>türkiye w</span></div><div class='terminal-row'><span>rizespor - gala</span><span class='highlight'></span></div><div class='terminal-row'><span></span><span class='highlight'></span></div><div class='terminal-row'><span></span><span class='highlight'></span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 8.79</span><span>Bet: 100 USD</span></div>"""
-w2_matches = """<div class='terminal-row'><span>gala - kayserispor</span><span style='color:#00ff41;'>gala w & iy +1 & 2+ ✅</span></div><div class='terminal-row'><span>liverpool - newcastle</span><span style='color:#00ff41;'>+2 & liverpool 1x ✅</span></div><div class='terminal-row'><span>bvb - heidenheim</span><span style='color:#00ff41;'>bvb w & iy +1 & 2+ ✅</span></div><div class='terminal-row'><span>kocaelispor - fenerbahçe</span><span style='color:#00ff41;'>fenerbahçe w & 2+ ✅</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 5.53</span><span>Bet: 100 USD</span></div>"""
-w1_matches = """<div class='terminal-row'><span>karagümrük - gala</span><span style='color:#ff4b4b;'>gala w & +2 ✅</span></div><div class='terminal-row'><span>bournemouth - liverpool</span><span style='color:#00ff41;'>kg ✅</span></div><div class='terminal-row'><span>union berlin - bvb</span><span style='color:#00ff41;'>iy +1 ✅</span></div><div class='terminal-row'><span>newcastle - aston villa</span><span style='color:#ff4b4b;'>newcastle +2 ❌</span></div><div class='terminal-row'><span>fenerbahçe - göztepe</span><span style='color:#ff4b4b;'>fenerbahçe w ❌</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 7.09</span><span>Bet: 100 USD</span></div>"""
+w1_matches = """<div class='terminal-row'><span>türkiye - xxx </span><span class='highlight'>türkiye w</span></div><div class='terminal-row'><span>türkiye - aaa</span><span class='highlight'>türkiye w</span></div><div class='terminal-row'><span>rizespor - gala</span><span class='highlight'></span></div><div class='terminal-row'><span></span><span class='highlight'></span></div><div class='terminal-row'><span></span><span class='highlight'></span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 8.79</span><span>Bet: 100 USD</span></div>"""
 
-w3_coupon_html = f"<div class='industrial-card' style='border-top-color: #00ff41 !important;'><div class='terminal-header' style='color:#00ff41;'>✅ W3 KUPONU (BAŞARILI)</div>{w3_matches}<span style='color:#00ff41; font-weight:bold;'>SONUÇLANDI ✅</span></div>"
-w2_coupon_html = f"<div class='industrial-card' style='border-top-color: #00ff41 !important;'><div class='terminal-header' style='color:#00ff41;'>✅ W2 KUPONU (BAŞARILI)</div>{w2_matches}<span style='color:#00ff41; font-weight:bold;'>SONUÇLANDI ✅</span></div>"
-w1_coupon_html = f"<div class='industrial-card' style='border-top-color: #ff4b4b !important;'><div class='terminal-header' style='color:#ff4b4b;'>❌ W1 KUPONU (BAŞARISIZ)</div>{w1_matches}<span style='color:#ff4b4b; font-weight:bold;'>SONUÇLANDI ❌</span></div>"
+w1_coupon_html = f"<div class='industrial-card' style='border-top-color: #ff4b4b !important;'><div class='terminal-header' style='color:#ff4b4b;'>🔜 W1 KUPONU </div>{w1_matches}<span style='color:#ff4b4b; font-weight:bold;'>SONUÇLANDI ❌</span></div>"
 
 # --- 10. GÜVENLİK ---
 if "password_correct" not in st.session_state:
@@ -2027,16 +2023,10 @@ elif page == "⚽ FORMLINE":
     elif toplam_bahis_kar < 0:
         render_smart_alerts([("warn", "Formline negatif", f"Net sonuç {fmt_money_usd(toplam_bahis_kar)}. Risk seviyesini düşük tutmak daha mantıklı.")])
 
-    t1, t2, t3 = st.tabs(["✅ W3", "✅ W2", "❌ W1"])
+    t1, t2, t3 = st.tabs(["🔜 W1"])
 
     with t1:
         st.markdown(w3_coupon_html, unsafe_allow_html=True)
-
-    with t2:
-        st.markdown(w2_coupon_html, unsafe_allow_html=True)
-
-    with t3:
-        st.markdown(w1_coupon_html, unsafe_allow_html=True)
 
 elif page == "📊 Portföy Takip":
     render_portfolio_v2(live_vars)
