@@ -961,7 +961,7 @@ selected_risk = st.radio(
 risk_rate = risk_profiles[selected_risk]
 risk_limit = ultra_kasa * risk_rate
 
-    st.markdown(
+st.markdown(
     f"""
     <div class='industrial-card'>
         <div class='terminal-header'>Risk Modülü</div>
@@ -982,7 +982,7 @@ risk_limit = ultra_kasa * risk_rate
     unsafe_allow_html=True
 )
 
-    st.markdown(
+st.markdown(
         f"""
         <div style='margin-top:8px; font-size:13px; color:#888; text-align:right;'>
             %{current_pct:.1f}
@@ -991,10 +991,10 @@ risk_limit = ultra_kasa * risk_rate
         unsafe_allow_html=True
     )
 
-    col1, col2, col3 = st.columns(3)
+col1, col2, col3 = st.columns(3)
 
-    with col1:
-        st.markdown(
+with col1:
+st.markdown(
             f"""
             <div class='industrial-card' style='height:230px;'>
                 <div class='terminal-header'>💎 KASA</div>
@@ -1011,7 +1011,7 @@ risk_limit = ultra_kasa * risk_rate
             unsafe_allow_html=True
         )
 
-    with col2:
+with col2:
         try:
             if yf is not None:
                 btc = yf.Ticker("BTC-USD").history(period="1d")["Close"].iloc[-1]
@@ -1043,7 +1043,7 @@ risk_limit = ultra_kasa * risk_rate
                 unsafe_allow_html=True
             )
 
-    with col3:
+with col3:
         st.markdown(
             f"""
             <div class='industrial-card' style='height:230px;'>
@@ -1056,8 +1056,8 @@ risk_limit = ultra_kasa * risk_rate
             unsafe_allow_html=True
         )
 
-    st.markdown("### 📜 SON İŞLEMLER")
-    st.markdown(
+st.markdown("### 📜 SON İŞLEMLER")
+st.markdown(
         f"""
         <div class='industrial-card'>
             <div class='terminal-header'>AKTİVİTE LOGLARI</div>
