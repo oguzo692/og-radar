@@ -186,6 +186,21 @@ def render_animated_counter(label, value, prefix="", suffix="", decimals=2, subt
             font-size: 12px;
             margin-top: 12px;
         }}
+        @media (max-width: 520px) {{
+            .counter-card {{
+                padding: 18px;
+            }}
+            .counter-label {{
+                font-size: 10px;
+                letter-spacing: 2px;
+            }}
+            .counter-value {{
+                font-size: 28px;
+            }}
+            .counter-subtitle {{
+                font-size: 11px;
+            }}
+        }}
         @keyframes counterIn {{
             from {{ opacity: 0; transform: translateY(10px); }}
             to {{ opacity: 1; transform: translateY(0); }}
@@ -356,13 +371,26 @@ def render_portfolio_hero_component(selected_user_label, total_usd, total_try, a
         @media (max-width: 760px) {{
             .portfolio-hero {{
                 grid-template-columns: 1fr;
-                padding: 22px;
+                gap: 18px;
+                padding: 20px;
             }}
             .portfolio-hero-main {{
-                font-size: 38px;
+                font-size: 34px;
             }}
             .portfolio-meta-grid {{
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }}
+            .portfolio-meta-card {{
+                min-height: 72px;
+                padding: 12px;
+            }}
+            .portfolio-meta-label {{
+                font-size: 9px;
+                letter-spacing: 1.4px;
+            }}
+            .portfolio-meta-value {{
+                font-size: 14px;
             }}
         }}
     </style>
@@ -399,7 +427,7 @@ def render_portfolio_hero_component(selected_user_label, total_usd, total_try, a
         requestAnimationFrame(tick);
     </script>
     """
-    components.html(hero_html, height=270, scrolling=False)
+    components.html(hero_html, height=320, scrolling=False)
 
 def render_smart_alerts(alerts):
     if not alerts:
@@ -530,6 +558,13 @@ common_css = """
 [data-testid="stSidebar"] span, [data-testid="stSidebar"] small {font-size: 0 !important; color: transparent !important;}
 [data-testid="stSidebar"] p {font-size: 14px !important; color: #d1d1d1 !important; visibility: visible !important;}
 
+.block-container {
+    max-width: 1320px;
+    padding-top: 1.2rem !important;
+    padding-left: 2.2rem !important;
+    padding-right: 2.2rem !important;
+}
+
 section[data-testid="stSidebar"] {
     background-color: rgba(5, 5, 5, 0.95) !important;
     border-right: 1px solid rgba(204, 122, 0, 0.15);
@@ -548,6 +583,15 @@ section[data-testid="stSidebar"] {
     border-radius: 6px !important;
 }
 
+div[role="radiogroup"] {
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+div[role="radiogroup"] label {
+    min-width: 0;
+}
+
 body, [data-testid="stAppViewContainer"], p, div, span, button, input {
     font-family: 'JetBrains Mono', monospace !important;
     color: #d1d1d1 !important;
@@ -561,6 +605,7 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input {
     margin-bottom: 12px;
     line-height: 1.6;
     gap: 12px;
+    min-width: 0;
 }
 
 .industrial-card {
@@ -598,6 +643,7 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input {
     font-weight: 500;
     font-size: 14px;
     font-family: 'JetBrains Mono', monospace;
+    overflow-wrap: anywhere;
 }
 
 .val-std {
@@ -846,9 +892,61 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input {
 }
 
 @media (max-width: 900px) {
+    .block-container {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+        padding-top: 0.75rem !important;
+    }
+
     section[data-testid="stSidebar"] {
-        min-width: 280px !important;
-        max-width: 280px !important;
+        min-width: min(320px, 88vw) !important;
+        max-width: min(320px, 88vw) !important;
+    }
+
+    [data-testid="column"] {
+        width: 100% !important;
+        flex: 1 1 100% !important;
+        min-width: 0 !important;
+    }
+
+    [data-testid="stHorizontalBlock"] {
+        flex-wrap: wrap !important;
+        gap: 0.75rem !important;
+    }
+
+    .industrial-card {
+        padding: 18px;
+        margin-bottom: 16px;
+    }
+
+    .industrial-card:hover {
+        transform: none;
+    }
+
+    .terminal-row {
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .terminal-header {
+        font-size: 10px;
+        letter-spacing: 2px;
+        margin-bottom: 14px;
+    }
+
+    .ticker-wrap {
+        margin-left: -1rem;
+        margin-right: -1rem;
+        width: calc(100% + 2rem);
+        padding: 9px 0;
+        margin-bottom: 18px;
+    }
+
+    .ticker-item {
+        font-size: 10px;
+        letter-spacing: 1.8px;
+        padding-right: 28px;
+        gap: 8px;
     }
 
     .portfolio-hero {
@@ -875,6 +973,79 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input {
 
     .smart-alert-grid {
         grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 520px) {
+    .block-container {
+        padding-left: 0.72rem !important;
+        padding-right: 0.72rem !important;
+    }
+
+    section[data-testid="stSidebar"] {
+        min-width: 86vw !important;
+        max-width: 86vw !important;
+    }
+
+    section[data-testid="stSidebar"] h1 {
+        font-size: 20px !important;
+        letter-spacing: 4px !important;
+        margin-bottom: 28px !important;
+    }
+
+    .stButton button, .stLinkButton a {
+        padding: 10px !important;
+        font-size: 12px !important;
+    }
+
+    .industrial-card {
+        padding: 15px;
+        border-radius: 6px;
+    }
+
+    .terminal-row {
+        font-size: 12px;
+    }
+
+    .val-std {
+        font-size: 18px !important;
+    }
+
+    .smart-alert {
+        padding: 14px;
+    }
+
+    .smart-alert-title {
+        font-size: 11px;
+        letter-spacing: 1.4px;
+    }
+
+    .smart-alert-body {
+        font-size: 11px;
+    }
+
+    .portfolio-table-card {
+        padding: 16px;
+    }
+
+    .portfolio-table-title {
+        font-size: 10px;
+        letter-spacing: 2px;
+    }
+
+    .portfolio-row {
+        padding: 14px 0;
+    }
+
+    .portfolio-row-name strong,
+    .portfolio-row-value strong {
+        font-size: 14px;
+    }
+
+    .portfolio-row-name span,
+    .portfolio-row-value span {
+        font-size: 11px;
+        line-height: 1.45;
     }
 }
 </style>
@@ -913,6 +1084,19 @@ input[type="password"] {
     letter-spacing: 12px !important;
     padding: 12px !important;
     border-radius: 10px !important;
+}
+
+@media (max-width: 520px) {
+    div[data-testid="stVerticalBlock"] > div:has(input[type="password"]) {
+        width: calc(100vw - 34px) !important;
+        padding: 42px 22px !important;
+        border-radius: 14px !important;
+    }
+
+    input[type="password"] {
+        font-size: 22px !important;
+        letter-spacing: 9px !important;
+    }
 }
 
 .stButton { visibility: hidden; height: 0; margin: 0; padding: 0; }
