@@ -908,7 +908,7 @@ else:
         current_pct = max(0, min(100, ((ultra_kasa - onceki_hedef) / hedef_aralik) * 100))
         hedef_baslik = f"Hedef Yolculuğu ({fmt_money_usd(aktif_hedef)})"
 
-    st.markdown(
+st.markdown(
         f"""
         <div class='industrial-card' style='text-align:center; border-top-color:#cc7a00;'>
             <div style='font-size:11px; color:#666;'>Oguzo Bakiye</div>
