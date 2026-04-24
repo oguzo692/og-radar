@@ -884,9 +884,9 @@ if check_password():
             st.rerun()
 
     if page == "⚡ ULTRA ATAK":
-    st.markdown("<div class='terminal-header'>💰 Oguzo Kasa</div>", unsafe_allow_html=True)
+        st.markdown("<div class='terminal-header'>💰 Oguzo Kasa</div>", unsafe_allow_html=True)
 
-    st.markdown(
+        st.markdown(
         f"""
         <div class='industrial-card' style='text-align:center; border-top-color:#cc7a00;'>
             <div style='font-size:11px; color:#666;'>Oguzo Bakiye</div>
