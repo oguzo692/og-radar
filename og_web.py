@@ -939,7 +939,7 @@ if page == "⚡ ULTRA ATAK":
         """,
         unsafe_allow_html=True
     )
-  st.markdown(
+    st.markdown(
     f"""
     <div class='industrial-card'>
         <div style='font-size:12px; color:#666;'>Başlangıç Kasa</div>
