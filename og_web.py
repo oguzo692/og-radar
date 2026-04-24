@@ -104,17 +104,10 @@ aktif_soru_1 = get_str(live_vars, "aktif_soru", "yeni soru yakında...")
 aktif_soru_2 = get_str(live_vars, "aktif_soru2", "yeni soru yakında...")
 
 # --- 💰 FORMLINE HESAPLAMA ---
-w1_kar = float(get_num(live_vars, "w1_sonuc", -100))
-w2_kar = float(get_num(live_vars, "w2_sonuc", 553))
-w3_kar = float(get_num(live_vars, "w3_sonuc", 879))
-w4_kar = float(get_num(live_vars, "w4_sonuc", -100))
-w5_kar = float(get_num(live_vars, "w5_sonuc", -100))
-w6_kar = float(get_num(live_vars, "w6_sonuc", -100))
-w7_kar = float(get_num(live_vars, "w7_sonuc", 650))
-w8_kar = float(get_num(live_vars, "w8_sonuc", -100))
-w9_kar = float(get_num(live_vars, "w9_sonuc", -100))
-w10_kar = float(get_num(live_vars, "w10_sonuc", -100))
-toplam_bahis_kar = w1_kar + w2_kar + w3_kar + w4_kar + w5_kar + w6_kar + w7_kar + w8_kar + w9_kar + w10_kar
+w1_kar = float(get_num(live_vars, "w1_sonuc", 0))
+w2_kar = float(get_num(live_vars, "w2_sonuc", 0))
+w3_kar = float(get_num(live_vars, "w3_sonuc", 0))
+toplam_bahis_kar = w1_kar + w2_kar + w3_kar
 
 wr_oran = get_str(live_vars, "win_rate", "0")
 son_islemler_raw = get_str(live_vars, "son_islemler", "Veri yok")
@@ -351,24 +344,10 @@ input[type="password"] {
 """
 
 # --- 4. HTML ŞABLONLARI ---
-w10_matches = """<div class='terminal-row'><span>trabzonspor - gala</span><span class='highlight'>xxx</span></div><div class='terminal-row'><span>stuttgart - bvb</span><span class='highlight'>xxx</span></div><div class='terminal-row'><span>newcastle - maç yok</span><span class='highlight'>---</span></div><div class='terminal-row'><span>manchester city - liverpool</span><span class='highlight'>xxx</span></div><div class='terminal-row'><span>fenerbahçe - beşiktaş</span><span class='highlight'>xxx</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Toplam Oran:xxx</span><span>Tutar: 100 USD</span></div>"""
-w9_matches = """<div class='terminal-row'><span>gala - maç oynamıyor</span><span class='highlight'>-</span></div><div class='terminal-row'><span>bvb - hamburg</span><span class='highlight'>bvb +2 & iy +1 ❌</span></div><div class='terminal-row'><span>newcastle - sunderland</span><span class='highlight'>newcastle +2</span></div><div class='terminal-row'><span>brighton - liverpool</span><span class='highlight'>kg ✅</span></div><div class='terminal-row'><span>fenerbahçe - gaziantep</span><span class='highlight'>fenerbahçe w & +3 ✅</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Toplam Oran: 5.09</span><span>Tutar: 100 USD</span></div>"""
-w8_matches = """<div class='terminal-row'><span>gala - başakşehir</span><span class='highlight'>gala 1x & +2 ✅</span></div><div class='terminal-row'><span>bvb - augsburg</span><span class='highlight'>bvb +2 & iy +1 ✅</span></div><div class='terminal-row'><span>chelsea - newcastle</span><span class='highlight'>kg ❌</span></div><div class='terminal-row'><span>liverpool - spurs</span><span class='highlight'>+3 ❌</span></div><div class='terminal-row'><span>karagümrük - fenerbahçe</span><span class='highlight'>fenerbahçe w & +2 ❌</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Toplam Oran: 7.59</span><span>Tutar: 100 USD</span></div>"""
-w7_matches = """<div class='terminal-row'><span>beşiktaş - gala</span><span class='highlight'>gala +1 ✅</span></div><div class='terminal-row'><span>köln - bvb</span><span class='highlight'>bvb +2 ✅</span></div><div class='terminal-row'><span>newcastle - manchester united</span><span class='highlight'>kg ✅</span></div><div class='terminal-row'><span>wolwes - liverpool</span><span class='highlight'>kg ✅</span></div><div class='terminal-row'><span>fenerbahçe - samsunspor</span><span class='highlight'>fenerbahçe w & +2 ✅</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Toplam Oran: 6.50</span><span>Tutar: 100 USD</span></div>"""
-w6_matches = """<div class='terminal-row'><span>gala - alanyasapor</span><span class='highlight'>gala w & +2 ✅</span></div><div class='terminal-row'><span>bvb - bayern</span><span class='highlight'>kg ✅</span></div><div class='terminal-row'><span>newcastle - everton</span><span class='highlight'>newcastle +2 ✅</span></div><div class='terminal-row'><span>liverpool - west ham</span><span class='highlight'>live w & 2+ ✅</span></div><div class='terminal-row'><span>antalyasapor - fenerbahçe </span><span class='highlight'>fenerbahçe w & iy +1 & +2 ❌</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Toplam Oran: 8.89</span><span>Tutar: 100 USD</span></div>"""
-w5_matches = """<div class='terminal-row'><span>konyaspor - gala</span><span class='highlight'>gala w & +2 ❌</span></div><div class='terminal-row'><span>leipzig - bvb</span><span class='highlight'>kg ✅</span></div><div class='terminal-row'><span>man city - newcastle</span><span class='highlight'>x1 & +2 ✅</span></div><div class='terminal-row'><span>forest - liverpool</span><span class='highlight'>live 2+ ❌</span></div><div class='terminal-row'><span>fenerbahçe - kasımpaşa</span><span class='highlight'>fenerbahçe w & iy +1 & +2 ✅</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Toplam Oran: 8.26</span><span>Tutar: 100 USD</span></div>"""
-w4_matches = """<div class='terminal-row'><span>gala - eyüpspor</span><span class='highlight'>gala w & 2+ ✅</span></div><div class='terminal-row'><span>sunderland - liverpool</span><span class='highlight'>kg ❌</span></div><div class='terminal-row'><span>bvb - mainz 05</span><span class='highlight'>bvb 1x & bvb 2+ & iy +1 ✅</span></div><div class='terminal-row'><span>trabzonspor - fenerbahçe</span><span class='highlight'>fb 2+ ✅</span></div><div class='terminal-row'><span>spurs - newcastle</span><span class='highlight'>kg ✅</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Toplam Oran: 11.00</span><span>Tutar: 100 USD</span></div>"""
 w3_matches = """<div class='terminal-row'><span>wolfsburg - bvb</span><span class='highlight'>bvb x2 & +2 ✅</span></div><div class='terminal-row'><span>newcastle - brentford</span><span class='highlight'>newcastle +2 ✅</span></div><div class='terminal-row'><span>rizespor - gala</span><span class='highlight'>gala w & +2 ✅</span></div><div class='terminal-row'><span>liverpool - man city</span><span class='highlight'>lıve +1 ✅</span></div><div class='terminal-row'><span>fenerbahçe - gençlerbirliği</span><span class='highlight'>fenerbahçe w & +3 ✅</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 8.79</span><span>Bet: 100 USD</span></div>"""
 w2_matches = """<div class='terminal-row'><span>gala - kayserispor</span><span style='color:#00ff41;'>gala w & iy +1 & 2+ ✅</span></div><div class='terminal-row'><span>liverpool - newcastle</span><span style='color:#00ff41;'>+2 & liverpool 1x ✅</span></div><div class='terminal-row'><span>bvb - heidenheim</span><span style='color:#00ff41;'>bvb w & iy +1 & 2+ ✅</span></div><div class='terminal-row'><span>kocaelispor - fenerbahçe</span><span style='color:#00ff41;'>fenerbahçe w & 2+ ✅</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 5.53</span><span>Bet: 100 USD</span></div>"""
 w1_matches = """<div class='terminal-row'><span>karagümrük - gala</span><span style='color:#ff4b4b;'>gala w & +2 ✅</span></div><div class='terminal-row'><span>bournemouth - liverpool</span><span style='color:#00ff41;'>kg ✅</span></div><div class='terminal-row'><span>union berlin - bvb</span><span style='color:#00ff41;'>iy +1 ✅</span></div><div class='terminal-row'><span>newcastle - aston villa</span><span style='color:#ff4b4b;'>newcastle +2 ❌</span></div><div class='terminal-row'><span>fenerbahçe - göztepe</span><span style='color:#ff4b4b;'>fenerbahçe w ❌</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 7.09</span><span>Bet: 100 USD</span></div>"""
 
-w10_coupon_html = f"<div class='industrial-card' style='border-top-color: #00ff41 !important;'><div class='terminal-header' style='color:#00ff41;'>⏳ W10 KUPONU (BEKLİYOR)</div>{w10_matches}<span style='color:#00ff41; font-weight:bold;'>SONUÇ BEKLENİYOR 🔜</span></div>"
-w9_coupon_html = f"<div class='industrial-card' style='border-top-color: #00ff41 !important;'><div class='terminal-header' style='color:#00ff41;'>❌ W9 KUPONU (BAŞARISIZ)</div>{w9_matches}<span style='color:#00ff41; font-weight:bold;'>SONUÇLANDI ❌</span></div>"
-w8_coupon_html = f"<div class='industrial-card' style='border-top-color: #00ff41 !important;'><div class='terminal-header' style='color:#00ff41;'>❌ W8 KUPONU (BAŞARISIZ)</div>{w8_matches}<span style='color:#00ff41; font-weight:bold;'>SONUÇLANDI ❌</span></div>"
-w7_coupon_html = f"<div class='industrial-card' style='border-top-color: #00ff41 !important;'><div class='terminal-header' style='color:#00ff41;'>✅ W7 KUPONU (BAŞARILI)</div>{w7_matches}<span style='color:#00ff41; font-weight:bold;'>SONUÇLANDI ✅</span></div>"
-w6_coupon_html = f"<div class='industrial-card' style='border-top-color: #00ff41 !important;'><div class='terminal-header' style='color:#00ff41;'>❌ W6 KUPONU (BAŞARISIZ)</div>{w6_matches}<span style='color:#00ff41; font-weight:bold;'>SONUÇLANDI ❌</span></div>"
-w5_coupon_html = f"<div class='industrial-card' style='border-top-color: #00ff41 !important;'><div class='terminal-header' style='color:#00ff41;'>❌ W5 KUPONU (BAŞARISIZ)</div>{w5_matches}<span style='color:#00ff41; font-weight:bold;'>SONUÇLANDI ❌</span></div>"
-w4_coupon_html = f"<div class='industrial-card' style='border-top-color: #00ff41 !important;'><div class='terminal-header' style='color:#00ff41;'>❌ W4 KUPONU (BAŞARISIZ)</div>{w4_matches}<span style='color:#00ff41; font-weight:bold;'>SONUÇLANDI ❌</span></div>"
 w3_coupon_html = f"<div class='industrial-card' style='border-top-color: #00ff41 !important;'><div class='terminal-header' style='color:#00ff41;'>✅ W3 KUPONU (BAŞARILI)</div>{w3_matches}<span style='color:#00ff41; font-weight:bold;'>SONUÇLANDI ✅</span></div>"
 w2_coupon_html = f"<div class='industrial-card' style='border-top-color: #00ff41 !important;'><div class='terminal-header' style='color:#00ff41;'>✅ W2 KUPONU (BAŞARILI)</div>{w2_matches}<span style='color:#00ff41; font-weight:bold;'>SONUÇLANDI ✅</span></div>"
 w1_coupon_html = f"<div class='industrial-card' style='border-top-color: #ff4b4b !important;'><div class='terminal-header' style='color:#ff4b4b;'>❌ W1 KUPONU (BAŞARISIZ)</div>{w1_matches}<span style='color:#ff4b4b; font-weight:bold;'>SONUÇLANDI ❌</span></div>"
@@ -383,7 +362,7 @@ def check_password():
         st.markdown(login_bg_css, unsafe_allow_html=True)
         pwd = st.text_input("PIN", type="password", placeholder="----", label_visibility="collapsed")
         if pwd:
-            if pwd == "1608":
+            if pwd == "0644":
                 st.session_state["password_correct"] = True
                 st.rerun()
             else:
@@ -1070,21 +1049,7 @@ if check_password():
             unsafe_allow_html=True
         )
 
-        t10, t9, t8, t7, t6, t5, t4, t1, t2, t3 = st.tabs(["🆕 W10", "❌ W9", "❌ W8", "✅ W7", "❌ W6", "❌ W5", "❌ W4", "✅ W3", "✅ W2", "❌ W1"])
-        with t10:
-            st.markdown(w10_coupon_html, unsafe_allow_html=True)
-        with t9:
-            st.markdown(w9_coupon_html, unsafe_allow_html=True)
-        with t8:
-            st.markdown(w8_coupon_html, unsafe_allow_html=True)
-        with t7:
-            st.markdown(w7_coupon_html, unsafe_allow_html=True)
-        with t6:
-            st.markdown(w6_coupon_html, unsafe_allow_html=True)
-        with t5:
-            st.markdown(w5_coupon_html, unsafe_allow_html=True)
-        with t4:
-            st.markdown(w4_coupon_html, unsafe_allow_html=True)
+        t1, t2, t3 = st.tabs(["✅ W3", "✅ W2", "❌ W1"])
         with t1:
             st.markdown(w3_coupon_html, unsafe_allow_html=True)
         with t2:
