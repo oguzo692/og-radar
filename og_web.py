@@ -1055,6 +1055,3 @@ elif page == "⚽ FORMLINE":
 
     with t3:
         st.markdown(w1_coupon_html, unsafe_allow_html=True)
-
-
-elif page == "📊 Portföy Takip":
