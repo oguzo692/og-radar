@@ -131,7 +131,7 @@ def render_market_ticker(data, announcement):
         unsafe_allow_html=True
     )
 
-def render_animated_counter(label, value, prefix="", suffix="", decimals=2, subtitle="", accent="#cc7a00", height=152):
+def render_animated_counter(label, value, prefix="", suffix="", decimals=2, subtitle="", accent="#c58a2c", height=152):
     safe_value = float(value or 0)
     card_html = f"""
     <div class="counter-card">
@@ -141,7 +141,7 @@ def render_animated_counter(label, value, prefix="", suffix="", decimals=2, subt
     </div>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&family=Orbitron:wght@400;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&display=swap');
         html, body {{
             margin: 0;
             padding: 0;
@@ -152,7 +152,7 @@ def render_animated_counter(label, value, prefix="", suffix="", decimals=2, subt
             height: {height - 4}px;
             box-sizing: border-box;
             background:
-                linear-gradient(135deg, rgba(204,122,0,0.12), transparent 35%),
+                linear-gradient(135deg, rgba(197,138,44,0.12), transparent 35%),
                 rgba(15,15,15,0.86);
             border: 1px solid rgba(255,255,255,0.045);
             border-top: 2px solid {accent};
@@ -175,7 +175,7 @@ def render_animated_counter(label, value, prefix="", suffix="", decimals=2, subt
         }}
         .counter-value {{
             color: #f2f2f2;
-            font-family: 'Orbitron', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 36px;
             line-height: 1;
             font-weight: 900;
@@ -276,7 +276,7 @@ def render_portfolio_hero_component(selected_user_label, total_usd, total_try, a
     </div>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&family=Orbitron:wght@400;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&display=swap');
         html, body {{
             margin: 0;
             padding: 0;
@@ -308,10 +308,10 @@ def render_portfolio_hero_component(selected_user_label, total_usd, total_try, a
             grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
             gap: 22px;
             background:
-                linear-gradient(135deg, rgba(255,174,0,0.10), transparent 26%),
+                linear-gradient(135deg, rgba(197,138,44,0.10), transparent 26%),
                 linear-gradient(180deg, rgba(18,18,18,0.96), rgba(8,8,8,0.96));
             border: 1px solid rgba(255,255,255,0.045);
-            border-top: 2px solid rgba(204,122,0,0.72);
+            border-top: 2px solid rgba(197,138,44,0.72);
             border-radius: 6px;
             padding: 30px;
             box-sizing: border-box;
@@ -328,7 +328,7 @@ def render_portfolio_hero_component(selected_user_label, total_usd, total_try, a
         .portfolio-hero-main {{
             font-size: 58px;
             line-height: 1;
-            font-family: 'Orbitron', monospace;
+            font-family: 'JetBrains Mono', monospace;
             color: #f0f0f0;
             font-weight: 900;
             white-space: nowrap;
@@ -360,7 +360,7 @@ def render_portfolio_hero_component(selected_user_label, total_usd, total_try, a
         }}
         .portfolio-meta-value {{
             color: #eeeeee;
-            font-family: 'Orbitron', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 18px;
             font-weight: 800;
             white-space: nowrap;
@@ -434,6 +434,7 @@ def render_smart_alerts(alerts):
     if not alerts:
         return
 
+    grid_class = "smart-alert-grid single" if len(alerts) == 1 else "smart-alert-grid"
     cards = ""
     for level, title, body in alerts[:3]:
         cards += (
@@ -444,7 +445,7 @@ def render_smart_alerts(alerts):
         )
 
     st.markdown(
-        f"<div class='smart-alert-grid'>{cards}</div>",
+        f"<div class='{grid_class}'>{cards}</div>",
         unsafe_allow_html=True
     )
 
@@ -615,7 +616,7 @@ def render_kasa_history_chart(data, current_kasa):
     low_value = float(history_df["Kasa"].min())
     change_value = last_value - first_value
     change_pct = (change_value / first_value * 100) if first_value > 0 else 0
-    change_color = "#00ff41" if change_value >= 0 else "#ff4b4b"
+    change_color = "#c58a2c"
     width = 900
     height = 230
     pad_x = 34
@@ -671,8 +672,8 @@ def render_kasa_history_chart(data, current_kasa):
             <svg viewBox="0 0 {width} {height}" preserveAspectRatio="none" role="img">
                 <defs>
                     <linearGradient id="areaFill" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stop-color="rgba(255,174,0,0.26)" />
-                        <stop offset="100%" stop-color="rgba(255,174,0,0.00)" />
+                        <stop offset="0%" stop-color="rgba(197,138,44,0.26)" />
+                        <stop offset="100%" stop-color="rgba(197,138,44,0.00)" />
                     </linearGradient>
                     <filter id="glow">
                         <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
@@ -699,7 +700,7 @@ def render_kasa_history_chart(data, current_kasa):
     </div>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&family=Orbitron:wght@400;700;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&display=swap');
         html, body {{
             margin: 0;
             padding: 0;
@@ -710,10 +711,10 @@ def render_kasa_history_chart(data, current_kasa):
             box-sizing: border-box;
             height: 100%;
             background:
-                radial-gradient(circle at 12% 0%, rgba(255,174,0,0.12), transparent 28%),
+                radial-gradient(circle at 12% 0%, rgba(197,138,44,0.12), transparent 28%),
                 linear-gradient(180deg, rgba(16,16,16,0.96), rgba(7,7,7,0.96));
             border: 1px solid rgba(255,255,255,0.05);
-            border-top: 2px solid rgba(204,122,0,0.72);
+            border-top: 2px solid rgba(197,138,44,0.72);
             border-radius: 6px;
             padding: 22px;
             font-family: 'JetBrains Mono', monospace;
@@ -734,20 +735,20 @@ def render_kasa_history_chart(data, current_kasa):
             font-weight: 800;
             letter-spacing: 2.8px;
             text-transform: uppercase;
-            border-left: 3px solid #cc7a00;
+            border-left: 3px solid #c58a2c;
             padding-left: 12px;
             margin-bottom: 8px;
         }}
         .kasa-title {{
             color: #f0f0f0;
-            font-family: 'Orbitron', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 22px;
             font-weight: 900;
         }}
         .kasa-badge {{
-            border: 1px solid rgba(255,174,0,0.32);
-            background: rgba(255,174,0,0.08);
-            color: #ffae00;
+            border: 1px solid rgba(197,138,44,0.32);
+            background: rgba(197,138,44,0.08);
+            color: #c58a2c;
             border-radius: 999px;
             padding: 8px 12px;
             font-size: 10px;
@@ -777,7 +778,7 @@ def render_kasa_history_chart(data, current_kasa):
         .metric strong {{
             display: block;
             color: #f0f0f0;
-            font-family: 'Orbitron', monospace;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 18px;
             font-weight: 900;
             white-space: nowrap;
@@ -808,14 +809,14 @@ def render_kasa_history_chart(data, current_kasa):
         }}
         .chart-line {{
             fill: none;
-            stroke: #ffae00;
+            stroke: #c58a2c;
             stroke-width: 4;
             stroke-linecap: round;
             stroke-linejoin: round;
         }}
         .chart-dot {{
             fill: #050505;
-            stroke: #ffae00;
+            stroke: #c58a2c;
             stroke-width: 3;
         }}
         .kasa-history-foot {{
@@ -927,7 +928,19 @@ son_islemler_raw = get_str(live_vars, "son_islemler", "Veri yok")
 # --- 8. STİL SİSTEMİ ---
 common_css = """
 <style>
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&family=Orbitron:wght@400;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&display=swap');
+
+:root {
+    --og-bg: #050505;
+    --og-surface: rgba(15, 15, 15, 0.86);
+    --og-surface-soft: rgba(255,255,255,0.026);
+    --og-border: rgba(255,255,255,0.05);
+    --og-accent: #c58a2c;
+    --og-accent-soft: rgba(197,138,44,0.12);
+    --og-text: #e6e2da;
+    --og-muted: #8b867c;
+    --og-radius: 6px;
+}
 
 #MainMenu, footer, header, .stAppDeployButton {visibility: hidden;}
 [data-testid="stSidebar"] svg, [data-testid="stHeaderActionElements"], .st-emotion-cache-10trblm {display: none !important;}
@@ -943,7 +956,7 @@ common_css = """
 
 section[data-testid="stSidebar"] {
     background-color: rgba(5, 5, 5, 0.95) !important;
-    border-right: 1px solid rgba(204, 122, 0, 0.15);
+    border-right: 1px solid rgba(197, 138, 44, 0.15);
     padding-top: 20px;
     min-width: 340px !important;
     max-width: 340px !important;
@@ -951,12 +964,12 @@ section[data-testid="stSidebar"] {
 
 .stButton button, .stLinkButton a {
     width: 100% !important;
-    background: rgba(204, 122, 0, 0.1) !important;
-    border: 1px solid rgba(204, 122, 0, 0.3) !important;
-    color: #cc7a00 !important;
-    font-family: 'Orbitron' !important;
+    background: var(--og-accent-soft) !important;
+    border: 1px solid rgba(197, 138, 44, 0.30) !important;
+    color: var(--og-accent) !important;
+    font-family: 'JetBrains Mono', monospace !important;
     padding: 12px !important;
-    border-radius: 6px !important;
+    border-radius: var(--og-radius) !important;
 }
 
 div[role="radiogroup"] {
@@ -970,7 +983,7 @@ div[role="radiogroup"] label {
 
 body, [data-testid="stAppViewContainer"], p, div, span, button, input {
     font-family: 'JetBrains Mono', monospace !important;
-    color: #d1d1d1 !important;
+    color: var(--og-text) !important;
 }
 
 .terminal-row {
@@ -985,37 +998,37 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input {
 }
 
 .industrial-card {
-    background: rgba(15, 15, 15, 0.82) !important;
+    background: var(--og-surface) !important;
     backdrop-filter: blur(5px);
-    border: 1px solid rgba(255, 255, 255, 0.03) !important;
-    border-top: 2px solid rgba(204, 122, 0, 0.4) !important;
+    border: 1px solid var(--og-border) !important;
+    border-top: 2px solid rgba(197, 138, 44, 0.48) !important;
     padding: 22px;
     margin-bottom: 20px;
-    border-radius: 4px;
+    border-radius: var(--og-radius);
     box-shadow: 0 4px 15px rgba(0,0,0,0.5);
     transition: all 0.25s ease;
 }
 
 .industrial-card:hover {
     transform: translateY(-3px);
-    border-top-color: #ffae00 !important;
+    border-top-color: var(--og-accent) !important;
     background: rgba(21, 21, 21, 0.9) !important;
-    box-shadow: 0 8px 22px rgba(204, 122, 0, 0.11);
+    box-shadow: 0 8px 22px rgba(197, 138, 44, 0.11);
 }
 
 .terminal-header {
-    color: #8b8b8b;
+    color: var(--og-muted);
     font-size: 11px;
     font-weight: 800;
     letter-spacing: 2.8px;
     text-transform: uppercase;
     margin-bottom: 18px;
-    border-left: 3px solid #cc7a00;
+    border-left: 3px solid var(--og-accent);
     padding-left: 12px;
 }
 
 .highlight {
-    color: #FFFFFF !important;
+    color: var(--og-text) !important;
     font-weight: 500;
     font-size: 14px;
     font-family: 'JetBrains Mono', monospace;
@@ -1025,14 +1038,14 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input {
 .val-std {
     font-size: 22px !important;
     font-weight: 800 !important;
-    font-family: 'Orbitron';
+    font-family: 'JetBrains Mono', monospace;
 }
 
 .ticker-wrap {
     width: 100%;
     overflow: hidden;
-    background: linear-gradient(90deg, rgba(204, 122, 0, 0.10), rgba(255,255,255,0.025), rgba(204, 122, 0, 0.06));
-    border-bottom: 1px solid rgba(204, 122, 0, 0.2);
+    background: linear-gradient(90deg, rgba(197, 138, 44, 0.10), rgba(255,255,255,0.025), rgba(197, 138, 44, 0.06));
+    border-bottom: 1px solid rgba(197, 138, 44, 0.2);
     border-top: 1px solid rgba(255,255,255,0.035);
     padding: 11px 0;
     margin-bottom: 25px;
@@ -1061,7 +1074,7 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input {
 }
 
 .ticker-value {
-    color: #ffae00 !important;
+    color: var(--og-accent) !important;
     font-weight: 900;
 }
 
@@ -1079,21 +1092,21 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input {
 
 /* --- PORTFÖY TABLOSU --- */
 .portfolio-table-card {
-    background: rgba(14,14,14,0.88);
-    border: 1px solid rgba(255,255,255,0.045);
-    border-radius: 6px;
+    background: var(--og-surface);
+    border: 1px solid var(--og-border);
+    border-radius: var(--og-radius);
     padding: 22px;
     box-shadow: 0 12px 30px rgba(0,0,0,0.32);
 }
 
 .portfolio-table-title {
-    color: #8b8b8b !important;
+    color: var(--og-muted) !important;
     font-size: 11px;
     font-weight: 800;
     letter-spacing: 2.8px;
     text-transform: uppercase;
     margin-bottom: 16px;
-    border-left: 3px solid #cc7a00;
+    border-left: 3px solid var(--og-accent);
     padding-left: 12px;
 }
 
@@ -1113,7 +1126,7 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input {
 .portfolio-row-name strong,
 .portfolio-row-value strong {
     display: block;
-    color: #f0f0f0 !important;
+    color: var(--og-text) !important;
     font-size: 16px;
     font-weight: 800;
 }
@@ -1121,7 +1134,7 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input {
 .portfolio-row-name span,
 .portfolio-row-value span {
     display: block;
-    color: #858585 !important;
+    color: var(--og-muted) !important;
     font-size: 12px;
     margin-top: 6px;
 }
@@ -1131,7 +1144,7 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input {
 }
 
 .portfolio-empty {
-    color: #a0a0a0 !important;
+    color: var(--og-muted) !important;
     font-size: 14px;
     padding: 12px 0;
 }
@@ -1143,29 +1156,33 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input {
     margin: 4px 0 20px 0;
 }
 
+.smart-alert-grid.single {
+    grid-template-columns: 1fr;
+}
+
 .smart-alert {
-    background: rgba(15, 15, 15, 0.82);
-    border: 1px solid rgba(255,255,255,0.045);
-    border-left: 3px solid #cc7a00;
-    border-radius: 6px;
+    background: var(--og-surface);
+    border: 1px solid var(--og-border);
+    border-left: 3px solid var(--og-accent);
+    border-radius: var(--og-radius);
     padding: 16px;
     box-shadow: 0 10px 24px rgba(0,0,0,0.28);
 }
 
 .smart-alert-good {
-    border-left-color: #00ff41;
+    border-left-color: var(--og-accent);
 }
 
 .smart-alert-warn {
-    border-left-color: #ffae00;
+    border-left-color: var(--og-accent);
 }
 
 .smart-alert-info {
-    border-left-color: #4ea3ff;
+    border-left-color: var(--og-accent);
 }
 
 .smart-alert-title {
-    color: #f0f0f0 !important;
+    color: var(--og-text) !important;
     font-size: 12px;
     font-weight: 900;
     letter-spacing: 1.8px;
@@ -1174,36 +1191,36 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input {
 }
 
 .smart-alert-body {
-    color: #969696 !important;
+    color: var(--og-muted) !important;
     font-size: 12px;
     line-height: 1.55;
 }
 
 .decision-grid {
     display: grid;
-    grid-template-columns: 1.1fr 1fr 1fr;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 14px;
     margin: 2px 0 20px 0;
 }
 
 .decision-card {
     background:
-        linear-gradient(135deg, rgba(255,174,0,0.06), transparent 34%),
-        rgba(15,15,15,0.86);
-    border: 1px solid rgba(255,255,255,0.05);
-    border-top: 2px solid rgba(204,122,0,0.54);
-    border-radius: 6px;
+        linear-gradient(135deg, var(--og-accent-soft), transparent 34%),
+        var(--og-surface);
+    border: 1px solid var(--og-border);
+    border-top: 2px solid rgba(197,138,44,0.54);
+    border-radius: var(--og-radius);
     padding: 18px;
     min-height: 160px;
     box-shadow: 0 12px 28px rgba(0,0,0,0.32);
 }
 
 .decision-primary {
-    border-top-color: #ffae00;
+    border-top-color: var(--og-accent);
 }
 
 .decision-kicker {
-    color: #858585 !important;
+    color: var(--og-muted) !important;
     font-size: 10px;
     font-weight: 900;
     letter-spacing: 2.4px;
@@ -1212,8 +1229,8 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input {
 }
 
 .decision-title {
-    color: #f2f2f2 !important;
-    font-family: 'Orbitron', monospace !important;
+    color: var(--og-text) !important;
+    font-family: 'JetBrains Mono', monospace !important;
     font-size: 24px;
     line-height: 1.08;
     font-weight: 900;
@@ -1221,7 +1238,7 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input {
 }
 
 .decision-body {
-    color: #969696 !important;
+    color: var(--og-muted) !important;
     font-size: 12px;
     line-height: 1.55;
 }
@@ -1230,14 +1247,14 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input {
     display: flex;
     justify-content: space-between;
     gap: 12px;
-    color: #858585 !important;
+    color: var(--og-muted) !important;
     font-size: 12px;
     margin: 10px 0;
 }
 
 .vault-row strong {
-    color: #f0f0f0 !important;
-    font-family: 'Orbitron', monospace !important;
+    color: var(--og-text) !important;
+    font-family: 'JetBrains Mono', monospace !important;
     font-size: 13px;
     white-space: nowrap;
 }
@@ -1258,13 +1275,13 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input {
     display: block;
     height: 100%;
     border-radius: 999px;
-    background: linear-gradient(90deg, #cc7a00, #ffae00);
-    box-shadow: 0 0 16px rgba(255,174,0,0.24);
+    background: linear-gradient(90deg, #8f6426, var(--og-accent));
+    box-shadow: 0 0 16px rgba(197,138,44,0.24);
 }
 
 .recovery-label {
-    color: #ffae00 !important;
-    font-family: 'Orbitron', monospace !important;
+    color: var(--og-accent) !important;
+    font-family: 'JetBrains Mono', monospace !important;
     font-size: 18px;
     font-weight: 900;
     text-align: right;
@@ -1272,11 +1289,11 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input {
 
 .ops-summary-card {
     background:
-        linear-gradient(135deg, rgba(255,174,0,0.07), transparent 34%),
-        rgba(15,15,15,0.86);
-    border: 1px solid rgba(255,255,255,0.05);
-    border-top: 2px solid rgba(204,122,0,0.62);
-    border-radius: 6px;
+        linear-gradient(135deg, var(--og-accent-soft), transparent 34%),
+        var(--og-surface);
+    border: 1px solid var(--og-border);
+    border-top: 2px solid rgba(197,138,44,0.62);
+    border-radius: var(--og-radius);
     padding: 20px;
     margin-bottom: 20px;
     box-shadow: 0 12px 28px rgba(0,0,0,0.32);
@@ -1289,15 +1306,15 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input {
 }
 
 .ops-summary-item {
-    background: rgba(255,255,255,0.025);
-    border: 1px solid rgba(255,255,255,0.045);
-    border-radius: 6px;
+    background: var(--og-surface-soft);
+    border: 1px solid var(--og-border);
+    border-radius: var(--og-radius);
     padding: 14px;
 }
 
 .ops-summary-item span {
     display: block;
-    color: #777 !important;
+    color: var(--og-muted) !important;
     font-size: 10px;
     letter-spacing: 2px;
     text-transform: uppercase;
@@ -1306,8 +1323,8 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input {
 
 .ops-summary-item strong {
     display: block;
-    color: #f0f0f0 !important;
-    font-family: 'Orbitron', monospace !important;
+    color: var(--og-text) !important;
+    font-family: 'JetBrains Mono', monospace !important;
     font-size: 18px;
     font-weight: 900;
     white-space: nowrap;
@@ -1495,8 +1512,8 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input {
 login_bg_css = """
 <style>
 .stApp {
-    background: radial-gradient(circle at 20% 30%, rgba(204,122,0,0.15), transparent 40%),
-                radial-gradient(circle at 80% 70%, rgba(0,255,65,0.10), transparent 40%),
+    background: radial-gradient(circle at 20% 30%, rgba(197,138,44,0.15), transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(197,138,44,0.07), transparent 40%),
                 linear-gradient(135deg, #050505 0%, #0b0b0b 40%, #111111 100%) !important;
     background-attachment: fixed !important;
 }
@@ -1506,8 +1523,8 @@ div[data-testid="stVerticalBlock"] > div:has(input[type="password"]) {
     backdrop-filter: blur(30px) !important;
     padding: 55px 35px !important;
     border-radius: 18px !important;
-    border: 1px solid rgba(204, 122, 0, 0.35) !important;
-    box-shadow: 0 0 40px rgba(204,122,0,0.15);
+    border: 1px solid rgba(197, 138, 44, 0.35) !important;
+    box-shadow: 0 0 40px rgba(197,138,44,0.15);
     position: fixed !important;
     top: 50% !important;
     left: 50% !important;
@@ -1518,9 +1535,9 @@ div[data-testid="stVerticalBlock"] > div:has(input[type="password"]) {
 
 input[type="password"] {
     background: rgba(0, 0, 0, 0.5) !important;
-    border: 1px solid rgba(204, 122, 0, 0.6) !important;
+    border: 1px solid rgba(197, 138, 44, 0.6) !important;
     text-align: center !important;
-    color: #cc7a00 !important;
+    color: #c58a2c !important;
     font-size: 26px !important;
     letter-spacing: 12px !important;
     padding: 12px !important;
@@ -1545,9 +1562,13 @@ input[type="password"] {
 """
 
 # --- 9. STATİK HTML ŞABLONLARI ---
-w1_matches = """<div class='terminal-row'><span>türkiye - xxx </span><span class='highlight'>türkiye w</span></div><div class='terminal-row'><span>türkiye - aaa</span><span class='highlight'>türkiye w</span></div><div class='terminal-row'><span>rizespor - gala</span><span class='highlight'></span></div><div class='terminal-row'><span></span><span class='highlight'></span></div><div class='terminal-row'><span></span><span class='highlight'></span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 8.79</span><span>Bet: 100 USD</span></div>"""
+w3_matches = """<div class='terminal-row'><span>türkiye - xxx </span><span class='highlight'>türkiye w</span></div><div class='terminal-row'><span>türkiye - aaa</span><span class='highlight'>türkiye w</span></div><div class='terminal-row'><span>rizespor - gala</span><span class='highlight'></span></div><div class='terminal-row'><span></span><span class='highlight'></span></div><div class='terminal-row'><span></span><span class='highlight'></span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 8.79</span><span>Bet: 100 USD</span></div>"""
+w2_matches = """<div class='terminal-row'><span>gala - kayserispor</span><span class='highlight'>gala w & iy +1 & 2+ ✅</span></div><div class='terminal-row'><span>liverpool - newcastle</span><span class='highlight'>+2 & liverpool 1x ✅</span></div><div class='terminal-row'><span>bvb - heidenheim</span><span class='highlight'>bvb w & iy +1 & 2+ ✅</span></div><div class='terminal-row'><span>kocaelispor - fenerbahçe</span><span class='highlight'>fenerbahçe w & 2+ ✅</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 5.53</span><span>Bet: 100 USD</span></div>"""
+w1_matches = """<div class='terminal-row'><span>karagümrük - gala</span><span class='highlight'>gala w & +2 ✅</span></div><div class='terminal-row'><span>bournemouth - liverpool</span><span class='highlight'>kg ✅</span></div><div class='terminal-row'><span>union berlin - bvb</span><span class='highlight'>iy +1 ✅</span></div><div class='terminal-row'><span>newcastle - aston villa</span><span class='highlight'>newcastle +2 ❌</span></div><div class='terminal-row'><span>fenerbahçe - göztepe</span><span class='highlight'>fenerbahçe w ❌</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 7.09</span><span>Bet: 100 USD</span></div>"""
 
-w1_coupon_html = f"<div class='industrial-card' style='border-top-color: #ff4b4b !important;'><div class='terminal-header' style='color:#ff4b4b;'>🔜 W1 KUPONU </div>{w1_matches}<span style='color:#ff4b4b; font-weight:bold;'>SONUÇLANDI ❌</span></div>"
+w3_coupon_html = f"<div class='industrial-card' style='border-top-color: #c58a2c !important;'><div class='terminal-header'>✅ W3 KUPONU (BAŞARILI)</div>{w3_matches}<span class='highlight' style='font-weight:bold;'>SONUÇLANDI ✅</span></div>"
+w2_coupon_html = f"<div class='industrial-card' style='border-top-color: #c58a2c !important;'><div class='terminal-header'>✅ W2 KUPONU (BAŞARILI)</div>{w2_matches}<span class='highlight' style='font-weight:bold;'>SONUÇLANDI ✅</span></div>"
+w1_coupon_html = f"<div class='industrial-card' style='border-top-color: #c58a2c !important;'><div class='terminal-header'>❌ W1 KUPONU (BAŞARISIZ)</div>{w1_matches}<span class='highlight' style='font-weight:bold;'>SONUÇLANDI ❌</span></div>"
 
 # --- 10. GÜVENLİK ---
 if "password_correct" not in st.session_state:
@@ -1748,11 +1769,11 @@ def render_allocation_panel(df_nonzero):
         rows_html += f"""
 <div style='margin-bottom:14px;'>
     <div style='display:flex; justify-content:space-between; gap:12px; margin-bottom:7px; font-size:13px;'>
-        <span style='color:#dedede;'>{row["label"]}</span>
-        <span style='color:#cfcfcf;'>{pct:.1f}% &nbsp;//&nbsp; {value_text}</span>
+        <span style='color:var(--og-text);'>{row["label"]}</span>
+        <span style='color:var(--og-muted);'>{pct:.1f}% &nbsp;//&nbsp; {value_text}</span>
     </div>
     <div style='width:100%; height:9px; border-radius:999px; background:rgba(255,255,255,0.05); overflow:hidden; border:1px solid rgba(255,255,255,0.03);'>
-        <div style='height:100%; width:{pct:.2f}%; border-radius:999px; background:linear-gradient(90deg, rgba(204,122,0,0.95), rgba(255,174,0,0.95)); box-shadow:0 0 12px rgba(204,122,0,0.22);'></div>
+        <div style='height:100%; width:{pct:.2f}%; border-radius:999px; background:linear-gradient(90deg, #8f6426, var(--og-accent)); box-shadow:0 0 12px rgba(197,138,44,0.22);'></div>
     </div>
 </div>
 """
@@ -1869,23 +1890,23 @@ render_market_ticker(live_vars, duyuru_metni)
 
 with st.sidebar:
     st.markdown(
-        "<h1 style='color:white; font-family:Orbitron; font-size:24px; letter-spacing:5px; text-align:center; margin-bottom:40px;'>OG CORE</h1>",
+        "<h1 style='color:var(--og-text); font-family:JetBrains Mono, monospace; font-size:24px; letter-spacing:5px; text-align:center; margin-bottom:40px;'>OG CORE</h1>",
         unsafe_allow_html=True
     )
     st.markdown(
-        "<div style='margin-bottom:10px; color:#666; font-size:11px; letter-spacing:2px; font-weight:800;'>SİSTEM MODÜLLERİ</div>",
+        "<div style='margin-bottom:10px; color:var(--og-muted); font-size:11px; letter-spacing:2px; font-weight:800;'>SİSTEM MODÜLLERİ</div>",
         unsafe_allow_html=True
     )
     page = st.radio("Menu", ["⚡ ULTRA ATAK", "⚽ FORMLINE", "📊 Portföy Takip"], label_visibility="collapsed")
     st.divider()
     st.markdown(
-        "<div style='color:#666; font-size:11px; letter-spacing:2px; font-weight:800; margin-bottom:15px;'>📂 TERMİNAL ERİŞİMİ</div>",
+        "<div style='color:var(--og-muted); font-size:11px; letter-spacing:2px; font-weight:800; margin-bottom:15px;'>📂 TERMİNAL ERİŞİMİ</div>",
         unsafe_allow_html=True
     )
     admin_pwd = st.text_input("PIN", type="password", placeholder="Admin PIN", label_visibility="collapsed")
     if admin_pwd == "0644":
         st.markdown(
-            "<a href='https://docs.google.com/spreadsheets/d/15izevdpRjs8Om5BAHKVWmdL3FxEHml35DGECfhQUG_s/edit' target='_blank' style='text-decoration:none;'><div style='background:rgba(204, 122, 0, 0.2); border: 1px solid #cc7a00; color:#cc7a00; text-align:center; padding:10px; border-radius:4px; font-family:Orbitron; font-size:12px; font-weight:bold;'>VERİ TABANINA BAĞLAN</div></a>",
+            "<a href='https://docs.google.com/spreadsheets/d/15izevdpRjs8Om5BAHKVWmdL3FxEHml35DGECfhQUG_s/edit' target='_blank' style='text-decoration:none;'><div style='background:rgba(197, 138, 44, 0.14); border: 1px solid rgba(197, 138, 44, 0.42); color:#c58a2c; text-align:center; padding:10px; border-radius:6px; font-family:JetBrains Mono, monospace; font-size:12px; font-weight:bold;'>VERİ TABANINA BAĞLAN</div></a>",
             unsafe_allow_html=True
         )
     st.markdown("<br>", unsafe_allow_html=True)
@@ -1935,16 +1956,16 @@ if page == "⚡ ULTRA ATAK":
             <div class='terminal-header'>{hedef_baslik}</div>
             <div style='display:flex; justify-content:space-between; gap:18px; flex-wrap:wrap; margin-bottom:18px;'>
                 <div>
-                    <div style='font-size:12px; color:#666;'>Başlangıç Kasa</div>
+                    <div style='font-size:12px; color:var(--og-muted);'>Başlangıç Kasa</div>
                     <div style='font-size:22px; font-weight:800;'>${baslangic_kasa:,.2f}</div>
                 </div>
                 <div>
-                    <div style='font-size:12px; color:#666;'>Aktif Hedef</div>
-                    <div style='font-size:22px; font-weight:900; color:#cc7a00;'>${aktif_hedef:,.2f}</div>
+                    <div style='font-size:12px; color:var(--og-muted);'>Aktif Hedef</div>
+                    <div style='font-size:22px; font-weight:900; color:#c58a2c;'>${aktif_hedef:,.2f}</div>
                 </div>
                 <div>
-                    <div style='font-size:12px; color:#666;'>Net Kâr</div>
-                    <div style='font-size:22px; font-weight:900; color:{'#00ff41' if net_kar >= 0 else '#ff4b4b'};'>${net_kar:,.2f}</div>
+                    <div style='font-size:12px; color:var(--og-muted);'>Net Kâr</div>
+                    <div style='font-size:22px; font-weight:900; color:#c58a2c;'>${net_kar:,.2f}</div>
                 </div>
             </div>
         </div>
@@ -1956,7 +1977,7 @@ if page == "⚡ ULTRA ATAK":
 
     st.markdown(
         f"""
-        <div style='margin-top:8px; font-size:13px; color:#888; text-align:right;'>
+        <div style='margin-top:8px; font-size:13px; color:var(--og-muted); text-align:right;'>
             %{current_pct:.1f}
         </div>
         """,
@@ -1988,7 +2009,7 @@ if page == "⚡ ULTRA ATAK":
                 </div>
                 <div class='ops-summary-item'>
                     <span>Net K/Z</span>
-                    <strong style='color:{'#00ff41' if net_kar >= 0 else '#ff4b4b'};'>{fmt_money_usd(net_kar)}</strong>
+                    <strong style='color:#c58a2c;'>{fmt_money_usd(net_kar)}</strong>
                 </div>
             </div>
         </div>
@@ -2001,7 +2022,7 @@ if page == "⚡ ULTRA ATAK":
         f"""
         <div class='industrial-card'>
             <div class='terminal-header'>AKTİVİTE LOGLARI</div>
-            <p style='font-family:JetBrains Mono; color:#888;'>{son_islemler_raw}</p>
+            <p style='font-family:JetBrains Mono; color:var(--og-muted);'>{son_islemler_raw}</p>
         </div>
         """,
         unsafe_allow_html=True
@@ -2014,7 +2035,7 @@ elif page == "⚽ FORMLINE":
         prefix="$",
         decimals=2,
         subtitle="Toplam bahis performansı",
-        accent="#00ff41" if toplam_bahis_kar >= 0 else "#ff4b4b",
+        accent="#c58a2c",
         height=150
     )
 
@@ -2023,9 +2044,15 @@ elif page == "⚽ FORMLINE":
     elif toplam_bahis_kar < 0:
         render_smart_alerts([("warn", "Formline negatif", f"Net sonuç {fmt_money_usd(toplam_bahis_kar)}. Risk seviyesini düşük tutmak daha mantıklı.")])
 
-    t1, = st.tabs(["🔜 W1"])
+    t1, t2, t3 = st.tabs(["✅ W3", "✅ W2", "❌ W1"])
 
     with t1:
+        st.markdown(w3_coupon_html, unsafe_allow_html=True)
+
+    with t2:
+        st.markdown(w2_coupon_html, unsafe_allow_html=True)
+
+    with t3:
         st.markdown(w1_coupon_html, unsafe_allow_html=True)
 
 elif page == "📊 Portföy Takip":
