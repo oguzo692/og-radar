@@ -1864,42 +1864,42 @@ def check_password():
         st.markdown(common_css, unsafe_allow_html=True)
         st.markdown(login_bg_css, unsafe_allow_html=True)
         st.markdown(
-            """
-            <div class="og-login-shell">
-                <div class="og-login-brand">
-                    <div>
-                        <div class="og-login-eyebrow">Özel giriş alanı</div>
-                        <div class="og-login-title">OG CORE</div>
-                        <div class="og-login-copy">
-                            Kasa, risk ve portföy ekranlarına güvenli erişim.
-                            Canlı veri akışı yalnızca doğru kodla açılır.
+            textwrap.dedent("""
+                <div class="og-login-shell">
+                    <div class="og-login-brand">
+                        <div>
+                            <div class="og-login-eyebrow">Özel giriş alanı</div>
+                            <div class="og-login-title">OG CORE</div>
+                            <div class="og-login-copy">
+                                Kasa, risk ve portföy ekranlarına güvenli erişim.
+                                Canlı veri akışı yalnızca doğru kodla açılır.
+                            </div>
+                        </div>
+
+                        <div class="og-login-status">
+                            <div class="og-login-stat">
+                                <span>Durum</span>
+                                <strong>Hazır</strong>
+                            </div>
+                            <div class="og-login-stat">
+                                <span>Veri</span>
+                                <strong>Canlı</strong>
+                            </div>
+                            <div class="og-login-stat">
+                                <span>Koruma</span>
+                                <strong>Aktif</strong>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="og-login-status">
-                        <div class="og-login-stat">
-                            <span>Durum</span>
-                            <strong>Hazır</strong>
-                        </div>
-                        <div class="og-login-stat">
-                            <span>Veri</span>
-                            <strong>Canlı</strong>
-                        </div>
-                        <div class="og-login-stat">
-                            <span>Koruma</span>
-                            <strong>Aktif</strong>
-                        </div>
+                    <div class="og-login-panel">
+                        <div class="og-login-orb"></div>
+                        <div class="og-login-pin-label">Güvenlik PIN</div>
+                        <div class="og-login-pin-copy">4 haneli kodu gir, çekirdek panel açılsın.</div>
+                        <div class="og-login-input-slot"></div>
                     </div>
                 </div>
-
-                <div class="og-login-panel">
-                    <div class="og-login-orb"></div>
-                    <div class="og-login-pin-label">Güvenlik PIN</div>
-                    <div class="og-login-pin-copy">4 haneli kodu gir, çekirdek panel açılsın.</div>
-                    <div class="og-login-input-slot"></div>
-                </div>
-            </div>
-            """,
+            """),
             unsafe_allow_html=True
         )
         pwd = st.text_input("PIN", type="password", placeholder="----", label_visibility="collapsed")
