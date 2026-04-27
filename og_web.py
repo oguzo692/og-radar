@@ -499,7 +499,7 @@ def build_next_move(ultra_kasa, baslangic_kasa, aktif_hedef, current_pct, net_ka
     if current_pct >= 85:
         return "KİLİTLE", f"Hedefe %{current_pct:.1f} yaklaşıldı. Risk artırmak yerine kârı koru."
     if drawdown_pct >= 8:
-        return "RECOVERY", f"Zirveden %{drawdown_pct:.1f} aşağıdasın. Öncelik zirveye dönüş olsun."
+        return "TOPARLAN", f"Zirveden %{drawdown_pct:.1f} aşağıdasın. Öncelik zirveye dönüş olsun."
     if selected_risk == "Atak" and net_kar <= 0:
         return "RİSK DÜŞÜR", "Atak modu negatif bölgede pahalı kalır. Standart veya Koruma daha sağlıklı."
     if net_kar > 0 and selected_risk == "Koruma":
@@ -541,19 +541,19 @@ def render_ultra_decision_panels(data, ultra_kasa, baslangic_kasa, aktif_hedef, 
     panel_html = (
         "<div class='decision-grid'>"
         "<div class='decision-card decision-primary'>"
-        "<div class='decision-kicker'>Next Move</div>"
+        "<div class='decision-kicker'>Sıradaki Hamle</div>"
         f"<div class='decision-title'>{html.escape(move_title)}</div>"
         f"<div class='decision-body'>{html.escape(move_body)}</div>"
         "</div>"
         "<div class='decision-card'>"
-        "<div class='decision-kicker'>Vault Split</div>"
-        "<div class='vault-row'><span>Safe Vault</span><strong>" + fmt_money_usd(safe_pool) + "</strong></div>"
+        "<div class='decision-kicker'>Kasa Dağılımı</div>"
+        "<div class='vault-row'><span>Güvenli Kasa</span><strong>" + fmt_money_usd(safe_pool) + "</strong></div>"
         "<div class='vault-bar'><i style='width:80%;'></i></div>"
-        f"<div class='vault-row'><span>Risk Pool · {html.escape(selected_risk)}</span><strong>{fmt_money_usd(risk_limit)}</strong></div>"
-        f"<div class='vault-row'><span>Growth Pool</span><strong>{fmt_money_usd(growth_pool)}</strong></div>"
+        f"<div class='vault-row'><span>Risk Payı · {html.escape(selected_risk)}</span><strong>{fmt_money_usd(risk_limit)}</strong></div>"
+        f"<div class='vault-row'><span>Büyüme Payı</span><strong>{fmt_money_usd(growth_pool)}</strong></div>"
         "</div>"
         "<div class='decision-card'>"
-        "<div class='decision-kicker'>Recovery Meter</div>"
+        "<div class='decision-kicker'>Toparlanma Ölçeri</div>"
         f"<div class='decision-title'>{recovery_status}</div>"
         f"<div class='decision-body'>Zirve {fmt_money_usd(peak_value)} · Geri dönüş {fmt_money_usd(recovery_needed)}</div>"
         f"<div class='recovery-track'><i style='width:{recovery_pct:.1f}%;'></i></div>"
@@ -916,7 +916,7 @@ duyuru_metni = get_str(live_vars, "duyuru", "SİSTEM ÇEVRİMİÇİ... OG CORE")
 # Kişisel kasa verileri
 og_kasa = float(get_num(live_vars, "oguzo_kasa", kasa / 1))
 
-# Formline hesaplama
+# Form takibi hesaplama
 w1_kar = float(get_num(live_vars, "w1_sonuc", 0))
 w2_kar = float(get_num(live_vars, "w2_sonuc", 0))
 w3_kar = float(get_num(live_vars, "w3_sonuc", 0))
@@ -1512,43 +1512,328 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input {
 login_bg_css = """
 <style>
 .stApp {
-    background: radial-gradient(circle at 20% 30%, rgba(197,138,44,0.15), transparent 40%),
-                radial-gradient(circle at 80% 70%, rgba(197,138,44,0.07), transparent 40%),
-                linear-gradient(135deg, #050505 0%, #0b0b0b 40%, #111111 100%) !important;
+    background:
+        radial-gradient(circle at 18% 24%, rgba(197,138,44,0.18), transparent 34%),
+        radial-gradient(circle at 78% 72%, rgba(197,138,44,0.10), transparent 36%),
+        linear-gradient(135deg, #030303 0%, #090806 44%, #020202 100%) !important;
     background-attachment: fixed !important;
 }
 
-div[data-testid="stVerticalBlock"] > div:has(input[type="password"]) {
-    background: rgba(10, 10, 10, 0.75) !important;
-    backdrop-filter: blur(30px) !important;
-    padding: 55px 35px !important;
-    border-radius: 18px !important;
-    border: 1px solid rgba(197, 138, 44, 0.35) !important;
-    box-shadow: 0 0 40px rgba(197,138,44,0.15);
+.stApp::before {
+    content: "";
     position: fixed !important;
-    top: 50% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%) !important;
-    z-index: 9999 !important;
-    width: 360px !important;
+    inset: 0 !important;
+    pointer-events: none !important;
+    z-index: 0 !important;
+    background-image:
+        linear-gradient(rgba(197,138,44,0.055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(197,138,44,0.045) 1px, transparent 1px);
+    background-size: 54px 54px;
+    mask-image: radial-gradient(circle at center, rgba(0,0,0,0.82), transparent 72%);
+    animation: loginGrid 18s linear infinite;
+}
+
+.stApp::after {
+    content: "";
+    position: fixed !important;
+    width: 520px;
+    height: 520px;
+    right: 8vw;
+    bottom: -140px;
+    border-radius: 999px;
+    background: radial-gradient(circle, rgba(197,138,44,0.13), transparent 64%);
+    filter: blur(10px);
+    pointer-events: none !important;
+    z-index: 0 !important;
+    animation: loginGlow 7s ease-in-out infinite alternate;
+}
+
+.block-container {
+    max-width: none !important;
+    padding: 0 !important;
+}
+
+.og-login-shell {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    z-index: 9998;
+    width: min(920px, calc(100vw - 42px));
+    min-height: 430px;
+    transform: translate(-50%, -50%);
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: 0;
+    overflow: hidden;
+    border-radius: 24px;
+    border: 1px solid rgba(197,138,44,0.28);
+    background:
+        linear-gradient(135deg, rgba(197,138,44,0.16), transparent 33%),
+        linear-gradient(180deg, rgba(15,15,15,0.90), rgba(4,4,4,0.92));
+    box-shadow:
+        0 34px 90px rgba(0,0,0,0.62),
+        0 0 70px rgba(197,138,44,0.10);
+    backdrop-filter: blur(26px);
+    animation: loginPanelIn 680ms ease-out both;
+}
+
+.og-login-shell::before {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    background: linear-gradient(115deg, transparent 0%, rgba(197,138,44,0.24) 36%, transparent 58%);
+    opacity: 0.48;
+    transform: translateX(-60%);
+    animation: loginSweep 5.4s ease-in-out infinite;
+    pointer-events: none;
+}
+
+.og-login-brand,
+.og-login-panel {
+    position: relative;
+    z-index: 2;
+    padding: 38px;
+}
+
+.og-login-brand {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-right: 1px solid rgba(255,255,255,0.06);
+}
+
+.og-login-eyebrow,
+.og-login-pin-label,
+.og-login-stat span {
+    color: #8b867c !important;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 2.6px;
+    text-transform: uppercase;
+}
+
+.og-login-title {
+    margin-top: 18px;
+    color: #f1eee8 !important;
+    font-size: clamp(42px, 5vw, 68px);
+    line-height: 0.95;
+    font-weight: 900;
+    letter-spacing: 7px;
+}
+
+.og-login-copy {
+    max-width: 390px;
+    margin-top: 20px;
+    color: #a6a198 !important;
+    font-size: 14px;
+    line-height: 1.75;
+}
+
+.og-login-status {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 30px;
+}
+
+.og-login-stat {
+    min-height: 76px;
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 14px;
+    background: rgba(255,255,255,0.026);
+    padding: 14px;
+    box-sizing: border-box;
+}
+
+.og-login-stat strong {
+    display: block;
+    margin-top: 10px;
+    color: #f1eee8 !important;
+    font-size: 13px;
+    font-weight: 900;
+}
+
+.og-login-panel {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.og-login-orb {
+    width: 178px;
+    height: 178px;
+    margin: 0 auto 26px auto;
+    border-radius: 999px;
+    border: 1px solid rgba(197,138,44,0.22);
+    background:
+        radial-gradient(circle at 50% 50%, rgba(197,138,44,0.28), transparent 26%),
+        conic-gradient(from 0deg, transparent, rgba(197,138,44,0.58), transparent, rgba(255,255,255,0.18), transparent);
+    box-shadow: inset 0 0 42px rgba(0,0,0,0.55), 0 0 46px rgba(197,138,44,0.15);
+    animation: loginOrbit 8s linear infinite;
+}
+
+.og-login-orb::after {
+    content: "";
+    display: block;
+    width: 86px;
+    height: 86px;
+    margin: 45px auto;
+    border-radius: 999px;
+    background: rgba(3,3,3,0.78);
+    border: 1px solid rgba(255,255,255,0.08);
+}
+
+.og-login-pin-copy {
+    margin-top: 12px;
+    color: #a6a198 !important;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.og-login-input-slot {
+    height: 62px;
+    margin-top: 22px;
+    border-radius: 15px;
+    border: 1px solid rgba(197,138,44,0.18);
+    background: rgba(0,0,0,0.22);
+}
+
+div[data-testid="stVerticalBlock"] > div:has(input[type="password"]) {
+    position: fixed !important;
+    top: calc(50% + 106px) !important;
+    left: calc(50% + 236px) !important;
+    transform: translateX(-50%) !important;
+    z-index: 10000 !important;
+    width: min(342px, calc(100vw - 72px)) !important;
+    padding: 0 !important;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+}
+
+div[data-testid="stTextInput"] {
+    margin: 0 !important;
+}
+
+div[data-testid="stTextInput"] label {
+    display: none !important;
 }
 
 input[type="password"] {
-    background: rgba(0, 0, 0, 0.5) !important;
-    border: 1px solid rgba(197, 138, 44, 0.6) !important;
+    height: 54px !important;
+    background: rgba(9, 9, 9, 0.86) !important;
+    border: 1px solid rgba(197, 138, 44, 0.55) !important;
     text-align: center !important;
-    color: #c58a2c !important;
-    font-size: 26px !important;
+    color: #f1eee8 !important;
+    font-size: 24px !important;
     letter-spacing: 12px !important;
-    padding: 12px !important;
-    border-radius: 10px !important;
+    padding: 12px 18px !important;
+    border-radius: 14px !important;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.035), 0 14px 28px rgba(0,0,0,0.35) !important;
 }
 
-@media (max-width: 520px) {
+input[type="password"]:focus {
+    border-color: rgba(197, 138, 44, 0.92) !important;
+    box-shadow: 0 0 0 3px rgba(197,138,44,0.10), 0 16px 34px rgba(0,0,0,0.44) !important;
+}
+
+div[data-testid="stAlert"] {
+    position: fixed !important;
+    top: calc(50% + 176px) !important;
+    left: calc(50% + 236px) !important;
+    transform: translateX(-50%) !important;
+    z-index: 10001 !important;
+    width: min(342px, calc(100vw - 72px)) !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+}
+
+@keyframes loginPanelIn {
+    from { opacity: 0; transform: translate(-50%, -46%) scale(0.98); }
+    to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+@keyframes loginSweep {
+    0%, 45% { transform: translateX(-70%); }
+    70%, 100% { transform: translateX(72%); }
+}
+
+@keyframes loginOrbit {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes loginGrid {
+    from { background-position: 0 0, 0 0; }
+    to { background-position: 54px 54px, 54px 54px; }
+}
+
+@keyframes loginGlow {
+    from { opacity: 0.35; transform: translate3d(0, 0, 0) scale(0.95); }
+    to { opacity: 0.78; transform: translate3d(-24px, -18px, 0) scale(1.05); }
+}
+
+@media (max-width: 760px) {
+    .og-login-shell {
+        width: calc(100vw - 28px);
+        min-height: 620px;
+        grid-template-columns: 1fr;
+        border-radius: 20px;
+    }
+
+    .og-login-brand {
+        border-right: 0;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+        padding: 28px 24px 20px 24px;
+    }
+
+    .og-login-panel {
+        padding: 24px;
+        justify-content: flex-start;
+    }
+
+    .og-login-title {
+        font-size: 40px;
+        letter-spacing: 5px;
+    }
+
+    .og-login-copy {
+        font-size: 12px;
+        line-height: 1.6;
+    }
+
+    .og-login-status {
+        grid-template-columns: 1fr;
+        gap: 8px;
+        margin-top: 18px;
+    }
+
+    .og-login-stat {
+        min-height: auto;
+        padding: 12px;
+    }
+
+    .og-login-orb {
+        width: 118px;
+        height: 118px;
+        margin-bottom: 18px;
+    }
+
+    .og-login-orb::after {
+        width: 58px;
+        height: 58px;
+        margin: 29px auto;
+    }
+
     div[data-testid="stVerticalBlock"] > div:has(input[type="password"]) {
-        width: calc(100vw - 34px) !important;
-        padding: 42px 22px !important;
-        border-radius: 14px !important;
+        top: calc(50% + 214px) !important;
+        left: 50% !important;
+        width: min(330px, calc(100vw - 66px)) !important;
+    }
+
+    div[data-testid="stAlert"] {
+        top: calc(50% + 282px) !important;
+        left: 50% !important;
+        width: min(330px, calc(100vw - 66px)) !important;
     }
 
     input[type="password"] {
@@ -1562,9 +1847,9 @@ input[type="password"] {
 """
 
 # --- 9. STATİK HTML ŞABLONLARI ---
-w3_matches = """<div class='terminal-row'><span>türkiye - xxx </span><span class='highlight'>türkiye w</span></div><div class='terminal-row'><span>türkiye - aaa</span><span class='highlight'>türkiye w</span></div><div class='terminal-row'><span>rizespor - gala</span><span class='highlight'></span></div><div class='terminal-row'><span></span><span class='highlight'></span></div><div class='terminal-row'><span></span><span class='highlight'></span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 8.79</span><span>Bet: 100 USD</span></div>"""
-w2_matches = """<div class='terminal-row'><span>gala - kayserispor</span><span class='highlight'>gala w & iy +1 & 2+ ✅</span></div><div class='terminal-row'><span>liverpool - newcastle</span><span class='highlight'>+2 & liverpool 1x ✅</span></div><div class='terminal-row'><span>bvb - heidenheim</span><span class='highlight'>bvb w & iy +1 & 2+ ✅</span></div><div class='terminal-row'><span>kocaelispor - fenerbahçe</span><span class='highlight'>fenerbahçe w & 2+ ✅</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 5.53</span><span>Bet: 100 USD</span></div>"""
-w1_matches = """<div class='terminal-row'><span>karagümrük - gala</span><span class='highlight'>gala w & +2 ✅</span></div><div class='terminal-row'><span>bournemouth - liverpool</span><span class='highlight'>kg ✅</span></div><div class='terminal-row'><span>union berlin - bvb</span><span class='highlight'>iy +1 ✅</span></div><div class='terminal-row'><span>newcastle - aston villa</span><span class='highlight'>newcastle +2 ❌</span></div><div class='terminal-row'><span>fenerbahçe - göztepe</span><span class='highlight'>fenerbahçe w ❌</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 7.09</span><span>Bet: 100 USD</span></div>"""
+w3_matches = """<div class='terminal-row'><span>türkiye - xxx </span><span class='highlight'>türkiye kazanır</span></div><div class='terminal-row'><span>türkiye - aaa</span><span class='highlight'>türkiye kazanır</span></div><div class='terminal-row'><span>rizespor - gala</span><span class='highlight'></span></div><div class='terminal-row'><span></span><span class='highlight'></span></div><div class='terminal-row'><span></span><span class='highlight'></span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 8.79</span><span>Bahis: 100 USD</span></div>"""
+w2_matches = """<div class='terminal-row'><span>gala - kayserispor</span><span class='highlight'>gala kazanır & iy +1 & 2+ ✅</span></div><div class='terminal-row'><span>liverpool - newcastle</span><span class='highlight'>+2 & liverpool 1x ✅</span></div><div class='terminal-row'><span>bvb - heidenheim</span><span class='highlight'>bvb kazanır & iy +1 & 2+ ✅</span></div><div class='terminal-row'><span>kocaelispor - fenerbahçe</span><span class='highlight'>fenerbahçe kazanır & 2+ ✅</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 5.53</span><span>Bahis: 100 USD</span></div>"""
+w1_matches = """<div class='terminal-row'><span>karagümrük - gala</span><span class='highlight'>gala kazanır & +2 ✅</span></div><div class='terminal-row'><span>bournemouth - liverpool</span><span class='highlight'>kg ✅</span></div><div class='terminal-row'><span>union berlin - bvb</span><span class='highlight'>iy +1 ✅</span></div><div class='terminal-row'><span>newcastle - aston villa</span><span class='highlight'>newcastle +2 ❌</span></div><div class='terminal-row'><span>fenerbahçe - göztepe</span><span class='highlight'>fenerbahçe kazanır ❌</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 7.09</span><span>Bahis: 100 USD</span></div>"""
 
 w3_coupon_html = f"<div class='industrial-card' style='border-top-color: #c58a2c !important;'><div class='terminal-header'>✅ W3 KUPONU (BAŞARILI)</div>{w3_matches}<span class='highlight' style='font-weight:bold;'>SONUÇLANDI ✅</span></div>"
 w2_coupon_html = f"<div class='industrial-card' style='border-top-color: #c58a2c !important;'><div class='terminal-header'>✅ W2 KUPONU (BAŞARILI)</div>{w2_matches}<span class='highlight' style='font-weight:bold;'>SONUÇLANDI ✅</span></div>"
@@ -1578,13 +1863,52 @@ def check_password():
     if not st.session_state["password_correct"]:
         st.markdown(common_css, unsafe_allow_html=True)
         st.markdown(login_bg_css, unsafe_allow_html=True)
+        st.markdown(
+            """
+            <div class="og-login-shell">
+                <div class="og-login-brand">
+                    <div>
+                        <div class="og-login-eyebrow">Özel giriş alanı</div>
+                        <div class="og-login-title">OG CORE</div>
+                        <div class="og-login-copy">
+                            Kasa, risk ve portföy ekranlarına güvenli erişim.
+                            Canlı veri akışı yalnızca doğru kodla açılır.
+                        </div>
+                    </div>
+
+                    <div class="og-login-status">
+                        <div class="og-login-stat">
+                            <span>Durum</span>
+                            <strong>Hazır</strong>
+                        </div>
+                        <div class="og-login-stat">
+                            <span>Veri</span>
+                            <strong>Canlı</strong>
+                        </div>
+                        <div class="og-login-stat">
+                            <span>Koruma</span>
+                            <strong>Aktif</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="og-login-panel">
+                    <div class="og-login-orb"></div>
+                    <div class="og-login-pin-label">Güvenlik PIN</div>
+                    <div class="og-login-pin-copy">4 haneli kodu gir, çekirdek panel açılsın.</div>
+                    <div class="og-login-input-slot"></div>
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
         pwd = st.text_input("PIN", type="password", placeholder="----", label_visibility="collapsed")
         if pwd:
             if pwd == "0644":
                 st.session_state["password_correct"] = True
                 st.rerun()
             else:
-                st.error("ACCESS DENIED")
+                st.error("ERİŞİM REDDEDİLDİ")
         return False
     return True
 
@@ -1897,13 +2221,13 @@ with st.sidebar:
         "<div style='margin-bottom:10px; color:var(--og-muted); font-size:11px; letter-spacing:2px; font-weight:800;'>SİSTEM MODÜLLERİ</div>",
         unsafe_allow_html=True
     )
-    page = st.radio("Menu", ["⚡ ULTRA ATAK", "⚽ FORMLINE", "📊 Portföy Takip"], label_visibility="collapsed")
+    page = st.radio("Menü", ["⚡ ULTRA ATAK", "⚽ FORM TAKİBİ", "📊 Portföy Takip"], label_visibility="collapsed")
     st.divider()
     st.markdown(
         "<div style='color:var(--og-muted); font-size:11px; letter-spacing:2px; font-weight:800; margin-bottom:15px;'>📂 TERMİNAL ERİŞİMİ</div>",
         unsafe_allow_html=True
     )
-    admin_pwd = st.text_input("PIN", type="password", placeholder="Admin PIN", label_visibility="collapsed")
+    admin_pwd = st.text_input("PIN", type="password", placeholder="Yönetici PIN", label_visibility="collapsed")
     if admin_pwd == "0644":
         st.markdown(
             "<a href='https://docs.google.com/spreadsheets/d/15izevdpRjs8Om5BAHKVWmdL3FxEHml35DGECfhQUG_s/edit' target='_blank' style='text-decoration:none;'><div style='background:rgba(197, 138, 44, 0.14); border: 1px solid rgba(197, 138, 44, 0.42); color:#c58a2c; text-align:center; padding:10px; border-radius:6px; font-family:JetBrains Mono, monospace; font-size:12px; font-weight:bold;'>VERİ TABANINA BAĞLAN</div></a>",
@@ -2028,9 +2352,9 @@ if page == "⚡ ULTRA ATAK":
         unsafe_allow_html=True
     )
 
-elif page == "⚽ FORMLINE":
+elif page == "⚽ FORM TAKİBİ":
     render_animated_counter(
-        "Formline Net",
+        "Form Takibi Net",
         toplam_bahis_kar,
         prefix="$",
         decimals=2,
@@ -2040,9 +2364,9 @@ elif page == "⚽ FORMLINE":
     )
 
     if toplam_bahis_kar > 0:
-        render_smart_alerts([("good", "Formline pozitif", f"Net sonuç {fmt_money_usd(toplam_bahis_kar)}. Seri kârlı bölgede.")])
+        render_smart_alerts([("good", "Form takibi pozitif", f"Net sonuç {fmt_money_usd(toplam_bahis_kar)}. Seri kârlı bölgede.")])
     elif toplam_bahis_kar < 0:
-        render_smart_alerts([("warn", "Formline negatif", f"Net sonuç {fmt_money_usd(toplam_bahis_kar)}. Risk seviyesini düşük tutmak daha mantıklı.")])
+        render_smart_alerts([("warn", "Form takibi negatif", f"Net sonuç {fmt_money_usd(toplam_bahis_kar)}. Risk seviyesini düşük tutmak daha mantıklı.")])
 
     t1, t2, t3 = st.tabs(["✅ W3", "✅ W2", "❌ W1"])
 
