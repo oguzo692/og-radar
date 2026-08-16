@@ -1,1905 +1,1127 @@
-import streamlit as st
-from datetime import datetime
+from __future__ import annotations
+
 import html
-import json
+import math
+import re
+from datetime import date, datetime
+
 import pandas as pd
-import textwrap
-import streamlit.components.v1 as components
+import streamlit as st
 
-try:
-    import yfinance as yf
-except Exception:
-    yf = None
 
-# --- 1. AYARLAR ---
+SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/15izevdpRjs8Om5BAHKVWmdL3FxEHml35DGECfhQUG_s/export?format=csv&gid=0"
+APP_TITLE = "OG Core"
+DEFAULT_PIN = "0644"
+
+
 st.set_page_config(
-    page_title="OG Core",
-    page_icon="🛡️",
+    page_title=APP_TITLE,
+    page_icon="📊",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="collapsed",
 )
 
-# --- 2. VERİ KATMANI ---
-@st.cache_data(ttl=20)
-def get_live_data():
+
+def get_secret(name: str, fallback: str) -> str:
     try:
-        sheet_url = "https://docs.google.com/spreadsheets/d/15izevdpRjs8Om5BAHKVWmdL3FxEHml35DGECfhQUG_s/export?format=csv&gid=0"
-        df = pd.read_csv(sheet_url)
+        return str(st.secrets[name])
+    except Exception:
+        return fallback
+
+
+ACCESS_PIN = get_secret("OG_CORE_PIN", DEFAULT_PIN)
+
+
+@st.cache_data(ttl=45, show_spinner=False)
+def get_live_data() -> dict[str, str]:
+    try:
+        df = pd.read_csv(SHEET_CSV_URL)
+        if "key" not in df.columns or "value" not in df.columns:
+            raise ValueError("Sheet must contain key and value columns.")
+        df = df[["key", "value"]].dropna(subset=["key"])
         df["key"] = df["key"].astype(str).str.strip()
-        df["value"] = df["value"].astype(str).str.strip()
+        df["value"] = df["value"].fillna("").astype(str).str.strip()
         return dict(zip(df["key"], df["value"]))
     except Exception:
-        return {"kasa": "600.0", "ana_para": "600.0"}
+        return {
+            "duyuru": "Canlı veri bekleniyor.",
+            "kasa": "600",
+            "ana_para": "600",
+            "win_rate": "0",
+            "w1_sonuc": "0",
+            "w2_sonuc": "0",
+            "w3_sonuc": "0",
+            "son_islemler": "Sheet bağlantısı kurulunca kayıtlar burada görünecek.",
+        }
 
-# --- 3. FORMAT VE TEMEL YARDIMCILAR ---
-def get_num(data, key, default=0.0):
+
+def get_num(data: dict[str, str], key: str, default: float = 0.0) -> float:
     try:
-        val = data.get(key, default)
-        if val is None or str(val).strip() == "":
+        value = data.get(key, default)
+        if value is None or str(value).strip() == "":
             return float(default)
-        return float(str(val).replace(",", ".").strip())
+        cleaned = str(value).replace("₺", "").replace("$", "").replace("%", "").replace(",", ".").strip()
+        return float(cleaned)
     except Exception:
         return float(default)
 
-def get_str(data, key, default=""):
+
+def get_first_num(data: dict[str, str], keys: list[str], default: float = 0.0) -> float:
+    for key in keys:
+        if key in data and str(data.get(key, "")).strip() != "":
+            return get_num(data, key, default)
+    return float(default)
+
+
+def get_str(data: dict[str, str], key: str, default: str = "") -> str:
     try:
-        val = data.get(key, default)
-        if val is None:
+        value = data.get(key, default)
+        if value is None:
             return default
-        return str(val).strip()
+        return str(value).strip()
     except Exception:
         return default
 
-def fmt_money_usd(x):
-    return f"${x:,.2f}"
 
-def fmt_money_try(x):
-    return f"₺{x:,.0f}"
+def get_first_str(data: dict[str, str], keys: list[str], default: str = "") -> str:
+    for key in keys:
+        value = get_str(data, key, "")
+        if value:
+            return value
+    return default
 
-def fmt_unit_value(qty, unit):
-    unit = (unit or "").strip().lower()
-    if unit in ["adet", "lot"]:
-        return f"{qty:,.4f}".rstrip("0").rstrip(".")
-    elif unit == "gr":
-        return f"{qty:,.2f} gr"
-    elif unit == "usd":
-        return f"${qty:,.0f}"
-    elif unit == "eur":
-        return f"€{qty:,.2f}"
-    else:
-        return f"{qty:,.4f}".rstrip("0").rstrip(".")
 
-@st.cache_data(ttl=90)
-def get_market_snapshot(data):
-    snapshot = []
+def clamp(value: float, low: float = 0.0, high: float = 100.0) -> float:
+    return max(low, min(high, value))
 
-    if yf is not None:
-        for symbol, label, decimals in [
-            ("BTC-USD", "BTC", 0),
-            ("ETH-USD", "ETH", 0),
-            ("SOL-USD", "SOL", 2),
-        ]:
-            try:
-                hist = yf.Ticker(symbol).history(period="1d")
-                if not hist.empty:
-                    price = float(hist["Close"].iloc[-1])
-                    snapshot.append((label, f"${price:,.{decimals}f}"))
-            except Exception:
-                pass
 
-    fallback_assets = [
-        ("BTC", get_num(data, "btc_fiyat_usd", 0), "$", 0),
-        ("ETH", get_num(data, "eth_fiyat_usd", 0), "$", 0),
-        ("SOL", get_num(data, "sol_fiyat_usd", 0), "$", 2),
-    ]
+def fmt_money_usd(value: float) -> str:
+    return f"${value:,.2f}"
 
-    existing_labels = {label for label, _ in snapshot}
-    for label, price, prefix, decimals in fallback_assets:
-        if label not in existing_labels and price > 0:
-            snapshot.append((label, f"{prefix}{price:,.{decimals}f}"))
 
-    usdtry = get_num(data, "usdtry", 0)
-    gram_altin = get_num(data, "gram_altin_fiyat", 0)
-    ceyrek_altin = get_num(data, "ceyrek_altin_fiyat", 0)
+def fmt_money_try(value: float) -> str:
+    return f"₺{value:,.0f}"
 
-    if usdtry > 0:
-        snapshot.append(("USD/TRY", f"₺{usdtry:.2f}"))
-    if gram_altin > 0:
-        snapshot.append(("GRAM", fmt_money_try(gram_altin)))
-    if ceyrek_altin > 0:
-        snapshot.append(("ÇEYREK", fmt_money_try(ceyrek_altin)))
 
-    return snapshot
+def fmt_pct(value: float) -> str:
+    return f"{value:.1f}%"
 
-# --- 4. ORTAK UI BİLEŞENLERİ ---
-def render_market_ticker(data, announcement):
-    market_items = [("DUYURU", announcement)] + get_market_snapshot(data)
-    if len(market_items) == 1:
-        market_items.append(("SİSTEM", "Piyasa verisi bekleniyor"))
 
-    item_html = ""
-    for label, value in market_items * 2:
-        item_html += (
-            "<span class='ticker-item'>"
-            f"<span class='ticker-label'>{html.escape(str(label))}</span>"
-            f"<span class='ticker-value'>{html.escape(str(value))}</span>"
-            "</span>"
-        )
+def fmt_qty(quantity: float, unit: str) -> str:
+    unit_clean = (unit or "").strip().lower()
+    if unit_clean in {"usd", "dolar"}:
+        return f"${quantity:,.0f}"
+    if unit_clean in {"try", "tl"}:
+        return fmt_money_try(quantity)
+    if unit_clean == "gr":
+        return f"{quantity:,.2f} gr"
+    return f"{quantity:,.4f}".rstrip("0").rstrip(".")
 
-    st.markdown(
-        f"<div class='ticker-wrap'><div class='ticker'>{item_html}</div></div>",
-        unsafe_allow_html=True
-    )
 
-def render_animated_counter(label, value, prefix="", suffix="", decimals=2, subtitle="", accent="#c58a2c", height=152):
-    safe_value = float(value or 0)
-    card_html = f"""
-    <div class="counter-card">
-        <div class="counter-label">{html.escape(label)}</div>
-        <div class="counter-value" id="counter">0</div>
-        <div class="counter-subtitle">{html.escape(subtitle)}</div>
-    </div>
+def safe_text(value: object) -> str:
+    return html.escape(str(value))
 
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&display=swap');
-        html, body {{
-            margin: 0;
-            padding: 0;
-            background: transparent;
-            overflow: hidden;
-        }}
-        .counter-card {{
-            height: {height - 4}px;
-            box-sizing: border-box;
-            background:
-                linear-gradient(135deg, rgba(197,138,44,0.12), transparent 35%),
-                rgba(15,15,15,0.86);
-            border: 1px solid rgba(255,255,255,0.045);
-            border-top: 2px solid {accent};
-            border-radius: 6px;
-            padding: 22px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            box-shadow: 0 14px 30px rgba(0,0,0,0.38);
-            animation: counterIn 520ms ease-out both;
-        }}
-        .counter-label {{
-            color: #858585;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 11px;
-            font-weight: 800;
-            letter-spacing: 2.6px;
-            text-transform: uppercase;
-            margin-bottom: 10px;
-        }}
-        .counter-value {{
-            color: #f2f2f2;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 36px;
-            line-height: 1;
-            font-weight: 900;
-            white-space: nowrap;
-        }}
-        .counter-subtitle {{
-            color: #8d8d8d;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 12px;
-            margin-top: 12px;
-        }}
-        @media (max-width: 520px) {{
-            .counter-card {{
-                padding: 18px;
-            }}
-            .counter-label {{
-                font-size: 10px;
-                letter-spacing: 2px;
-            }}
-            .counter-value {{
-                font-size: 28px;
-            }}
-            .counter-subtitle {{
-                font-size: 11px;
-            }}
-        }}
-        @keyframes counterIn {{
-            from {{ opacity: 0; transform: translateY(10px); }}
-            to {{ opacity: 1; transform: translateY(0); }}
-        }}
-    </style>
 
-    <script>
-        const target = {safe_value};
-        const prefix = {json.dumps(prefix)};
-        const suffix = {json.dumps(suffix)};
-        const decimals = {int(decimals)};
-        const el = document.getElementById("counter");
-        const start = performance.now();
-        const duration = 950;
+def parse_date(value: object, fallback: date | None = None) -> date:
+    fallback = fallback or datetime.now().date()
+    if value is None or str(value).strip() == "":
+        return fallback
 
-        function formatValue(value) {{
-            const sign = value < 0 ? "-" : "";
-            const absolute = Math.abs(value);
-            const formatted = absolute.toLocaleString("en-US", {{
-                minimumFractionDigits: decimals,
-                maximumFractionDigits: decimals
-            }});
-            return sign + prefix + formatted + suffix;
-        }}
-
-        function tick(now) {{
-            const progress = Math.min((now - start) / duration, 1);
-            const eased = 1 - Math.pow(1 - progress, 3);
-            el.textContent = formatValue(target * eased);
-            if (progress < 1) requestAnimationFrame(tick);
-        }}
-
-        requestAnimationFrame(tick);
-    </script>
-    """
-    components.html(card_html, height=height, scrolling=False)
-
-def render_portfolio_hero_component(selected_user_label, total_usd, total_try, active_assets, main_asset_label, main_asset_pct, usdtry):
-    hero_html = f"""
-    <div class="portfolio-shell">
-        <div class="portfolio-topline">
-            <span>Portföy Sahibi</span>
-            <strong>{html.escape(selected_user_label)}</strong>
-        </div>
-
-        <div class="portfolio-hero">
-            <div>
-                <div class="portfolio-hero-sub">Net Portföy Değeri</div>
-                <div class="portfolio-hero-main" id="portfolio-usd">$0.00</div>
-                <div class="portfolio-hero-try" id="portfolio-try">≈ ₺0</div>
-            </div>
-
-            <div class="portfolio-meta-grid">
-                <div class="portfolio-meta-card">
-                    <div class="portfolio-meta-label">Aktif Varlık</div>
-                    <div class="portfolio-meta-value">{active_assets}</div>
-                </div>
-                <div class="portfolio-meta-card">
-                    <div class="portfolio-meta-label">Ana Varlık</div>
-                    <div class="portfolio-meta-value">{html.escape(main_asset_label)}</div>
-                </div>
-                <div class="portfolio-meta-card">
-                    <div class="portfolio-meta-label">Yoğunluk</div>
-                    <div class="portfolio-meta-value">%{main_asset_pct:.1f}</div>
-                </div>
-                <div class="portfolio-meta-card">
-                    <div class="portfolio-meta-label">USD/TRY</div>
-                    <div class="portfolio-meta-value">₺{usdtry:.2f}</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&display=swap');
-        html, body {{
-            margin: 0;
-            padding: 0;
-            background: transparent;
-            overflow: hidden;
-        }}
-        .portfolio-shell {{
-            display: flex;
-            flex-direction: column;
-            gap: 18px;
-            font-family: 'JetBrains Mono', monospace;
-        }}
-        .portfolio-topline {{
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 16px;
-            color: #7b7b7b;
-            font-size: 11px;
-            letter-spacing: 2.4px;
-            text-transform: uppercase;
-        }}
-        .portfolio-topline strong {{
-            color: #e2e2e2;
-            font-weight: 800;
-        }}
-        .portfolio-hero {{
-            display: grid;
-            grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
-            gap: 22px;
-            background:
-                linear-gradient(135deg, rgba(197,138,44,0.10), transparent 26%),
-                linear-gradient(180deg, rgba(18,18,18,0.96), rgba(8,8,8,0.96));
-            border: 1px solid rgba(255,255,255,0.045);
-            border-top: 2px solid rgba(197,138,44,0.72);
-            border-radius: 6px;
-            padding: 30px;
-            box-sizing: border-box;
-            box-shadow: 0 18px 45px rgba(0,0,0,0.45);
-            animation: heroIn 560ms ease-out both;
-        }}
-        .portfolio-hero-sub {{
-            font-size: 12px;
-            color: #858585;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            margin-bottom: 14px;
-        }}
-        .portfolio-hero-main {{
-            font-size: 58px;
-            line-height: 1;
-            font-family: 'JetBrains Mono', monospace;
-            color: #f0f0f0;
-            font-weight: 900;
-            white-space: nowrap;
-        }}
-        .portfolio-hero-try {{
-            margin-top: 14px;
-            font-size: 16px;
-            color: #9a9a9a;
-        }}
-        .portfolio-meta-grid {{
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }}
-        .portfolio-meta-card {{
-            background: rgba(255,255,255,0.025);
-            border: 1px solid rgba(255,255,255,0.055);
-            border-radius: 6px;
-            padding: 16px;
-            min-height: 88px;
-            box-sizing: border-box;
-        }}
-        .portfolio-meta-label {{
-            color: #777;
-            font-size: 10px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-bottom: 10px;
-        }}
-        .portfolio-meta-value {{
-            color: #eeeeee;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 18px;
-            font-weight: 800;
-            white-space: nowrap;
-        }}
-        @keyframes heroIn {{
-            from {{ opacity: 0; transform: translateY(12px); }}
-            to {{ opacity: 1; transform: translateY(0); }}
-        }}
-        @media (max-width: 760px) {{
-            .portfolio-hero {{
-                grid-template-columns: 1fr;
-                gap: 18px;
-                padding: 20px;
-            }}
-            .portfolio-hero-main {{
-                font-size: 34px;
-            }}
-            .portfolio-meta-grid {{
-                grid-template-columns: 1fr 1fr;
-                gap: 10px;
-            }}
-            .portfolio-meta-card {{
-                min-height: 72px;
-                padding: 12px;
-            }}
-            .portfolio-meta-label {{
-                font-size: 9px;
-                letter-spacing: 1.4px;
-            }}
-            .portfolio-meta-value {{
-                font-size: 14px;
-            }}
-        }}
-    </style>
-
-    <script>
-        const usdTarget = {float(total_usd or 0)};
-        const tryTarget = {float(total_try or 0)};
-        const usdEl = document.getElementById("portfolio-usd");
-        const tryEl = document.getElementById("portfolio-try");
-        const start = performance.now();
-        const duration = 1050;
-
-        function moneyUsd(value) {{
-            return "$" + value.toLocaleString("en-US", {{
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            }});
-        }}
-
-        function moneyTry(value) {{
-            return "≈ ₺" + value.toLocaleString("en-US", {{
-                maximumFractionDigits: 0
-            }});
-        }}
-
-        function tick(now) {{
-            const progress = Math.min((now - start) / duration, 1);
-            const eased = 1 - Math.pow(1 - progress, 3);
-            usdEl.textContent = moneyUsd(usdTarget * eased);
-            tryEl.textContent = moneyTry(tryTarget * eased);
-            if (progress < 1) requestAnimationFrame(tick);
-        }}
-
-        requestAnimationFrame(tick);
-    </script>
-    """
-    components.html(hero_html, height=320, scrolling=False)
-
-def render_smart_alerts(alerts):
-    if not alerts:
-        return
-
-    grid_class = "smart-alert-grid single" if len(alerts) == 1 else "smart-alert-grid"
-    cards = ""
-    for level, title, body in alerts[:3]:
-        cards += (
-            f"<div class='smart-alert smart-alert-{level}'>"
-            f"<div class='smart-alert-title'>{html.escape(title)}</div>"
-            f"<div class='smart-alert-body'>{html.escape(body)}</div>"
-            f"</div>"
-        )
-
-    st.markdown(
-        f"<div class='{grid_class}'>{cards}</div>",
-        unsafe_allow_html=True
-    )
-
-def build_ultra_alerts(ultra_kasa, baslangic_kasa, current_pct, net_kar, risk_state):
-    alerts = []
-    selected_risk = risk_state.get("selected_risk", "Standart")
-    risk_limit = risk_state.get("risk_limit", ultra_kasa * 0.03)
-
-    if ultra_kasa < baslangic_kasa:
-        alerts.append(("warn", "Koruma bölgesi", "Kasa başlangıç seviyesinin altında. Koruma modu daha kontrollü kalır."))
-    elif current_pct >= 90:
-        alerts.append(("good", "Hedef kilidi", "Aktif hedefe çok yaklaşıldı. Kârı korumak burada daha değerli."))
-    elif current_pct >= 70:
-        alerts.append(("info", "Yaklaşan hedef", "Hedefin büyük kısmı tamamlandı. Risk artışı yerine istikrar daha mantıklı."))
-
-    if selected_risk == "Atak" and current_pct >= 70:
-        alerts.append(("warn", "Atak modu yüksek", f"Aktif limit {fmt_money_usd(risk_limit)}. Hedefe yakınken bu mod agresif kalabilir."))
-    elif selected_risk == "Koruma":
-        alerts.append(("info", "Düşük risk aktif", f"Aktif limit {fmt_money_usd(risk_limit)} ile kasa daha kontrollü ilerliyor."))
-
-    if net_kar > 0:
-        alerts.append(("good", "Pozitif bölge", f"Net kâr {fmt_money_usd(net_kar)}. Sistem başlangıcın üstünde çalışıyor."))
-
-    if not alerts:
-        alerts.append(("info", "Sistem dengede", "Kasa ve hedef akışı normal bölgede. Standart risk seviyesi yeterli görünüyor."))
-
-    return alerts
-
-def build_portfolio_alerts(active_assets, main_asset_pct, main_asset_label, total_usd):
-    if total_usd <= 0:
-        return [("warn", "Portföy boş", "Aktif varlık görünmüyor. Sheet tarafında miktar alanlarını kontrol et.")]
-
-    alerts = []
-    if active_assets == 1 and main_asset_pct >= 95:
-        alerts.append(("warn", "Yoğun portföy", f"Portföy neredeyse tamamen {main_asset_label} üzerinde. Dağılım tek noktada toplanmış."))
-    elif active_assets >= 3 and main_asset_pct <= 60:
-        alerts.append(("good", "Dengeli yapı", "Portföy birden fazla varlığa yayılmış. Yoğunluk riski düşük görünüyor."))
-    else:
-        alerts.append(("info", "Portföy izleniyor", "Dağılım normal bölgede. Yeni varlık ekledikçe analiz daha anlamlı olur."))
-
-    return alerts
-
-# --- 5. ULTRA ATAK KARAR PANELLERİ ---
-def build_next_move(ultra_kasa, baslangic_kasa, aktif_hedef, current_pct, net_kar, risk_state, peak_value):
-    selected_risk = risk_state.get("selected_risk", "Standart")
-    drawdown = max(0, peak_value - ultra_kasa)
-    drawdown_pct = (drawdown / peak_value * 100) if peak_value > 0 else 0
-
-    if ultra_kasa < baslangic_kasa:
-        return "KORU", "Başlangıç kasanın altındasın. Koruma modu ve düşük tempo daha doğru."
-    if current_pct >= 85:
-        return "KİLİTLE", f"Hedefe %{current_pct:.1f} yaklaşıldı. Risk artırmak yerine kârı koru."
-    if drawdown_pct >= 8:
-        return "TOPARLAN", f"Zirveden %{drawdown_pct:.1f} aşağıdasın. Öncelik zirveye dönüş olsun."
-    if selected_risk == "Atak" and net_kar <= 0:
-        return "RİSK DÜŞÜR", "Atak modu negatif bölgede pahalı kalır. Standart veya Koruma daha sağlıklı."
-    if net_kar > 0 and selected_risk == "Koruma":
-        return "STANDART SERBEST", "Kasa pozitif bölgede. İstersen Standart moda geçiş alanı var."
-
-    remaining = max(0, aktif_hedef - ultra_kasa)
-    return "STANDARTTA KAL", f"Akış dengeli. Aktif hedefe kalan {fmt_money_usd(remaining)}."
-
-def render_ultra_decision_panels(data, ultra_kasa, baslangic_kasa, aktif_hedef, current_pct, net_kar, risk_state):
-    history_df = parse_kasa_history(data)
-    if history_df.empty:
-        peak_value = max(ultra_kasa, baslangic_kasa)
-    else:
-        peak_value = max(float(history_df["Kasa"].max()), ultra_kasa)
-
-    selected_risk = risk_state.get("selected_risk", "Standart")
-    risk_rate = float(risk_state.get("risk_rate", 0.03))
-    risk_limit = float(risk_state.get("risk_limit", ultra_kasa * risk_rate))
-
-    move_title, move_body = build_next_move(
-        ultra_kasa,
-        baslangic_kasa,
-        aktif_hedef,
-        current_pct,
-        net_kar,
-        risk_state,
-        peak_value,
-    )
-
-    safe_rate = 0.80
-    growth_rate = max(0, 1 - safe_rate - risk_rate)
-    safe_pool = ultra_kasa * safe_rate
-    growth_pool = ultra_kasa * growth_rate
-
-    recovery_needed = max(0, peak_value - ultra_kasa)
-    recovery_pct = 100 if peak_value <= 0 else max(0, min(100, (ultra_kasa / peak_value) * 100))
-    recovery_status = "ZİRVEDE" if recovery_needed <= 0 else "TOPARLANMA"
-
-    panel_html = (
-        "<div class='decision-grid'>"
-        "<div class='decision-card decision-primary'>"
-        "<div class='decision-kicker'>Sıradaki Hamle</div>"
-        f"<div class='decision-title'>{html.escape(move_title)}</div>"
-        f"<div class='decision-body'>{html.escape(move_body)}</div>"
-        "</div>"
-        "<div class='decision-card'>"
-        "<div class='decision-kicker'>Kasa Dağılımı</div>"
-        "<div class='vault-row'><span>Güvenli Kasa</span><strong>" + fmt_money_usd(safe_pool) + "</strong></div>"
-        "<div class='vault-bar'><i style='width:80%;'></i></div>"
-        f"<div class='vault-row'><span>Risk Payı · {html.escape(selected_risk)}</span><strong>{fmt_money_usd(risk_limit)}</strong></div>"
-        f"<div class='vault-row'><span>Büyüme Payı</span><strong>{fmt_money_usd(growth_pool)}</strong></div>"
-        "</div>"
-        "<div class='decision-card'>"
-        "<div class='decision-kicker'>Toparlanma Ölçeri</div>"
-        f"<div class='decision-title'>{recovery_status}</div>"
-        f"<div class='decision-body'>Zirve {fmt_money_usd(peak_value)} · Geri dönüş {fmt_money_usd(recovery_needed)}</div>"
-        f"<div class='recovery-track'><i style='width:{recovery_pct:.1f}%;'></i></div>"
-        f"<div class='recovery-label'>%{recovery_pct:.1f}</div>"
-        "</div>"
-        "</div>"
-    )
-    st.markdown(panel_html, unsafe_allow_html=True)
-
-# --- 6. KASA GEÇMİŞİ ---
-def parse_kasa_history(data):
-    rows = []
-
-    for key, value in data.items():
-        if not isinstance(key, str) or not key.startswith("kasa_"):
-            continue
-
-        raw_date = key.replace("kasa_", "", 1)
+    raw = str(value).strip()
+    for fmt in ("%Y-%m-%d", "%d.%m.%Y", "%d/%m/%Y", "%Y_%m_%d", "%d-%m-%Y"):
         try:
-            date_value = datetime.strptime(raw_date, "%Y_%m_%d").date()
-            raw_value = data.get(key, "")
-            if raw_value is None or str(raw_value).strip() == "":
-                continue
-            kasa_value = float(str(raw_value).replace(",", ".").strip())
-            rows.append({"Tarih": date_value, "Kasa": kasa_value})
+            return datetime.strptime(raw, fmt).date()
         except Exception:
-            continue
+            pass
 
-    if not rows:
-        return pd.DataFrame(columns=["Tarih", "Kasa"])
+    try:
+        parsed = pd.to_datetime(raw, dayfirst=True, errors="coerce")
+        if pd.isna(parsed):
+            return fallback
+        return parsed.date()
+    except Exception:
+        return fallback
 
-    df = pd.DataFrame(rows).sort_values("Tarih").drop_duplicates("Tarih", keep="last")
-    return df.reset_index(drop=True)
 
-def render_kasa_history_chart(data, current_kasa):
-    history_df = parse_kasa_history(data)
+def normalize_result(value: object, profit: float | None = None) -> str:
+    raw = str(value or "").strip().lower().replace("ı", "i")
+    if raw in {"won", "win", "w", "kazandi", "kazanç", "kar", "green", "geldi"}:
+        return "won"
+    if raw in {"lost", "loss", "l", "kaybetti", "kayip", "zarar", "red", "gelmedi"}:
+        return "lost"
+    if raw in {"void", "push", "refund", "iade", "iptal", "cancelled", "cancel"}:
+        return "void"
+    if raw in {"open", "pending", "bekliyor", "bekleyen", "aktif", "live"}:
+        return "open"
+    if profit is not None:
+        if profit > 0:
+            return "won"
+        if profit < 0:
+            return "lost"
+    return "open"
 
-    if history_df.empty:
-        st.markdown(
-            """
-            <div class='industrial-card'>
-                <div class='terminal-header'>Kasa Geçmişi</div>
-                <div class='highlight'>Grafik için Sheet'e kasa_YYYY_MM_DD satırları eklenmeli.</div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-        return
 
-    today = datetime.now().date()
-    if today not in set(history_df["Tarih"]):
-        history_df = pd.concat(
-            [history_df, pd.DataFrame([{"Tarih": today, "Kasa": current_kasa}])],
-            ignore_index=True
-        ).sort_values("Tarih").drop_duplicates("Tarih", keep="last")
-
-    first_value = float(history_df["Kasa"].iloc[0])
-    last_value = float(history_df["Kasa"].iloc[-1])
-    high_value = float(history_df["Kasa"].max())
-    low_value = float(history_df["Kasa"].min())
-    change_value = last_value - first_value
-    change_pct = (change_value / first_value * 100) if first_value > 0 else 0
-    change_color = "#c58a2c"
-    width = 900
-    height = 230
-    pad_x = 34
-    pad_y = 26
-    values = [float(v) for v in history_df["Kasa"].tolist()]
-    dates = history_df["Tarih"].tolist()
-    value_range = max(high_value - low_value, 1)
-    point_count = len(values)
-
-    points = []
-    for idx, value in enumerate(values):
-        x = pad_x if point_count == 1 else pad_x + (idx / (point_count - 1)) * (width - pad_x * 2)
-        y = pad_y + (1 - ((value - low_value) / value_range)) * (height - pad_y * 2)
-        points.append((x, y, value))
-
-    line_points = " ".join([f"{x:.1f},{y:.1f}" for x, y, _ in points])
-    area_points = f"{pad_x},{height - pad_y} {line_points} {width - pad_x},{height - pad_y}"
-    circles = ""
-    for x, y, value in points:
-        circles += f"<circle cx='{x:.1f}' cy='{y:.1f}' r='4.2' class='chart-dot'><title>{fmt_money_usd(value)}</title></circle>"
-
-    first_label = dates[0].strftime("%d.%m") if dates else "-"
-    last_label = dates[-1].strftime("%d.%m") if dates else "-"
-    period_label = f"{len(history_df)} kayıt · {first_label} - {last_label}"
-    trend_label = "POZİTİF" if change_value >= 0 else "NEGATİF"
-
-    chart_html = f"""
-    <div class="kasa-history-card">
-        <div class="kasa-history-head">
-            <div>
-                <div class="kasa-eyebrow">Kasa Geçmişi</div>
-                <div class="kasa-title">Performans İzleme</div>
-            </div>
-            <div class="kasa-badge">{trend_label}</div>
-        </div>
-
-        <div class="kasa-metrics">
-            <div class="metric">
-                <span>Güncel</span>
-                <strong>{fmt_money_usd(last_value)}</strong>
-            </div>
-            <div class="metric">
-                <span>Zirve</span>
-                <strong>{fmt_money_usd(high_value)}</strong>
-            </div>
-            <div class="metric">
-                <span>Değişim</span>
-                <strong style="color:{change_color};">{fmt_money_usd(change_value)} / %{change_pct:.1f}</strong>
-            </div>
-        </div>
-
-        <div class="chart-wrap">
-            <svg viewBox="0 0 {width} {height}" preserveAspectRatio="none" role="img">
-                <defs>
-                    <linearGradient id="areaFill" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stop-color="rgba(197,138,44,0.26)" />
-                        <stop offset="100%" stop-color="rgba(197,138,44,0.00)" />
-                    </linearGradient>
-                    <filter id="glow">
-                        <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
-                        <feMerge>
-                            <feMergeNode in="coloredBlur"/>
-                            <feMergeNode in="SourceGraphic"/>
-                        </feMerge>
-                    </filter>
-                </defs>
-                <line x1="{pad_x}" y1="{pad_y}" x2="{pad_x}" y2="{height - pad_y}" class="grid-axis" />
-                <line x1="{pad_x}" y1="{height - pad_y}" x2="{width - pad_x}" y2="{height - pad_y}" class="grid-axis" />
-                <line x1="{pad_x}" y1="{pad_y + (height - pad_y * 2) * 0.33:.1f}" x2="{width - pad_x}" y2="{pad_y + (height - pad_y * 2) * 0.33:.1f}" class="grid-line" />
-                <line x1="{pad_x}" y1="{pad_y + (height - pad_y * 2) * 0.66:.1f}" x2="{width - pad_x}" y2="{pad_y + (height - pad_y * 2) * 0.66:.1f}" class="grid-line" />
-                <polygon points="{area_points}" class="chart-area" />
-                <polyline points="{line_points}" class="chart-line" filter="url(#glow)" />
-                {circles}
-            </svg>
-        </div>
-
-        <div class="kasa-history-foot">
-            <span>{period_label}</span>
-            <span>Dip {fmt_money_usd(low_value)}</span>
-        </div>
-    </div>
-
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&display=swap');
-        html, body {{
-            margin: 0;
-            padding: 0;
-            background: transparent;
-            overflow: hidden;
-        }}
-        .kasa-history-card {{
-            box-sizing: border-box;
-            height: 100%;
-            background:
-                radial-gradient(circle at 12% 0%, rgba(197,138,44,0.12), transparent 28%),
-                linear-gradient(180deg, rgba(16,16,16,0.96), rgba(7,7,7,0.96));
-            border: 1px solid rgba(255,255,255,0.05);
-            border-top: 2px solid rgba(197,138,44,0.72);
-            border-radius: 6px;
-            padding: 22px;
-            font-family: 'JetBrains Mono', monospace;
-            color: #d1d1d1;
-            box-shadow: 0 18px 45px rgba(0,0,0,0.42);
-            animation: panelIn 520ms ease-out both;
-        }}
-        .kasa-history-head,
-        .kasa-history-foot {{
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 14px;
-        }}
-        .kasa-eyebrow {{
-            color: #8b8b8b;
-            font-size: 11px;
-            font-weight: 800;
-            letter-spacing: 2.8px;
-            text-transform: uppercase;
-            border-left: 3px solid #c58a2c;
-            padding-left: 12px;
-            margin-bottom: 8px;
-        }}
-        .kasa-title {{
-            color: #f0f0f0;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 22px;
-            font-weight: 900;
-        }}
-        .kasa-badge {{
-            border: 1px solid rgba(197,138,44,0.32);
-            background: rgba(197,138,44,0.08);
-            color: #c58a2c;
-            border-radius: 999px;
-            padding: 8px 12px;
-            font-size: 10px;
-            font-weight: 900;
-            letter-spacing: 2px;
-        }}
-        .kasa-metrics {{
-            display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 12px;
-            margin: 18px 0 14px 0;
-        }}
-        .metric {{
-            background: rgba(255,255,255,0.026);
-            border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 6px;
-            padding: 14px;
-        }}
-        .metric span {{
-            display: block;
-            color: #777;
-            font-size: 10px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-bottom: 8px;
-        }}
-        .metric strong {{
-            display: block;
-            color: #f0f0f0;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 18px;
-            font-weight: 900;
-            white-space: nowrap;
-        }}
-        .chart-wrap {{
-            height: 210px;
-            border: 1px solid rgba(255,255,255,0.035);
-            background: rgba(0,0,0,0.18);
-            border-radius: 6px;
-            overflow: hidden;
-        }}
-        svg {{
-            width: 100%;
-            height: 100%;
-            display: block;
-        }}
-        .grid-axis {{
-            stroke: rgba(255,255,255,0.13);
-            stroke-width: 1;
-        }}
-        .grid-line {{
-            stroke: rgba(255,255,255,0.06);
-            stroke-width: 1;
-            stroke-dasharray: 6 8;
-        }}
-        .chart-area {{
-            fill: url(#areaFill);
-        }}
-        .chart-line {{
-            fill: none;
-            stroke: #c58a2c;
-            stroke-width: 4;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }}
-        .chart-dot {{
-            fill: #050505;
-            stroke: #c58a2c;
-            stroke-width: 3;
-        }}
-        .kasa-history-foot {{
-            color: #858585;
-            font-size: 11px;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            margin-top: 12px;
-        }}
-        @keyframes panelIn {{
-            from {{ opacity: 0; transform: translateY(12px); }}
-            to {{ opacity: 1; transform: translateY(0); }}
-        }}
-        @media (max-width: 620px) {{
-            .kasa-history-card {{
-                padding: 16px;
-            }}
-            .kasa-history-head,
-            .kasa-history-foot {{
-                align-items: flex-start;
-                flex-direction: column;
-            }}
-            .kasa-title {{
-                font-size: 18px;
-            }}
-            .kasa-metrics {{
-                grid-template-columns: 1fr;
-                gap: 8px;
-                margin: 14px 0;
-            }}
-            .metric {{
-                padding: 12px;
-            }}
-            .metric strong {{
-                font-size: 16px;
-            }}
-            .chart-wrap {{
-                height: 170px;
-            }}
-        }}
-    </style>
-    """
-
-    components.html(chart_html, height=440, scrolling=False)
-
-def render_risk_module(current_kasa):
-    risk_profiles = {
-        "Koruma": 0.015,
-        "Standart": 0.03,
-        "Atak": 0.05,
-    }
-
-    selected_risk = st.radio(
-        "Risk Seviyesi",
-        ["Koruma", "Standart", "Atak"],
-        horizontal=True,
-        key="ultra_risk_level"
-    )
-
-    risk_rate = risk_profiles[selected_risk]
-    risk_limit = current_kasa * risk_rate
-
-    st.markdown(
-        f"""
-        <div class='industrial-card'>
-            <div class='terminal-header'>Risk Modülü</div>
-            <div class='terminal-row'>
-                <span>MOD</span>
-                <span class='highlight'>{selected_risk}</span>
-            </div>
-            <div class='terminal-row'>
-                <span>ORAN</span>
-                <span class='highlight'>%{risk_rate * 100:.1f}</span>
-            </div>
-            <div class='terminal-row'>
-                <span>AKTİF LİMİT</span>
-                <span class='highlight'>{fmt_money_usd(risk_limit)}</span>
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
+def result_label(status: str) -> str:
     return {
-        "selected_risk": selected_risk,
-        "risk_rate": risk_rate,
-        "risk_limit": risk_limit,
-    }
+        "won": "Kazandı",
+        "lost": "Kaybetti",
+        "void": "İade",
+        "open": "Bekliyor",
+    }.get(status, "Bekliyor")
 
-# --- 7. CANLI VERİ DEĞİŞKENLERİ ---
-live_vars = get_live_data()
 
-kasa = float(get_num(live_vars, "kasa", 600))
-ana_para = float(get_num(live_vars, "ana_para", 600))
-duyuru_metni = get_str(live_vars, "duyuru", "SİSTEM ÇEVRİMİÇİ... OG CORE")
+def result_class(status: str) -> str:
+    return {
+        "won": "good",
+        "lost": "bad",
+        "void": "neutral",
+        "open": "open",
+    }.get(status, "open")
 
-# Kişisel kasa verileri
-og_kasa = float(get_num(live_vars, "oguzo_kasa", kasa / 1))
 
-# Form takibi hesaplama
-w1_kar = float(get_num(live_vars, "w1_sonuc", 0))
-w2_kar = float(get_num(live_vars, "w2_sonuc", 0))
-w3_kar = float(get_num(live_vars, "w3_sonuc", 0))
-toplam_bahis_kar = w1_kar + w2_kar + w3_kar
-
-wr_oran = get_str(live_vars, "win_rate", "0")
-son_islemler_raw = get_str(live_vars, "son_islemler", "Veri yok")
-
-# --- 8. STİL SİSTEMİ ---
-common_css = """
+GLOBAL_CSS = """
 <style>
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700;800&display=swap');
-
 :root {
-    --og-bg: #050505;
-    --og-surface: rgba(15, 15, 15, 0.86);
-    --og-surface-soft: rgba(255,255,255,0.026);
-    --og-border: rgba(255,255,255,0.05);
-    --og-accent: #c58a2c;
-    --og-accent-soft: rgba(197,138,44,0.12);
-    --og-text: #e6e2da;
-    --og-muted: #8b867c;
-    --og-radius: 6px;
+    --bg: #f5f5f7;
+    --panel: rgba(255, 255, 255, 0.86);
+    --text: #1d1d1f;
+    --muted: #6e6e73;
+    --muted-2: #86868b;
+    --line: rgba(0, 0, 0, 0.10);
+    --line-soft: rgba(0, 0, 0, 0.06);
+    --blue: #0071e3;
+    --blue-soft: rgba(0, 113, 227, 0.10);
+    --green: #1d8f4f;
+    --green-soft: rgba(29, 143, 79, 0.10);
+    --red: #d92d20;
+    --red-soft: rgba(217, 45, 32, 0.10);
+    --amber: #b56a00;
+    --amber-soft: rgba(181, 106, 0, 0.10);
+    --radius: 8px;
+    --shadow: 0 18px 48px rgba(0, 0, 0, 0.08);
 }
 
-#MainMenu, footer, header, .stAppDeployButton {visibility: hidden;}
-[data-testid="stSidebar"] svg, [data-testid="stHeaderActionElements"], .st-emotion-cache-10trblm {display: none !important;}
-[data-testid="stSidebar"] span, [data-testid="stSidebar"] small {font-size: 0 !important; color: transparent !important;}
-[data-testid="stSidebar"] p {font-size: 14px !important; color: #d1d1d1 !important; visibility: visible !important;}
+#MainMenu, footer, header, [data-testid="stSidebar"], .stDeployButton {
+    visibility: hidden;
+}
+
+.stApp {
+    background: linear-gradient(180deg, #fbfbfd 0%, #f5f5f7 48%, #eef1f5 100%) !important;
+    color: var(--text);
+}
 
 .block-container {
-    max-width: 1320px;
-    padding-top: 1.2rem !important;
-    padding-left: 2.2rem !important;
-    padding-right: 2.2rem !important;
+    max-width: 1180px;
+    padding: 26px 28px 56px 28px !important;
 }
 
-section[data-testid="stSidebar"] {
-    background-color: rgba(5, 5, 5, 0.95) !important;
-    border-right: 1px solid rgba(197, 138, 44, 0.15);
-    padding-top: 20px;
-    min-width: 340px !important;
-    max-width: 340px !important;
+body, p, div, span, button, input, textarea, label {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Inter", "Segoe UI", sans-serif !important;
+    letter-spacing: 0 !important;
 }
 
-.stButton button, .stLinkButton a {
-    width: 100% !important;
-    background: var(--og-accent-soft) !important;
-    border: 1px solid rgba(197, 138, 44, 0.30) !important;
-    color: var(--og-accent) !important;
-    font-family: 'JetBrains Mono', monospace !important;
-    padding: 12px !important;
-    border-radius: var(--og-radius) !important;
+h1, h2, h3 {
+    color: var(--text) !important;
+    letter-spacing: 0 !important;
+}
+
+[data-testid="stHorizontalBlock"] {
+    gap: 16px;
+}
+
+.topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 26px;
+}
+
+.brand-lockup {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+}
+
+.brand-mark {
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    background: #1d1d1f;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 750;
+}
+
+.brand-name {
+    color: var(--text) !important;
+    font-size: 18px;
+    font-weight: 760;
+    line-height: 1.1;
+}
+
+.brand-sub {
+    color: var(--muted) !important;
+    font-size: 13px;
+    margin-top: 3px;
+}
+
+.data-pill {
+    border: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.72);
+    color: var(--muted) !important;
+    border-radius: 999px;
+    padding: 9px 13px;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.hero {
+    border: 1px solid var(--line-soft);
+    background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.76));
+    box-shadow: var(--shadow);
+    border-radius: var(--radius);
+    padding: 30px;
+    margin-bottom: 18px;
+}
+
+.hero-kicker {
+    color: var(--blue) !important;
+    font-size: 13px;
+    font-weight: 680;
+    margin-bottom: 12px;
+}
+
+.hero-title {
+    color: var(--text) !important;
+    font-size: 46px;
+    line-height: 1.04;
+    font-weight: 780;
+    max-width: 760px;
+}
+
+.hero-copy {
+    color: var(--muted) !important;
+    font-size: 17px;
+    line-height: 1.55;
+    max-width: 760px;
+    margin-top: 14px;
 }
 
 div[role="radiogroup"] {
-    gap: 8px;
-    flex-wrap: wrap;
+    background: rgba(0, 0, 0, 0.055);
+    border: 1px solid rgba(0,0,0,0.055);
+    border-radius: 999px;
+    padding: 4px;
+    gap: 4px;
+    width: fit-content;
 }
 
 div[role="radiogroup"] label {
-    min-width: 0;
+    border-radius: 999px;
+    padding: 8px 14px;
+    min-height: 34px;
 }
 
-body, [data-testid="stAppViewContainer"], p, div, span, button, input {
-    font-family: 'JetBrains Mono', monospace !important;
-    color: var(--og-text) !important;
+div[role="radiogroup"] label:has(input:checked) {
+    background: #ffffff;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.10);
 }
 
-.terminal-row {
+div[role="radiogroup"] p {
+    color: var(--text) !important;
+    font-size: 13px !important;
+    font-weight: 620 !important;
+}
+
+.metric-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    margin: 18px 0;
+}
+
+.metric-card {
+    min-height: 132px;
+    border-radius: var(--radius);
+    border: 1px solid var(--line-soft);
+    background: var(--panel);
+    box-shadow: 0 12px 34px rgba(0, 0, 0, 0.06);
+    padding: 18px;
+    box-sizing: border-box;
+}
+
+.metric-label {
+    color: var(--muted) !important;
+    font-size: 12px;
+    font-weight: 630;
+    margin-bottom: 12px;
+}
+
+.metric-value {
+    color: var(--text) !important;
+    font-size: 29px;
+    line-height: 1.05;
+    font-weight: 780;
+    white-space: nowrap;
+}
+
+.metric-caption {
+    color: var(--muted-2) !important;
+    font-size: 12px;
+    line-height: 1.35;
+    margin-top: 12px;
+}
+
+.metric-card.good .metric-value { color: var(--green) !important; }
+.metric-card.bad .metric-value { color: var(--red) !important; }
+.metric-card.blue .metric-value { color: var(--blue) !important; }
+.metric-card.amber .metric-value { color: var(--amber) !important; }
+
+.section-title {
+    color: var(--text) !important;
+    font-size: 22px;
+    font-weight: 750;
+    margin: 28px 0 12px 0;
+}
+
+.panel {
+    border: 1px solid var(--line-soft);
+    background: var(--panel);
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: 0 12px 34px rgba(0, 0, 0, 0.055);
+    margin-bottom: 16px;
+}
+
+.panel-title {
+    color: var(--text) !important;
+    font-size: 17px;
+    font-weight: 720;
+    margin-bottom: 14px;
+}
+
+.progress-shell {
+    height: 9px;
+    border-radius: 999px;
+    background: rgba(0,0,0,0.08);
+    overflow: hidden;
+    margin: 14px 0 10px 0;
+}
+
+.progress-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #0071e3, #5ac8fa);
+}
+
+.split-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 14px;
+    color: var(--muted) !important;
+    font-size: 13px;
+    margin-top: 8px;
+}
+
+.status-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.status-card {
+    border: 1px solid var(--line-soft);
+    border-radius: var(--radius);
+    background: rgba(255,255,255,0.72);
+    padding: 16px;
+}
+
+.status-title {
+    color: var(--text) !important;
     font-size: 14px;
-    margin-bottom: 12px;
-    line-height: 1.6;
-    gap: 12px;
-    min-width: 0;
+    font-weight: 720;
+    margin-bottom: 8px;
 }
 
-.industrial-card {
-    background: var(--og-surface) !important;
-    backdrop-filter: blur(5px);
-    border: 1px solid var(--og-border) !important;
-    border-top: 2px solid rgba(197, 138, 44, 0.48) !important;
-    padding: 22px;
-    margin-bottom: 20px;
-    border-radius: var(--og-radius);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-    transition: all 0.25s ease;
+.status-body {
+    color: var(--muted) !important;
+    font-size: 13px;
+    line-height: 1.5;
 }
 
-.industrial-card:hover {
-    transform: translateY(-3px);
-    border-top-color: var(--og-accent) !important;
-    background: rgba(21, 21, 21, 0.9) !important;
-    box-shadow: 0 8px 22px rgba(197, 138, 44, 0.11);
-}
-
-.terminal-header {
-    color: var(--og-muted);
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 2.8px;
-    text-transform: uppercase;
-    margin-bottom: 18px;
-    border-left: 3px solid var(--og-accent);
-    padding-left: 12px;
-}
-
-.highlight {
-    color: var(--og-text) !important;
-    font-weight: 500;
-    font-size: 14px;
-    font-family: 'JetBrains Mono', monospace;
-    overflow-wrap: anywhere;
-}
-
-.val-std {
-    font-size: 22px !important;
-    font-weight: 800 !important;
-    font-family: 'JetBrains Mono', monospace;
-}
-
-.ticker-wrap {
-    width: 100%;
+.table-card {
+    border: 1px solid var(--line-soft);
+    background: var(--panel);
+    border-radius: var(--radius);
     overflow: hidden;
-    background: linear-gradient(90deg, rgba(197, 138, 44, 0.10), rgba(255,255,255,0.025), rgba(197, 138, 44, 0.06));
-    border-bottom: 1px solid rgba(197, 138, 44, 0.2);
-    border-top: 1px solid rgba(255,255,255,0.035);
-    padding: 11px 0;
-    margin-bottom: 25px;
+    box-shadow: 0 12px 34px rgba(0,0,0,0.055);
 }
 
-.ticker {
-    display: flex;
-    white-space: nowrap;
-    width: max-content;
-    animation: ticker 38s linear infinite;
+.table-row {
+    display: grid;
+    grid-template-columns: 1.1fr 1.6fr 1fr 0.8fr 0.9fr 0.9fr;
+    gap: 12px;
+    align-items: center;
+    padding: 15px 18px;
+    border-top: 1px solid var(--line-soft);
 }
 
-.ticker-item {
+.table-row.header {
+    border-top: 0;
+    background: rgba(0,0,0,0.025);
+    color: var(--muted) !important;
+    font-size: 12px;
+    font-weight: 680;
+}
+
+.table-cell-main {
+    color: var(--text) !important;
+    font-size: 14px;
+    font-weight: 650;
+}
+
+.table-cell-sub {
+    color: var(--muted) !important;
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+.badge {
     display: inline-flex;
     align-items: center;
-    gap: 10px;
+    justify-content: center;
+    border-radius: 999px;
+    padding: 6px 10px;
     font-size: 12px;
-    letter-spacing: 2.6px;
-    padding-right: 42px;
-    text-transform: uppercase;
+    font-weight: 680;
+    width: fit-content;
 }
 
-.ticker-label {
-    color: #8e8e8e !important;
-    font-weight: 800;
+.badge.good { color: var(--green) !important; background: var(--green-soft); }
+.badge.bad { color: var(--red) !important; background: var(--red-soft); }
+.badge.open { color: var(--blue) !important; background: var(--blue-soft); }
+.badge.neutral { color: var(--muted) !important; background: rgba(0,0,0,0.06); }
+
+.allocation-row {
+    margin-bottom: 15px;
 }
 
-.ticker-value {
-    color: var(--og-accent) !important;
-    font-weight: 900;
+.allocation-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+    color: var(--text) !important;
+    font-size: 14px;
+    font-weight: 650;
+    margin-bottom: 8px;
 }
 
-@keyframes ticker {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
+.allocation-sub {
+    color: var(--muted) !important;
+    font-size: 12px;
+    font-weight: 500;
 }
 
-.equal-card {
-    min-height: 180px;
+.asset-table-row {
+    display: grid;
+    grid-template-columns: 1.4fr 0.9fr 0.9fr 0.9fr 0.9fr;
+    gap: 12px;
+    align-items: center;
+    padding: 15px 18px;
+    border-top: 1px solid var(--line-soft);
+}
+
+.empty-state {
+    border: 1px dashed rgba(0,0,0,0.16);
+    background: rgba(255,255,255,0.62);
+    border-radius: var(--radius);
+    padding: 24px;
+    color: var(--muted) !important;
+    font-size: 14px;
+}
+
+.login-page .block-container {
+    max-width: 1040px;
+    padding-top: 8vh !important;
+}
+
+.login-shell {
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: 28px;
+    align-items: stretch;
+}
+
+.login-hero {
+    border-radius: var(--radius);
+    padding: 42px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.94), rgba(255,255,255,0.70));
+    border: 1px solid var(--line-soft);
+    box-shadow: var(--shadow);
+    min-height: 420px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
 }
 
-/* --- PORTFÖY TABLOSU --- */
-.portfolio-table-card {
-    background: var(--og-surface);
-    border: 1px solid var(--og-border);
-    border-radius: var(--og-radius);
-    padding: 22px;
-    box-shadow: 0 12px 30px rgba(0,0,0,0.32);
+.login-panel {
+    border-radius: var(--radius);
+    background: #1d1d1f;
+    border: 1px solid rgba(255,255,255,0.10);
+    box-shadow: var(--shadow);
+    padding: 38px;
+    color: #fff !important;
 }
 
-.portfolio-table-title {
-    color: var(--og-muted) !important;
-    font-size: 11px;
-    font-weight: 800;
-    letter-spacing: 2.8px;
-    text-transform: uppercase;
-    margin-bottom: 16px;
-    border-left: 3px solid var(--og-accent);
-    padding-left: 12px;
-}
-
-.portfolio-row {
-    display: grid;
-    grid-template-columns: minmax(0, 1.3fr) minmax(160px, 0.7fr);
-    gap: 18px;
-    align-items: center;
-    padding: 16px 0;
-    border-top: 1px solid rgba(255,255,255,0.055);
-}
-
-.portfolio-row:first-of-type {
-    border-top: 0;
-}
-
-.portfolio-row-name strong,
-.portfolio-row-value strong {
-    display: block;
-    color: var(--og-text) !important;
-    font-size: 16px;
-    font-weight: 800;
-}
-
-.portfolio-row-name span,
-.portfolio-row-value span {
-    display: block;
-    color: var(--og-muted) !important;
-    font-size: 12px;
-    margin-top: 6px;
-}
-
-.portfolio-row-value {
-    text-align: right;
-}
-
-.portfolio-empty {
-    color: var(--og-muted) !important;
-    font-size: 14px;
-    padding: 12px 0;
-}
-
-.smart-alert-grid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 14px;
-    margin: 4px 0 20px 0;
-}
-
-.smart-alert-grid.single {
-    grid-template-columns: 1fr;
-}
-
-.smart-alert {
-    background: var(--og-surface);
-    border: 1px solid var(--og-border);
-    border-left: 3px solid var(--og-accent);
-    border-radius: var(--og-radius);
-    padding: 16px;
-    box-shadow: 0 10px 24px rgba(0,0,0,0.28);
-}
-
-.smart-alert-good {
-    border-left-color: var(--og-accent);
-}
-
-.smart-alert-warn {
-    border-left-color: var(--og-accent);
-}
-
-.smart-alert-info {
-    border-left-color: var(--og-accent);
-}
-
-.smart-alert-title {
-    color: var(--og-text) !important;
-    font-size: 12px;
-    font-weight: 900;
-    letter-spacing: 1.8px;
-    text-transform: uppercase;
-    margin-bottom: 8px;
-}
-
-.smart-alert-body {
-    color: var(--og-muted) !important;
-    font-size: 12px;
-    line-height: 1.55;
-}
-
-.decision-grid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 14px;
-    margin: 2px 0 20px 0;
-}
-
-.decision-card {
-    background:
-        linear-gradient(135deg, var(--og-accent-soft), transparent 34%),
-        var(--og-surface);
-    border: 1px solid var(--og-border);
-    border-top: 2px solid rgba(197,138,44,0.54);
-    border-radius: var(--og-radius);
-    padding: 18px;
-    min-height: 160px;
-    box-shadow: 0 12px 28px rgba(0,0,0,0.32);
-}
-
-.decision-primary {
-    border-top-color: var(--og-accent);
-}
-
-.decision-kicker {
-    color: var(--og-muted) !important;
-    font-size: 10px;
-    font-weight: 900;
-    letter-spacing: 2.4px;
-    text-transform: uppercase;
-    margin-bottom: 12px;
-}
-
-.decision-title {
-    color: var(--og-text) !important;
-    font-family: 'JetBrains Mono', monospace !important;
-    font-size: 24px;
-    line-height: 1.08;
-    font-weight: 900;
-    margin-bottom: 12px;
-}
-
-.decision-body {
-    color: var(--og-muted) !important;
-    font-size: 12px;
-    line-height: 1.55;
-}
-
-.vault-row {
-    display: flex;
-    justify-content: space-between;
-    gap: 12px;
-    color: var(--og-muted) !important;
-    font-size: 12px;
-    margin: 10px 0;
-}
-
-.vault-row strong {
-    color: var(--og-text) !important;
-    font-family: 'JetBrains Mono', monospace !important;
+.login-eyebrow {
+    color: var(--blue) !important;
     font-size: 13px;
-    white-space: nowrap;
+    font-weight: 680;
+    margin-bottom: 14px;
 }
 
-.vault-bar,
-.recovery-track {
-    width: 100%;
-    height: 9px;
-    border-radius: 999px;
-    background: rgba(255,255,255,0.055);
-    overflow: hidden;
-    border: 1px solid rgba(255,255,255,0.035);
-    margin: 12px 0;
+.login-title {
+    color: var(--text) !important;
+    font-size: 58px;
+    line-height: 1;
+    font-weight: 790;
 }
 
-.vault-bar i,
-.recovery-track i {
-    display: block;
-    height: 100%;
-    border-radius: 999px;
-    background: linear-gradient(90deg, #8f6426, var(--og-accent));
-    box-shadow: 0 0 16px rgba(197,138,44,0.24);
+.login-copy {
+    color: var(--muted) !important;
+    font-size: 17px;
+    line-height: 1.58;
+    max-width: 520px;
+    margin-top: 18px;
 }
 
-.recovery-label {
-    color: var(--og-accent) !important;
-    font-family: 'JetBrains Mono', monospace !important;
-    font-size: 18px;
-    font-weight: 900;
-    text-align: right;
-}
-
-.ops-summary-card {
-    background:
-        linear-gradient(135deg, var(--og-accent-soft), transparent 34%),
-        var(--og-surface);
-    border: 1px solid var(--og-border);
-    border-top: 2px solid rgba(197,138,44,0.62);
-    border-radius: var(--og-radius);
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 12px 28px rgba(0,0,0,0.32);
-}
-
-.ops-summary-grid {
+.login-mini-grid {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 14px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 36px;
 }
 
-.ops-summary-item {
-    background: var(--og-surface-soft);
-    border: 1px solid var(--og-border);
-    border-radius: var(--og-radius);
+.login-mini {
+    border-radius: var(--radius);
+    border: 1px solid var(--line-soft);
+    background: rgba(255,255,255,0.72);
     padding: 14px;
 }
 
-.ops-summary-item span {
-    display: block;
-    color: var(--og-muted) !important;
-    font-size: 10px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 8px;
+.login-mini span {
+    color: var(--muted) !important;
+    font-size: 12px;
 }
 
-.ops-summary-item strong {
+.login-mini strong {
     display: block;
-    color: var(--og-text) !important;
-    font-family: 'JetBrains Mono', monospace !important;
-    font-size: 18px;
-    font-weight: 900;
-    white-space: nowrap;
+    color: var(--text) !important;
+    font-size: 15px;
+    margin-top: 8px;
+}
+
+.login-panel-title {
+    color: #fff !important;
+    font-size: 26px;
+    font-weight: 760;
+    margin-bottom: 10px;
+}
+
+.login-panel-copy {
+    color: rgba(255,255,255,0.66) !important;
+    font-size: 14px;
+    line-height: 1.55;
+    margin-bottom: 28px;
+}
+
+input[type="password"] {
+    border-radius: var(--radius) !important;
+    border: 1px solid rgba(255,255,255,0.16) !important;
+    background: rgba(255,255,255,0.08) !important;
+    color: #ffffff !important;
+    min-height: 48px !important;
+    font-size: 18px !important;
+    text-align: center !important;
+    letter-spacing: 8px !important;
+}
+
+.stButton button {
+    border-radius: 999px !important;
+    background: var(--blue) !important;
+    color: #fff !important;
+    border: 0 !important;
+    min-height: 42px !important;
+    font-weight: 680 !important;
 }
 
 @media (max-width: 900px) {
     .block-container {
-        padding-left: 1rem !important;
-        padding-right: 1rem !important;
-        padding-top: 0.75rem !important;
+        padding-left: 16px !important;
+        padding-right: 16px !important;
     }
-
-    section[data-testid="stSidebar"] {
-        min-width: min(320px, 88vw) !important;
-        max-width: min(320px, 88vw) !important;
-    }
-
-    [data-testid="column"] {
-        width: 100% !important;
-        flex: 1 1 100% !important;
-        min-width: 0 !important;
-    }
-
-    [data-testid="stHorizontalBlock"] {
-        flex-wrap: wrap !important;
-        gap: 0.75rem !important;
-    }
-
-    .industrial-card {
-        padding: 18px;
-        margin-bottom: 16px;
-    }
-
-    .industrial-card:hover {
-        transform: none;
-    }
-
-    .terminal-row {
+    .topbar, .login-shell {
+        grid-template-columns: 1fr;
+        flex-direction: column;
         align-items: flex-start;
-        gap: 8px;
     }
-
-    .terminal-header {
-        font-size: 10px;
-        letter-spacing: 2px;
-        margin-bottom: 14px;
+    .hero {
+        padding: 22px;
     }
-
-    .ticker-wrap {
-        margin-left: -1rem;
-        margin-right: -1rem;
-        width: calc(100% + 2rem);
-        padding: 9px 0;
-        margin-bottom: 18px;
+    .hero-title, .login-title {
+        font-size: 38px;
     }
-
-    .ticker-item {
-        font-size: 10px;
-        letter-spacing: 1.8px;
-        padding-right: 28px;
-        gap: 8px;
+    .metric-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
-
-    .portfolio-row {
-        grid-template-columns: 1fr;
-        gap: 8px;
-    }
-
-    .portfolio-row-value {
-        text-align: left;
-    }
-
-    .smart-alert-grid {
+    .status-grid {
         grid-template-columns: 1fr;
     }
-
-    .decision-grid {
+    .table-row,
+    .asset-table-row {
         grid-template-columns: 1fr;
+        gap: 7px;
     }
-
-    .decision-card {
-        min-height: auto;
+    .table-row.header,
+    .asset-table-row.header {
+        display: none;
     }
-
-    .ops-summary-grid {
-        grid-template-columns: 1fr 1fr;
+    .login-mini-grid {
+        grid-template-columns: 1fr;
     }
 }
 
 @media (max-width: 520px) {
-    .block-container {
-        padding-left: 0.72rem !important;
-        padding-right: 0.72rem !important;
-    }
-
-    section[data-testid="stSidebar"] {
-        min-width: 86vw !important;
-        max-width: 86vw !important;
-    }
-
-    section[data-testid="stSidebar"] h1 {
-        font-size: 20px !important;
-        letter-spacing: 4px !important;
-        margin-bottom: 28px !important;
-    }
-
-    .stButton button, .stLinkButton a {
-        padding: 10px !important;
-        font-size: 12px !important;
-    }
-
-    .industrial-card {
-        padding: 15px;
-        border-radius: 6px;
-    }
-
-    .terminal-row {
-        font-size: 12px;
-    }
-
-    .val-std {
-        font-size: 18px !important;
-    }
-
-    .smart-alert {
-        padding: 14px;
-    }
-
-    .smart-alert-title {
-        font-size: 11px;
-        letter-spacing: 1.4px;
-    }
-
-    .smart-alert-body {
-        font-size: 11px;
-    }
-
-    .portfolio-table-card {
-        padding: 16px;
-    }
-
-    .portfolio-table-title {
-        font-size: 10px;
-        letter-spacing: 2px;
-    }
-
-    .portfolio-row {
-        padding: 14px 0;
-    }
-
-    .portfolio-row-name strong,
-    .portfolio-row-value strong {
-        font-size: 14px;
-    }
-
-    .portfolio-row-name span,
-    .portfolio-row-value span {
-        font-size: 11px;
-        line-height: 1.45;
-    }
-
-    .decision-title {
-        font-size: 20px;
-    }
-
-    .vault-row {
-        font-size: 11px;
-    }
-
-    .ops-summary-card {
-        padding: 16px;
-    }
-
-    .ops-summary-grid {
+    .metric-grid {
         grid-template-columns: 1fr;
     }
-
-    .ops-summary-item strong {
-        font-size: 16px;
+    .metric-value {
+        font-size: 25px;
     }
 }
 </style>
 """
 
-login_bg_css = """
-<style>
-.stApp {
-    background:
-        radial-gradient(circle at 18% 24%, rgba(197,138,44,0.18), transparent 34%),
-        radial-gradient(circle at 78% 72%, rgba(197,138,44,0.10), transparent 36%),
-        linear-gradient(135deg, #030303 0%, #090806 44%, #020202 100%) !important;
-    background-attachment: fixed !important;
-}
 
-.stApp::before {
-    content: "";
-    position: fixed !important;
-    inset: 0 !important;
-    pointer-events: none !important;
-    z-index: 0 !important;
-    background-image:
-        linear-gradient(rgba(197,138,44,0.055) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(197,138,44,0.045) 1px, transparent 1px);
-    background-size: 54px 54px;
-    mask-image: radial-gradient(circle at center, rgba(0,0,0,0.82), transparent 72%);
-    animation: loginGrid 18s linear infinite;
-}
+def inject_css() -> None:
+    st.markdown(GLOBAL_CSS, unsafe_allow_html=True)
 
-.stApp::after {
-    content: "";
-    position: fixed !important;
-    width: 520px;
-    height: 520px;
-    right: 8vw;
-    bottom: -140px;
-    border-radius: 999px;
-    background: radial-gradient(circle, rgba(197,138,44,0.13), transparent 64%);
-    filter: blur(10px);
-    pointer-events: none !important;
-    z-index: 0 !important;
-    animation: loginGlow 7s ease-in-out infinite alternate;
-}
 
-.block-container {
-    max-width: none !important;
-    padding: 0 !important;
-}
+def render_topbar(data: dict[str, str]) -> None:
+    announcement = get_str(data, "duyuru", "Canlı veri aktif")
+    stamp = datetime.now().strftime("%d.%m.%Y %H:%M")
+    st.markdown(
+        f"""
+        <div class="topbar">
+            <div class="brand-lockup">
+                <div class="brand-mark">OG</div>
+                <div>
+                    <div class="brand-name">OG Core</div>
+                    <div class="brand-sub">{safe_text(announcement)}</div>
+                </div>
+            </div>
+            <div class="data-pill">Son kontrol: {safe_text(stamp)}</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
-.og-login-shell {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    z-index: 9998;
-    width: min(920px, calc(100vw - 42px));
-    min-height: 430px;
-    transform: translate(-50%, -50%);
-    display: grid;
-    grid-template-columns: 1.05fr 0.95fr;
-    gap: 0;
-    overflow: hidden;
-    border-radius: 24px;
-    border: 1px solid rgba(197,138,44,0.28);
-    background:
-        linear-gradient(135deg, rgba(197,138,44,0.16), transparent 33%),
-        linear-gradient(180deg, rgba(15,15,15,0.90), rgba(4,4,4,0.92));
-    box-shadow:
-        0 34px 90px rgba(0,0,0,0.62),
-        0 0 70px rgba(197,138,44,0.10);
-    backdrop-filter: blur(26px);
-    animation: loginPanelIn 680ms ease-out both;
-}
 
-.og-login-shell::before {
-    content: "";
-    position: absolute;
-    inset: -1px;
-    background: linear-gradient(115deg, transparent 0%, rgba(197,138,44,0.24) 36%, transparent 58%);
-    opacity: 0.48;
-    transform: translateX(-60%);
-    animation: loginSweep 5.4s ease-in-out infinite;
-    pointer-events: none;
-}
+def render_metric_card(label: str, value: str, caption: str = "", tone: str = "") -> str:
+    return (
+        f'<div class="metric-card {safe_text(tone)}">'
+        f'<div class="metric-label">{safe_text(label)}</div>'
+        f'<div class="metric-value">{safe_text(value)}</div>'
+        f'<div class="metric-caption">{safe_text(caption)}</div>'
+        "</div>"
+    )
 
-.og-login-brand,
-.og-login-panel {
-    position: relative;
-    z-index: 2;
-    padding: 38px;
-}
 
-.og-login-brand {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    border-right: 1px solid rgba(255,255,255,0.06);
-}
+def render_metric_grid(cards: list[tuple[str, str, str, str]]) -> None:
+    html_cards = "".join(render_metric_card(*card) for card in cards)
+    st.markdown(f'<div class="metric-grid">{html_cards}</div>', unsafe_allow_html=True)
 
-.og-login-eyebrow,
-.og-login-pin-label,
-.og-login-stat span {
-    color: #8b867c !important;
-    font-size: 10px;
-    font-weight: 900;
-    letter-spacing: 2.6px;
-    text-transform: uppercase;
-}
 
-.og-login-title {
-    margin-top: 18px;
-    color: #f1eee8 !important;
-    font-size: clamp(42px, 5vw, 68px);
-    line-height: 0.95;
-    font-weight: 900;
-    letter-spacing: 7px;
-}
+def render_login() -> bool:
+    st.markdown('<div class="login-page">', unsafe_allow_html=True)
+    st.markdown(
+        """
+        <div class="login-shell">
+            <div class="login-hero">
+                <div>
+                    <div class="login-eyebrow">Private dashboard</div>
+                    <div class="login-title">OG Core</div>
+                    <div class="login-copy">
+                        Bahis performansı ve portföy varlıkları için sade, hızlı ve güvenli takip alanı.
+                    </div>
+                </div>
+                <div class="login-mini-grid">
+                    <div class="login-mini"><span>Mod</span><strong>Takip</strong></div>
+                    <div class="login-mini"><span>Veri</span><strong>Sheet</strong></div>
+                    <div class="login-mini"><span>Erişim</span><strong>PIN</strong></div>
+                </div>
+            </div>
+            <div class="login-panel">
+                <div class="login-panel-title">Giriş</div>
+                <div class="login-panel-copy">Devam etmek için özel PIN kodunu gir.</div>
+        """,
+        unsafe_allow_html=True,
+    )
+    pin = st.text_input("PIN", type="password", placeholder="----", label_visibility="collapsed")
+    if pin:
+        if pin == ACCESS_PIN:
+            st.session_state["password_correct"] = True
+            st.rerun()
+        else:
+            st.error("PIN hatalı.")
+    st.markdown("</div></div></div>", unsafe_allow_html=True)
+    return False
 
-.og-login-copy {
-    max-width: 390px;
-    margin-top: 20px;
-    color: #a6a198 !important;
-    font-size: 14px;
-    line-height: 1.75;
-}
 
-.og-login-status {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 10px;
-    margin-top: 30px;
-}
+def discover_bet_row_ids(data: dict[str, str]) -> list[tuple[str, int]]:
+    row_ids: set[tuple[str, int]] = set()
+    for key in data:
+        match = re.match(r"^(bet|bahis|kupon)_(\d+)_", str(key).strip(), re.IGNORECASE)
+        if match:
+            row_ids.add((match.group(1).lower(), int(match.group(2))))
+    return sorted(row_ids, key=lambda item: (item[1], item[0]))
 
-.og-login-stat {
-    min-height: 76px;
-    border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 14px;
-    background: rgba(255,255,255,0.026);
-    padding: 14px;
-    box-sizing: border-box;
-}
 
-.og-login-stat strong {
-    display: block;
-    margin-top: 10px;
-    color: #f1eee8 !important;
-    font-size: 13px;
-    font-weight: 900;
-}
+def row_field(data: dict[str, str], prefix: str, index: int, aliases: list[str], default: str = "") -> str:
+    for alias in aliases:
+        value = get_str(data, f"{prefix}_{index}_{alias}", "")
+        if value:
+            return value
+    return default
 
-.og-login-panel {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
 
-.og-login-orb {
-    width: 178px;
-    height: 178px;
-    margin: 0 auto 26px auto;
-    border-radius: 999px;
-    border: 1px solid rgba(197,138,44,0.22);
-    background:
-        radial-gradient(circle at 50% 50%, rgba(197,138,44,0.28), transparent 26%),
-        conic-gradient(from 0deg, transparent, rgba(197,138,44,0.58), transparent, rgba(255,255,255,0.18), transparent);
-    box-shadow: inset 0 0 42px rgba(0,0,0,0.55), 0 0 46px rgba(197,138,44,0.15);
-    animation: loginOrbit 8s linear infinite;
-}
+def row_num(data: dict[str, str], prefix: str, index: int, aliases: list[str], default: float = 0.0) -> float:
+    for alias in aliases:
+        key = f"{prefix}_{index}_{alias}"
+        if key in data and get_str(data, key, "") != "":
+            return get_num(data, key, default)
+    return default
 
-.og-login-orb::after {
-    content: "";
-    display: block;
-    width: 86px;
-    height: 86px;
-    margin: 45px auto;
-    border-radius: 999px;
-    background: rgba(3,3,3,0.78);
-    border: 1px solid rgba(255,255,255,0.08);
-}
 
-.og-login-pin-copy {
-    margin-top: 12px;
-    color: #a6a198 !important;
-    font-size: 13px;
-    line-height: 1.6;
-}
+def build_dynamic_bets(data: dict[str, str]) -> pd.DataFrame:
+    records = []
+    for prefix, index in discover_bet_row_ids(data):
+        match_name = row_field(data, prefix, index, ["match", "mac", "maç", "event", "karsilasma"], "")
+        league = row_field(data, prefix, index, ["league", "lig", "category"], "")
+        market = row_field(data, prefix, index, ["market", "pazar", "secim", "seçim", "pick"], "")
+        if not any([match_name, league, market]):
+            continue
 
-.og-login-input-slot {
-    height: 62px;
-    margin-top: 22px;
-    border-radius: 15px;
-    border: 1px solid rgba(197,138,44,0.18);
-    background: rgba(0,0,0,0.22);
-}
+        stake = row_num(data, prefix, index, ["stake", "bahis", "miktar", "tutar"], 0)
+        odds = row_num(data, prefix, index, ["odds", "oran"], 0)
+        explicit_profit = row_num(data, prefix, index, ["profit", "kar", "kâr", "sonuc", "sonuç"], math.nan)
+        result_raw = row_field(data, prefix, index, ["result", "status", "durum", "sonuc", "sonuç"], "")
+        status = normalize_result(result_raw, None if math.isnan(explicit_profit) else explicit_profit)
 
-div[data-testid="stVerticalBlock"] > div:has(input[type="password"]) {
-    position: fixed !important;
-    top: calc(50% + 106px) !important;
-    left: calc(50% + 236px) !important;
-    transform: translateX(-50%) !important;
-    z-index: 10000 !important;
-    width: min(342px, calc(100vw - 72px)) !important;
-    padding: 0 !important;
-    background: transparent !important;
-    border: 0 !important;
-    box-shadow: none !important;
-}
-
-div[data-testid="stTextInput"] {
-    margin: 0 !important;
-}
-
-div[data-testid="stTextInput"] label {
-    display: none !important;
-}
-
-input[type="password"] {
-    height: 54px !important;
-    background: rgba(9, 9, 9, 0.86) !important;
-    border: 1px solid rgba(197, 138, 44, 0.55) !important;
-    text-align: center !important;
-    color: #f1eee8 !important;
-    font-size: 24px !important;
-    letter-spacing: 12px !important;
-    padding: 12px 18px !important;
-    border-radius: 14px !important;
-    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.035), 0 14px 28px rgba(0,0,0,0.35) !important;
-}
-
-input[type="password"]:focus {
-    border-color: rgba(197, 138, 44, 0.92) !important;
-    box-shadow: 0 0 0 3px rgba(197,138,44,0.10), 0 16px 34px rgba(0,0,0,0.44) !important;
-}
-
-div[data-testid="stAlert"] {
-    position: fixed !important;
-    top: calc(50% + 176px) !important;
-    left: calc(50% + 236px) !important;
-    transform: translateX(-50%) !important;
-    z-index: 10001 !important;
-    width: min(342px, calc(100vw - 72px)) !important;
-    border-radius: 12px !important;
-    overflow: hidden !important;
-}
-
-@keyframes loginPanelIn {
-    from { opacity: 0; transform: translate(-50%, -46%) scale(0.98); }
-    to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-}
-
-@keyframes loginSweep {
-    0%, 45% { transform: translateX(-70%); }
-    70%, 100% { transform: translateX(72%); }
-}
-
-@keyframes loginOrbit {
-    to { transform: rotate(360deg); }
-}
-
-@keyframes loginGrid {
-    from { background-position: 0 0, 0 0; }
-    to { background-position: 54px 54px, 54px 54px; }
-}
-
-@keyframes loginGlow {
-    from { opacity: 0.35; transform: translate3d(0, 0, 0) scale(0.95); }
-    to { opacity: 0.78; transform: translate3d(-24px, -18px, 0) scale(1.05); }
-}
-
-@media (max-width: 760px) {
-    .og-login-shell {
-        width: calc(100vw - 28px);
-        min-height: 620px;
-        grid-template-columns: 1fr;
-        border-radius: 20px;
-    }
-
-    .og-login-brand {
-        border-right: 0;
-        border-bottom: 1px solid rgba(255,255,255,0.06);
-        padding: 28px 24px 20px 24px;
-    }
-
-    .og-login-panel {
-        padding: 24px;
-        justify-content: flex-start;
-    }
-
-    .og-login-title {
-        font-size: 40px;
-        letter-spacing: 5px;
-    }
-
-    .og-login-copy {
-        font-size: 12px;
-        line-height: 1.6;
-    }
-
-    .og-login-status {
-        grid-template-columns: 1fr;
-        gap: 8px;
-        margin-top: 18px;
-    }
-
-    .og-login-stat {
-        min-height: auto;
-        padding: 12px;
-    }
-
-    .og-login-orb {
-        width: 118px;
-        height: 118px;
-        margin-bottom: 18px;
-    }
-
-    .og-login-orb::after {
-        width: 58px;
-        height: 58px;
-        margin: 29px auto;
-    }
-
-    div[data-testid="stVerticalBlock"] > div:has(input[type="password"]) {
-        top: calc(50% + 214px) !important;
-        left: 50% !important;
-        width: min(330px, calc(100vw - 66px)) !important;
-    }
-
-    div[data-testid="stAlert"] {
-        top: calc(50% + 282px) !important;
-        left: 50% !important;
-        width: min(330px, calc(100vw - 66px)) !important;
-    }
-
-    input[type="password"] {
-        font-size: 22px !important;
-        letter-spacing: 9px !important;
-    }
-}
-
-.stButton { visibility: hidden; height: 0; margin: 0; padding: 0; }
-</style>
-"""
-
-# --- 9. STATİK HTML ŞABLONLARI ---
-w3_matches = """<div class='terminal-row'><span>başakşehir - gala</span><span class='highlight'>odd</span></div><div class='terminal-row'><span>arsenal - chelsea</span><span class='highlight'>odd</span></div><div class='terminal-row'><span>xxx - bvb</span><span class='highlight'>odd</span></div><div class='terminal-row'><span>xxx - fenerbahçe</span><span class='highlight'>odd</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 0.00</span><span>Bahis: 100 USD</span></div>"""
-w2_matches = """<div class='terminal-row'><span>gala - göztepe</span><span class='highlight'>odd</span></div><div class='terminal-row'><span>chelsea - brighton</span><span class='highlight'>odd</span></div><div class='terminal-row'><span>xxx - bvb</span><span class='highlight'>odd</span></div><div class='terminal-row'><span>fenerbahçe - xxx</span><span class='highlight'>odd</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 0.009</span><span>Bahis: 100 USD</span></div>"""
-w1_matches = """<div class='terminal-row'><span>erzurumspor - gala</span><span class='highlight'>odd</span></div><div class='terminal-row'><span>fulham - chelsea</span><span class='highlight'>odd</span></div><div class='terminal-row'><span>union berlin - bvb</span><span class='highlight'>odd</span></div><div class='terminal-row'><span>fenerbahçe - konyaspor</span><span class='highlight'>odd</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 0.00</span><span>Bahis: 100 USD</span></div>"""
-w3_coupon_html = f"<div class='industrial-card' style='border-top-color: #c58a2c !important;'><div class='terminal-header'>⏳ W3 KUPONU (BEKLİYOR)</div>{w3_matches}<span class='highlight' style='font-weight:bold;'>BEKLİYOR ⏳</span></div>"
-w2_coupon_html = f"<div class='industrial-card' style='border-top-color: #c58a2c !important;'><div class='terminal-header'>⏳ W2 KUPONU (BEKLİYOR)</div>{w2_matches}<span class='highlight' style='font-weight:bold;'>BEKLİYOR ⏳</span></div>"
-w1_coupon_html = f"<div class='industrial-card' style='border-top-color: #c58a2c !important;'><div class='terminal-header'>⏳ W1 KUPONU (BEKLİYOR)</div>{w1_matches}<span class='highlight' style='font-weight:bold;'>BEKLİYOR ⏳</span></div>"
-
-# --- 10. GÜVENLİK ---
-if "password_correct" not in st.session_state:
-    st.session_state["password_correct"] = False
-
-def check_password():
-    if not st.session_state["password_correct"]:
-        st.markdown(common_css, unsafe_allow_html=True)
-        st.markdown(login_bg_css, unsafe_allow_html=True)
-        login_html = (
-            '<div class="og-login-shell">'
-            '<div class="og-login-brand">'
-            '<div>'
-            '<div class="og-login-eyebrow">Özel giriş alanı</div>'
-            '<div class="og-login-title">OG CORE</div>'
-            '<div class="og-login-copy">Kasa, risk ve portföy ekranlarına güvenli erişim. Canlı veri akışı yalnızca doğru kodla açılır.</div>'
-            '</div>'
-            '<div class="og-login-status">'
-            '<div class="og-login-stat"><span>Durum</span><strong>Hazır</strong></div>'
-            '<div class="og-login-stat"><span>Veri</span><strong>Canlı</strong></div>'
-            '<div class="og-login-stat"><span>Koruma</span><strong>Aktif</strong></div>'
-            '</div>'
-            '</div>'
-            '<div class="og-login-panel">'
-            '<div class="og-login-orb"></div>'
-            '<div class="og-login-pin-label">Güvenlik PIN</div>'
-            '<div class="og-login-pin-copy">4 haneli kodu gir, çekirdek panel açılsın.</div>'
-            '<div class="og-login-input-slot"></div>'
-            '</div>'
-            '</div>'
-        )
-        st.markdown(login_html, unsafe_allow_html=True)
-        pwd = st.text_input("PIN", type="password", placeholder="----", label_visibility="collapsed")
-        if pwd:
-            if pwd == "0644":
-                st.session_state["password_correct"] = True
-                st.rerun()
+        if math.isnan(explicit_profit):
+            if status == "won" and stake > 0 and odds > 0:
+                profit = stake * max(0, odds - 1)
+            elif status == "lost" and stake > 0:
+                profit = -stake
             else:
-                st.error("ERİŞİM REDDEDİLDİ")
-        return False
-    return True
+                profit = 0.0
+        else:
+            profit = explicit_profit
 
-# --- 11. PORTFÖY MOTORU ---
-def discover_dynamic_instruments(data, users):
+        records.append(
+            {
+                "id": f"{prefix.upper()}-{index}",
+                "date": parse_date(row_field(data, prefix, index, ["date", "tarih"], "")),
+                "league": league or "Genel",
+                "match": match_name or "Kayıt",
+                "market": market or "Seçim yok",
+                "odds": odds,
+                "stake": stake,
+                "profit": profit,
+                "status": status,
+                "note": row_field(data, prefix, index, ["note", "not", "aciklama", "açıklama"], ""),
+            }
+        )
+
+    return pd.DataFrame(records)
+
+
+def build_legacy_bets(data: dict[str, str]) -> pd.DataFrame:
+    rows = [
+        {
+            "id": "W3",
+            "date": datetime.now().date(),
+            "league": "Haftalık kupon",
+            "match": get_str(data, "w3_maclar", "Başakşehir - Gala / Arsenal - Chelsea / BVB / Fenerbahçe"),
+            "market": get_str(data, "w3_market", "Kupon"),
+            "odds": get_num(data, "w3_oran", 0),
+            "stake": get_num(data, "w3_bahis", 100),
+            "profit": get_num(data, "w3_sonuc", 0),
+            "status": normalize_result(get_str(data, "w3_durum", ""), get_num(data, "w3_sonuc", 0)),
+            "note": get_str(data, "w3_not", ""),
+        },
+        {
+            "id": "W2",
+            "date": datetime.now().date(),
+            "league": "Haftalık kupon",
+            "match": get_str(data, "w2_maclar", "Gala - Göztepe / Chelsea - Brighton / BVB / Fenerbahçe"),
+            "market": get_str(data, "w2_market", "Kupon"),
+            "odds": get_num(data, "w2_oran", 0),
+            "stake": get_num(data, "w2_bahis", 100),
+            "profit": get_num(data, "w2_sonuc", 0),
+            "status": normalize_result(get_str(data, "w2_durum", ""), get_num(data, "w2_sonuc", 0)),
+            "note": get_str(data, "w2_not", ""),
+        },
+        {
+            "id": "W1",
+            "date": datetime.now().date(),
+            "league": "Haftalık kupon",
+            "match": get_str(data, "w1_maclar", "Erzurumspor - Gala / Fulham - Chelsea / Union Berlin - BVB / Fenerbahçe"),
+            "market": get_str(data, "w1_market", "Kupon"),
+            "odds": get_num(data, "w1_oran", 0),
+            "stake": get_num(data, "w1_bahis", 100),
+            "profit": get_num(data, "w1_sonuc", 0),
+            "status": normalize_result(get_str(data, "w1_durum", ""), get_num(data, "w1_sonuc", 0)),
+            "note": get_str(data, "w1_not", ""),
+        },
+    ]
+    return pd.DataFrame(rows)
+
+
+def build_bet_records(data: dict[str, str]) -> pd.DataFrame:
+    dynamic_df = build_dynamic_bets(data)
+    df = dynamic_df if not dynamic_df.empty else build_legacy_bets(data)
+    df["date"] = pd.to_datetime(df["date"])
+    df["odds"] = pd.to_numeric(df["odds"], errors="coerce").fillna(0.0)
+    df["stake"] = pd.to_numeric(df["stake"], errors="coerce").fillna(0.0)
+    df["profit"] = pd.to_numeric(df["profit"], errors="coerce").fillna(0.0)
+    df["status"] = df["status"].fillna("open")
+    return df.sort_values("date", ascending=False).reset_index(drop=True)
+
+
+def calculate_bet_metrics(df: pd.DataFrame, data: dict[str, str]) -> dict[str, float | int | str]:
+    settled = df[df["status"].isin(["won", "lost", "void"])].copy()
+    decisive = df[df["status"].isin(["won", "lost"])].copy()
+    open_df = df[df["status"] == "open"].copy()
+
+    total_profit = float(settled["profit"].sum()) if not settled.empty else 0.0
+    total_stake = float(settled["stake"].sum()) if not settled.empty else 0.0
+    open_stake = float(open_df["stake"].sum()) if not open_df.empty else 0.0
+    roi = (total_profit / total_stake * 100) if total_stake > 0 else 0.0
+    win_rate = (len(decisive[decisive["status"] == "won"]) / len(decisive) * 100) if len(decisive) > 0 else get_num(data, "win_rate", 0)
+    odds_df = settled.loc[settled["odds"] > 0]
+    avg_odds = float(odds_df["odds"].mean()) if not odds_df.empty else 0.0
+
+    starting_bankroll = get_first_num(data, ["bahis_baslangic_kasa", "bet_start_bankroll", "ana_para"], 1000)
+    current_bankroll = get_first_num(data, ["bahis_kasa", "bet_bankroll", "kasa"], starting_bankroll + total_profit)
+    target = get_first_num(data, ["bahis_hedef", "bet_target", "hedef"], max(current_bankroll, starting_bankroll) * 1.25)
+    target_progress = (current_bankroll / target * 100) if target > 0 else 0.0
+
+    ordered = settled.sort_values("date").copy()
+    if ordered.empty:
+        drawdown = 0.0
+    else:
+        ordered["equity"] = starting_bankroll + ordered["profit"].cumsum()
+        ordered["peak"] = ordered["equity"].cummax()
+        ordered["drawdown"] = ordered["peak"] - ordered["equity"]
+        drawdown = float(ordered["drawdown"].max())
+
+    streak_label = "Veri yok"
+    streak_count = 0
+    decisive_sorted = decisive.sort_values("date")
+    if not decisive_sorted.empty:
+        last_status = str(decisive_sorted.iloc[-1]["status"])
+        streak_count = 0
+        for status in reversed(decisive_sorted["status"].tolist()):
+            if status == last_status:
+                streak_count += 1
+            else:
+                break
+        streak_label = f"{streak_count} maç {result_label(last_status).lower()}"
+
+    discipline = 100.0
+    if roi < 0:
+        discipline -= min(32, abs(roi) * 1.4)
+    if drawdown > 0 and current_bankroll > 0:
+        discipline -= min(28, (drawdown / current_bankroll) * 100 * 1.8)
+    if streak_label.endswith("kaybetti"):
+        discipline -= min(18, streak_count * 6)
+
+    return {
+        "total_profit": total_profit,
+        "total_stake": total_stake,
+        "open_stake": open_stake,
+        "roi": roi,
+        "win_rate": win_rate,
+        "avg_odds": avg_odds,
+        "starting_bankroll": starting_bankroll,
+        "current_bankroll": current_bankroll,
+        "target": target,
+        "target_progress": clamp(target_progress),
+        "drawdown": drawdown,
+        "streak_label": streak_label,
+        "discipline": int(clamp(discipline, 0, 100)),
+        "settled_count": int(len(settled)),
+        "open_count": int(len(open_df)),
+    }
+
+
+def render_betting_table(df: pd.DataFrame) -> None:
+    if df.empty:
+        st.markdown('<div class="empty-state">Bahis kaydı bulunamadı.</div>', unsafe_allow_html=True)
+        return
+
+    rows_html = [
+        """
+        <div class="table-row header">
+            <div>Tarih</div>
+            <div>Karşılaşma</div>
+            <div>Seçim</div>
+            <div>Oran</div>
+            <div>Stake</div>
+            <div>Sonuç</div>
+        </div>
+        """
+    ]
+    for _, row in df.head(14).iterrows():
+        status = str(row["status"])
+        date_text = pd.to_datetime(row["date"]).strftime("%d.%m.%Y")
+        profit_text = fmt_money_usd(float(row["profit"]))
+        rows_html.append(
+            f"""
+            <div class="table-row">
+                <div>
+                    <div class="table-cell-main">{safe_text(date_text)}</div>
+                    <div class="table-cell-sub">{safe_text(row["id"])}</div>
+                </div>
+                <div>
+                    <div class="table-cell-main">{safe_text(row["match"])}</div>
+                    <div class="table-cell-sub">{safe_text(row["league"])}</div>
+                </div>
+                <div>
+                    <div class="table-cell-main">{safe_text(row["market"])}</div>
+                    <div class="table-cell-sub">{safe_text(row["note"])}</div>
+                </div>
+                <div class="table-cell-main">{float(row["odds"]):.2f}</div>
+                <div>
+                    <div class="table-cell-main">{fmt_money_usd(float(row["stake"]))}</div>
+                    <div class="table-cell-sub">{safe_text(profit_text)}</div>
+                </div>
+                <div><span class="badge {result_class(status)}">{safe_text(result_label(status))}</span></div>
+            </div>
+            """
+        )
+
+    st.markdown(f'<div class="table-card">{"".join(rows_html)}</div>', unsafe_allow_html=True)
+
+
+def render_bet_status_panels(metrics: dict[str, float | int | str]) -> None:
+    score = int(metrics["discipline"])
+    if score >= 80:
+        title = "Disiplin güçlü"
+        body = "Kayıtlar kontrollü bir çizgide duruyor. Panel yalnızca takip ve ölçüm için çalışır."
+    elif score >= 55:
+        title = "Dikkat bölgesi"
+        body = "Kâr/zarar ve seri etkisi izlenmeli. Stake büyütme kararı bu panelin konusu değildir."
+    else:
+        title = "Koruma bölgesi"
+        body = "Drawdown veya negatif seri belirgin. Takip paneli riski görünür tutmak için sade kalır."
+
+    panels = [
+        (title, body),
+        ("Açık pozisyon", f'{int(metrics["open_count"])} bekleyen kayıt, toplam açık stake {fmt_money_usd(float(metrics["open_stake"]))}.'),
+        ("Seri durumu", str(metrics["streak_label"])),
+    ]
+    cards = "".join(
+        f'<div class="status-card"><div class="status-title">{safe_text(t)}</div><div class="status-body">{safe_text(b)}</div></div>'
+        for t, b in panels
+    )
+    st.markdown(f'<div class="status-grid">{cards}</div>', unsafe_allow_html=True)
+
+
+def render_betting_page(data: dict[str, str]) -> None:
+    df = build_bet_records(data)
+    metrics = calculate_bet_metrics(df, data)
+
+    st.markdown(
+        """
+        <div class="hero">
+            <div class="hero-kicker">Bahis Takip Sistemi</div>
+            <div class="hero-title">Performans, kasa ve kupon akışı tek ekranda.</div>
+            <div class="hero-copy">Sonuç odaklı kayıt, açık kupon görünümü, ROI, win rate ve kasa ilerlemesi.</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    profit_tone = "good" if float(metrics["total_profit"]) >= 0 else "bad"
+    render_metric_grid(
+        [
+            ("Bahis Kasası", fmt_money_usd(float(metrics["current_bankroll"])), f'Hedef {fmt_money_usd(float(metrics["target"]))}', "blue"),
+            ("Net Sonuç", fmt_money_usd(float(metrics["total_profit"])), f'{int(metrics["settled_count"])} kapanan kayıt', profit_tone),
+            ("ROI", fmt_pct(float(metrics["roi"])), f'Toplam stake {fmt_money_usd(float(metrics["total_stake"]))}', profit_tone),
+            ("Win Rate", fmt_pct(float(metrics["win_rate"])), f'Ortalama oran {float(metrics["avg_odds"]):.2f}', "blue"),
+        ]
+    )
+
+    progress = float(metrics["target_progress"])
+    st.markdown(
+        f"""
+        <div class="panel">
+            <div class="panel-title">Kasa ilerlemesi</div>
+            <div class="progress-shell"><div class="progress-fill" style="width:{progress:.1f}%;"></div></div>
+            <div class="split-row">
+                <span>{fmt_money_usd(float(metrics["current_bankroll"]))}</span>
+                <span>{fmt_pct(progress)} / {fmt_money_usd(float(metrics["target"]))}</span>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    render_bet_status_panels(metrics)
+
+    chart_col, mix_col = st.columns([1.35, 0.65])
+    settled = df[df["status"].isin(["won", "lost", "void"])].sort_values("date").copy()
+    with chart_col:
+        st.markdown('<div class="section-title">Kâr/Zarar Eğrisi</div>', unsafe_allow_html=True)
+        if settled.empty:
+            st.markdown('<div class="empty-state">Grafik için kapanan kayıt bekleniyor.</div>', unsafe_allow_html=True)
+        else:
+            curve = settled[["date", "profit"]].copy()
+            curve["Kümülatif Sonuç"] = curve["profit"].cumsum()
+            curve = curve.set_index("date")[["Kümülatif Sonuç"]]
+            st.line_chart(curve, height=290)
+
+    with mix_col:
+        st.markdown('<div class="section-title">Sonuç Dağılımı</div>', unsafe_allow_html=True)
+        counts = df["status"].map(result_label).value_counts()
+        if counts.empty:
+            st.markdown('<div class="empty-state">Dağılım verisi yok.</div>', unsafe_allow_html=True)
+        else:
+            st.bar_chart(counts, height=290)
+
+    st.markdown('<div class="section-title">Kupon Kayıtları</div>', unsafe_allow_html=True)
+    status_filter = st.segmented_control(
+        "Filtre",
+        options=["Tümü", "Bekliyor", "Kazandı", "Kaybetti", "İade"],
+        default="Tümü",
+        label_visibility="collapsed",
+    )
+    filtered = df.copy()
+    reverse_labels = {"Bekliyor": "open", "Kazandı": "won", "Kaybetti": "lost", "İade": "void"}
+    if status_filter != "Tümü":
+        filtered = filtered[filtered["status"] == reverse_labels[status_filter]]
+    render_betting_table(filtered)
+
+
+def discover_dynamic_instruments(data: dict[str, str], users: list[str]) -> list[dict[str, object]]:
     instrument_codes = set()
-
-    for key in data.keys():
+    for key in data:
         if isinstance(key, str) and key.startswith("price_"):
             code = key.replace("price_", "", 1).strip()
             if code:
@@ -1907,460 +1129,243 @@ def discover_dynamic_instruments(data, users):
 
     instruments = []
     for code in instrument_codes:
-        label = get_str(data, f"label_{code}", code.upper())
-        unit = get_str(data, f"unit_{code}", "adet")
-        currency = get_str(data, f"currency_{code}", "TRY").upper()
-        order = get_num(data, f"order_{code}", 999)
         show = int(get_num(data, f"show_{code}", 1))
         price = get_num(data, f"price_{code}", 0)
-
-        if show == 0:
+        has_user_key = any(f"{user}_{code}" in data for user in users)
+        if show == 0 or not has_user_key:
             continue
+        instruments.append(
+            {
+                "code": code,
+                "label": get_str(data, f"label_{code}", code.upper()),
+                "unit": get_str(data, f"unit_{code}", "adet"),
+                "currency": get_str(data, f"currency_{code}", "TRY").upper(),
+                "price": price,
+                "order": get_num(data, f"order_{code}", 999),
+            }
+        )
+    return sorted(instruments, key=lambda item: (float(item["order"]), str(item["label"])))
 
-        has_any_user_key = any(f"{u}_{code}" in data for u in users)
-        if not has_any_user_key:
-            continue
 
-        instruments.append({
-            "code": code,
-            "label": label,
-            "unit": unit,
-            "currency": currency,
-            "price": price,
-            "order": order,
-        })
-
-    return sorted(instruments, key=lambda x: (x["order"], x["label"]))
-
-def build_legacy_fallback_instruments(data):
+def build_legacy_instruments(data: dict[str, str]) -> list[dict[str, object]]:
     return [
-        {
-            "code": "usd_cash",
-            "label": "NAKİT",
-            "unit": "USD",
-            "currency": "USD",
-            "price": 1.0,
-            "order": 1,
-            "legacy_map": {"oguzo": "oguzo_usd"},
-        },
-        {
-            "code": "gram_altin",
-            "label": "GRAM ALTIN",
-            "unit": "gr",
-            "currency": "TRY",
-            "price": get_num(data, "gram_altin_fiyat", 7136),
-            "order": 2,
-            "legacy_map": {"oguzo": "oguzo_altin", "ero7": "ero7_altin", "fybey": "fybey_altin"},
-        },
-        {
-            "code": "ceyrek",
-            "label": "ÇEYREK",
-            "unit": "adet",
-            "currency": "TRY",
-            "price": get_num(data, "ceyrek_altin_fiyat", 12417),
-            "order": 3,
-            "legacy_map": {"oguzo": "oguzo_ceyrek", "ero7": "ero7_ceyrek", "fybey": "fybey_ceyrek"},
-        },
-        {
-            "code": "aft",
-            "label": "AFT",
-            "unit": "adet",
-            "currency": "TRY",
-            "price": get_num(data, "aft_fiyat_tl", 0.8295),
-            "order": 4,
-            "legacy_map": {"oguzo": "oguzo_aft_adet", "ero7": "ero7_aft_adet", "fybey": "fybey_aft_adet"},
-        },
-        {
-            "code": "btc",
-            "label": "BTC",
-            "unit": "adet",
-            "currency": "USD",
-            "price": get_num(data, "btc_fiyat_usd", 84250),
-            "order": 5,
-            "legacy_map": {"oguzo": "oguzo_btc", "ero7": "ero7_btc", "fybey": "fybey_btc"},
-        },
-        {
-            "code": "eth",
-            "label": "ETH",
-            "unit": "adet",
-            "currency": "USD",
-            "price": get_num(data, "eth_fiyat_usd", 2107.89),
-            "order": 6,
-            "legacy_map": {"oguzo": "oguzo_eth", "ero7": "ero7_eth", "fybey": "fybey_eth"},
-        },
-        {
-            "code": "gumus",
-            "label": "GÜMÜŞ",
-            "unit": "gr",
-            "currency": "TRY",
-            "price": get_num(data, "gumus_fiyat_tl", 41.2),
-            "order": 7,
-            "legacy_map": {"oguzo": "oguzo_gumus", "ero7": "ero7_gumus", "fybey": "fybey_gumus"},
-        },
+        {"code": "usd_cash", "label": "Nakit", "unit": "USD", "currency": "USD", "price": 1.0, "order": 1, "legacy": {"oguzo": "oguzo_usd"}},
+        {"code": "gram_altin", "label": "Gram Altın", "unit": "gr", "currency": "TRY", "price": get_num(data, "gram_altin_fiyat", 0), "order": 2, "legacy": {"oguzo": "oguzo_altin"}},
+        {"code": "ceyrek", "label": "Çeyrek Altın", "unit": "adet", "currency": "TRY", "price": get_num(data, "ceyrek_altin_fiyat", 0), "order": 3, "legacy": {"oguzo": "oguzo_ceyrek"}},
+        {"code": "aft", "label": "AFT", "unit": "adet", "currency": "TRY", "price": get_num(data, "aft_fiyat_tl", 0), "order": 4, "legacy": {"oguzo": "oguzo_aft_adet"}},
+        {"code": "btc", "label": "Bitcoin", "unit": "adet", "currency": "USD", "price": get_num(data, "btc_fiyat_usd", 0), "order": 5, "legacy": {"oguzo": "oguzo_btc"}},
+        {"code": "eth", "label": "Ethereum", "unit": "adet", "currency": "USD", "price": get_num(data, "eth_fiyat_usd", 0), "order": 6, "legacy": {"oguzo": "oguzo_eth"}},
+        {"code": "gumus", "label": "Gümüş", "unit": "gr", "currency": "TRY", "price": get_num(data, "gumus_fiyat_tl", 0), "order": 7, "legacy": {"oguzo": "oguzo_gumus"}},
     ]
 
-def get_user_quantity_for_instrument(data, user, instrument):
+
+def portfolio_users(data: dict[str, str]) -> list[str]:
+    configured = get_first_str(data, ["portfolio_users", "portfoy_users", "users"], "")
+    if configured:
+        users = [item.strip() for item in configured.split(",") if item.strip()]
+        if users:
+            return users
+    return ["oguzo"]
+
+
+def user_label(data: dict[str, str], user: str) -> str:
+    return get_first_str(data, [f"label_{user}", f"{user}_label"], user.upper())
+
+
+def quantity_for_instrument(data: dict[str, str], user: str, instrument: dict[str, object]) -> float:
     direct_key = f"{user}_{instrument['code']}"
     if direct_key in data:
         return get_num(data, direct_key, 0)
-
-    if "legacy_map" in instrument and user in instrument["legacy_map"]:
-        return get_num(data, instrument["legacy_map"][user], 0)
-
+    legacy = instrument.get("legacy", {})
+    if isinstance(legacy, dict) and user in legacy:
+        return get_num(data, str(legacy[user]), 0)
     return 0.0
 
-def convert_to_try_and_usd(quantity, price, currency, usdtry):
-    currency = (currency or "TRY").upper()
 
-    if currency == "USD":
+def convert_value(quantity: float, price: float, currency: str, usdtry: float) -> tuple[float, float]:
+    if currency.upper() == "USD":
         total_usd = quantity * price
-        total_try = total_usd * usdtry
-    elif currency == "TRY":
-        total_try = quantity * price
-        total_usd = total_try / usdtry if usdtry > 0 else 0
-    else:
-        total_try = quantity * price
-        total_usd = total_try / usdtry if usdtry > 0 else 0
-
+        return total_usd * usdtry, total_usd
+    total_try = quantity * price
+    total_usd = total_try / usdtry if usdtry > 0 else 0.0
     return total_try, total_usd
 
-def build_user_portfolio(data, user, instruments, usdtry):
+
+def build_portfolio(data: dict[str, str], user: str, instruments: list[dict[str, object]], usdtry: float) -> pd.DataFrame:
     rows = []
-
-    for ins in instruments:
-        qty = get_user_quantity_for_instrument(data, user, ins)
-        total_try, total_usd = convert_to_try_and_usd(qty, ins["price"], ins["currency"], usdtry)
-
-        rows.append({
-            "code": ins["code"],
-            "label": ins["label"],
-            "unit": ins["unit"],
-            "currency": ins["currency"],
-            "price": ins["price"],
-            "quantity": qty,
-            "total_try": total_try,
-            "total_usd": total_usd,
-            "order": ins["order"],
-        })
-
+    for instrument in instruments:
+        quantity = quantity_for_instrument(data, user, instrument)
+        price = float(instrument["price"])
+        total_try, total_usd = convert_value(quantity, price, str(instrument["currency"]), usdtry)
+        rows.append(
+            {
+                "code": str(instrument["code"]),
+                "label": str(instrument["label"]),
+                "unit": str(instrument["unit"]),
+                "currency": str(instrument["currency"]),
+                "price": price,
+                "quantity": quantity,
+                "total_try": total_try,
+                "total_usd": total_usd,
+                "order": float(instrument["order"]),
+            }
+        )
     df = pd.DataFrame(rows)
     if df.empty:
         return df
-
     return df.sort_values(["order", "label"]).reset_index(drop=True)
 
-def render_allocation_panel(df_nonzero):
-    if df_nonzero.empty:
-        st.markdown(
-            textwrap.dedent("""
-                <div class='industrial-card'>
-                    <div class='terminal-header'>Dağılım</div>
-                    <div class='highlight'>Aktif enstrüman bulunamadı.</div>
+
+def render_allocation(df: pd.DataFrame) -> None:
+    total = float(df["total_usd"].sum())
+    if total <= 0:
+        st.markdown('<div class="empty-state">Dağılım için aktif varlık bekleniyor.</div>', unsafe_allow_html=True)
+        return
+
+    rows = []
+    for _, row in df.sort_values("total_usd", ascending=False).iterrows():
+        pct = float(row["total_usd"]) / total * 100
+        rows.append(
+            f"""
+            <div class="allocation-row">
+                <div class="allocation-head">
+                    <span>{safe_text(row["label"])}</span>
+                    <span class="allocation-sub">{fmt_pct(pct)} · {fmt_money_usd(float(row["total_usd"]))}</span>
                 </div>
-            """),
-            unsafe_allow_html=True
+                <div class="progress-shell"><div class="progress-fill" style="width:{pct:.1f}%;"></div></div>
+            </div>
+            """
         )
+    st.markdown(f'<div class="panel"><div class="panel-title">Portföy dağılımı</div>{"".join(rows)}</div>', unsafe_allow_html=True)
+
+
+def render_asset_table(df: pd.DataFrame) -> None:
+    if df.empty:
+        st.markdown('<div class="empty-state">Aktif portföy varlığı bulunamadı.</div>', unsafe_allow_html=True)
         return
 
-    total_usd = df_nonzero["total_usd"].sum()
-    if total_usd <= 0:
-        total_usd = 1
-
-    alloc_df = df_nonzero.sort_values("total_usd", ascending=False).copy()
-    rows_html = ""
-
-    for _, row in alloc_df.iterrows():
-        pct = (row["total_usd"] / total_usd) * 100
-        value_text = fmt_money_usd(row["total_usd"])
-
-        rows_html += f"""
-<div style='margin-bottom:14px;'>
-    <div style='display:flex; justify-content:space-between; gap:12px; margin-bottom:7px; font-size:13px;'>
-        <span style='color:var(--og-text);'>{row["label"]}</span>
-        <span style='color:var(--og-muted);'>{pct:.1f}% &nbsp;//&nbsp; {value_text}</span>
-    </div>
-    <div style='width:100%; height:9px; border-radius:999px; background:rgba(255,255,255,0.05); overflow:hidden; border:1px solid rgba(255,255,255,0.03);'>
-        <div style='height:100%; width:{pct:.2f}%; border-radius:999px; background:linear-gradient(90deg, #8f6426, var(--og-accent)); box-shadow:0 0 12px rgba(197,138,44,0.22);'></div>
-    </div>
-</div>
-"""
-
-    html = f"""
-<div class='industrial-card'>
-    <div class='terminal-header'>Dağılım Yüzdesi</div>
-    {rows_html}
-</div>
-"""
-    st.markdown(textwrap.dedent(html), unsafe_allow_html=True)
-
-def render_portfolio_v2(data):
-    st.markdown("<div class='terminal-header'>🏛️ PORTFÖY MERKEZİ</div>", unsafe_allow_html=True)
-
-    users = ["oguzo"]
-    user_labels = {"oguzo": "OGUZO"}
-
-    usdtry = get_num(data, "usdtry", 44.18)
-
-    dynamic_instruments = discover_dynamic_instruments(data, users)
-    instruments = dynamic_instruments if len(dynamic_instruments) > 0 else build_legacy_fallback_instruments(data)
-
-    if len(instruments) == 0:
-        st.error("Portföy enstrümanları bulunamadı.")
-        return
-
-    if len(users) > 1:
-        selected_user_label = st.selectbox("Portföy:", [user_labels[u] for u in users], label_visibility="collapsed")
-        selected_user = [k for k, v in user_labels.items() if v == selected_user_label][0]
-    else:
-        selected_user = users[0]
-        selected_user_label = user_labels[selected_user]
-
-    df_user = build_user_portfolio(data, selected_user, instruments, usdtry)
-
-    if df_user.empty:
-        st.error("Seçilen kullanıcı için portföy verisi bulunamadı.")
-        return
-
-    total_usd = df_user["total_usd"].sum()
-    total_try = df_user["total_try"].sum()
-    df_nonzero = df_user[df_user["quantity"] > 0].copy()
-
-    active_assets = len(df_nonzero)
-    if df_nonzero.empty or total_usd <= 0:
-        main_asset_label = "YOK"
-        main_asset_pct = 0
-    else:
-        main_asset = df_nonzero.sort_values("total_usd", ascending=False).iloc[0]
-        main_asset_label = main_asset["label"]
-        main_asset_pct = (main_asset["total_usd"] / total_usd) * 100
-
-    render_portfolio_hero_component(
-        selected_user_label,
-        total_usd,
-        total_try,
-        active_assets,
-        main_asset_label,
-        main_asset_pct,
-        usdtry,
-    )
-
-    render_smart_alerts(build_portfolio_alerts(active_assets, main_asset_pct, main_asset_label, total_usd))
-
-    if df_nonzero.empty:
-        empty_html = (
-            "<div class='portfolio-table-card'>"
-            "<div class='portfolio-table-title'>Varlıklar</div>"
-            "<div class='portfolio-empty'>Aktif varlık bulunamadı.</div>"
-            "</div>"
+    rows = [
+        """
+        <div class="asset-table-row header table-row">
+            <div>Varlık</div>
+            <div>Miktar</div>
+            <div>Birim Fiyat</div>
+            <div>TRY</div>
+            <div>USD</div>
+        </div>
+        """
+    ]
+    for _, row in df.sort_values("total_usd", ascending=False).iterrows():
+        price_text = fmt_money_usd(float(row["price"])) if str(row["currency"]).upper() == "USD" else fmt_money_try(float(row["price"]))
+        rows.append(
+            f"""
+            <div class="asset-table-row">
+                <div>
+                    <div class="table-cell-main">{safe_text(row["label"])}</div>
+                    <div class="table-cell-sub">{safe_text(row["currency"])}</div>
+                </div>
+                <div class="table-cell-main">{safe_text(fmt_qty(float(row["quantity"]), str(row["unit"])))}</div>
+                <div class="table-cell-main">{safe_text(price_text)}</div>
+                <div class="table-cell-main">{safe_text(fmt_money_try(float(row["total_try"])))}</div>
+                <div class="table-cell-main">{safe_text(fmt_money_usd(float(row["total_usd"])))}</div>
+            </div>
+            """
         )
-        st.markdown(empty_html, unsafe_allow_html=True)
-        return
+    st.markdown(f'<div class="table-card">{"".join(rows)}</div>', unsafe_allow_html=True)
 
-    rows_html = ""
-    for _, row in df_nonzero.sort_values("total_usd", ascending=False).iterrows():
-        qty_text = fmt_unit_value(row["quantity"], row["unit"])
-        price_text = fmt_money_usd(row["price"]) if row["currency"] == "USD" else fmt_money_try(row["price"])
-        value_text = fmt_money_usd(row["total_usd"])
-        local_text = fmt_money_try(row["total_try"])
 
-        rows_html += (
-            f"<div class='portfolio-row'>"
-            f"<div class='portfolio-row-name'>"
-            f"<strong>{row['label']}</strong>"
-            f"<span>{qty_text} · Birim {price_text}</span>"
-            f"</div>"
-            f"<div class='portfolio-row-value'>"
-            f"<strong>{value_text}</strong>"
-            f"<span>{local_text}</span>"
-            f"</div>"
-            f"</div>"
-        )
+def render_portfolio_page(data: dict[str, str]) -> None:
+    users = portfolio_users(data)
+    labels = {user_label(data, user): user for user in users}
+    selected_label = list(labels.keys())[0]
+    if len(labels) > 1:
+        selected_label = st.selectbox("Portföy", options=list(labels.keys()), label_visibility="collapsed")
+    user = labels[selected_label]
 
-    table_html = (
-        f"<div class='portfolio-table-card'>"
-        f"<div class='portfolio-table-title'>Varlıklar</div>"
-        f"{rows_html}"
-        f"</div>"
-    )
-    st.markdown(table_html, unsafe_allow_html=True)
+    usdtry = get_num(data, "usdtry", 0)
+    instruments = discover_dynamic_instruments(data, users)
+    if not instruments:
+        instruments = build_legacy_instruments(data)
 
-    if len(df_nonzero) > 1:
-        render_allocation_panel(df_nonzero)
+    df = build_portfolio(data, user, instruments, usdtry)
+    active = df[(df["quantity"] > 0) & (df["total_usd"] > 0)].copy() if not df.empty else pd.DataFrame()
 
-# --- 12. ANA UYGULAMA ---
-if not check_password():
-    st.stop()
+    total_usd = float(active["total_usd"].sum()) if not active.empty else 0.0
+    total_try = float(active["total_try"].sum()) if not active.empty else 0.0
+    main_asset = "Yok"
+    main_pct = 0.0
+    if total_usd > 0:
+        biggest = active.sort_values("total_usd", ascending=False).iloc[0]
+        main_asset = str(biggest["label"])
+        main_pct = float(biggest["total_usd"]) / total_usd * 100
 
-st.markdown(common_css, unsafe_allow_html=True)
-st.markdown("<style>.stApp { background: #030303 !important; background-image: none !important; }</style>", unsafe_allow_html=True)
-render_market_ticker(live_vars, duyuru_metni)
-
-with st.sidebar:
     st.markdown(
-        "<h1 style='color:var(--og-text); font-family:JetBrains Mono, monospace; font-size:24px; letter-spacing:5px; text-align:center; margin-bottom:40px;'>OG CORE</h1>",
-        unsafe_allow_html=True
+        f"""
+        <div class="hero">
+            <div class="hero-kicker">Portföy Takip</div>
+            <div class="hero-title">{safe_text(selected_label)} portföy görünümü.</div>
+            <div class="hero-copy">Sadece izleme modu: varlık, miktar, dağılım ve toplam değer.</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
     )
-    st.markdown(
-        "<div style='margin-bottom:10px; color:var(--og-muted); font-size:11px; letter-spacing:2px; font-weight:800;'>SİSTEM MODÜLLERİ</div>",
-        unsafe_allow_html=True
+
+    render_metric_grid(
+        [
+            ("Toplam USD", fmt_money_usd(total_usd), f'{len(active)} aktif varlık', "blue"),
+            ("Toplam TRY", fmt_money_try(total_try), f'USD/TRY {usdtry:.2f}', ""),
+            ("Ana Varlık", main_asset, fmt_pct(main_pct), "blue"),
+            ("Takip Modu", "Aktif", "Al/sat önerisi yok", "good"),
+        ]
     )
-    page = st.radio("Menü", ["⚡ ULTRA ATAK", "⚽ FORM TAKİBİ", "📊 Portföy Takip"], label_visibility="collapsed")
-    st.divider()
-    st.markdown(
-        "<div style='color:var(--og-muted); font-size:11px; letter-spacing:2px; font-weight:800; margin-bottom:15px;'>📂 TERMİNAL ERİŞİMİ</div>",
-        unsafe_allow_html=True
-    )
-    admin_pwd = st.text_input("PIN", type="password", placeholder="Yönetici PIN", label_visibility="collapsed")
-    if admin_pwd == "0644":
-        st.markdown(
-            "<a href='https://docs.google.com/spreadsheets/d/15izevdpRjs8Om5BAHKVWmdL3FxEHml35DGECfhQUG_s/edit' target='_blank' style='text-decoration:none;'><div style='background:rgba(197, 138, 44, 0.14); border: 1px solid rgba(197, 138, 44, 0.42); color:#c58a2c; text-align:center; padding:10px; border-radius:6px; font-family:JetBrains Mono, monospace; font-size:12px; font-weight:bold;'>VERİ TABANINA BAĞLAN</div></a>",
-            unsafe_allow_html=True
-        )
-    st.markdown("<br>", unsafe_allow_html=True)
-    if st.button("SİSTEMDEN ÇIK"):
-        st.session_state["password_correct"] = False
-        st.rerun()
 
-if page == "⚡ ULTRA ATAK":
-    st.markdown("<div class='terminal-header'>💰 Oguzo Kasa</div>", unsafe_allow_html=True)
-
-    ultra_kasa = og_kasa
-    baslangic_kasa = 1000
-    hedefler = [1500, 2000, 2500, 3000, 4000]
-
-    net_kar = ultra_kasa - baslangic_kasa
-    aktif_hedef = next((h for h in hedefler if ultra_kasa < h), hedefler[-1])
-    onceki_hedef = baslangic_kasa
-
-    for hedef in hedefler:
-        if ultra_kasa >= hedef:
-            onceki_hedef = hedef
+    alloc_col, chart_col = st.columns([1, 1])
+    with alloc_col:
+        st.markdown('<div class="section-title">Dağılım</div>', unsafe_allow_html=True)
+        render_allocation(active)
+    with chart_col:
+        st.markdown('<div class="section-title">Varlık Değeri</div>', unsafe_allow_html=True)
+        if active.empty:
+            st.markdown('<div class="empty-state">Grafik için aktif varlık bekleniyor.</div>', unsafe_allow_html=True)
         else:
-            break
+            chart_df = active.sort_values("total_usd", ascending=False).set_index("label")[["total_usd"]]
+            chart_df = chart_df.rename(columns={"total_usd": "USD Değer"})
+            st.bar_chart(chart_df, height=330)
 
-    if ultra_kasa >= hedefler[-1]:
-        current_pct = 100
-        hedef_baslik = "Final Hedef Tamamlandı"
+    st.markdown('<div class="section-title">Varlık Listesi</div>', unsafe_allow_html=True)
+    render_asset_table(active)
+
+
+def main() -> None:
+    inject_css()
+    data = get_live_data()
+
+    if "password_correct" not in st.session_state:
+        st.session_state["password_correct"] = False
+
+    if not st.session_state["password_correct"]:
+        render_login()
+        st.stop()
+
+    render_topbar(data)
+    nav_col, exit_col = st.columns([0.78, 0.22])
+    with nav_col:
+        page = st.radio(
+            "Bölüm",
+            ["Bahis Takibi", "Portföy"],
+            horizontal=True,
+            label_visibility="collapsed",
+        )
+    with exit_col:
+        if st.button("Çıkış"):
+            st.session_state["password_correct"] = False
+            st.rerun()
+
+    if page == "Bahis Takibi":
+        render_betting_page(data)
     else:
-        hedef_aralik = max(1, aktif_hedef - onceki_hedef)
-        current_pct = max(0, min(100, ((ultra_kasa - onceki_hedef) / hedef_aralik) * 100))
-        hedef_baslik = f"Hedef Yolculuğu ({fmt_money_usd(aktif_hedef)})"
+        render_portfolio_page(data)
 
-    render_animated_counter(
-        "Oguzo Bakiye",
-        ultra_kasa,
-        prefix="$",
-        decimals=2,
-        subtitle=f"Net kâr: {fmt_money_usd(net_kar)}",
-        height=148
-    )
 
-    st.divider()
-
-    st.markdown(
-        f"""
-        <div class='industrial-card'>
-            <div class='terminal-header'>{hedef_baslik}</div>
-            <div style='display:flex; justify-content:space-between; gap:18px; flex-wrap:wrap; margin-bottom:18px;'>
-                <div>
-                    <div style='font-size:12px; color:var(--og-muted);'>Başlangıç Kasa</div>
-                    <div style='font-size:22px; font-weight:800;'>${baslangic_kasa:,.2f}</div>
-                </div>
-                <div>
-                    <div style='font-size:12px; color:var(--og-muted);'>Aktif Hedef</div>
-                    <div style='font-size:22px; font-weight:900; color:#c58a2c;'>${aktif_hedef:,.2f}</div>
-                </div>
-                <div>
-                    <div style='font-size:12px; color:var(--og-muted);'>Net Kâr</div>
-                    <div style='font-size:22px; font-weight:900; color:#c58a2c;'>${net_kar:,.2f}</div>
-                </div>
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    st.progress(int(current_pct))
-
-    st.markdown(
-        f"""
-        <div style='margin-top:8px; font-size:13px; color:var(--og-muted); text-align:right;'>
-            %{current_pct:.1f}
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    risk_state = render_risk_module(ultra_kasa)
-    render_smart_alerts(build_ultra_alerts(ultra_kasa, baslangic_kasa, current_pct, net_kar, risk_state))
-    render_ultra_decision_panels(live_vars, ultra_kasa, baslangic_kasa, aktif_hedef, current_pct, net_kar, risk_state)
-    render_kasa_history_chart(live_vars, ultra_kasa)
-
-    hedefe_kalan = max(0, aktif_hedef - ultra_kasa)
-    st.markdown(
-        f"""
-        <div class='ops-summary-card'>
-            <div class='terminal-header'>Operasyon Özeti</div>
-            <div class='ops-summary-grid'>
-                <div class='ops-summary-item'>
-                    <span>Win Rate</span>
-                    <strong>%{wr_oran}</strong>
-                </div>
-                <div class='ops-summary-item'>
-                    <span>Risk Limiti</span>
-                    <strong>{fmt_money_usd(risk_state["risk_limit"])}</strong>
-                </div>
-                <div class='ops-summary-item'>
-                    <span>Hedefe Kalan</span>
-                    <strong>{fmt_money_usd(hedefe_kalan)}</strong>
-                </div>
-                <div class='ops-summary-item'>
-                    <span>Net K/Z</span>
-                    <strong style='color:#c58a2c;'>{fmt_money_usd(net_kar)}</strong>
-                </div>
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    st.markdown("### 📜 SON İŞLEMLER")
-    st.markdown(
-        f"""
-        <div class='industrial-card'>
-            <div class='terminal-header'>AKTİVİTE LOGLARI</div>
-            <p style='font-family:JetBrains Mono; color:var(--og-muted);'>{son_islemler_raw}</p>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-elif page == "⚽ FORM TAKİBİ":
-    render_animated_counter(
-        "Form Takibi Net",
-        toplam_bahis_kar,
-        prefix="$",
-        decimals=2,
-        subtitle="Toplam bahis performansı",
-        accent="#c58a2c",
-        height=150
-    )
-
-    if toplam_bahis_kar > 0:
-        render_smart_alerts([("good", "Form takibi pozitif", f"Net sonuç {fmt_money_usd(toplam_bahis_kar)}. Seri kârlı bölgede.")])
-    elif toplam_bahis_kar < 0:
-        render_smart_alerts([("warn", "Form takibi negatif", f"Net sonuç {fmt_money_usd(toplam_bahis_kar)}. Risk seviyesini düşük tutmak daha mantıklı.")])
-
-    t1, t2, t3 = st.tabs(["⏳ W3", "⏳ W2", "⏳ W1"])
-
-    with t1:
-        st.markdown(w3_coupon_html, unsafe_allow_html=True)
-
-    with t2:
-        st.markdown(w2_coupon_html, unsafe_allow_html=True)
-
-    with t3:
-        st.markdown(w1_coupon_html, unsafe_allow_html=True)
-
-elif page == "📊 Portföy Takip":
-    render_portfolio_v2(live_vars)
+if __name__ == "__main__":
+    main()
