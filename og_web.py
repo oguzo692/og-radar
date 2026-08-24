@@ -917,7 +917,7 @@ duyuru_metni = get_str(live_vars, "duyuru", "SİSTEM ÇEVRİMİÇİ... OG CORE")
 og_kasa = float(get_num(live_vars, "oguzo_kasa", kasa / 1))
 
 # Form takibi hesaplama
-w1_kar = float(get_num(live_vars, "w1_sonuc", -50))
+w1_kar = float(get_num(live_vars, "w1_sonuc", 215))
 w2_kar = float(get_num(live_vars, "w2_sonuc", 0))
 w3_kar = float(get_num(live_vars, "w3_sonuc", 0))
 toplam_bahis_kar = w1_kar + w2_kar + w3_kar
@@ -1849,10 +1849,10 @@ div[data-testid="stAlert"] {
 # --- 9. STATİK HTML ŞABLONLARI ---
 w3_matches = """<div class='terminal-row'><span>başakşehir - gala</span><span class='highlight'>odd</span></div><div class='terminal-row'><span>arsenal - chelsea</span><span class='highlight'>odd</span></div><div class='terminal-row'><span>xxx - bvb</span><span class='highlight'>odd</span></div><div class='terminal-row'><span>xxx - fenerbahçe</span><span class='highlight'>odd</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 0.00</span><span>Bahis: 50 USD</span></div>"""
 w2_matches = """<div class='terminal-row'><span>gala - göztepe</span><span class='highlight'>odd</span></div><div class='terminal-row'><span>chelsea - brighton</span><span class='highlight'>odd</span></div><div class='terminal-row'><span>bvb - hsv</span><span class='highlight'>odd</span></div><div class='terminal-row'><span>samsunspor - fenerbahçe</span><span class='highlight'>odd</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 0.00</span><span>Bahis: 50 USD</span></div>"""
-w1_matches = """<div class='terminal-row'><span>erzurumspor - gala</span><span class='highlight'>gala w & +2 ✅</span></div><div class='terminal-row'><span>fulham - chelsea</span><span class='highlight'>chelsea x2 & +2</span></div><div class='terminal-row'><span>bayern - bvb</span><span class='highlight'>+3</span></div><div class='terminal-row'><span>fenerbahçe - konyaspor</span><span class='highlight'>fenerbahçe w & +2</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 5.3</span><span>Bahis: 50 USD</span></div>"""
+w1_matches = """<div class='terminal-row'><span>erzurumspor - gala</span><span class='highlight'>gala w & +2 ✅</span></div><div class='terminal-row'><span>fulham - chelsea</span><span class='highlight'>chelsea x2 & +2 ✅</span></div><div class='terminal-row'><span>bayern - bvb</span><span class='highlight'>+3 ✅</span></div><div class='terminal-row'><span>fenerbahçe - konyaspor</span><span class='highlight'>fenerbahçe w & +2 ✅</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 5.3</span><span>Bahis: 50 USD</span></div>"""
 w3_coupon_html = f"<div class='industrial-card' style='border-top-color: #c58a2c !important;'><div class='terminal-header'>🔜 W3 KUPONU (YAKINDA)</div>{w3_matches}<span class='highlight' style='font-weight:bold;'>YAKINDA 🔜</span></div>"
 w2_coupon_html = f"<div class='industrial-card' style='border-top-color: #c58a2c !important;'><div class='terminal-header'>🔜 W2 KUPONU (YAKINDA)</div>{w2_matches}<span class='highlight' style='font-weight:bold;'>YAKINDA 🔜</span></div>"
-w1_coupon_html = f"<div class='industrial-card' style='border-top-color: #c58a2c !important;'><div class='terminal-header'>⏳ W1 KUPONU (BEKLİYOR)</div>{w1_matches}<span class='highlight' style='font-weight:bold;'>BEKLİYOR ⏳</span></div>"
+w1_coupon_html = f"<div class='industrial-card' style='border-top-color: #c58a2c !important;'><div class='terminal-header'>⏳ W1 KUPONU (BEKLİYOR)</div>{w1_matches}<span class='highlight' style='font-weight:bold;'>SONUÇLANDI ✅</span></div>"
 
 # --- 10. GÜVENLİK ---
 if "password_correct" not in st.session_state:
@@ -2351,7 +2351,7 @@ elif page == "⚽ FORM TAKİBİ":
     elif toplam_bahis_kar < 0:
         render_smart_alerts([("warn", "Form takibi negatif", f"Net sonuç {fmt_money_usd(toplam_bahis_kar)}. Risk seviyesini düşük tutmak daha mantıklı.")])
 
-    t1, t2, t3 = st.tabs(["🔜 W3", "🔜 W2", "⏳ W1"])
+    t1, t2, t3 = st.tabs(["🔜 W3", "🔜 W2", "✅ W1"])
 
     with t1:
         st.markdown(w3_coupon_html, unsafe_allow_html=True)
