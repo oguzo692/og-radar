@@ -918,7 +918,7 @@ og_kasa = float(get_num(live_vars, "oguzo_kasa", kasa / 1))
 
 # Form takibi hesaplama
 w1_kar = float(get_num(live_vars, "w1_sonuc", 215))
-w2_kar = float(get_num(live_vars, "w2_sonuc", 298.5)
+w2_kar = float(get_num(live_vars, "w2_sonuc", 298))
 w3_kar = float(get_num(live_vars, "w3_sonuc", 0))
 toplam_bahis_kar = w1_kar + w2_kar + w3_kar
 
