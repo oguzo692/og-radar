@@ -2225,8 +2225,8 @@ if page == "⚡ ULTRA ATAK":
     st.markdown("<div class='terminal-header'>💰 Oguzo Kasa</div>", unsafe_allow_html=True)
 
     ultra_kasa = og_kasa
-    baslangic_kasa = 1000
-    hedefler = [1500, 2000, 2500, 3000, 4000]
+    baslangic_kasa = 500
+    hedefler = [1000, 2000, 4000, 4500, 5000]
 
     net_kar = ultra_kasa - baslangic_kasa
     aktif_hedef = next((h for h in hedefler if ultra_kasa < h), hedefler[-1])
