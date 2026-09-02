@@ -2099,7 +2099,7 @@ def render_portfolio_v2(data):
     users = ["oguzo"]
     user_labels = {"oguzo": "OGUZO"}
 
-    usdtry = get_num(data, "usdtry", 44.18)
+    usdtry = get_num(data, "usdtry", 48.17)
 
     dynamic_instruments = discover_dynamic_instruments(data, users)
     instruments = dynamic_instruments if len(dynamic_instruments) > 0 else build_legacy_fallback_instruments(data)
