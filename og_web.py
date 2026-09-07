@@ -920,7 +920,8 @@ og_kasa = float(get_num(live_vars, "oguzo_kasa", kasa / 1))
 w1_kar = float(get_num(live_vars, "w1_sonuc", 215))
 w2_kar = float(get_num(live_vars, "w2_sonuc", 298))
 w3_kar = float(get_num(live_vars, "w3_sonuc", -50))
-toplam_bahis_kar = w1_kar + w2_kar + w3_kar
+w3_kar = float(get_num(live_vars, "w4_sonuc", -50))
+toplam_bahis_kar = w1_kar + w2_kar + w3_kar + w4_kar
 
 wr_oran = get_str(live_vars, "win_rate", "0")
 son_islemler_raw = get_str(live_vars, "son_islemler", "Veri yok")
