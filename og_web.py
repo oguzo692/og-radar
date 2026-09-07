@@ -1847,10 +1847,12 @@ div[data-testid="stAlert"] {
 """
 
 # --- 9. STATİK HTML ŞABLONLARI ---
-w3_matches = """<div class='terminal-row'><span>başakşehir - gala</span><span class='highlight'>gala x2 & +2 </span></div><div class='terminal-row'><span>arsenal - chelsea</span><span class='highlight'>arsenal x1 & +2</span></div><div class='terminal-row'><span>hoffenheim - bvb</span><span class='highlight'>bvb x2 & +2</span></div><div class='terminal-row'><span>fenerbahçe - beşiktaş</span><span class='highlight'>fenerbahçe x1 & +2</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 4.80</span><span>Bahis: 50 USD</span></div>"""
+w4_matches = """<div class='terminal-row'><span>başakşehir - gala</span><span class='highlight'>gala x2 & +2 ✅</span></div><div class='terminal-row'><span>arsenal - chelsea</span><span class='highlight'>arsenal x1 & +2 ✅</span></div><div class='terminal-row'><span>hoffenheim - bvb</span><span class='highlight'>bvb x2 & +2 ✅</span></div><div class='terminal-row'><span>fenerbahçe - beşiktaş</span><span class='highlight'>fenerbahçe x1 & +2 ❌</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 4.80</span><span>Bahis: 50 USD</span></div>"""
+w3_matches = """<div class='terminal-row'><span>başakşehir - gala</span><span class='highlight'>gala x2 & +2 ✅</span></div><div class='terminal-row'><span>arsenal - chelsea</span><span class='highlight'>arsenal x1 & +2 ✅</span></div><div class='terminal-row'><span>hoffenheim - bvb</span><span class='highlight'>bvb x2 & +2 ✅</span></div><div class='terminal-row'><span>fenerbahçe - beşiktaş</span><span class='highlight'>fenerbahçe x1 & +2 ❌</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 4.80</span><span>Bahis: 50 USD</span></div>"""
 w2_matches = """<div class='terminal-row'><span>gala - göztepe</span><span class='highlight'>gala w & +3 ✅</span></div><div class='terminal-row'><span>chelsea - brighton</span><span class='highlight'>chelsea x1 & +2 ✅</span></div><div class='terminal-row'><span>bvb - hsv</span><span class='highlight'>bvb +2 ✅</span></div><div class='terminal-row'><span>samsunspor - fenerbahçe</span><span class='highlight'>fenerbahçe w ✅</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 5.97</span><span>Bahis: 50 USD</span></div>"""
 w1_matches = """<div class='terminal-row'><span>erzurumspor - gala</span><span class='highlight'>gala w & +2 ✅</span></div><div class='terminal-row'><span>fulham - chelsea</span><span class='highlight'>chelsea x2 & +2 ✅</span></div><div class='terminal-row'><span>bayern - bvb</span><span class='highlight'>+3 ✅</span></div><div class='terminal-row'><span>fenerbahçe - konyaspor</span><span class='highlight'>fenerbahçe w & +2 ✅</span></div><hr style='border: 0; height: 1px; background: rgba(255,255,255,0.05); margin: 15px 0;'><div class='terminal-row'><span>Oran: 5.3</span><span>Bahis: 50 USD</span></div>"""
-w3_coupon_html = f"<div class='industrial-card' style='border-top-color: #c58a2c !important;'><div class='terminal-header'>🔜 W3 KUPONU (BEKLİYOR)</div>{w3_matches}<span class='highlight' style='font-weight:bold;'>BEKLİYOR ⏳</span></div>"
+w4_coupon_html = f"<div class='industrial-card' style='border-top-color: #c58a2c !important;'><div class='terminal-header'>❌ W3 KUPONU (SONUÇLANDI)</div>{w3_matches}<span class='highlight' style='font-weight:bold;'>SONUÇLANDI ❌</span></div>"
+w3_coupon_html = f"<div class='industrial-card' style='border-top-color: #c58a2c !important;'><div class='terminal-header'>❌ W3 KUPONU (SONUÇLANDI)</div>{w3_matches}<span class='highlight' style='font-weight:bold;'>SONUÇLANDI ❌</span></div>"
 w2_coupon_html = f"<div class='industrial-card' style='border-top-color: #c58a2c !important;'><div class='terminal-header'>✅ W2 KUPONU (SONUÇLANDI)</div>{w2_matches}<span class='highlight' style='font-weight:bold;'>SONUÇLANDI ✅</span></div>"
 w1_coupon_html = f"<div class='industrial-card' style='border-top-color: #c58a2c !important;'><div class='terminal-header'>✅ W1 KUPONU (SONUÇLANDI)</div>{w1_matches}<span class='highlight' style='font-weight:bold;'>SONUÇLANDI ✅</span></div>"
 
@@ -2351,7 +2353,7 @@ elif page == "⚽ FORM TAKİBİ":
     elif toplam_bahis_kar < 0:
         render_smart_alerts([("warn", "Form takibi negatif", f"Net sonuç {fmt_money_usd(toplam_bahis_kar)}. Risk seviyesini düşük tutmak daha mantıklı.")])
 
-    t1, t2, t3 = st.tabs(["⏳ W3", "✅ W2", "✅ W1"])
+    t1, t2, t3, t4= st.tabs(["⏳ W4", "❌ W3", "✅ W2", "✅ W1"])
 
     with t1:
         st.markdown(w3_coupon_html, unsafe_allow_html=True)
@@ -2361,6 +2363,9 @@ elif page == "⚽ FORM TAKİBİ":
 
     with t3:
         st.markdown(w1_coupon_html, unsafe_allow_html=True)
+        
+    with t4:
+        st.markdown(w4_coupon_html, unsafe_allow_html=True)
 
 elif page == "📊 Portföy Takip":
     render_portfolio_v2(live_vars)
