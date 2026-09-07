@@ -2353,7 +2353,7 @@ elif page == "⚽ FORM TAKİBİ":
     elif toplam_bahis_kar < 0:
         render_smart_alerts([("warn", "Form takibi negatif", f"Net sonuç {fmt_money_usd(toplam_bahis_kar)}. Risk seviyesini düşük tutmak daha mantıklı.")])
 
-    t1, t2, t3, t4= st.tabs(["⏳ W4ucl", "❌ W3", "✅ W2", "✅ W1"])
+    t1, t2, t3, t4= st.tabs(["❌ W3", "✅ W2", "✅ W1", "⏳ W4ucl"])
     
     with t4:
         st.markdown(w4ucl_coupon_html, unsafe_allow_html=True)
