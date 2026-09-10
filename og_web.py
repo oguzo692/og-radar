@@ -2365,22 +2365,22 @@ elif page == "⚽ FORM TAKİBİ":
     elif toplam_bahis_kar < 0:
         render_smart_alerts([("warn", "Form takibi negatif", f"Net sonuç {fmt_money_usd(toplam_bahis_kar)}. Risk seviyesini düşük tutmak daha mantıklı.")])
 
-t1, t2, t3, t4, t5 = st.tabs(["⏳ W4", "❌ W3", "✅ W2", "✅ W1", "❌ W4 UCL"])
+    t1, t2, t3, t4, t5 = st.tabs(["⏳ W4", "❌ W3", "✅ W2", "✅ W1", "❌ W4 UCL"])
 
-with t1:
-    st.markdown(w4_coupon_html, unsafe_allow_html=True)
+    with t1:
+        st.markdown(w4_coupon_html, unsafe_allow_html=True)
 
-with t2:
-    st.markdown(w3_coupon_html, unsafe_allow_html=True)
+    with t2:
+        st.markdown(w3_coupon_html, unsafe_allow_html=True)
 
-with t3:
-    st.markdown(w2_coupon_html, unsafe_allow_html=True)
+    with t3:
+        st.markdown(w2_coupon_html, unsafe_allow_html=True)
 
-with t4:
-    st.markdown(w1_coupon_html, unsafe_allow_html=True)
+    with t4:
+        st.markdown(w1_coupon_html, unsafe_allow_html=True)
 
-with t5:
-    st.markdown(w4ucl_coupon_html, unsafe_allow_html=True)
+    with t5:
+        st.markdown(w4ucl_coupon_html, unsafe_allow_html=True)
 
-elif page == "📊 Portföy Takip":
-    render_portfolio_v2(live_vars)
+    elif page == "📊 Portföy Takip":
+        render_portfolio_v2(live_vars)
