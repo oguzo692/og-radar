@@ -2382,5 +2382,5 @@ elif page == "⚽ FORM TAKİBİ":
     with t5:
         st.markdown(w4ucl_coupon_html, unsafe_allow_html=True)
 
-    elif page == "📊 Portföy Takip":
-        render_portfolio_v2(live_vars)
+elif page == "📊 Portföy Takip":
+    render_portfolio_v2(live_vars)
