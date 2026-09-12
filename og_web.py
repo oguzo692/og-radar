@@ -508,7 +508,7 @@ def build_next_move(ultra_kasa, baslangic_kasa, aktif_hedef, current_pct, net_ka
     remaining = max(0, aktif_hedef - ultra_kasa)
     return "STANDARTTA KAL", f"Akış dengeli. Aktif hedefe kalan {fmt_money_usd(remaining)}."
 
-def render_ultra_decision_panels(data, ultra_kasa, baslangic_kasa, aktif_hedef, current_pct, net_kar, risk_state):
+def render_ultra_command_center(data, ultra_kasa, baslangic_kasa, aktif_hedef, current_pct, net_kar, risk_state):
     history_df = parse_kasa_history(data)
     if history_df.empty:
         peak_value = max(ultra_kasa, baslangic_kasa)
@@ -516,8 +516,7 @@ def render_ultra_decision_panels(data, ultra_kasa, baslangic_kasa, aktif_hedef, 
         peak_value = max(float(history_df["Kasa"].max()), ultra_kasa)
 
     selected_risk = risk_state.get("selected_risk", "Standart")
-    risk_rate = float(risk_state.get("risk_rate", 0.03))
-    risk_limit = float(risk_state.get("risk_limit", ultra_kasa * risk_rate))
+    risk_limit = float(risk_state.get("risk_limit", ultra_kasa * 0.03))
 
     move_title, move_body = build_next_move(
         ultra_kasa,
@@ -529,35 +528,61 @@ def render_ultra_decision_panels(data, ultra_kasa, baslangic_kasa, aktif_hedef, 
         peak_value,
     )
 
-    safe_rate = 0.80
-    growth_rate = max(0, 1 - safe_rate - risk_rate)
-    safe_pool = ultra_kasa * safe_rate
-    growth_pool = ultra_kasa * growth_rate
-
+    hedefe_kalan = max(0, aktif_hedef - ultra_kasa)
     recovery_needed = max(0, peak_value - ultra_kasa)
-    recovery_pct = 100 if peak_value <= 0 else max(0, min(100, (ultra_kasa / peak_value) * 100))
-    recovery_status = "ZİRVEDE" if recovery_needed <= 0 else "TOPARLANMA"
+    drawdown_pct = (recovery_needed / peak_value * 100) if peak_value > 0 else 0
+    current_pct = max(0, min(100, current_pct))
+
+    if ultra_kasa < baslangic_kasa:
+        health_label = "SAVUNMA"
+        health_class = "guard"
+    elif current_pct >= 85:
+        health_label = "KAR KORUMA"
+        health_class = "good"
+    elif drawdown_pct >= 8:
+        health_label = "TOPARLANMA"
+        health_class = "warn"
+    else:
+        health_label = "DENGELİ"
+        health_class = "good"
 
     panel_html = (
-        "<div class='decision-grid'>"
-        "<div class='decision-card decision-primary'>"
-        "<div class='decision-kicker'>Sıradaki Hamle</div>"
-        f"<div class='decision-title'>{html.escape(move_title)}</div>"
-        f"<div class='decision-body'>{html.escape(move_body)}</div>"
+        "<div class='ultra-command-shell'>"
+        "<div class='ultra-command-hero'>"
+        "<div class='ultra-main-block'>"
+        "<div class='ultra-kicker'>Ultra Atak</div>"
+        f"<div class='ultra-balance'>{fmt_money_usd(ultra_kasa)}</div>"
+        f"<div class='ultra-subline'>Başlangıç {fmt_money_usd(baslangic_kasa)} · Net {fmt_money_usd(net_kar)}</div>"
+        "<div class='ultra-progress-meta'>"
+        f"<span>Aktif hedef {fmt_money_usd(aktif_hedef)}</span>"
+        f"<strong>%{current_pct:.1f}</strong>"
         "</div>"
-        "<div class='decision-card'>"
-        "<div class='decision-kicker'>Kasa Dağılımı</div>"
-        "<div class='vault-row'><span>Güvenli Kasa</span><strong>" + fmt_money_usd(safe_pool) + "</strong></div>"
-        "<div class='vault-bar'><i style='width:80%;'></i></div>"
-        f"<div class='vault-row'><span>Risk Payı · {html.escape(selected_risk)}</span><strong>{fmt_money_usd(risk_limit)}</strong></div>"
-        f"<div class='vault-row'><span>Büyüme Payı</span><strong>{fmt_money_usd(growth_pool)}</strong></div>"
+        f"<div class='ultra-progress-rail'><i style='width:{current_pct:.1f}%;'></i></div>"
         "</div>"
-        "<div class='decision-card'>"
-        "<div class='decision-kicker'>Toparlanma Ölçeri</div>"
-        f"<div class='decision-title'>{recovery_status}</div>"
-        f"<div class='decision-body'>Zirve {fmt_money_usd(peak_value)} · Geri dönüş {fmt_money_usd(recovery_needed)}</div>"
-        f"<div class='recovery-track'><i style='width:{recovery_pct:.1f}%;'></i></div>"
-        f"<div class='recovery-label'>%{recovery_pct:.1f}</div>"
+        "<div class='ultra-action-block'>"
+        f"<div class='ultra-status ultra-status-{health_class}'>{health_label}</div>"
+        "<div class='ultra-action-label'>Sıradaki Hamle</div>"
+        f"<div class='ultra-action-title'>{html.escape(move_title)}</div>"
+        f"<div class='ultra-action-copy'>{html.escape(move_body)}</div>"
+        "</div>"
+        "</div>"
+        "<div class='ultra-metric-grid'>"
+        "<div class='ultra-metric'>"
+        "<span>Risk Modu</span>"
+        f"<strong>{html.escape(selected_risk)}</strong>"
+        "</div>"
+        "<div class='ultra-metric'>"
+        "<span>Tek İşlem Limiti</span>"
+        f"<strong>{fmt_money_usd(risk_limit)}</strong>"
+        "</div>"
+        "<div class='ultra-metric'>"
+        "<span>Hedefe Kalan</span>"
+        f"<strong>{fmt_money_usd(hedefe_kalan)}</strong>"
+        "</div>"
+        "<div class='ultra-metric'>"
+        "<span>Zirveden Fark</span>"
+        f"<strong>{fmt_money_usd(recovery_needed)}</strong>"
+        "</div>"
         "</div>"
         "</div>"
     )
@@ -616,41 +641,59 @@ def render_kasa_history_chart(data, current_kasa):
     low_value = float(history_df["Kasa"].min())
     change_value = last_value - first_value
     change_pct = (change_value / first_value * 100) if first_value > 0 else 0
-    change_color = "#c58a2c"
-    width = 900
-    height = 230
-    pad_x = 34
-    pad_y = 26
+    change_color = "#64d39a" if change_value > 0 else "#e47b7b" if change_value < 0 else "#c58a2c"
+    width = 920
+    height = 260
+    pad_x = 46
+    pad_y = 30
     values = [float(v) for v in history_df["Kasa"].tolist()]
     dates = history_df["Tarih"].tolist()
-    value_range = max(high_value - low_value, 1)
+    raw_range = high_value - low_value
+    padding = max(raw_range * 0.18, abs(high_value) * 0.035, 25)
+    scale_low = low_value - padding
+    scale_high = high_value + padding
+    value_range = max(scale_high - scale_low, 1)
     point_count = len(values)
 
     points = []
-    for idx, value in enumerate(values):
-        x = pad_x if point_count == 1 else pad_x + (idx / (point_count - 1)) * (width - pad_x * 2)
-        y = pad_y + (1 - ((value - low_value) / value_range)) * (height - pad_y * 2)
-        points.append((x, y, value))
+    if point_count == 1:
+        y = pad_y + (1 - ((values[0] - scale_low) / value_range)) * (height - pad_y * 2)
+        points = [(pad_x, y, values[0]), (width - pad_x, y, values[0])]
+        visible_points = [(width / 2, y, values[0])]
+    else:
+        for idx, value in enumerate(values):
+            x = pad_x + (idx / (point_count - 1)) * (width - pad_x * 2)
+            y = pad_y + (1 - ((value - scale_low) / value_range)) * (height - pad_y * 2)
+            points.append((x, y, value))
 
-    line_points = " ".join([f"{x:.1f},{y:.1f}" for x, y, _ in points])
-    area_points = f"{pad_x},{height - pad_y} {line_points} {width - pad_x},{height - pad_y}"
+        important_indexes = {0, point_count - 1, values.index(high_value), values.index(low_value)}
+        visible_points = [points[idx] for idx in sorted(important_indexes)]
+
+    line_d = "M " + " L ".join([f"{x:.1f} {y:.1f}" for x, y, _ in points])
+    area_d = line_d + f" L {points[-1][0]:.1f} {height - pad_y:.1f} L {points[0][0]:.1f} {height - pad_y:.1f} Z"
     circles = ""
-    for x, y, value in points:
-        circles += f"<circle cx='{x:.1f}' cy='{y:.1f}' r='4.2' class='chart-dot'><title>{fmt_money_usd(value)}</title></circle>"
+    for x, y, value in visible_points:
+        circles += f"<circle cx='{x:.1f}' cy='{y:.1f}' r='5.2' class='chart-dot'><title>{fmt_money_usd(value)}</title></circle>"
+
+    grid_lines = ""
+    for idx in range(4):
+        ratio = idx / 3
+        y = pad_y + ratio * (height - pad_y * 2)
+        grid_lines += f"<line x1='{pad_x}' y1='{y:.1f}' x2='{width - pad_x}' y2='{y:.1f}' class='grid-line' />"
 
     first_label = dates[0].strftime("%d.%m") if dates else "-"
     last_label = dates[-1].strftime("%d.%m") if dates else "-"
-    period_label = f"{len(history_df)} kayıt · {first_label} - {last_label}"
-    trend_label = "POZİTİF" if change_value >= 0 else "NEGATİF"
+    period_label = f"{len(history_df)} kayıt / {first_label} - {last_label}"
+    trend_label = "YUKARI" if change_value > 0 else "AŞAĞI" if change_value < 0 else "YATAY"
 
     chart_html = f"""
     <div class="kasa-history-card">
         <div class="kasa-history-head">
             <div>
-                <div class="kasa-eyebrow">Kasa Geçmişi</div>
-                <div class="kasa-title">Performans İzleme</div>
+                <div class="kasa-eyebrow">Kasa Trendi</div>
+                <div class="kasa-title">Net Akış</div>
             </div>
-            <div class="kasa-badge">{trend_label}</div>
+            <div class="kasa-badge" style="color:{change_color}; border-color:{change_color}55; background:{change_color}14;">{trend_label}</div>
         </div>
 
         <div class="kasa-metrics">
@@ -669,26 +712,16 @@ def render_kasa_history_chart(data, current_kasa):
         </div>
 
         <div class="chart-wrap">
-            <svg viewBox="0 0 {width} {height}" preserveAspectRatio="none" role="img">
+            <svg viewBox="0 0 {width} {height}" role="img" aria-label="Kasa geçmiş grafiği">
                 <defs>
                     <linearGradient id="areaFill" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stop-color="rgba(197,138,44,0.26)" />
-                        <stop offset="100%" stop-color="rgba(197,138,44,0.00)" />
+                        <stop offset="0%" stop-color="{change_color}" stop-opacity="0.24" />
+                        <stop offset="100%" stop-color="{change_color}" stop-opacity="0" />
                     </linearGradient>
-                    <filter id="glow">
-                        <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
-                        <feMerge>
-                            <feMergeNode in="coloredBlur"/>
-                            <feMergeNode in="SourceGraphic"/>
-                        </feMerge>
-                    </filter>
                 </defs>
-                <line x1="{pad_x}" y1="{pad_y}" x2="{pad_x}" y2="{height - pad_y}" class="grid-axis" />
-                <line x1="{pad_x}" y1="{height - pad_y}" x2="{width - pad_x}" y2="{height - pad_y}" class="grid-axis" />
-                <line x1="{pad_x}" y1="{pad_y + (height - pad_y * 2) * 0.33:.1f}" x2="{width - pad_x}" y2="{pad_y + (height - pad_y * 2) * 0.33:.1f}" class="grid-line" />
-                <line x1="{pad_x}" y1="{pad_y + (height - pad_y * 2) * 0.66:.1f}" x2="{width - pad_x}" y2="{pad_y + (height - pad_y * 2) * 0.66:.1f}" class="grid-line" />
-                <polygon points="{area_points}" class="chart-area" />
-                <polyline points="{line_points}" class="chart-line" filter="url(#glow)" />
+                {grid_lines}
+                <path d="{area_d}" class="chart-area" />
+                <path d="{line_d}" class="chart-line" />
                 {circles}
             </svg>
         </div>
@@ -711,10 +744,9 @@ def render_kasa_history_chart(data, current_kasa):
             box-sizing: border-box;
             height: 100%;
             background:
-                radial-gradient(circle at 12% 0%, rgba(197,138,44,0.12), transparent 28%),
-                linear-gradient(180deg, rgba(16,16,16,0.96), rgba(7,7,7,0.96));
-            border: 1px solid rgba(255,255,255,0.05);
-            border-top: 2px solid rgba(197,138,44,0.72);
+                linear-gradient(135deg, rgba(197,138,44,0.10), transparent 32%),
+                linear-gradient(180deg, rgba(18,18,18,0.96), rgba(7,7,7,0.97));
+            border: 1px solid rgba(255,255,255,0.065);
             border-radius: 6px;
             padding: 22px;
             font-family: 'JetBrains Mono', monospace;
@@ -784,9 +816,10 @@ def render_kasa_history_chart(data, current_kasa):
             white-space: nowrap;
         }}
         .chart-wrap {{
-            height: 210px;
+            height: 230px;
             border: 1px solid rgba(255,255,255,0.035);
-            background: rgba(0,0,0,0.18);
+            background:
+                linear-gradient(180deg, rgba(255,255,255,0.026), rgba(0,0,0,0.16));
             border-radius: 6px;
             overflow: hidden;
         }}
@@ -800,24 +833,27 @@ def render_kasa_history_chart(data, current_kasa):
             stroke-width: 1;
         }}
         .grid-line {{
-            stroke: rgba(255,255,255,0.06);
+            stroke: rgba(255,255,255,0.07);
             stroke-width: 1;
             stroke-dasharray: 6 8;
+            vector-effect: non-scaling-stroke;
         }}
         .chart-area {{
             fill: url(#areaFill);
         }}
         .chart-line {{
             fill: none;
-            stroke: #c58a2c;
+            stroke: {change_color};
             stroke-width: 4;
             stroke-linecap: round;
             stroke-linejoin: round;
+            vector-effect: non-scaling-stroke;
         }}
         .chart-dot {{
             fill: #050505;
-            stroke: #c58a2c;
+            stroke: {change_color};
             stroke-width: 3;
+            vector-effect: non-scaling-stroke;
         }}
         .kasa-history-foot {{
             color: #858585;
@@ -860,51 +896,64 @@ def render_kasa_history_chart(data, current_kasa):
     </style>
     """
 
-    components.html(chart_html, height=440, scrolling=False)
+    components.html(chart_html, height=500, scrolling=False)
 
-def render_risk_module(current_kasa):
+def build_risk_state(current_kasa, selected_risk="Standart"):
     risk_profiles = {
         "Koruma": 0.015,
         "Standart": 0.03,
         "Atak": 0.05,
     }
 
-    selected_risk = st.radio(
-        "Risk Seviyesi",
-        ["Koruma", "Standart", "Atak"],
-        horizontal=True,
-        key="ultra_risk_level"
-    )
+    if selected_risk not in risk_profiles:
+        selected_risk = "Standart"
 
     risk_rate = risk_profiles[selected_risk]
     risk_limit = current_kasa * risk_rate
-
-    st.markdown(
-        f"""
-        <div class='industrial-card'>
-            <div class='terminal-header'>Risk Modülü</div>
-            <div class='terminal-row'>
-                <span>MOD</span>
-                <span class='highlight'>{selected_risk}</span>
-            </div>
-            <div class='terminal-row'>
-                <span>ORAN</span>
-                <span class='highlight'>%{risk_rate * 100:.1f}</span>
-            </div>
-            <div class='terminal-row'>
-                <span>AKTİF LİMİT</span>
-                <span class='highlight'>{fmt_money_usd(risk_limit)}</span>
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
 
     return {
         "selected_risk": selected_risk,
         "risk_rate": risk_rate,
         "risk_limit": risk_limit,
     }
+
+def render_risk_module(current_kasa):
+    st.markdown("<div class='ultra-section-label'>Risk Seviyesi</div>", unsafe_allow_html=True)
+    selected_risk = st.radio(
+        "Risk Seviyesi",
+        ["Koruma", "Standart", "Atak"],
+        horizontal=True,
+        key="ultra_risk_level",
+        label_visibility="collapsed"
+    )
+
+    risk_state = build_risk_state(current_kasa, selected_risk)
+    risk_rate = risk_state["risk_rate"]
+    risk_limit = risk_state["risk_limit"]
+    risk_notes = {
+        "Koruma": "Kasa savunması öncelikli. Seri bozulduğunda veya hedefe yaklaşınca en temiz mod.",
+        "Standart": "Dengeli akış. Kasa pozitifken ve trend sağlıklı görünürken ana çalışma modu.",
+        "Atak": "Agresif tempo. Sadece net avantaj gördüğün kısa pencerelerde kullanılmalı.",
+    }
+
+    st.markdown(
+        f"""
+        <div class='risk-premium-card'>
+            <div>
+                <div class='risk-premium-kicker'>Aktif Mod</div>
+                <div class='risk-premium-title'>{html.escape(selected_risk)}</div>
+                <div class='risk-premium-copy'>{html.escape(risk_notes[selected_risk])}</div>
+            </div>
+            <div class='risk-premium-limit'>
+                <strong>{fmt_money_usd(risk_limit)}</strong>
+                <span>%{risk_rate * 100:.1f} tek işlem limiti</span>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    return risk_state
 
 # --- 7. CANLI VERİ DEĞİŞKENLERİ ---
 live_vars = get_live_data()
@@ -1332,6 +1381,222 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input {
     white-space: nowrap;
 }
 
+.ultra-command-shell {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 18px;
+}
+
+.ultra-command-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(300px, 0.55fr);
+    gap: 16px;
+    background:
+        linear-gradient(135deg, rgba(197,138,44,0.14), transparent 34%),
+        linear-gradient(180deg, rgba(18,18,18,0.96), rgba(6,6,6,0.98));
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: var(--og-radius);
+    padding: 24px;
+    box-shadow: 0 18px 44px rgba(0,0,0,0.44);
+}
+
+.ultra-main-block,
+.ultra-action-block,
+.ultra-metric,
+.risk-premium-card {
+    min-width: 0;
+}
+
+.ultra-kicker,
+.ultra-action-label,
+.risk-premium-kicker,
+.ultra-section-label {
+    color: var(--og-muted) !important;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 2.4px;
+    text-transform: uppercase;
+}
+
+.ultra-balance {
+    color: #f3eee5 !important;
+    font-size: 56px;
+    line-height: 1;
+    font-weight: 900;
+    margin: 14px 0 10px 0;
+    white-space: nowrap;
+}
+
+.ultra-subline {
+    color: #9b9488 !important;
+    font-size: 13px;
+    line-height: 1.55;
+}
+
+.ultra-progress-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    margin-top: 28px;
+    color: var(--og-muted) !important;
+    font-size: 12px;
+}
+
+.ultra-progress-meta strong {
+    color: var(--og-accent) !important;
+    font-size: 16px;
+}
+
+.ultra-progress-rail {
+    height: 12px;
+    width: 100%;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.055);
+    border: 1px solid rgba(255,255,255,0.045);
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.ultra-progress-rail i {
+    display: block;
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #9f7330, #e1b36a);
+    box-shadow: 0 0 22px rgba(197,138,44,0.28);
+}
+
+.ultra-action-block {
+    position: relative;
+    border: 1px solid rgba(255,255,255,0.065);
+    border-radius: var(--og-radius);
+    background: rgba(255,255,255,0.028);
+    padding: 18px;
+}
+
+.ultra-status {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    padding: 7px 10px;
+    margin-bottom: 20px;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 1.8px;
+    border: 1px solid rgba(197,138,44,0.38);
+    color: var(--og-accent) !important;
+    background: rgba(197,138,44,0.10);
+}
+
+.ultra-status-good {
+    color: #64d39a !important;
+    border-color: rgba(100,211,154,0.34);
+    background: rgba(100,211,154,0.08);
+}
+
+.ultra-status-warn,
+.ultra-status-guard {
+    color: #e3b066 !important;
+    border-color: rgba(227,176,102,0.34);
+    background: rgba(227,176,102,0.08);
+}
+
+.ultra-action-title {
+    color: var(--og-text) !important;
+    font-size: 26px;
+    line-height: 1.08;
+    font-weight: 900;
+    margin: 10px 0;
+    overflow-wrap: anywhere;
+}
+
+.ultra-action-copy {
+    color: var(--og-muted) !important;
+    font-size: 12px;
+    line-height: 1.65;
+}
+
+.ultra-metric-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.ultra-metric {
+    background: rgba(18,18,18,0.82);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: var(--og-radius);
+    padding: 15px;
+}
+
+.ultra-metric span {
+    display: block;
+    color: var(--og-muted) !important;
+    font-size: 10px;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.ultra-metric strong {
+    display: block;
+    color: var(--og-text) !important;
+    font-size: 18px;
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+.ultra-section-label {
+    margin: 10px 0 8px 0;
+}
+
+.risk-premium-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(180px, auto);
+    gap: 18px;
+    align-items: center;
+    background: rgba(16,16,16,0.88);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: var(--og-radius);
+    padding: 18px;
+    margin: 8px 0 18px 0;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.30);
+}
+
+.risk-premium-title {
+    color: var(--og-text) !important;
+    font-size: 22px;
+    line-height: 1.1;
+    font-weight: 900;
+    margin: 8px 0;
+}
+
+.risk-premium-copy {
+    color: var(--og-muted) !important;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.risk-premium-limit {
+    text-align: right;
+}
+
+.risk-premium-limit strong {
+    display: block;
+    color: var(--og-accent) !important;
+    font-size: 24px;
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+.risk-premium-limit span {
+    display: block;
+    color: var(--og-muted) !important;
+    font-size: 11px;
+    margin-top: 7px;
+}
+
 @media (max-width: 900px) {
     .block-container {
         padding-left: 1rem !important;
@@ -1412,6 +1677,20 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input {
     }
 
     .ops-summary-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .ultra-command-hero {
+        grid-template-columns: 1fr;
+        padding: 20px;
+    }
+
+    .ultra-balance {
+        font-size: 40px;
+        white-space: normal;
+    }
+
+    .ultra-metric-grid {
         grid-template-columns: 1fr 1fr;
     }
 }
@@ -1506,6 +1785,39 @@ body, [data-testid="stAppViewContainer"], p, div, span, button, input {
 
     .ops-summary-item strong {
         font-size: 16px;
+    }
+
+    .ultra-command-hero {
+        padding: 16px;
+    }
+
+    .ultra-balance {
+        font-size: 32px;
+    }
+
+    .ultra-progress-meta {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 6px;
+        margin-top: 20px;
+    }
+
+    .ultra-action-title {
+        font-size: 21px;
+    }
+
+    .ultra-metric-grid,
+    .risk-premium-card {
+        grid-template-columns: 1fr;
+    }
+
+    .ultra-metric strong,
+    .risk-premium-limit strong {
+        font-size: 18px;
+    }
+
+    .risk-premium-limit {
+        text-align: left;
     }
 }
 </style>
@@ -2236,8 +2548,6 @@ with st.sidebar:
         st.rerun()
 
 if page == "⚡ ULTRA ATAK":
-    st.markdown("<div class='terminal-header'>💰 Oguzo Kasa</div>", unsafe_allow_html=True)
-
     ultra_kasa = og_kasa
     baslangic_kasa = 500
     hedefler = [1000, 2000, 4000, 4500, 5000]
@@ -2254,100 +2564,28 @@ if page == "⚡ ULTRA ATAK":
 
     if ultra_kasa >= hedefler[-1]:
         current_pct = 100
-        hedef_baslik = "Final Hedef Tamamlandı"
     else:
         hedef_aralik = max(1, aktif_hedef - onceki_hedef)
         current_pct = max(0, min(100, ((ultra_kasa - onceki_hedef) / hedef_aralik) * 100))
-        hedef_baslik = f"Hedef Yolculuğu ({fmt_money_usd(aktif_hedef)})"
 
-    render_animated_counter(
-        "Oguzo Bakiye",
+    risk_state = build_risk_state(
         ultra_kasa,
-        prefix="$",
-        decimals=2,
-        subtitle=f"Net kâr: {fmt_money_usd(net_kar)}",
-        height=148
+        st.session_state.get("ultra_risk_level", "Standart")
     )
-
-    st.divider()
-
-    st.markdown(
-        f"""
-        <div class='industrial-card'>
-            <div class='terminal-header'>{hedef_baslik}</div>
-            <div style='display:flex; justify-content:space-between; gap:18px; flex-wrap:wrap; margin-bottom:18px;'>
-                <div>
-                    <div style='font-size:12px; color:var(--og-muted);'>Başlangıç Kasa</div>
-                    <div style='font-size:22px; font-weight:800;'>${baslangic_kasa:,.2f}</div>
-                </div>
-                <div>
-                    <div style='font-size:12px; color:var(--og-muted);'>Aktif Hedef</div>
-                    <div style='font-size:22px; font-weight:900; color:#c58a2c;'>${aktif_hedef:,.2f}</div>
-                </div>
-                <div>
-                    <div style='font-size:12px; color:var(--og-muted);'>Net Kâr</div>
-                    <div style='font-size:22px; font-weight:900; color:#c58a2c;'>${net_kar:,.2f}</div>
-                </div>
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    st.progress(int(current_pct))
-
-    st.markdown(
-        f"""
-        <div style='margin-top:8px; font-size:13px; color:var(--og-muted); text-align:right;'>
-            %{current_pct:.1f}
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
+    render_ultra_command_center(live_vars, ultra_kasa, baslangic_kasa, aktif_hedef, current_pct, net_kar, risk_state)
     risk_state = render_risk_module(ultra_kasa)
-    render_smart_alerts(build_ultra_alerts(ultra_kasa, baslangic_kasa, current_pct, net_kar, risk_state))
-    render_ultra_decision_panels(live_vars, ultra_kasa, baslangic_kasa, aktif_hedef, current_pct, net_kar, risk_state)
     render_kasa_history_chart(live_vars, ultra_kasa)
 
-    hedefe_kalan = max(0, aktif_hedef - ultra_kasa)
-    st.markdown(
-        f"""
-        <div class='ops-summary-card'>
-            <div class='terminal-header'>Operasyon Özeti</div>
-            <div class='ops-summary-grid'>
-                <div class='ops-summary-item'>
-                    <span>Win Rate</span>
-                    <strong>%{wr_oran}</strong>
-                </div>
-                <div class='ops-summary-item'>
-                    <span>Risk Limiti</span>
-                    <strong>{fmt_money_usd(risk_state["risk_limit"])}</strong>
-                </div>
-                <div class='ops-summary-item'>
-                    <span>Hedefe Kalan</span>
-                    <strong>{fmt_money_usd(hedefe_kalan)}</strong>
-                </div>
-                <div class='ops-summary-item'>
-                    <span>Net K/Z</span>
-                    <strong style='color:#c58a2c;'>{fmt_money_usd(net_kar)}</strong>
-                </div>
+    with st.expander("Son işlemler", expanded=False):
+        st.markdown(
+            f"""
+            <div class='industrial-card'>
+                <div class='terminal-header'>Aktivite Logları</div>
+                <p style='font-family:JetBrains Mono; color:var(--og-muted); line-height:1.7;'>{html.escape(son_islemler_raw)}</p>
             </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    st.markdown("### 📜 SON İŞLEMLER")
-    st.markdown(
-        f"""
-        <div class='industrial-card'>
-            <div class='terminal-header'>AKTİVİTE LOGLARI</div>
-            <p style='font-family:JetBrains Mono; color:var(--og-muted);'>{son_islemler_raw}</p>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+            """,
+            unsafe_allow_html=True
+        )
 
 elif page == "⚽ FORM TAKİBİ":
     render_animated_counter(
